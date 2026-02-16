@@ -89,9 +89,9 @@ export default function Navbar() {
 
           {/* Desktop right side */}
           <div className="hidden md:flex items-center gap-5">
-            <button className="font-sans text-xs uppercase tracking-[0.2em] text-white/40 hover:text-white/70 transition-colors">
+            <Link href="/auth/login" className="font-sans text-xs uppercase tracking-[0.2em] text-white/40 hover:text-white/70 transition-colors">
               Sign In
-            </button>
+            </Link>
             <Link
               href="/shop"
               className="font-sans text-xs uppercase tracking-[0.2em] px-5 py-2 bg-white text-obsidian hover:bg-champagne transition-colors duration-300"
@@ -156,9 +156,9 @@ export default function Navbar() {
               transition={{ delay: 0.3 }}
               className="mt-8 flex flex-col items-center gap-4"
             >
-              <button className="font-sans text-sm uppercase tracking-[0.2em] text-white/40">
+              <Link href="/auth/login" className="font-sans text-sm uppercase tracking-[0.2em] text-white/40">
                 Sign In
-              </button>
+              </Link>
             </motion.div>
           </motion.div>
         )}
