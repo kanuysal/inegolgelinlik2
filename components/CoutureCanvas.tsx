@@ -23,7 +23,7 @@ function padFrame(n: number): string {
  * on a sticky <canvas> synced to scroll progress via useSpring.
  */
 export default function CoutureCanvas({
-  totalFrames = 192,
+  totalFrames = 300,
   framePrefix = "/frames/frame_",
   frameExtension = ".jpg",
 }: CoutureCanvasProps) {

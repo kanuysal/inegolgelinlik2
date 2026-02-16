@@ -10,10 +10,10 @@ import {
 } from "framer-motion";
 
 /* ═══════════════════════════════════════════
-   FRAME CONFIG — matches your actual files:
-   frame_000.jpg → frame_191.jpg  (192 total)
+   FRAME CONFIG — Bleecker collection video:
+   frame_000.jpg → frame_299.jpg  (300 total)
    ═══════════════════════════════════════════ */
-const TOTAL_FRAMES = 192;
+const TOTAL_FRAMES = 300;
 const FRAME_PREFIX = "/frames/frame_";
 const FRAME_EXT = ".jpg";
 
