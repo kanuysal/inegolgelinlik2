@@ -193,7 +193,7 @@ export default function SellPage() {
                 className="flex flex-col sm:flex-row gap-4 justify-center"
               >
                 <button
-                  onClick={() => { setFormStep(1); setTimeout(() => document.getElementById("consign-form")?.scrollIntoView({ behavior: "smooth" }), 100); }}
+                  onClick={() => { window.location.href = '/sell/submit'; }}
                   className="group relative px-10 py-3.5 bg-white text-obsidian font-sans text-sm uppercase tracking-[0.25em] overflow-hidden transition-all duration-500 hover:shadow-[0_0_40px_rgba(201,169,110,0.15)] inline-flex items-center justify-center gap-3"
                 >
                   <span className="relative z-10">Start Consigning</span>
@@ -500,7 +500,7 @@ export default function SellPage() {
                 Join hundreds of GL brides who have found the perfect new home for their gowns.
               </p>
               <button
-                onClick={() => { setFormStep(1); setTimeout(() => document.getElementById("consign-form")?.scrollIntoView({ behavior: "smooth" }), 100); }}
+                onClick={() => { window.location.href = '/sell/submit'; }}
                 className="group relative px-12 py-3.5 bg-white text-obsidian font-sans text-sm uppercase tracking-[0.25em] overflow-hidden transition-all inline-flex items-center gap-3"
               >
                 <span className="relative z-10">Consign Your Gown</span>
