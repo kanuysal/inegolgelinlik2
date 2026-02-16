@@ -69,11 +69,22 @@ const PLACEHOLDER_IMAGES = [
   "https://images.unsplash.com/photo-1550005809-91ad75fb315f?w=600&h=900&fit=crop&q=80",
 ];
 
-function pickRandom<T>(arr: T[]): T {
-  return arr[Math.floor(Math.random() * arr.length)];
+/* Seeded random number generator — ensures server & client produce identical values */
+function createSeededRandom(seed: number) {
+  let s = seed;
+  return () => {
+    s = (s * 16807 + 0) % 2147483647;
+    return (s - 1) / 2147483646;
+  };
 }
 
 function generateListings(): Listing[] {
+  const random = createSeededRandom(42);
+
+  function pickRandom<T>(arr: T[]): T {
+    return arr[Math.floor(random() * arr.length)];
+  }
+
   const names = [
     "Almeria", "Brianna", "Celine", "Dahlia", "Estelle",
     "Fiorella", "Giselle", "Helena", "Isla", "Juliana",
@@ -83,8 +94,8 @@ function generateListings(): Listing[] {
   ];
 
   return names.map((name, i) => {
-    const original = 5000 + Math.floor(Math.random() * 12000);
-    const discount = 0.3 + Math.random() * 0.4; // 30-70% off
+    const original = 5000 + Math.floor(random() * 12000);
+    const discount = 0.3 + random() * 0.4; // 30-70% off
     const sale = Math.round(original * (1 - discount));
     return {
       id: `gl-${String(i + 1).padStart(4, "0")}`,
@@ -104,14 +115,14 @@ function generateListings(): Listing[] {
       stockImageUrl: PLACEHOLDER_IMAGES[(i + 3) % PLACEHOLDER_IMAGES.length],
       verified: true,
       featured: i < 6,
-      saves: Math.floor(Math.random() * 120) + 5,
-      daysListed: Math.floor(Math.random() * 60) + 1,
+      saves: Math.floor(random() * 120) + 5,
+      daysListed: Math.floor(random() * 60) + 1,
       sellerLocation: pickRandom(["New York, US", "Los Angeles, US", "London, UK", "Paris, FR", "Tel Aviv, IL", "Dubai, AE", "Sydney, AU", "Toronto, CA"]),
       measurements: {
-        bust: `${32 + Math.floor(Math.random() * 10)}"`,
-        waist: `${24 + Math.floor(Math.random() * 8)}"`,
-        hips: `${34 + Math.floor(Math.random() * 10)}"`,
-        height: `5'${4 + Math.floor(Math.random() * 8)}"`,
+        bust: `${32 + Math.floor(random() * 10)}"`,
+        waist: `${24 + Math.floor(random() * 8)}"`,
+        hips: `${34 + Math.floor(random() * 10)}"`,
+        height: `5'${4 + Math.floor(random() * 8)}"`,
       },
     };
   });
