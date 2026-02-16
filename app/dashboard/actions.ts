@@ -1,0 +1,226 @@
+'use server'
+
+import { createClient } from '@/lib/supabase/server'
+import { requireAuth } from '@/lib/auth'
+import { revalidatePath } from 'next/cache'
+
+async function db() {
+  return (await createClient()) as any
+}
+
+// ── My Listings ──────────────────────────────────────────────
+export async function getMyListings() {
+  const user = await requireAuth()
+  const supabase = await db()
+
+  const { data, error } = await supabase
+    .from('listings')
+    .select('*, products(style_name, sku)')
+    .eq('seller_id', user.id)
+    .order('created_at', { ascending: false })
+
+  if (error) return []
+  return data
+}
+
+export async function deleteListing(listingId: string) {
+  const user = await requireAuth()
+  const supabase = await db()
+
+  // Only allow deleting drafts or rejected listings
+  const { error } = await supabase
+    .from('listings')
+    .delete()
+    .eq('id', listingId)
+    .eq('seller_id', user.id)
+    .in('status', ['draft', 'rejected'])
+
+  if (error) return { error: error.message }
+  revalidatePath('/dashboard')
+  return { success: true }
+}
+
+// ── My Purchases (Orders as buyer) ──────────────────────────
+export async function getMyPurchases() {
+  const user = await requireAuth()
+  const supabase = await db()
+
+  const { data, error } = await supabase
+    .from('orders')
+    .select('*, listings(title, images, category)')
+    .eq('buyer_id', user.id)
+    .order('created_at', { ascending: false })
+
+  if (error) return []
+  return data
+}
+
+// ── My Sales (Orders as seller) ─────────────────────────────
+export async function getMySales() {
+  const user = await requireAuth()
+  const supabase = await db()
+
+  const { data, error } = await supabase
+    .from('orders')
+    .select('*, listings(title, images, category)')
+    .eq('seller_id', user.id)
+    .order('created_at', { ascending: false })
+
+  if (error) return []
+  return data
+}
+
+// ── Messages / Conversations ────────────────────────────────
+export async function getMyConversations() {
+  const user = await requireAuth()
+  const supabase = await db()
+
+  const { data, error } = await supabase
+    .from('conversations')
+    .select(`
+      *,
+      listings(title, images),
+      messages(content, sender_id, created_at, is_read)
+    `)
+    .or(`buyer_id.eq.${user.id},seller_id.eq.${user.id}`)
+    .order('last_message_at', { ascending: false })
+
+  if (error) return []
+  return data
+}
+
+export async function getConversationMessages(conversationId: string) {
+  const user = await requireAuth()
+  const supabase = await db()
+
+  // Verify user is participant
+  const { data: conv } = await supabase
+    .from('conversations')
+    .select('buyer_id, seller_id')
+    .eq('id', conversationId)
+    .single()
+
+  if (!conv || (conv.buyer_id !== user.id && conv.seller_id !== user.id)) {
+    return []
+  }
+
+  // Mark unread messages as read
+  await supabase
+    .from('messages')
+    .update({ is_read: true })
+    .eq('conversation_id', conversationId)
+    .neq('sender_id', user.id)
+    .eq('is_read', false)
+
+  const { data, error } = await supabase
+    .from('messages')
+    .select('*')
+    .eq('conversation_id', conversationId)
+    .order('created_at', { ascending: true })
+
+  if (error) return []
+  return data
+}
+
+export async function sendMessage(conversationId: string, content: string) {
+  const user = await requireAuth()
+  const supabase = await db()
+
+  if (!content.trim()) return { error: 'Message cannot be empty' }
+
+  // Verify participant
+  const { data: conv } = await supabase
+    .from('conversations')
+    .select('buyer_id, seller_id')
+    .eq('id', conversationId)
+    .single()
+
+  if (!conv || (conv.buyer_id !== user.id && conv.seller_id !== user.id)) {
+    return { error: 'Unauthorized' }
+  }
+
+  const { error: msgError } = await supabase
+    .from('messages')
+    .insert({
+      conversation_id: conversationId,
+      sender_id: user.id,
+      content: content.trim(),
+    })
+
+  if (msgError) return { error: msgError.message }
+
+  // Update conversation timestamp
+  await supabase
+    .from('conversations')
+    .update({ last_message_at: new Date().toISOString() })
+    .eq('id', conversationId)
+
+  revalidatePath('/dashboard')
+  return { success: true }
+}
+
+// ── Profile ─────────────────────────────────────────────────
+export async function getMyProfile() {
+  const user = await requireAuth()
+  const supabase = await db()
+
+  const { data } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', user.id)
+    .single()
+
+  return { ...data, email: user.email }
+}
+
+export async function updateProfile(formData: FormData) {
+  const user = await requireAuth()
+  const supabase = await db()
+
+  const updates: Record<string, any> = {}
+  const displayName = formData.get('display_name') as string
+  const fullName = formData.get('full_name') as string
+  const phone = formData.get('phone') as string
+
+  if (displayName !== undefined) updates.display_name = displayName || null
+  if (fullName !== undefined) updates.full_name = fullName || null
+  if (phone !== undefined) updates.phone = phone || null
+  updates.updated_at = new Date().toISOString()
+
+  const { error } = await supabase
+    .from('profiles')
+    .update(updates)
+    .eq('id', user.id)
+
+  if (error) return { error: error.message }
+  revalidatePath('/dashboard')
+  return { success: true }
+}
+
+// ── Notifications ───────────────────────────────────────────
+export async function getMyNotifications() {
+  const user = await requireAuth()
+  const supabase = await db()
+
+  const { data } = await supabase
+    .from('notifications')
+    .select('*')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false })
+    .limit(50)
+
+  return data || []
+}
+
+export async function markNotificationRead(notificationId: string) {
+  const user = await requireAuth()
+  const supabase = await db()
+
+  await supabase
+    .from('notifications')
+    .update({ is_read: true })
+    .eq('id', notificationId)
+    .eq('user_id', user.id)
+
+  revalidatePath('/dashboard')
+}

@@ -1,11 +1,66 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion } from "framer-motion";
 import Navbar from "@/components/ui/Navbar";
 import FilterBar, { ActiveFilters, DEFAULT_FILTERS } from "@/components/ui/FilterBar";
 import ProductCard from "@/components/ui/ProductCard";
 import { mockListings, type Listing } from "@/lib/mock-listings";
+import { getApprovedListings } from "./actions";
+
+/**
+ * Convert a Supabase listing row into the Listing shape
+ * used by ProductCard / FilterBar (backward compat with mocks)
+ */
+function mapDbListing(row: any): Listing {
+  const conditionMap: Record<string, Listing["condition"]> = {
+    new_unworn: "New Never Worn",
+    excellent: "Excellent",
+    good: "Good",
+  };
+  const silhouetteMap: Record<string, Listing["silhouette"]> = {
+    a_line: "A-Line",
+    mermaid: "Mermaid",
+    ball_gown: "Ball Gown",
+    sheath: "Sheath",
+    fit_and_flare: "Fit & Flare",
+    trumpet: "Mermaid",
+    empire: "A-Line",
+    column: "Sheath",
+  };
+
+  const mainImage = row.images?.[0] || "/placeholder-gown.jpg";
+  const stockImage = row.products?.images?.[0] || mainImage;
+
+  return {
+    id: row.id,
+    title: row.title,
+    collection: row.products?.style_name || row.category || "Couture",
+    designer: "Galia Lahav",
+    originalPrice: row.msrp || row.price * 1.4,
+    salePrice: row.price,
+    currency: "USD",
+    size: row.size_us || "—",
+    condition: conditionMap[row.condition] || "Excellent",
+    silhouette: silhouetteMap[row.silhouette || ""] || "A-Line",
+    neckline: "V-Neck",
+    fabric: "Lace",
+    color: "Ivory",
+    imageUrl: mainImage,
+    stockImageUrl: stockImage,
+    verified: true,
+    featured: false,
+    saves: 0,
+    daysListed: Math.floor((Date.now() - new Date(row.created_at).getTime()) / 86400000),
+    sellerLocation: "Worldwide",
+    measurements: {
+      bust: row.bust_cm ? `${row.bust_cm}cm` : "—",
+      waist: row.waist_cm ? `${row.waist_cm}cm` : "—",
+      hips: row.hips_cm ? `${row.hips_cm}cm` : "—",
+      height: row.height_cm ? `${row.height_cm}cm` : "—",
+    },
+  };
+}
 
 function applyFilters(listings: Listing[], filters: ActiveFilters): Listing[] {
   let result = [...listings];
@@ -34,7 +89,6 @@ function applyFilters(listings: Listing[], filters: ActiveFilters): Listing[] {
     );
   }
 
-  /* Sorting */
   switch (filters.sortBy) {
     case "price-low":
       result.sort((a, b) => a.salePrice - b.salePrice);
@@ -53,7 +107,6 @@ function applyFilters(listings: Listing[], filters: ActiveFilters): Listing[] {
       );
       break;
     default:
-      /* relevance — featured first, then newest */
       result.sort((a, b) => {
         if (a.featured && !b.featured) return -1;
         if (!a.featured && b.featured) return 1;
@@ -66,8 +119,19 @@ function applyFilters(listings: Listing[], filters: ActiveFilters): Listing[] {
 
 export default function ShopPage() {
   const [filters, setFilters] = useState<ActiveFilters>(DEFAULT_FILTERS);
+  const [listings, setListings] = useState<Listing[]>(mockListings);
 
-  const filtered = useMemo(() => applyFilters(mockListings, filters), [filters]);
+  // Try to load real listings from Supabase on mount
+  useEffect(() => {
+    getApprovedListings().then((data) => {
+      if (data && data.length > 0) {
+        setListings(data.map(mapDbListing));
+      }
+      // else keep mock data as fallback
+    });
+  }, []);
+
+  const filtered = useMemo(() => applyFilters(listings, filters), [listings, filters]);
 
   return (
     <main className="min-h-screen bg-obsidian">
@@ -76,7 +140,6 @@ export default function ShopPage() {
       {/* Hero banner */}
       <section className="pt-24 pb-10 px-6 md:px-10">
         <div className="max-w-7xl mx-auto">
-          {/* Breadcrumbs */}
           <nav className="flex items-center gap-2 mb-8">
             <a href="/" className="font-sans text-[10px] uppercase tracking-[0.2em] text-white/25 hover:text-white/50 transition-colors">
               Home
@@ -112,7 +175,6 @@ export default function ShopPage() {
             totalResults={filtered.length}
           />
 
-          {/* Product grid */}
           {filtered.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-10 mt-8">
               {filtered.map((listing, i) => (

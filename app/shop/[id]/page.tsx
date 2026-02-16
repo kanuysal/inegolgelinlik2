@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { mockListings, type Listing } from "@/lib/mock-listings";
+import { getListingById } from "../actions";
 import Navbar from "@/components/ui/Navbar";
 
 /* ── Helpers ────────────────────────────────────── */
@@ -134,8 +135,48 @@ export default function ProductDetailPage() {
   const [listing, setListing] = useState<Listing | null>(null);
 
   useEffect(() => {
-    const found = mockListings.find((l) => l.id === params.id);
-    if (found) setListing(found);
+    // Try Supabase first, fallback to mock data
+    const id = params.id as string;
+    getListingById(id).then((dbRow) => {
+      if (dbRow) {
+        // Map DB row to Listing shape
+        const condMap: Record<string, Listing["condition"]> = { new_unworn: "New Never Worn", excellent: "Excellent", good: "Good" };
+        const silMap: Record<string, Listing["silhouette"]> = { a_line: "A-Line", mermaid: "Mermaid", ball_gown: "Ball Gown", sheath: "Sheath", fit_and_flare: "Fit & Flare", trumpet: "Mermaid" };
+        const mainImg = dbRow.images?.[0] || "/placeholder-gown.jpg";
+        setListing({
+          id: dbRow.id,
+          title: dbRow.title,
+          collection: dbRow.products?.style_name || dbRow.category || "Couture",
+          designer: "Galia Lahav",
+          originalPrice: dbRow.msrp || dbRow.price * 1.4,
+          salePrice: dbRow.price,
+          currency: "USD",
+          size: dbRow.size_us || "—",
+          condition: condMap[dbRow.condition] || "Excellent",
+          silhouette: silMap[dbRow.silhouette || ""] || "A-Line",
+          neckline: "V-Neck",
+          fabric: "Lace",
+          color: "Ivory",
+          imageUrl: mainImg,
+          stockImageUrl: dbRow.products?.images?.[0] || mainImg,
+          verified: true,
+          featured: false,
+          saves: 0,
+          daysListed: Math.floor((Date.now() - new Date(dbRow.created_at).getTime()) / 86400000),
+          sellerLocation: "Worldwide",
+          measurements: {
+            bust: dbRow.bust_cm ? `${dbRow.bust_cm}cm` : "—",
+            waist: dbRow.waist_cm ? `${dbRow.waist_cm}cm` : "—",
+            hips: dbRow.hips_cm ? `${dbRow.hips_cm}cm` : "—",
+            height: dbRow.height_cm ? `${dbRow.height_cm}cm` : "—",
+          },
+        });
+      } else {
+        // Fallback to mock
+        const found = mockListings.find((l) => l.id === id);
+        if (found) setListing(found);
+      }
+    });
   }, [params.id]);
 
   if (!listing) {
