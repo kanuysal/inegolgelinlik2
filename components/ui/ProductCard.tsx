@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import type { Listing } from "@/lib/mock-listings";
 
 function VerifiedBadge() {
@@ -66,6 +67,7 @@ export default function ProductCard({ listing, index = 0 }: ProductCardProps) {
   );
 
   return (
+    <Link href={`/shop/${listing.id}`}>
     <motion.article
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
@@ -180,5 +182,6 @@ export default function ProductCard({ listing, index = 0 }: ProductCardProps) {
         </p>
       </div>
     </motion.article>
+    </Link>
   );
 }
