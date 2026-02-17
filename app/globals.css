@@ -2,6 +2,64 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── PP Monument Extended ── */
+@font-face {
+  font-family: "PP Monument Extended";
+  src: url("/fonts/PPMonumentExtended-Thin.otf") format("opentype");
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PP Monument Extended";
+  src: url("/fonts/PPMonumentExtended-ThinItalic.otf") format("opentype");
+  font-weight: 100;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PP Monument Extended";
+  src: url("/fonts/PPMonumentExtended-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PP Monument Extended";
+  src: url("/fonts/PPMonumentExtended-RegularItalic.otf") format("opentype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PP Monument Extended";
+  src: url("/fonts/PPMonumentExtended-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PP Monument Extended";
+  src: url("/fonts/PPMonumentExtended-BoldItalic.otf") format("opentype");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PP Monument Extended";
+  src: url("/fonts/PPMonumentExtended-Black.otf") format("opentype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PP Monument Extended";
+  src: url("/fonts/PPMonumentExtended-BlackItalic.otf") format("opentype");
+  font-weight: 900;
+  font-style: italic;
+  font-display: swap;
+}
+
 /* ── Base resets ── */
 * {
   margin: 0;

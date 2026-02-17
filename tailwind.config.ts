@@ -10,6 +10,7 @@ const config: Config = {
       fontFamily: {
         serif: ["Cormorant Garamond", "Georgia", "serif"],
         sans: ["Inter", "system-ui", "sans-serif"],
+        display: ["PP Monument Extended", "Inter", "system-ui", "sans-serif"],
       },
       colors: {
         obsidian: "#050505",
