@@ -39,6 +39,7 @@ type WizardData = {
   height_cm: string
   silhouette: string
   train_style: string
+  stock_images: string[]
   // Step 3: Condition
   condition: '' | 'new_unworn' | 'excellent' | 'good'
   // Step 4: Photos
@@ -61,6 +62,7 @@ const INITIAL_DATA: WizardData = {
   height_cm: '',
   silhouette: '',
   train_style: '',
+  stock_images: [],
   condition: '',
   images: [],
   price: '',
@@ -69,10 +71,10 @@ const INITIAL_DATA: WizardData = {
 
 const STEPS = [
   { num: 1, label: 'Find Item' },
-  { num: 2, label: 'Details' },
+  { num: 2, label: 'Item Details' },
   { num: 3, label: 'Condition' },
   { num: 4, label: 'Photos' },
-  { num: 5, label: 'Price & Submit' },
+  { num: 5, label: 'Price' },
 ]
 
 const CONDITIONS = [
@@ -189,6 +191,7 @@ export default function SellWizardPage() {
       silhouette: product.silhouette || '',
       train_style: product.train_style || '',
       msrp: product.msrp?.toString() || '',
+      stock_images: product.images || [],
     }))
     setStep(2)
   }
@@ -368,36 +371,24 @@ export default function SellWizardPage() {
           </div>
 
           {/* Step Indicator */}
-          <div className="flex items-center justify-between mb-12 max-w-xl mx-auto">
-            {STEPS.map((s, i) => (
-              <div key={s.num} className="flex items-center">
-                <div className="flex flex-col items-center">
-                  <div
-                    className={`w-9 h-9 rounded-full flex items-center justify-center text-sm transition-all duration-300 ${
-                      step > s.num
-                        ? 'bg-gold-muted text-obsidian'
-                        : step === s.num
-                        ? 'border-2 border-gold-muted text-gold-muted'
-                        : 'border border-white/15 text-white/20'
+          <div className="flex items-center justify-between mb-16 relative">
+            <div className="absolute top-1/2 left-0 w-full h-[1px] bg-white/5 -translate-y-1/2" />
+            <div
+              className="absolute top-1/2 left-0 h-[1px] bg-gold-muted/30 -translate-y-1/2 transition-all duration-700 ease-in-out"
+              style={{ width: `${((step - 1) / (STEPS.length - 1)) * 100}%` }}
+            />
+            {STEPS.map((s) => (
+              <div key={s.num} className="relative z-10 flex flex-col items-center">
+                <div
+                  className={`w-2.5 h-2.5 rounded-full transition-all duration-500 ${step >= s.num ? 'bg-gold-muted shadow-[0_0_10px_rgba(212,175,55,0.4)]' : 'bg-white/10'
                     }`}
-                  >
-                    {step > s.num ? <CheckIcon /> : s.num}
-                  </div>
-                  <span
-                    className={`font-sans text-[9px] tracking-widest uppercase mt-2 ${
-                      step >= s.num ? 'text-white/40' : 'text-white/15'
+                />
+                <span
+                  className={`absolute top-6 whitespace-nowrap font-sans text-[9px] tracking-[0.2em] uppercase transition-colors duration-500 ${step === s.num ? 'text-white font-medium' : 'text-white/20'
                     }`}
-                  >
-                    {s.label}
-                  </span>
-                </div>
-                {i < STEPS.length - 1 && (
-                  <div
-                    className={`w-8 md:w-16 h-[1px] mx-1 md:mx-2 mb-5 transition-colors ${
-                      step > s.num ? 'bg-gold-muted/40' : 'bg-white/10'
-                    }`}
-                  />
-                )}
+                >
+                  {s.label}
+                </span>
               </div>
             ))}
           </div>
@@ -457,11 +448,10 @@ export default function SellWizardPage() {
                       onClick={() =>
                         setData((prev) => ({ ...prev, category: cat as 'bridal' | 'evening' | 'accessories' }))
                       }
-                      className={`px-4 py-2 text-xs tracking-widest uppercase border transition-colors ${
-                        data.category === cat
-                          ? 'border-gold-muted/50 text-gold-muted bg-gold-muted/5'
-                          : 'border-white/10 text-white/30 hover:border-white/20'
-                      }`}
+                      className={`px-4 py-2 text-xs tracking-widest uppercase border transition-colors ${data.category === cat
+                        ? 'border-gold-muted/50 text-gold-muted bg-gold-muted/5'
+                        : 'border-white/10 text-white/30 hover:border-white/20'
+                        }`}
                     >
                       {cat}
                     </button>
@@ -470,30 +460,46 @@ export default function SellWizardPage() {
 
                 {/* Results */}
                 {searchResults.length > 0 && (
-                  <div className="space-y-2 mb-8">
-                    <p className="font-sans text-[10px] text-white/25 tracking-widest uppercase mb-3">
-                      {searchResults.length} result{searchResults.length !== 1 ? 's' : ''}
+                  <div className="mb-12">
+                    <p className="font-sans text-[10px] text-white/25 tracking-[0.2em] uppercase mb-6">
+                      CHOOSE YOUR ITEM FROM OUR COLLECTION
                     </p>
-                    {searchResults.map((product) => (
-                      <button
-                        key={product.id}
-                        onClick={() => selectProduct(product)}
-                        className="w-full text-left p-4 border border-white/10 hover:border-gold-muted/30 hover:bg-white/[0.02] transition-all flex items-center justify-between group"
-                      >
-                        <div>
-                          <div className="font-serif text-sm text-white/70 group-hover:text-white/90 transition-colors">
-                            {product.style_name}
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                      {searchResults.map((product) => (
+                        <button
+                          key={product.id}
+                          onClick={() => selectProduct(product)}
+                          className="group text-left"
+                        >
+                          <div className="relative aspect-[3/4] overflow-hidden bg-white/5 border border-white/5 group-hover:border-gold-muted/40 transition-all duration-500">
+                            {product.images && product.images[0] ? (
+                              <img
+                                src={product.images[0]}
+                                alt={product.style_name}
+                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center opacity-10">
+                                <UploadIcon />
+                              </div>
+                            )}
+                            <div className="absolute inset-0 bg-gradient-to-t from-obsidian/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-4">
+                              <span className="font-sans text-[9px] tracking-widest text-gold-muted uppercase">
+                                Select Style →
+                              </span>
+                            </div>
                           </div>
-                          <div className="font-sans text-[10px] text-white/25 mt-1 tracking-wider">
-                            {product.category} {product.sku && `· ${product.sku}`}{' '}
-                            {product.msrp && `· MSRP $${product.msrp.toLocaleString()}`}
+                          <div className="mt-3">
+                            <h3 className="font-serif text-[13px] text-white/80 group-hover:text-white transition-colors">
+                              {product.style_name}
+                            </h3>
+                            <p className="font-sans text-[9px] text-white/25 uppercase tracking-wider mt-1">
+                              {product.category}
+                            </p>
                           </div>
-                        </div>
-                        <span className="text-white/15 group-hover:text-gold-muted transition-colors text-xs tracking-widest">
-                          SELECT →
-                        </span>
-                      </button>
-                    ))}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 )}
 
@@ -622,16 +628,44 @@ export default function SellWizardPage() {
                     </div>
                   </div>
 
-                  {/* Description */}
-                  <div>
-                    <label className={labelClass}>Description</label>
-                    <textarea
-                      value={data.description}
-                      onChange={(e) => setData((prev) => ({ ...prev, description: e.target.value }))}
-                      rows={3}
-                      placeholder="Any additional details about your gown — alterations, special features, history..."
-                      className={`${inputClass} resize-none`}
-                    />
+                  {/* Stock Photos Section */}
+                  {data.stock_images.length > 0 && (
+                    <div className="pt-6 border-t border-white/5">
+                      <label className={labelClass}>Catalog Stock Photos</label>
+                      <p className="font-sans text-[10px] text-white/20 mb-4 uppercase tracking-[0.2em]">
+                        Official imagery automatically attached
+                      </p>
+                      <div className="grid grid-cols-4 gap-4">
+                        {data.stock_images.map((img, i) => (
+                          <div key={i} className="aspect-[3/4] bg-white/5 border border-white/5 overflow-hidden">
+                            <img src={img} alt={`Stock ${i}`} className="w-full h-full object-cover opacity-50 transition-opacity hover:opacity-100" />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Description / Atelier Notice */}
+                  <div className="pt-6 border-t border-white/5">
+                    {data.product_id ? (
+                      <div className="p-6 bg-gold-muted/[0.02] border border-gold-muted/10 resonance-panel">
+                        <p className="font-serif text-[15px] text-gold-muted/90 italic mb-2">Editorial Notice</p>
+                        <p className="font-sans text-[11px] text-white/40 leading-relaxed tracking-wide">
+                          The official product description for your {data.product_name} gown will be curated by the RE:GALIA editorial team. You only need to verify the condition and provide seller photos in the following steps.
+                        </p>
+                      </div>
+                    ) : (
+                      <div>
+                        <label className={labelClass}>Gown Description *</label>
+                        <textarea
+                          value={data.description}
+                          onChange={(e) => setData((prev) => ({ ...prev, description: e.target.value }))}
+                          placeholder="Please provide details about the style, silhouette, and history of this piece..."
+                          rows={4}
+                          className={`${inputClass} resize-none`}
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               </motion.div>
@@ -651,34 +685,40 @@ export default function SellWizardPage() {
                   Select the condition that best describes your gown.
                 </p>
 
-                <div className="space-y-3">
-                  {CONDITIONS.map((cond) => (
-                    <button
-                      key={cond.value}
-                      onClick={() => setData((prev) => ({ ...prev, condition: cond.value }))}
-                      className={`w-full text-left p-6 border transition-all duration-300 ${
-                        data.condition === cond.value
-                          ? 'border-gold-muted/50 bg-gold-muted/5'
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {CONDITIONS.map((cond, idx) => {
+                    const resalePct = idx === 0 ? '85%' : idx === 1 ? '75%' : '60%';
+                    return (
+                      <button
+                        key={cond.value}
+                        onClick={() => setData((prev) => ({ ...prev, condition: cond.value }))}
+                        className={`text-left p-6 border transition-all duration-500 flex flex-col h-full ${data.condition === cond.value
+                          ? 'border-gold-muted/50 bg-gold-muted/[0.03] shadow-[0_0_20px_rgba(212,175,55,0.05)]'
                           : 'border-white/10 hover:border-white/20'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <div className="font-serif text-lg text-white/80 mb-1">{cond.label}</div>
-                          <div className="font-sans text-xs text-white/30 leading-relaxed">{cond.desc}</div>
-                        </div>
-                        <div
-                          className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 ml-4 transition-all ${
-                            data.condition === cond.value
-                              ? 'border-gold-muted bg-gold-muted text-obsidian'
-                              : 'border-white/20'
                           }`}
-                        >
-                          {data.condition === cond.value && <CheckIcon />}
+                      >
+                        <div className="flex-1">
+                          <div className="font-serif text-lg text-white/90 mb-3">{cond.label}</div>
+                          <div className="font-sans text-[11px] text-white/30 leading-relaxed min-h-[60px]">
+                            {cond.desc}
+                          </div>
                         </div>
-                      </div>
-                    </button>
-                  ))}
+
+                        <div className="mt-6 pt-4 border-t border-white/5">
+                          <p className="font-sans text-[9px] text-white/20 uppercase tracking-widest mb-1">Recommended</p>
+                          <p className="font-serif text-xl text-gold-muted/80">{resalePct} <span className="text-[10px] font-sans text-white/20 italic">of MSRP</span></p>
+                        </div>
+
+                        {data.condition === cond.value && (
+                          <div className="mt-4 flex justify-end">
+                            <div className="text-gold-muted scale-125">
+                              <CheckIcon />
+                            </div>
+                          </div>
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
               </motion.div>
             )}
@@ -692,83 +732,99 @@ export default function SellWizardPage() {
                 exit={{ opacity: 0, x: -20 }}
                 className="border border-white/10 bg-white/[0.02] p-8"
               >
-                <h2 className="font-serif text-xl text-white/80 mb-2">Photos</h2>
-                <p className="font-sans text-xs text-white/30 mb-8">
-                  Upload up to 8 photos. Include front, back, close-ups, and any details or flaws.
-                </p>
+                <div className="grid md:grid-cols-2 gap-12">
+                  <div>
+                    <h2 className="font-serif text-xl text-white/80 mb-2">Seller Photos</h2>
+                    <p className="font-sans text-[11px] text-white/30 mb-8 leading-relaxed uppercase tracking-widest">
+                      Guidance for certification
+                    </p>
 
-                {/* Upload zone */}
-                <label
-                  className={`block border-2 border-dashed border-white/10 hover:border-gold-muted/30 p-10 text-center cursor-pointer transition-colors ${
-                    uploading ? 'opacity-50 pointer-events-none' : ''
-                  }`}
-                >
-                  <input
-                    type="file"
-                    accept="image/jpeg,image/png,image/webp"
-                    multiple
-                    onChange={handlePhotoUpload}
-                    className="hidden"
-                    disabled={uploading || data.images.length >= 8}
-                  />
-                  <div className="text-white/20 mb-3 flex justify-center">
-                    <UploadIcon />
-                  </div>
-                  <p className="font-sans text-sm text-white/40 mb-1">
-                    {uploading ? 'Uploading...' : 'Click to upload or drag photos here'}
-                  </p>
-                  <p className="font-sans text-[10px] text-white/20">
-                    JPEG, PNG, or WebP · Max 5MB each · {data.images.length}/8 photos
-                  </p>
-                </label>
-
-                {/* Photo grid */}
-                {data.images.length > 0 && (
-                  <div className="grid grid-cols-4 gap-3 mt-6">
-                    {data.images.map((img, i) => (
-                      <div key={i} className="relative aspect-square border border-white/10 overflow-hidden group">
-                        <img
-                          src={img.url}
-                          alt={`Photo ${i + 1}`}
-                          className="w-full h-full object-cover"
-                        />
-                        <button
-                          onClick={() => handleRemovePhoto(i)}
-                          className="absolute top-2 right-2 w-6 h-6 bg-obsidian/80 border border-white/20 flex items-center justify-center text-white/60 hover:text-red-400 hover:border-red-400/30 transition-colors opacity-0 group-hover:opacity-100"
-                        >
-                          <XIcon />
-                        </button>
-                        {i === 0 && (
-                          <div className="absolute bottom-0 left-0 right-0 bg-obsidian/70 py-1 text-center">
-                            <span className="font-sans text-[8px] tracking-widest text-gold-muted uppercase">
-                              Cover
-                            </span>
+                    <ul className="space-y-5 mb-10">
+                      {[
+                        { label: 'Full Frontal Silhouette', desc: 'The gown from head to toe in natural light' },
+                        { label: 'Back & Train Composition', desc: 'Highlighting the flow and back details' },
+                        { label: 'Atelier Interior Labels', icon: '🏷️' },
+                        { label: 'Detail & Texture Focus', desc: 'Close-ups of beading, lace, or flaws' },
+                      ].map((item, i) => (
+                        <li key={i} className="flex gap-4 group">
+                          <div className="w-10 h-10 border border-white/5 bg-white/[0.02] flex items-center justify-center text-xs group-hover:border-gold-muted/30 transition-colors shrink-0">
+                            {i + 1}
                           </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
+                          <div>
+                            <span className="block font-serif text-[13px] text-white/70 group-hover:text-gold-muted/80 transition-colors uppercase tracking-wider">{item.label}</span>
+                            {item.desc && <span className="block font-sans text-[9px] text-white/20 mt-1 uppercase tracking-widest leading-relaxed">{item.desc}</span>}
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
 
-                {/* Tips */}
-                <div className="mt-8 border border-white/5 p-5">
-                  <h4 className="font-sans text-[10px] tracking-[0.3em] text-gold-muted/50 uppercase mb-4">
-                    Photo Tips
-                  </h4>
-                  <div className="grid md:grid-cols-2 gap-3">
-                    {[
-                      'Use natural lighting for best results',
-                      'Include full front and back views',
-                      'Show close-ups of beading or details',
-                      'Photograph any alterations or wear',
-                      'Hang the gown for better shape',
-                      'Clean, neutral background preferred',
-                    ].map((tip, i) => (
-                      <div key={i} className="flex items-start gap-2">
-                        <span className="text-gold-muted/30 text-xs mt-0.5">•</span>
-                        <span className="font-sans text-xs text-white/30">{tip}</span>
+                    {/* Mobile Hint */}
+                    <div className="p-6 border border-gold-muted/10 bg-gold-muted/[0.01] flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="w-7 h-11 border border-white/20 rounded-[4px] relative bg-white/5 overflow-hidden">
+                          <div className="absolute top-1 left-1/2 -translate-x-1/2 w-3 h-[0.5px] bg-white/40" />
+                          <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full border border-white/20" />
+                          <div className="absolute inset-0 bg-gold-muted/5 opacity-40 animate-pulse" />
+                        </div>
+                        <p className="font-sans text-[9px] text-white/30 uppercase tracking-[0.2em] leading-relaxed">
+                          MOBILE SYNC ACTIVE<br /><span className="text-white/10 italic normal-case tracking-normal">Sync with your device for instant camera access</span>
+                        </p>
                       </div>
-                    ))}
+                      <div className="h-6 w-[1px] bg-white/5 mx-2" />
+                      <span className="text-[10px] text-gold-muted/50 font-serif italic">Syncing...</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-6">
+                    {/* Upload zone */}
+                    <label
+                      className={`block aspect-[3/4] border-2 border-dashed border-white/5 hover:border-gold-muted/30 bg-white/[0.01] flex flex-col items-center justify-center cursor-pointer transition-all duration-700 relative group rounded-sm overflow-hidden ${uploading ? 'opacity-50 pointer-events-none' : ''
+                        }`}
+                    >
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                        multiple
+                        onChange={handlePhotoUpload}
+                        className="hidden"
+                        disabled={uploading || data.images.length >= 8}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-b from-transparent to-obsidian/40 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                      <div className="relative z-10 text-gold-muted/20 group-hover:text-gold-muted/50 transition-colors duration-500 scale-125 group-hover:scale-150 transform transition-transform duration-700">
+                        <UploadIcon />
+                      </div>
+                      <div className="relative z-10 mt-6 text-center">
+                        <p className="font-sans text-[10px] text-white/30 uppercase tracking-[0.3em] group-hover:text-white/60 transition-colors">
+                          {uploading ? 'UPLOADING...' : 'PUSH TO UPLOAD'}
+                        </p>
+                        <p className="font-sans text-[8px] text-white/10 uppercase tracking-widest mt-2 block">
+                          Up to 8 high-resolution frames
+                        </p>
+                      </div>
+                    </label>
+
+                    {/* Image Previews */}
+                    {data.images.length > 0 && (
+                      <div className="grid grid-cols-3 gap-3">
+                        {data.images.map((img, i) => (
+                          <div key={i} className="relative aspect-[3/4] group border border-white/5 overflow-hidden">
+                            <img src={img.url} alt={`Upload ${i}`} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                            <div className="absolute inset-0 bg-obsidian/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                            <button
+                              onClick={() => handleRemovePhoto(i)}
+                              className="absolute top-2 right-2 w-7 h-7 bg-obsidian/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-gold-muted hover:text-obsidian"
+                            >
+                              <XIcon />
+                            </button>
+                            {i === 0 && (
+                              <div className="absolute bottom-0 left-0 right-0 bg-gold-muted/90 py-1 text-center">
+                                <span className="font-sans text-[8px] tracking-[0.2em] text-obsidian font-bold uppercase">Cover</span>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               </motion.div>
@@ -784,12 +840,12 @@ export default function SellWizardPage() {
                 className="border border-white/10 bg-white/[0.02] p-8"
               >
                 <h2 className="font-serif text-xl text-white/80 mb-2">Price Your Gown</h2>
-                <p className="font-sans text-xs text-white/30 mb-8">
-                  Set your asking price. Our commission scales down with higher prices.
+                <p className="font-sans text-[11px] text-white/30 mb-10 leading-relaxed uppercase tracking-widest">
+                  Set your asking price based on our condition guidance
                 </p>
 
-                <div className="space-y-6">
-                  <div className="grid md:grid-cols-2 gap-5">
+                <div className="grid md:grid-cols-2 gap-12">
+                  <div className="space-y-8">
                     <div>
                       <label className={labelClass}>Original Retail Price (USD)</label>
                       <input
@@ -810,65 +866,63 @@ export default function SellWizardPage() {
                         className={inputClass}
                       />
                     </div>
+
+                    {/* Commission Advisor */}
+                    {price > 0 && (
+                      <div className="p-8 border border-gold-muted/10 bg-gold-muted/[0.02] resonance-panel">
+                        <div className="flex justify-between items-end mb-8">
+                          <div>
+                            <p className="font-sans text-[10px] text-white/20 uppercase tracking-[0.2em] mb-2">Your Earnings</p>
+                            <p className="font-serif text-4xl text-gold-muted">${payout.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-sans text-[10px] text-white/20 uppercase tracking-[0.2em] mb-2">Commission</p>
+                            <p className="font-sans text-xs text-white/40 tracking-wider font-light">{commissionRate}% Fee</p>
+                          </div>
+                        </div>
+
+                        <div className="space-y-4 pt-6 border-t border-white/5">
+                          <div className="flex justify-between text-[11px] font-sans tracking-wide">
+                            <span className="text-white/30 lowercase italic">Listing amount</span>
+                            <span className="text-white/60">${price.toLocaleString()}</span>
+                          </div>
+                          <div className="flex justify-between text-[11px] font-sans tracking-wide">
+                            <span className="text-white/30 lowercase italic">RE:GALIA service fee</span>
+                            <span className="text-white/30">-${commission.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
-                  {/* Commission breakdown */}
-                  {price > 0 && (
-                    <div className="border border-white/10 p-6">
-                      <h4 className="font-sans text-[10px] tracking-[0.3em] text-gold-muted/50 uppercase mb-5">
-                        Payout Breakdown
-                      </h4>
-                      <div className="space-y-3">
-                        <div className="flex justify-between items-center">
-                          <span className="font-sans text-sm text-white/40">Listing Price</span>
-                          <span className="font-sans text-sm text-white/70">${price.toLocaleString()}</span>
+                  {/* Final Review */}
+                  <div className="border border-white/5 bg-white/[0.01] p-8 h-full flex flex-col justify-between">
+                    <div>
+                      <h3 className="font-serif text-lg text-white/80 mb-8 italic">Submission Review</h3>
+                      <div className="space-y-6">
+                        <div className="flex justify-between border-b border-white/5 pb-3">
+                          <span className="font-sans text-[10px] text-white/20 uppercase tracking-widest">Item</span>
+                          <span className="font-serif text-[14px] text-white/70 tracking-wide">{data.title || '—'}</span>
                         </div>
-                        <div className="flex justify-between items-center">
-                          <span className="font-sans text-sm text-white/40">
-                            Platform Fee ({commissionRate}%)
-                          </span>
-                          <span className="font-sans text-sm text-white/40">
-                            -${commission.toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                          </span>
+                        <div className="flex justify-between border-b border-white/5 pb-3">
+                          <span className="font-sans text-[10px] text-white/20 uppercase tracking-widest">Condition</span>
+                          <span className="font-sans text-[11px] text-white/70 uppercase tracking-wider">{CONDITIONS.find(c => c.value === data.condition)?.label || '—'}</span>
                         </div>
-                        <div className="border-t border-white/10 pt-3 flex justify-between items-center">
-                          <span className="font-sans text-sm text-white/60 font-medium">Your Payout</span>
-                          <span className="font-serif text-2xl text-champagne">
-                            ${payout.toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                          </span>
+                        <div className="flex justify-between border-b border-white/5 pb-3">
+                          <span className="font-sans text-[10px] text-white/20 uppercase tracking-widest">Size</span>
+                          <span className="font-sans text-[11px] text-white/70">{data.size_us || '—'}</span>
+                        </div>
+                        <div className="flex justify-between border-b border-white/5 pb-3">
+                          <span className="font-sans text-[10px] text-white/20 uppercase tracking-widest">Imagery</span>
+                          <span className="font-sans text-[11px] text-white/70">{data.images.length} Seller Frames</span>
                         </div>
                       </div>
                     </div>
-                  )}
 
-                  {/* Summary */}
-                  <div className="border border-white/10 p-6">
-                    <h4 className="font-sans text-[10px] tracking-[0.3em] text-gold-muted/50 uppercase mb-5">
-                      Listing Summary
-                    </h4>
-                    <div className="space-y-2 font-sans text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-white/30">Title</span>
-                        <span className="text-white/60">{data.title || '—'}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-white/30">Category</span>
-                        <span className="text-white/60 capitalize">{data.category}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-white/30">Condition</span>
-                        <span className="text-white/60">
-                          {CONDITIONS.find((c) => c.value === data.condition)?.label || '—'}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-white/30">Size</span>
-                        <span className="text-white/60">{data.size_us || '—'}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-white/30">Photos</span>
-                        <span className="text-white/60">{data.images.length} uploaded</span>
-                      </div>
+                    <div className="mt-12 p-5 border border-gold-muted/5 bg-gold-muted/[0.01]">
+                      <p className="font-sans text-[10px] text-white/20 leading-relaxed italic text-center">
+                        Our concierge will review your submission for certification within 24 hours. You will be notified via email upon approval.
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -880,9 +934,8 @@ export default function SellWizardPage() {
           <div className="flex justify-between items-center mt-8">
             <button
               onClick={() => setStep((s) => Math.max(1, s - 1))}
-              className={`px-6 py-3 border border-white/10 font-sans text-xs uppercase tracking-widest text-white/40 hover:text-white/70 hover:border-white/20 transition-colors ${
-                step === 1 ? 'invisible' : ''
-              }`}
+              className={`px-6 py-3 border border-white/10 font-sans text-xs uppercase tracking-widest text-white/40 hover:text-white/70 hover:border-white/20 transition-colors ${step === 1 ? 'invisible' : ''
+                }`}
             >
               ← Back
             </button>

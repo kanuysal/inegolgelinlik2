@@ -28,6 +28,8 @@ export const metadata: Metadata = {
   },
 };
 
+import LoadingScreen from "@/components/ui/LoadingScreen";
+
 export default function RootLayout({
   children,
 }: {
@@ -35,7 +37,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${cormorant.variable} ${outfit.variable}`}>
-      <body className="bg-obsidian text-white antialiased">{children}</body>
+      <body className="bg-obsidian text-white antialiased">
+        <LoadingScreen />
+        {children}
+      </body>
     </html>
   );
 }

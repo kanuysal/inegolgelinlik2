@@ -217,13 +217,17 @@ export default function Home() {
         if (loaded >= TOTAL_FRAMES) {
           setIsLoading(false);
           drawFrame(0);
+          window.dispatchEvent(new CustomEvent("app-ready"));
         }
       };
       img.onerror = () => {
         if (cancelled) return;
         loaded++;
         setLoadProgress(Math.round((loaded / TOTAL_FRAMES) * 100));
-        if (loaded >= TOTAL_FRAMES) setIsLoading(false);
+        if (loaded >= TOTAL_FRAMES) {
+          setIsLoading(false);
+          window.dispatchEvent(new CustomEvent("app-ready"));
+        }
       };
       images.push(img);
     }
@@ -259,33 +263,8 @@ export default function Home() {
       {/* ── NAVBAR — always visible ── */}
       <Navbar />
 
-      {/* ── LOADING SCREEN ── */}
-      {isLoading && (
-        <motion.div
-          className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-obsidian"
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          <motion.p
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="font-display text-2xl tracking-[0.3em] text-white/60 mb-8 uppercase"
-          >
-            Preparing the Atelier&hellip;
-          </motion.p>
-          <div className="w-64 h-[1px] bg-white/10 relative overflow-hidden rounded-full">
-            <motion.div
-              className="absolute left-0 top-0 h-full bg-gradient-to-r from-gold-muted/60 to-champagne/40"
-              style={{ width: `${loadProgress}%` }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
-            />
-          </div>
-          <p className="mt-4 font-sans text-xs tracking-widest text-white/30">
-            {loadProgress}%
-          </p>
-        </motion.div>
-      )}
+      {/* ── NAVBAR — always visible ── */}
+      <Navbar />
 
       {/* ══════════ SCROLL CONTAINER ══════════ */}
       <div

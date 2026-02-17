@@ -32,7 +32,7 @@ export async function getListingById(id: string) {
       .select(`
         *,
         products(style_name, sku, images, msrp, silhouette, train_style, category),
-        profiles(display_name, full_name)
+        public_profiles(display_name)
       `)
       .eq('id', id)
       .eq('status', 'approved')

@@ -126,7 +126,9 @@ export async function sendMessage(conversationId: string, content: string) {
   const user = await requireAuth()
   const supabase = await db()
 
-  if (!content.trim()) return { error: 'Message cannot be empty' }
+  const trimmed = content.trim()
+  if (!trimmed) return { error: 'Message cannot be empty' }
+  if (trimmed.length > 5000) return { error: 'Message too long' }
 
   // Verify participant
   const { data: conv } = await supabase
@@ -144,7 +146,7 @@ export async function sendMessage(conversationId: string, content: string) {
     .insert({
       conversation_id: conversationId,
       sender_id: user.id,
-      content: content.trim(),
+      content: trimmed,
     })
 
   if (msgError) return { error: msgError.message }
@@ -154,6 +156,7 @@ export async function sendMessage(conversationId: string, content: string) {
     .from('conversations')
     .update({ last_message_at: new Date().toISOString() })
     .eq('id', conversationId)
+    .or(`buyer_id.eq.${user.id},seller_id.eq.${user.id}`) // Redundant check
 
   revalidatePath('/dashboard')
   return { success: true }
@@ -178,9 +181,9 @@ export async function updateProfile(formData: FormData) {
   const supabase = await db()
 
   const updates: Record<string, any> = {}
-  const displayName = formData.get('display_name') as string
-  const fullName = formData.get('full_name') as string
-  const phone = formData.get('phone') as string
+  const displayName = (formData.get('display_name') as string)?.trim()?.slice(0, 50)
+  const fullName = (formData.get('full_name') as string)?.trim()?.slice(0, 100)
+  const phone = (formData.get('phone') as string)?.trim()?.slice(0, 20)
 
   if (displayName !== undefined) updates.display_name = displayName || null
   if (fullName !== undefined) updates.full_name = fullName || null
