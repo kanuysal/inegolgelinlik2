@@ -9,13 +9,15 @@ const config: Config = {
     extend: {
       fontFamily: {
         serif: ["Cormorant Garamond", "Georgia", "serif"],
-        sans: ["Inter", "system-ui", "sans-serif"],
-        display: ["PP Monument Extended", "Inter", "system-ui", "sans-serif"],
+        sans: ["Outfit", "Inter", "system-ui", "sans-serif"],
+        display: ["Outfit", "PP Monument Extended", "system-ui", "sans-serif"],
       },
       colors: {
-        obsidian: "#050505",
+        obsidian: "#000000",
         champagne: "#f5e6d3",
         "gold-muted": "#c9a96e",
+        "resonance-amber": "#ffb347",
+        "resonance-blue": "#00d2ff",
       },
       keyframes: {
         "fade-up": {

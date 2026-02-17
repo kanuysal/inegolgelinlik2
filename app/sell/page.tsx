@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
 
-/* ── Icons (consistent with rest of site) ── */
+/* ── Icons ── */
 function VerifiedBadge({ size = 16 }: { size?: number }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" width={size} height={size}>
@@ -28,23 +28,12 @@ function ArrowRight() {
   );
 }
 
-/* ── Luxury divider (matches homepage) ── */
-function LuxuryDivider() {
-  return (
-    <div className="flex items-center gap-4 my-6">
-      <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-gold-muted/30" />
-      <div className="w-1 h-1 rounded-full bg-gold-muted/40" />
-      <div className="h-[1px] w-12 bg-gradient-to-l from-transparent to-gold-muted/30" />
-    </div>
-  );
-}
-
 /* ── Data ── */
 const HOW_IT_WORKS_STEPS = [
-  { num: "01", title: "Submit Your Gown", desc: "Tell us about your Galia Lahav gown — collection, condition, and photos. Takes under 5 minutes." },
-  { num: "02", title: "We Authenticate & List", desc: "Our GL experts verify authenticity and create a premium listing with photography guidance." },
-  { num: "03", title: "Your Gown Sells", desc: "We handle inquiries, negotiations, and payment processing. You approve every offer." },
-  { num: "04", title: "Ship & Get Paid", desc: "We provide insured shipping labels. Payment released within 3 business days of buyer confirmation." },
+  { num: "01", title: "Submit Your Gown", desc: "Detail your gown's history, condition, and provide imagery. Our process is designed for discretion and speed." },
+  { num: "02", title: "Expert Verification", desc: "The House of Galia Lahav authenticates every submission, ensuring the integrity of our curated marketplace." },
+  { num: "03", title: "Global Exposure", desc: "Your couture is showcased to a worldwide audience of high-intent brides seeking the Galia Lahav signature." },
+  { num: "04", title: "Secure Handover", desc: "Benefit from insured logistics and secure payment processing. We handle the complexity of the secondary market." },
 ];
 
 const COMMISSION_TIERS = [
@@ -54,33 +43,15 @@ const COMMISSION_TIERS = [
   { range: "Over $10,000", rate: "15%", you: "85%" },
 ];
 
-const TRUST_POINTS = [
-  "Every gown verified by Galia Lahav experts",
-  "Professional listing with optimized photography",
-  "Secure payment processing & buyer vetting",
-  "Insured white-glove shipping with tracking",
-  "14-day buyer protection program",
-  "Dedicated seller support throughout",
-];
-
 const FAQS = [
   { q: "Which gowns do you accept?", a: "We exclusively accept Galia Lahav and GALA by Galia Lahav gowns in good or better condition. All collections are welcome — Couture, GALA, and limited editions." },
-  { q: "How long does it take to sell?", a: "Most gowns sell within 30–90 days. Featured and popular styles often sell within the first two weeks. Pricing competitively significantly speeds up the process." },
-  { q: "How is pricing determined?", a: "We recommend pricing based on original retail, condition, demand, and market data. You always have final say on the listing price and can adjust it anytime." },
-  { q: "What condition does my gown need to be in?", a: "We accept gowns in 'Good' condition or better. Minor alterations are fine. Gowns should be clean and free of significant damage." },
-  { q: "Do I need to pay anything upfront?", a: "No. Listing is completely free. We only earn our commission when your gown sells. Zero upfront costs or hidden fees." },
-  { q: "How does shipping work?", a: "Once your gown sells, we send you a pre-paid, insured shipping label. Simply pack your gown following our guidelines and drop it off at the carrier." },
+  { q: "How long does it take to sell?", a: "Most gowns sell within 30–90 days. Featured and popular styles often sell within the first two weeks." },
+  { q: "How is pricing determined?", a: "Pricing is based on original retail value, current market demand, and condition. Our team provides expert recommendations to maximize your return." },
+  { q: "Do I need to pay anything upfront?", a: "Listing is complimentary. We only earn a commission upon the successful sale of your gown." },
 ];
 
-const GOWN_CONDITIONS = [
-  "New — Never Worn (tags attached)",
-  "New — Never Worn (tags removed)",
-  "Excellent — Worn once, no alterations",
-  "Very Good — Worn once, minor alterations",
-  "Good — Worn, visible wear or alterations",
-];
-const COLLECTIONS_LIST = ["Couture", "GALA by Galia Lahav", "Bridal Couture", "Dancing Queen", "Do Not Disturb", "Victorian Affinity", "Queen of Hearts", "Fancy White", "Alegria", "Other / Not Sure"];
-const SIZES = ["0", "2", "4", "6", "8", "10", "12", "14", "16", "18", "Custom"];
+const COLLECTIONS_LIST = ["Couture", "GALA by Galia Lahav", "Bridal Couture", "Other"];
+const SIZES = ["0", "2", "4", "6", "8", "10", "12", "14", "Custom"];
 
 export default function SellPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -102,416 +73,291 @@ export default function SellPage() {
   };
 
   return (
-    <main className="min-h-screen bg-obsidian">
+    <main className="min-h-screen bg-obsidian text-white/90">
       <Navbar />
 
-      {/* ── Success State ── */}
-      {formStep === 2 && (
-        <section className="pt-32 pb-20 px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
+      <AnimatePresence mode="wait">
+        {formStep === 2 ? (
+          /* ── Success State ── */
+          <motion.section
+            key="success"
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            className="max-w-2xl mx-auto text-center"
+            exit={{ opacity: 0, y: -30 }}
+            className="pt-48 pb-40 px-6 text-center"
           >
-            <div className="w-20 h-20 rounded-full border border-emerald-500/30 flex items-center justify-center mx-auto mb-8">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-emerald-400">
-                <polyline points="20 6 9 17 4 12" />
-              </svg>
-            </div>
-            <h1 className="font-serif text-4xl md:text-5xl font-light text-white/90 mb-4 tracking-wider">
-              Submission Received
-            </h1>
-            <p className="font-sans text-sm text-white/40 mb-4 leading-relaxed">
-              Thank you, {formData.name.split(" ")[0] || "there"}. We&apos;ve received your consignment request
-              for your <span className="text-champagne">{formData.gownName || "Galia Lahav"}</span> gown.
-            </p>
-            <p className="font-sans text-xs text-white/25 mb-10">
-              Our authentication team will review your submission and respond within 24–48 hours.
-            </p>
-
-            <div className="border border-white/10 p-8 text-left mb-10">
-              <h3 className="font-sans text-[10px] tracking-[0.3em] text-gold-muted/60 uppercase mb-6">What Happens Next</h3>
-              <div className="space-y-4">
-                {["We review your gown details and photos", "Our team sends you a pricing recommendation", "You approve the listing and we go live", "Inquiries start coming in"].map((step, i) => (
-                  <div key={i} className="flex items-start gap-4">
-                    <span className="font-sans text-[10px] text-white/20 mt-0.5 tracking-widest">{String(i + 1).padStart(2, "0")}</span>
-                    <span className="font-sans text-sm text-white/50">{step}</span>
-                  </div>
-                ))}
+            <div className="max-w-xl mx-auto">
+              <div className="w-24 h-24 rounded-full bg-resonance-blue/5 border border-resonance-blue/20 flex items-center justify-center mx-auto mb-10 shadow-[0_0_50px_rgba(59,130,246,0.1)]">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-resonance-blue">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
               </div>
-            </div>
-
-            <div className="flex gap-4 justify-center">
-              <Link href="/shop" className="px-8 py-3 border border-white/15 font-sans text-xs uppercase tracking-[0.2em] text-white/50 hover:text-white hover:border-white/30 transition-all">
-                BROWSE GOWNS
-              </Link>
-              <button
-                onClick={() => { setFormStep(0); setFormData({ gownName: "", collection: "", size: "", condition: "", originalPrice: "", askingPrice: "", alterations: "", name: "", email: "", phone: "", location: "", notes: "" }); }}
-                className="px-8 py-3 bg-white text-obsidian font-sans text-xs uppercase tracking-[0.2em] hover:bg-champagne transition-all"
-              >
-                SUBMIT ANOTHER
-              </button>
-            </div>
-          </motion.div>
-        </section>
-      )}
-
-      {formStep < 2 && (
-        <>
-          {/* ── Hero ── */}
-          <section className="pt-28 pb-16 px-6">
-            <div className="max-w-4xl mx-auto text-center">
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="font-sans text-[10px] uppercase tracking-[0.5em] text-gold-muted/50 mb-4"
-              >
-                Consign with RE:GALIA
-              </motion.p>
-              <motion.h1
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className="font-serif text-5xl md:text-7xl font-light text-white/90 mb-6 tracking-wider leading-tight"
-              >
-                Give Your Gown<br />
-                <span className="italic text-champagne/80">a Second Chapter</span>
-              </motion.h1>
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="font-sans text-sm text-white/35 max-w-xl mx-auto mb-10 leading-relaxed"
-              >
-                Your Galia Lahav gown deserves another moment in the spotlight.
-                List it on the only marketplace dedicated exclusively to GL brides —
-                and let another bride fall in love.
-              </motion.p>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="flex flex-col sm:flex-row gap-4 justify-center"
-              >
-                <button
-                  onClick={() => { window.location.href = '/sell/submit'; }}
-                  className="group relative px-10 py-3.5 bg-white text-obsidian font-sans text-sm uppercase tracking-[0.25em] overflow-hidden transition-all duration-500 hover:shadow-[0_0_40px_rgba(201,169,110,0.15)] inline-flex items-center justify-center gap-3"
-                >
-                  <span className="relative z-10">Start Consigning</span>
-                  <span className="relative z-10"><ArrowRight /></span>
-                  <div className="absolute inset-0 bg-champagne translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+              <h1 className="font-serif text-5xl font-light tracking-tight mb-6">Submission Received</h1>
+              <p className="font-sans text-sm text-white/30 leading-relaxed mb-12">
+                Our authentication team will review the details for your <span className="text-white/60">{formData.gownName}</span>. We will contact you via email within 24–48 hours with our evaluation.
+              </p>
+              <div className="flex justify-center gap-5">
+                <Link href="/shop" className="px-10 py-5 bg-white text-obsidian font-sans text-[11px] font-bold uppercase tracking-[0.3em] rounded-full hover:bg-resonance-amber transition-all">
+                  Browse Gowns
+                </Link>
+                <button onClick={() => setFormStep(0)} className="px-10 py-5 border border-white/10 text-white/40 font-sans text-[11px] font-bold uppercase tracking-[0.3em] rounded-full hover:text-white transition-all">
+                  Done
                 </button>
-                <a
-                  href="#how-it-works"
-                  className="px-10 py-3.5 border border-white/20 font-sans text-sm uppercase tracking-[0.25em] text-white/60 hover:text-white hover:border-white/40 transition-all duration-500 text-center"
+              </div>
+            </div>
+          </motion.section>
+        ) : (
+          <div key="landing">
+            {/* ── Hero section ── */}
+            <section className="pt-48 pb-32 px-6 md:px-10 overflow-hidden relative">
+              <div className="max-w-7xl mx-auto relative z-10">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                  className="max-w-4xl"
                 >
-                  How It Works
-                </a>
-              </motion.div>
-            </div>
-          </section>
-
-          {/* ── Stats Bar ── */}
-          <section className="border-y border-white/5">
-            <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4">
-              {[
-                { val: "500+", label: "Gowns Sold" },
-                { val: "45 Days", label: "Avg. Time to Sell" },
-                { val: "$4,200", label: "Avg. Seller Payout" },
-                { val: "98%", label: "Seller Satisfaction" },
-              ].map((stat, i) => (
-                <div key={i} className="py-8 px-6 text-center border-r border-white/5 last:border-r-0">
-                  <div className="font-serif text-2xl md:text-3xl font-light text-white/80 mb-1">{stat.val}</div>
-                  <div className="font-sans text-[9px] tracking-[0.3em] text-white/25 uppercase">{stat.label}</div>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* ── How It Works ── */}
-          <section id="how-it-works" className="py-20 px-6">
-            <div className="max-w-5xl mx-auto">
-              <div className="text-center mb-14">
-                <p className="font-sans text-[10px] uppercase tracking-[0.5em] text-gold-muted/50 mb-3">The Process</p>
-                <h2 className="font-serif text-3xl md:text-5xl font-light text-white/90 tracking-wider">
-                  How Consigning Works
-                </h2>
-                <LuxuryDivider />
-                <p className="font-sans text-sm text-white/30 max-w-lg mx-auto">
-                  From submission to payout — we handle everything so you don&apos;t have to.
-                </p>
-              </div>
-
-              <div className="grid md:grid-cols-4 gap-10">
-                {HOW_IT_WORKS_STEPS.map((step, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.1 }}
-                    className="text-center"
-                  >
-                    <div className="w-14 h-14 rounded-full border border-white/10 flex items-center justify-center mx-auto mb-5">
-                      <span className="font-serif text-lg text-gold-muted/60">{step.num}</span>
-                    </div>
-                    <h3 className="font-serif text-lg text-white/80 mb-2 tracking-wide">{step.title}</h3>
-                    <p className="font-sans text-xs text-white/30 leading-relaxed">{step.desc}</p>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* ── Commission Table ── */}
-          <section className="py-20 px-6 border-y border-white/5">
-            <div className="max-w-3xl mx-auto">
-              <div className="text-center mb-12">
-                <p className="font-sans text-[10px] uppercase tracking-[0.5em] text-gold-muted/50 mb-3">Pricing</p>
-                <h2 className="font-serif text-3xl md:text-5xl font-light text-white/90 tracking-wider">
-                  Transparent Fees
-                </h2>
-                <LuxuryDivider />
-                <p className="font-sans text-sm text-white/30 max-w-lg mx-auto">
-                  No hidden fees. No upfront costs. We only earn when you do.
-                </p>
-              </div>
-
-              <div className="border border-white/10 overflow-hidden">
-                <div className="grid grid-cols-3 bg-white/5">
-                  <div className="px-6 py-4 font-sans text-[10px] tracking-[0.25em] text-white/40 uppercase">Sale Price</div>
-                  <div className="px-6 py-4 font-sans text-[10px] tracking-[0.25em] text-white/40 uppercase text-center">Our Fee</div>
-                  <div className="px-6 py-4 font-sans text-[10px] tracking-[0.25em] text-white/40 uppercase text-right">You Keep</div>
-                </div>
-                {COMMISSION_TIERS.map((tier, i) => (
-                  <div key={i} className="grid grid-cols-3 border-t border-white/5 hover:bg-white/[0.02] transition-colors">
-                    <div className="px-6 py-5 font-sans text-sm text-white/50">{tier.range}</div>
-                    <div className="px-6 py-5 font-sans text-sm text-white/30 text-center">{tier.rate}</div>
-                    <div className="px-6 py-5 font-sans text-sm text-champagne/80 font-medium text-right">{tier.you}</div>
-                  </div>
-                ))}
-              </div>
-              <p className="font-sans text-[10px] text-white/15 text-center mt-4 tracking-wider">
-                Commission is calculated on the final sale price. Shipping costs are covered by the buyer.
-              </p>
-            </div>
-          </section>
-
-          {/* ── Trust Points ── */}
-          <section className="py-20 px-6">
-            <div className="max-w-4xl mx-auto">
-              <div className="text-center mb-12">
-                <p className="font-sans text-[10px] uppercase tracking-[0.5em] text-gold-muted/50 mb-3">Why RE:GALIA</p>
-                <h2 className="font-serif text-3xl md:text-5xl font-light text-white/90 tracking-wider">
-                  The GL Standard
-                </h2>
-                <LuxuryDivider />
-              </div>
-              <div className="grid md:grid-cols-2 gap-4">
-                {TRUST_POINTS.map((point, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, x: -10 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.05 }}
-                    className="flex items-start gap-4 border border-white/5 p-5 hover:border-white/10 transition-colors"
-                  >
-                    <span className="text-gold-muted shrink-0 mt-0.5"><VerifiedBadge size={16} /></span>
-                    <span className="font-sans text-sm text-white/50">{point}</span>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* ── Consignment Form ── */}
-          <section id="consign-form" className="py-20 px-6 border-y border-white/5">
-            <div className="max-w-3xl mx-auto">
-              <AnimatePresence mode="wait">
-                {formStep === 0 ? (
-                  <motion.div key="cta" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center">
-                    <h2 className="font-serif text-3xl md:text-4xl font-light text-white/90 mb-4 tracking-wider">
-                      Ready to List Your Gown?
-                    </h2>
-                    <p className="font-sans text-sm text-white/30 mb-8 max-w-md mx-auto">
-                      It takes less than 5 minutes. Tell us about your Galia Lahav gown and we&apos;ll take care of the rest.
-                    </p>
+                  <p className="font-sans text-[10px] font-bold uppercase tracking-[0.5em] text-resonance-amber mb-6">
+                    A Legacy Redefined
+                  </p>
+                  <h1 className="font-serif text-6xl md:text-9xl font-light tracking-tighter text-white/95 leading-[0.85] mb-10">
+                    Consign Your <br />
+                    <span className="italic">Galia Lahav</span>
+                  </h1>
+                  <p className="font-sans text-xl text-white/30 tracking-wide max-w-xl leading-relaxed mb-14">
+                    The only platform endorsed by the House. Entrust your couture to the experts who designed it, ensuring a premium handover to its next custodian.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-6">
                     <button
-                      onClick={() => setFormStep(1)}
-                      className="group relative px-12 py-3.5 bg-white text-obsidian font-sans text-sm uppercase tracking-[0.25em] overflow-hidden transition-all inline-flex items-center gap-3"
+                      onClick={() => document.getElementById("consign-form")?.scrollIntoView({ behavior: 'smooth' })}
+                      className="px-12 py-6 bg-white text-obsidian font-sans text-[11px] font-bold uppercase tracking-[0.3em] rounded-full hover:bg-resonance-amber transition-all duration-500 text-center shadow-[0_0_60px_rgba(255,255,255,0.05)]"
                     >
-                      <span className="relative z-10">Start Your Submission</span>
-                      <span className="relative z-10"><ArrowRight /></span>
-                      <div className="absolute inset-0 bg-champagne translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+                      Start Submission
                     </button>
-                  </motion.div>
-                ) : (
-                  <motion.div key="form" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
-                    <h2 className="font-serif text-3xl font-light text-white/90 mb-2 tracking-wider">
-                      Consignment Submission
-                    </h2>
-                    <p className="font-sans text-xs text-white/25 mb-10 tracking-wider">
-                      All fields marked with * are required
-                    </p>
-
-                    <form onSubmit={handleSubmit} className="space-y-12">
-                      {/* Gown Details */}
-                      <div>
-                        <h3 className="font-sans text-[10px] tracking-[0.35em] text-gold-muted/50 uppercase mb-6 pb-2 border-b border-white/5">
-                          Gown Details
-                        </h3>
-                        <div className="grid md:grid-cols-2 gap-5">
-                          <div>
-                            <label className="block font-sans text-xs text-white/40 mb-2 tracking-wider">Gown Name / Style *</label>
-                            <input type="text" name="gownName" value={formData.gownName} onChange={handleChange} required placeholder="e.g. Almeria, Brianna" className="w-full px-4 py-3 border border-white/10 bg-white/[0.03] text-white/80 placeholder:text-white/15 font-sans text-sm focus:outline-none focus:border-gold-muted/40 transition-colors" />
-                          </div>
-                          <div>
-                            <label className="block font-sans text-xs text-white/40 mb-2 tracking-wider">Collection *</label>
-                            <select name="collection" value={formData.collection} onChange={handleChange} required className="w-full px-4 py-3 border border-white/10 bg-white/[0.03] text-white/80 font-sans text-sm focus:outline-none focus:border-gold-muted/40 transition-colors">
-                              <option value="" className="bg-obsidian">Select collection</option>
-                              {COLLECTIONS_LIST.map((c) => (<option key={c} value={c} className="bg-obsidian">{c}</option>))}
-                            </select>
-                          </div>
-                          <div>
-                            <label className="block font-sans text-xs text-white/40 mb-2 tracking-wider">Size *</label>
-                            <select name="size" value={formData.size} onChange={handleChange} required className="w-full px-4 py-3 border border-white/10 bg-white/[0.03] text-white/80 font-sans text-sm focus:outline-none focus:border-gold-muted/40 transition-colors">
-                              <option value="" className="bg-obsidian">Select size</option>
-                              {SIZES.map((s) => (<option key={s} value={s} className="bg-obsidian">{s}</option>))}
-                            </select>
-                          </div>
-                          <div>
-                            <label className="block font-sans text-xs text-white/40 mb-2 tracking-wider">Condition *</label>
-                            <select name="condition" value={formData.condition} onChange={handleChange} required className="w-full px-4 py-3 border border-white/10 bg-white/[0.03] text-white/80 font-sans text-sm focus:outline-none focus:border-gold-muted/40 transition-colors">
-                              <option value="" className="bg-obsidian">Select condition</option>
-                              {GOWN_CONDITIONS.map((c) => (<option key={c} value={c} className="bg-obsidian">{c}</option>))}
-                            </select>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Pricing */}
-                      <div>
-                        <h3 className="font-sans text-[10px] tracking-[0.35em] text-gold-muted/50 uppercase mb-6 pb-2 border-b border-white/5">
-                          Pricing
-                        </h3>
-                        <div className="grid md:grid-cols-2 gap-5">
-                          <div>
-                            <label className="block font-sans text-xs text-white/40 mb-2 tracking-wider">Original Retail Price (USD) *</label>
-                            <input type="number" name="originalPrice" value={formData.originalPrice} onChange={handleChange} required placeholder="e.g. 8500" className="w-full px-4 py-3 border border-white/10 bg-white/[0.03] text-white/80 placeholder:text-white/15 font-sans text-sm focus:outline-none focus:border-gold-muted/40 transition-colors" />
-                          </div>
-                          <div>
-                            <label className="block font-sans text-xs text-white/40 mb-2 tracking-wider">Your Asking Price (USD)</label>
-                            <input type="number" name="askingPrice" value={formData.askingPrice} onChange={handleChange} placeholder="Leave blank for our recommendation" className="w-full px-4 py-3 border border-white/10 bg-white/[0.03] text-white/80 placeholder:text-white/15 font-sans text-sm focus:outline-none focus:border-gold-muted/40 transition-colors" />
-                          </div>
-                        </div>
-                        <div className="mt-5">
-                          <label className="block font-sans text-xs text-white/40 mb-2 tracking-wider">Alterations Made</label>
-                          <input type="text" name="alterations" value={formData.alterations} onChange={handleChange} placeholder="e.g. Hemmed, taken in at waist, bustle added" className="w-full px-4 py-3 border border-white/10 bg-white/[0.03] text-white/80 placeholder:text-white/15 font-sans text-sm focus:outline-none focus:border-gold-muted/40 transition-colors" />
-                        </div>
-                      </div>
-
-                      {/* Contact Info */}
-                      <div>
-                        <h3 className="font-sans text-[10px] tracking-[0.35em] text-gold-muted/50 uppercase mb-6 pb-2 border-b border-white/5">
-                          Your Information
-                        </h3>
-                        <div className="grid md:grid-cols-2 gap-5">
-                          <div>
-                            <label className="block font-sans text-xs text-white/40 mb-2 tracking-wider">Full Name *</label>
-                            <input type="text" name="name" value={formData.name} onChange={handleChange} required className="w-full px-4 py-3 border border-white/10 bg-white/[0.03] text-white/80 font-sans text-sm focus:outline-none focus:border-gold-muted/40 transition-colors" />
-                          </div>
-                          <div>
-                            <label className="block font-sans text-xs text-white/40 mb-2 tracking-wider">Email *</label>
-                            <input type="email" name="email" value={formData.email} onChange={handleChange} required className="w-full px-4 py-3 border border-white/10 bg-white/[0.03] text-white/80 font-sans text-sm focus:outline-none focus:border-gold-muted/40 transition-colors" />
-                          </div>
-                          <div>
-                            <label className="block font-sans text-xs text-white/40 mb-2 tracking-wider">Phone</label>
-                            <input type="tel" name="phone" value={formData.phone} onChange={handleChange} className="w-full px-4 py-3 border border-white/10 bg-white/[0.03] text-white/80 font-sans text-sm focus:outline-none focus:border-gold-muted/40 transition-colors" />
-                          </div>
-                          <div>
-                            <label className="block font-sans text-xs text-white/40 mb-2 tracking-wider">Location *</label>
-                            <input type="text" name="location" value={formData.location} onChange={handleChange} required placeholder="City, Country" className="w-full px-4 py-3 border border-white/10 bg-white/[0.03] text-white/80 placeholder:text-white/15 font-sans text-sm focus:outline-none focus:border-gold-muted/40 transition-colors" />
-                          </div>
-                        </div>
-                        <div className="mt-5">
-                          <label className="block font-sans text-xs text-white/40 mb-2 tracking-wider">Additional Notes</label>
-                          <textarea name="notes" value={formData.notes} onChange={handleChange} rows={3} placeholder="Anything else we should know about your gown?" className="w-full px-4 py-3 border border-white/10 bg-white/[0.03] text-white/80 placeholder:text-white/15 font-sans text-sm focus:outline-none focus:border-gold-muted/40 transition-colors resize-none" />
-                        </div>
-                      </div>
-
-                      {/* Submit */}
-                      <div className="pt-2">
-                        <button type="submit" className="group relative w-full py-4 bg-white text-obsidian font-sans text-sm uppercase tracking-[0.25em] overflow-hidden transition-all hover:shadow-[0_0_40px_rgba(201,169,110,0.15)] flex items-center justify-center gap-3">
-                          <span className="relative z-10">Submit for Review</span>
-                          <span className="relative z-10"><ArrowRight /></span>
-                          <div className="absolute inset-0 bg-champagne translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
-                        </button>
-                        <p className="font-sans text-[10px] text-white/15 text-center mt-4 tracking-wider">
-                          By submitting, you agree to our consignment terms. We&apos;ll respond within 24–48 hours.
-                        </p>
-                      </div>
-                    </form>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          </section>
-
-          {/* ── FAQ ── */}
-          <section className="py-20 px-6">
-            <div className="max-w-3xl mx-auto">
-              <div className="text-center mb-12">
-                <h2 className="font-serif text-3xl md:text-4xl font-light text-white/90 tracking-wider">
-                  Frequently Asked Questions
-                </h2>
-                <LuxuryDivider />
+                    <Link
+                      href="/how-it-works"
+                      className="px-12 py-6 border border-white/10 text-white/40 font-sans text-[11px] font-bold uppercase tracking-[0.3em] rounded-full hover:text-white hover:border-white/30 hover:bg-white/5 transition-all duration-500 text-center"
+                    >
+                      The Process
+                    </Link>
+                  </div>
+                </motion.div>
               </div>
-              <div className="space-y-2">
-                {FAQS.map((faq, i) => (
-                  <div key={i} className="border border-white/5 hover:border-white/10 transition-colors">
-                    <button onClick={() => setOpenFaq(openFaq === i ? null : i)} className="w-full flex items-center justify-between px-6 py-5 text-left">
-                      <span className="font-sans text-sm text-white/60 pr-4">{faq.q}</span>
-                      <motion.span animate={{ rotate: openFaq === i ? 45 : 0 }} transition={{ duration: 0.2 }} className="text-white/20 text-lg leading-none shrink-0">+</motion.span>
-                    </button>
-                    <AnimatePresence>
-                      {openFaq === i && (
-                        <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }} className="overflow-hidden">
-                          <div className="px-6 pb-5 font-sans text-xs text-white/30 leading-relaxed">{faq.a}</div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+            </section>
+
+            {/* ── Stats Bar ── */}
+            <section className="border-y border-white/5 bg-white/[0.01]">
+              <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4">
+                {[
+                  { val: "500+", label: "Couture Items Sold" },
+                  { val: "45d", label: "Avg. Sale Time" },
+                  { val: "85%", label: "Seller Return Rate" },
+                  { val: "Verified", label: "By Galia Lahav" },
+                ].map((stat, i) => (
+                  <div key={i} className="py-12 px-10 text-center border-r border-white/5 last:border-r-0">
+                    <div className="font-serif text-3xl font-light text-white/80 mb-2">{stat.val}</div>
+                    <div className="font-sans text-[9px] font-bold tracking-[0.4em] text-white/20 uppercase">{stat.label}</div>
                   </div>
                 ))}
               </div>
-            </div>
-          </section>
+            </section>
 
-          {/* ── Final CTA ── */}
-          <section className="py-20 px-6 border-t border-white/5">
-            <div className="max-w-3xl mx-auto text-center">
-              <p className="font-sans text-[10px] uppercase tracking-[0.5em] text-gold-muted/40 mb-4">
-                Exclusively for Galia Lahav Gowns
-              </p>
-              <h2 className="font-serif text-3xl md:text-5xl font-light text-white/90 mb-4 tracking-wider">
-                Your Gown&apos;s Next Chapter<br />Starts Here
-              </h2>
-              <LuxuryDivider />
-              <p className="font-sans text-sm text-white/25 mb-8 max-w-md mx-auto">
-                Join hundreds of GL brides who have found the perfect new home for their gowns.
-              </p>
-              <button
-                onClick={() => { window.location.href = '/sell/submit'; }}
-                className="group relative px-12 py-3.5 bg-white text-obsidian font-sans text-sm uppercase tracking-[0.25em] overflow-hidden transition-all inline-flex items-center gap-3"
-              >
-                <span className="relative z-10">Consign Your Gown</span>
-                <span className="relative z-10"><ArrowRight /></span>
-                <div className="absolute inset-0 bg-champagne translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
-              </button>
-            </div>
-          </section>
-        </>
-      )}
+            {/* ── Why Consign ── */}
+            <section className="py-40 px-6 md:px-10">
+              <div className="max-w-7xl mx-auto">
+                <div className="grid md:grid-cols-3 gap-10">
+                  {[
+                    {
+                      title: "Authenticity First",
+                      desc: "Direct verification by the House protects your gown's value and ensures buyer confidence.",
+                      icon: "✓",
+                    },
+                    {
+                      title: "Global Reach",
+                      desc: "Connect with a curated community of brides worldwide, specifically seeking GL couture.",
+                      icon: "✧",
+                    },
+                    {
+                      title: "Full Security",
+                      desc: "Encrypted payments and white-glove logistics. We handle the process from end-to-end.",
+                      icon: "🔒",
+                    },
+                  ].map((item, i) => (
+                    <motion.div
+                      key={item.title}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: i * 0.1 }}
+                      className="resonance-panel p-12 flex flex-col items-start"
+                    >
+                      <div className="w-14 h-14 rounded-full bg-white/[0.03] border border-white/10 flex items-center justify-center text-xl text-resonance-amber mb-8 shadow-inner">
+                        {item.icon}
+                      </div>
+                      <h3 className="font-serif text-2xl text-white/90 mb-4 tracking-tight">{item.title}</h3>
+                      <p className="font-sans text-[13px] text-white/30 leading-relaxed tracking-wide">
+                        {item.desc}
+                      </p>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            {/* ── The Process ── */}
+            <section className="py-40 bg-white/[0.01] border-y border-white/5">
+              <div className="max-w-7xl mx-auto px-6 md:px-10">
+                <div className="text-center mb-24">
+                  <p className="font-sans text-[10px] font-bold uppercase tracking-[0.5em] text-resonance-amber mb-6">The Journey</p>
+                  <h2 className="font-serif text-5xl md:text-7xl font-light text-white/95 leading-none">How It Works</h2>
+                </div>
+                <div className="grid md:grid-cols-4 gap-12">
+                  {HOW_IT_WORKS_STEPS.map((step, i) => (
+                    <div key={i} className="relative">
+                      <div className="font-serif text-[80px] text-white/[0.03] leading-none absolute -top-8 -left-4 select-none">
+                        {step.num}
+                      </div>
+                      <div className="relative z-10">
+                        <h3 className="font-serif text-2xl text-white/80 mb-4 tracking-wide">{step.title}</h3>
+                        <p className="font-sans text-[13px] text-white/30 leading-relaxed tracking-wide">{step.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            {/* ── Consignment Form ── */}
+            <section id="consign-form" className="py-40 px-6">
+              <div className="max-w-4xl mx-auto">
+                <div className="text-center mb-20">
+                  <h2 className="font-serif text-5xl md:text-6xl font-light text-white/95 mb-6">Consignment Request</h2>
+                  <p className="font-sans text-sm text-white/30 tracking-widest uppercase">Start your gown&apos;s next chapter</p>
+                </div>
+
+                <form onSubmit={handleSubmit} className="space-y-16">
+                  {/* Step 1: The Gown */}
+                  <div className="space-y-10">
+                    <div className="flex items-center gap-6">
+                      <span className="w-10 h-10 rounded-full border border-resonance-amber/30 flex items-center justify-center font-serif text-resonance-amber text-lg">1</span>
+                      <h3 className="font-sans text-[10px] font-bold tracking-[0.4em] text-white/40 uppercase">Gown Details</h3>
+                      <div className="h-[1px] flex-1 bg-white/[0.05]" />
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-8">
+                      <div className="space-y-2">
+                        <label className="font-sans text-[10px] uppercase tracking-widest text-white/20 ml-2">Gown Name *</label>
+                        <input name="gownName" required onChange={handleChange} className="w-full bg-white/[0.02] border border-white/10 rounded-full px-8 py-4 font-sans text-[13px] focus:border-resonance-amber/50 focus:outline-none transition-all" placeholder="e.g. Almeria" />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="font-sans text-[10px] uppercase tracking-widest text-white/20 ml-2">Collection *</label>
+                        <select name="collection" required onChange={handleChange} className="w-full bg-white/[0.02] border border-white/10 rounded-full px-8 py-4 font-sans text-[13px] focus:border-resonance-amber/50 focus:outline-none transition-all appearance-none cursor-pointer">
+                          <option value="" className="bg-obsidian">Select Collection</option>
+                          {COLLECTIONS_LIST.map(c => <option key={c} value={c} className="bg-obsidian">{c}</option>)}
+                        </select>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="font-sans text-[10px] uppercase tracking-widest text-white/20 ml-2">Label Size *</label>
+                        <select name="size" required onChange={handleChange} className="w-full bg-white/[0.02] border border-white/10 rounded-full px-8 py-4 font-sans text-[13px] focus:border-resonance-amber/50 focus:outline-none transition-all appearance-none cursor-pointer">
+                          <option value="" className="bg-obsidian">Select Size</option>
+                          {SIZES.map(s => <option key={s} value={s} className="bg-obsidian">{s}</option>)}
+                        </select>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="font-sans text-[10px] uppercase tracking-widest text-white/20 ml-2">Original Retail (USD) *</label>
+                        <input name="originalPrice" type="number" required onChange={handleChange} className="w-full bg-white/[0.02] border border-white/10 rounded-full px-8 py-4 font-sans text-[13px] focus:border-resonance-amber/50 focus:outline-none transition-all" placeholder="e.g. 8500" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Step 2: Contact */}
+                  <div className="space-y-10">
+                    <div className="flex items-center gap-6">
+                      <span className="w-10 h-10 rounded-full border border-resonance-amber/30 flex items-center justify-center font-serif text-resonance-amber text-lg">2</span>
+                      <h3 className="font-sans text-[10px] font-bold tracking-[0.4em] text-white/40 uppercase">Your Information</h3>
+                      <div className="h-[1px] flex-1 bg-white/[0.05]" />
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-8">
+                      <div className="space-y-2">
+                        <label className="font-sans text-[10px] uppercase tracking-widest text-white/20 ml-2">Full Name *</label>
+                        <input name="name" required onChange={handleChange} className="w-full bg-white/[0.02] border border-white/10 rounded-full px-8 py-4 font-sans text-[13px] focus:border-resonance-amber/50 focus:outline-none transition-all" />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="font-sans text-[10px] uppercase tracking-widest text-white/20 ml-2">Email Address *</label>
+                        <input name="email" type="email" required onChange={handleChange} className="w-full bg-white/[0.02] border border-white/10 rounded-full px-8 py-4 font-sans text-[13px] focus:border-resonance-amber/50 focus:outline-none transition-all" />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="font-sans text-[10px] uppercase tracking-widest text-white/20 ml-2">Additional Notes</label>
+                      <textarea name="notes" rows={4} onChange={handleChange} className="w-full bg-white/[0.02] border border-white/10 rounded-3xl px-8 py-6 font-sans text-[13px] focus:border-resonance-amber/50 focus:outline-none transition-all resize-none" placeholder="e.g. Minor customizations, veil included, professional cleaning status..." />
+                    </div>
+                  </div>
+
+                  <div className="pt-10 flex flex-col items-center">
+                    <button type="submit" className="px-16 py-6 bg-white text-obsidian font-sans text-[11px] font-bold uppercase tracking-[0.4em] rounded-full hover:bg-resonance-amber transition-all duration-500 shadow-[0_0_50px_rgba(255,255,255,0.05)]">
+                      Submit for Approval
+                    </button>
+                    <p className="font-sans text-[9px] text-white/15 mt-6 tracking-[0.2em] uppercase">
+                      By submitting, you agree to the House of Galia Lahav consignment terms.
+                    </p>
+                  </div>
+                </form>
+              </div>
+            </section>
+
+            {/* ── Pricing Table ── */}
+            <section className="py-40 bg-white/[0.01] border-y border-white/5">
+              <div className="max-w-4xl mx-auto px-6">
+                <div className="text-center mb-20">
+                  <h2 className="font-serif text-5xl font-light text-white/95">Pricing Guide</h2>
+                  <p className="font-sans text-xs text-white/20 tracking-widest uppercase mt-4">Calculated to maximize your return</p>
+                </div>
+                <div className="resonance-panel overflow-hidden">
+                  <div className="grid grid-cols-3 border-b border-white/5 bg-white/[0.03]">
+                    <div className="px-10 py-6 font-sans text-[9px] font-bold tracking-[0.3em] text-white/30 uppercase">Sale Price</div>
+                    <div className="px-10 py-6 font-sans text-[9px] font-bold tracking-[0.3em] text-white/30 uppercase text-center">Service Fee</div>
+                    <div className="px-10 py-6 font-sans text-[9px] font-bold tracking-[0.3em] text-white/30 uppercase text-right">Owner Payout</div>
+                  </div>
+                  {COMMISSION_TIERS.map((tier, i) => (
+                    <div key={i} className="grid grid-cols-3 border-b last:border-0 border-white/[0.03] hover:bg-white/[0.01] transition-colors">
+                      <div className="px-10 py-6 font-sans text-sm text-white/50">{tier.range}</div>
+                      <div className="px-10 py-6 font-sans text-sm text-white/30 text-center">{tier.rate}</div>
+                      <div className="px-10 py-6 font-sans text-sm text-resonance-amber font-medium text-right">{tier.you}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            {/* ── FAQ ── */}
+            <section className="py-40 px-6">
+              <div className="max-w-3xl mx-auto">
+                <div className="text-center mb-20">
+                  <h2 className="font-serif text-5xl font-light text-white/95 tracking-tight">Support</h2>
+                </div>
+                <div className="space-y-4">
+                  {FAQS.map((faq, i) => (
+                    <div key={i} className="resonance-panel px-8 py-2">
+                      <button onClick={() => setOpenFaq(openFaq === i ? null : i)} className="w-full flex items-center justify-between py-6 text-left group">
+                        <span className="font-sans text-[13px] text-white/50 group-hover:text-white/80 transition-colors tracking-wide">{faq.q}</span>
+                        <motion.span animate={{ rotate: openFaq === i ? 45 : 0 }} className="text-white/20 text-xl font-light">+</motion.span>
+                      </button>
+                      <AnimatePresence>
+                        {openFaq === i && (
+                          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
+                            <div className="pb-8 font-sans text-[13px] text-white/20 leading-relaxed tracking-wide">{faq.a}</div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+          </div>
+        )}
+      </AnimatePresence>
 
       <Footer />
     </main>

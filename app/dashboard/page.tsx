@@ -38,11 +38,10 @@ const STATUS_STYLES: Record<string, string> = {
 };
 
 function StatusBadge({ status }: { status: string }) {
+  const styles = STATUS_STYLES[status] || "border-white/10 text-white/30";
   return (
     <span
-      className={`${
-        STATUS_STYLES[status] || "border-white/10 text-white/30"
-      } border text-[10px] px-3 py-1 font-sans uppercase tracking-[0.15em]`}
+      className={`${styles} border-none font-sans text-[9px] font-bold uppercase tracking-[0.2em] px-3 py-1.5 rounded-full bg-white/[0.03] backdrop-blur-sm`}
     >
       {status.replace(/_/g, " ")}
     </span>
@@ -144,72 +143,78 @@ function ListingsTab() {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between mb-8">
-        <p className="font-sans text-xs text-white/30 tracking-wider">
-          {listings.length} listing{listings.length !== 1 ? "s" : ""}
+    <div className="space-y-6">
+      <div className="flex items-center justify-between mb-10">
+        <p className="font-sans text-[11px] font-bold text-white/20 uppercase tracking-[0.3em]">
+          {listings.length} item{listings.length !== 1 ? "s" : ""} listed
         </p>
         <Link
           href="/sell/submit"
-          className="px-6 py-2.5 bg-white text-obsidian font-sans text-[10px] uppercase tracking-[0.2em] hover:bg-champagne transition-colors"
+          className="px-8 py-3.5 bg-white text-obsidian font-sans text-[10px] font-bold uppercase tracking-[0.3em] rounded-full hover:bg-resonance-amber transition-all duration-500 shadow-[0_0_40px_rgba(255,255,255,0.05)]"
         >
           + New Listing
         </Link>
       </div>
-      {listings.map((listing: any) => (
-        <div
-          key={listing.id}
-          className="border border-white/5 p-5 flex gap-5 items-start hover:border-white/10 transition-colors"
-        >
-          <div className="w-20 h-24 bg-white/5 flex-shrink-0 overflow-hidden">
-            {listing.images?.[0] ? (
-              <img
-                src={listing.images[0]}
-                alt=""
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-white/10 text-2xl">
-                👗
-              </div>
-            )}
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <h3 className="font-serif text-lg text-white/80 tracking-wide truncate">
-                  {listing.title}
-                </h3>
-                <p className="font-sans text-[11px] text-white/25 mt-1 tracking-wider">
-                  {listing.category} · Size {listing.size_us || "—"} · $
-                  {listing.price?.toLocaleString()}
-                </p>
-              </div>
-              <StatusBadge status={listing.status} />
-            </div>
-            {listing.rejection_reason && (
-              <p className="text-red-400/80 text-[11px] font-sans mt-3 bg-red-900/10 border border-red-500/10 px-3 py-2">
-                Rejection: {listing.rejection_reason}
-              </p>
-            )}
-            <div className="flex gap-4 mt-3">
-              {(listing.status === "draft" ||
-                listing.status === "rejected") && (
-                <button
-                  onClick={() => handleDelete(listing.id)}
-                  disabled={isPending}
-                  className="text-red-400/60 text-[10px] font-sans uppercase tracking-wider hover:text-red-400 transition-colors"
-                >
-                  Delete
-                </button>
+
+      <div className="grid gap-6">
+        {listings.map((listing: any) => (
+          <div
+            key={listing.id}
+            className="resonance-panel p-6 flex gap-8 items-center group transition-all duration-500 hover:bg-white/[0.03]"
+          >
+            <div className="w-24 h-32 bg-white/[0.03] rounded-xl flex-shrink-0 overflow-hidden border border-white/5 group-hover:border-white/10 transition-colors shadow-inner">
+              {listing.images?.[0] ? (
+                <img
+                  src={listing.images[0]}
+                  alt=""
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-white/10 text-3xl">👗</div>
               )}
-              <p className="text-white/15 text-[10px] font-sans tracking-wider">
-                Created {new Date(listing.created_at).toLocaleDateString()}
-              </p>
+            </div>
+
+            <div className="flex-1 min-w-0">
+              <div className="flex items-start justify-between gap-4 mb-4">
+                <div>
+                  <h3 className="font-serif text-2xl text-white/90 tracking-tight mb-2 group-hover:text-white transition-colors">
+                    {listing.title}
+                  </h3>
+                  <div className="flex flex-wrap gap-x-4 gap-y-2">
+                    <span className="font-sans text-[11px] font-medium text-white/30 uppercase tracking-widest">{listing.category}</span>
+                    <span className="font-sans text-[11px] font-medium text-white/30 uppercase tracking-widest">Size {listing.size_us || "—"}</span>
+                    <span className="font-sans text-[11px] font-bold text-resonance-amber uppercase tracking-widest">${listing.price?.toLocaleString()}</span>
+                  </div>
+                </div>
+                <StatusBadge status={listing.status} />
+              </div>
+
+              {listing.rejection_reason && (
+                <div className="mb-4 p-3 bg-red-500/5 border border-red-500/10 rounded-xl">
+                  <p className="text-red-400/80 text-[11px] font-sans leading-relaxed">
+                    <span className="font-bold uppercase mr-2 tracking-tighter">Issue:</span> {listing.rejection_reason}
+                  </p>
+                </div>
+              )}
+
+              <div className="flex items-center gap-6">
+                <p className="text-white/10 text-[9px] font-sans font-bold uppercase tracking-[0.2em]">
+                  Added {new Date(listing.created_at).toLocaleDateString()}
+                </p>
+                {(listing.status === "draft" || listing.status === "rejected") && (
+                  <button
+                    onClick={() => handleDelete(listing.id)}
+                    disabled={isPending}
+                    className="text-red-400/40 text-[9px] font-bold font-sans uppercase tracking-[0.25em] hover:text-red-400 transition-colors"
+                  >
+                    Delete
+                  </button>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }
@@ -237,20 +242,21 @@ function PurchasesTab() {
 
   return (
     <div>
-      <div className="flex gap-0 mb-8 border border-white/10 inline-flex">
-        {(["purchases", "sales"] as const).map((v) => (
-          <button
-            key={v}
-            onClick={() => setView(v)}
-            className={`px-6 py-2.5 font-sans text-[10px] uppercase tracking-[0.2em] transition-all ${
-              view === v
-                ? "bg-white text-obsidian"
-                : "text-white/30 hover:text-white/60"
-            }`}
-          >
-            {v === "purchases" ? `Purchases (${purchases.length})` : `Sales (${sales.length})`}
-          </button>
-        ))}
+      <div className="flex justify-center mb-12">
+        <div className="inline-flex bg-white/[0.03] p-1 rounded-full border border-white/5 backdrop-blur-md">
+          {(["purchases", "sales"] as const).map((v) => (
+            <button
+              key={v}
+              onClick={() => setView(v)}
+              className={`px-8 py-3 font-sans text-[10px] font-bold uppercase tracking-[0.3em] transition-all rounded-full ${view === v
+                  ? "bg-white text-obsidian shadow-lg"
+                  : "text-white/30 hover:text-white/60"
+                }`}
+            >
+              {v === "purchases" ? `Purchases (${purchases.length})` : `Sales (${sales.length})`}
+            </button>
+          ))}
+        </div>
       </div>
 
       {orders.length === 0 ? (
@@ -262,65 +268,52 @@ function PurchasesTab() {
               ? "Browse the shop to find your dream gown"
               : "Create a listing to start selling"
           }
-          cta={view === "purchases" ? "Browse Shop" : "Create Listing"}
+          cta={view === "purchases" ? "Browse Shop" : "/sell/submit"}
           href={view === "purchases" ? "/shop" : "/sell/submit"}
         />
       ) : (
-        <div className="space-y-4">
+        <div className="grid gap-6">
           {orders.map((order: any) => (
             <div
               key={order.id}
-              className="border border-white/5 p-6 hover:border-white/10 transition-colors"
+              className="resonance-panel p-8 hover:bg-white/[0.03] transition-all duration-500 group"
             >
-              <div className="flex items-start justify-between">
+              <div className="flex items-start justify-between mb-8">
                 <div>
-                  <h3 className="font-serif text-lg text-white/80 tracking-wide">
-                    {order.listings?.title || "Listing"}
+                  <h3 className="font-serif text-2xl text-white/90 tracking-tight group-hover:text-white transition-colors">
+                    {order.listings?.title || "Signature Couture"}
                   </h3>
-                  <p className="font-sans text-[10px] text-white/20 mt-1 tracking-wider">
-                    Order #{order.id.slice(0, 8)} ·{" "}
+                  <p className="font-sans text-[10px] font-bold text-white/15 mt-2 uppercase tracking-[0.3em]">
+                    Reference #{order.id.slice(0, 8)} ·{" "}
                     {new Date(order.created_at).toLocaleDateString()}
                   </p>
                 </div>
                 <StatusBadge status={order.status} />
               </div>
-              <div className="grid grid-cols-3 gap-4 mt-5 pt-5 border-t border-white/5">
-                <div>
-                  <p className="text-white/20 text-[10px] font-sans uppercase tracking-wider">
-                    Total
-                  </p>
-                  <p className="text-white/70 font-serif text-xl mt-1">
-                    ${order.total?.toLocaleString()}
-                  </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-8 border-t border-white/5">
+                <div className="space-y-1">
+                  <p className="text-white/10 text-[9px] font-bold font-sans uppercase tracking-[0.4em]">Transaction Total</p>
+                  <p className="text-white/80 font-serif text-2xl">${order.total?.toLocaleString()}</p>
                 </div>
+
                 {view === "sales" && (
                   <>
-                    <div>
-                      <p className="text-white/20 text-[10px] font-sans uppercase tracking-wider">
-                        Commission
-                      </p>
-                      <p className="text-white/40 font-sans text-sm mt-1">
-                        ${order.commission_amount?.toLocaleString()}
-                      </p>
+                    <div className="space-y-1">
+                      <p className="text-white/10 text-[9px] font-bold font-sans uppercase tracking-[0.4em]">House Commission</p>
+                      <p className="text-white/30 font-sans text-sm">${order.commission_amount?.toLocaleString()}</p>
                     </div>
-                    <div>
-                      <p className="text-white/20 text-[10px] font-sans uppercase tracking-wider">
-                        Your Payout
-                      </p>
-                      <p className="text-emerald-400/80 font-serif text-xl mt-1">
-                        ${order.seller_payout?.toLocaleString()}
-                      </p>
+                    <div className="space-y-1">
+                      <p className="text-white/10 text-[9px] font-bold font-sans uppercase tracking-[0.4em]">Final Payout</p>
+                      <p className="text-resonance-amber font-serif text-2xl">${order.seller_payout?.toLocaleString()}</p>
                     </div>
                   </>
                 )}
+
                 {order.tracking_number && (
-                  <div>
-                    <p className="text-white/20 text-[10px] font-sans uppercase tracking-wider">
-                      Tracking
-                    </p>
-                    <p className="text-gold-muted font-sans text-sm mt-1">
-                      {order.tracking_number}
-                    </p>
+                  <div className="space-y-1">
+                    <p className="text-white/10 text-[9px] font-bold font-sans uppercase tracking-[0.4em]">Consignment Tracking</p>
+                    <p className="text-resonance-amber font-sans text-sm tracking-widest">{order.tracking_number}</p>
                   </div>
                 )}
               </div>
@@ -380,36 +373,36 @@ function MessagesTab() {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border border-white/5 overflow-hidden min-h-[500px]">
+    <div className="resonance-panel grid grid-cols-1 md:grid-cols-3 overflow-hidden min-h-[600px] border-white/10">
       {/* Conversation list */}
-      <div className="md:col-span-1 border-r border-white/5">
-        <div className="px-5 py-4 border-b border-white/5">
-          <h3 className="font-sans text-[10px] uppercase tracking-[0.25em] text-white/30">
-            Conversations
+      <div className="md:col-span-1 border-r border-white/5 bg-white/[0.01]">
+        <div className="px-8 py-6 border-b border-white/5 bg-white/[0.02]">
+          <h3 className="font-sans text-[10px] font-bold uppercase tracking-[0.4em] text-white/20">
+            Inbox
           </h3>
         </div>
-        <div className="divide-y divide-white/5">
+        <div className="divide-y divide-white/[0.03] overflow-y-auto max-h-[520px]">
           {conversations.map((conv: any) => {
             const lastMsg = conv.messages?.[conv.messages.length - 1];
-            const unread =
-              conv.messages?.filter((m: any) => !m.is_read).length || 0;
+            const unread = conv.messages?.filter((m: any) => !m.is_read).length || 0;
+            const isActive = activeConv === conv.id;
+
             return (
               <button
                 key={conv.id}
                 onClick={() => openConversation(conv.id)}
-                className={`w-full text-left px-5 py-4 hover:bg-white/[0.02] transition-colors ${
-                  activeConv === conv.id ? "bg-white/[0.03]" : ""
-                }`}
+                className={`w-full text-left px-8 py-6 transition-all duration-300 ${isActive ? "bg-white/[0.05] border-l-2 border-resonance-amber" : "hover:bg-white/[0.02]"
+                  }`}
               >
-                <p className="font-serif text-sm text-white/70 truncate">
-                  {conv.listings?.title || "Listing"}
+                <p className={`font-serif text-lg tracking-tight transition-colors ${isActive ? "text-white" : "text-white/60"}`}>
+                  {conv.listings?.title || "Couture Inquiry"}
                 </p>
-                <p className="font-sans text-[11px] text-white/20 truncate mt-1">
-                  {lastMsg?.content || "No messages"}
+                <p className="font-sans text-[11px] text-white/20 truncate mt-2 tracking-wide font-medium">
+                  {lastMsg?.content || "Archive thread"}
                 </p>
                 {unread > 0 && (
-                  <span className="inline-block mt-2 bg-gold-muted text-obsidian text-[9px] px-2 py-0.5 font-sans tracking-wider">
-                    {unread} new
+                  <span className="inline-block mt-3 bg-resonance-amber text-obsidian text-[8px] px-2 py-0.5 font-bold font-sans uppercase tracking-widest rounded-full">
+                    {unread} New
                   </span>
                 )}
               </button>
@@ -419,63 +412,54 @@ function MessagesTab() {
       </div>
 
       {/* Message thread */}
-      <div className="md:col-span-2 flex flex-col">
+      <div className="md:col-span-2 flex flex-col bg-obsidian/20 backdrop-blur-sm">
         {activeConv ? (
           <>
-            <div className="flex-1 p-5 space-y-3 overflow-y-auto max-h-[400px]">
-              {messages.map((msg: any) => (
-                <div
-                  key={msg.id}
-                  className={`flex ${
-                    msg.sender_id ===
-                    conversations.find((c: any) => c.id === activeConv)
-                      ?.buyer_id
-                      ? "justify-start"
-                      : "justify-end"
-                  }`}
-                >
-                  <div
-                    className={`max-w-[70%] px-4 py-3 ${
-                      msg.sender_id ===
-                      conversations.find((c: any) => c.id === activeConv)
-                        ?.buyer_id
-                        ? "bg-white/5 text-white/70"
-                        : "bg-gold-muted/10 text-champagne/80 border border-gold-muted/10"
-                    }`}
-                  >
-                    <p className="font-sans text-sm">{msg.content}</p>
-                    <p className="font-sans text-[9px] text-white/20 mt-1">
-                      {new Date(msg.created_at).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </p>
+            <div className="flex-1 p-8 space-y-6 overflow-y-auto max-h-[500px] scrollbar-thin scrollbar-thumb-white/5">
+              {messages.map((msg: any) => {
+                const isBuyer = msg.sender_id === conversations.find((c: any) => c.id === activeConv)?.buyer_id;
+                return (
+                  <div key={msg.id} className={`flex ${isBuyer ? "justify-start" : "justify-end"}`}>
+                    <div className={`max-w-[80%] rounded-3xl px-6 py-4 transition-all duration-500 hover:shadow-lg ${isBuyer
+                        ? "resonance-panel rounded-bl-none border-white/10 text-white/70"
+                        : "bg-white/[0.04] rounded-br-none border border-resonance-amber/20 text-resonance-amber/90"
+                      }`}
+                    >
+                      <p className="font-sans text-[13px] leading-relaxed tracking-wide">{msg.content}</p>
+                      <p className="font-sans text-[9px] font-bold text-white/10 mt-3 uppercase tracking-widest">
+                        {new Date(msg.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
-            <div className="p-4 border-t border-white/5 flex gap-3">
-              <input
-                type="text"
-                value={newMsg}
-                onChange={(e) => setNewMsg(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSend()}
-                placeholder="Type a message..."
-                className="flex-1 bg-white/[0.03] border border-white/10 px-5 py-3 font-sans text-sm text-white placeholder:text-white/15 focus:outline-none focus:border-gold-muted/40 transition-colors"
-              />
-              <button
-                onClick={handleSend}
-                disabled={isPending || !newMsg.trim()}
-                className="px-6 py-3 bg-white text-obsidian font-sans text-[10px] uppercase tracking-[0.2em] hover:bg-champagne transition-colors disabled:opacity-30"
-              >
-                Send
-              </button>
+
+            <div className="p-6 border-t border-white/5 bg-white/[0.01]">
+              <div className="flex gap-4 p-1 bg-white/[0.02] border border-white/10 rounded-full focus-within:border-resonance-amber/40 transition-all shadow-inner">
+                <input
+                  type="text"
+                  value={newMsg}
+                  onChange={(e) => setNewMsg(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleSend()}
+                  placeholder="Draft your reply..."
+                  className="flex-1 bg-transparent px-8 py-3.5 font-sans text-[13px] text-white/80 placeholder:text-white/10 focus:outline-none"
+                />
+                <button
+                  onClick={handleSend}
+                  disabled={isPending || !newMsg.trim()}
+                  className="px-8 py-3.5 bg-white text-obsidian font-sans text-[10px] font-bold uppercase tracking-[0.3em] rounded-full hover:bg-resonance-amber transition-all duration-500 disabled:opacity-30 disabled:grayscale-[0.5]"
+                >
+                  Send
+                </button>
+              </div>
             </div>
           </>
         ) : (
-          <div className="flex-1 flex items-center justify-center">
-            <p className="font-sans text-xs text-white/15 tracking-wider">
-              Select a conversation to view messages
+          <div className="flex-1 flex flex-col items-center justify-center opacity-10">
+            <div className="text-6xl mb-6">✧</div>
+            <p className="font-sans text-[10px] font-bold text-white uppercase tracking-[0.4em]">
+              Select a conversation
             </p>
           </div>
         )}
@@ -515,60 +499,63 @@ function ProfileTab() {
   if (loading) return <LoadingSkeleton />;
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-lg space-y-8">
-      {[
-        {
-          label: "Email",
-          name: "email",
-          type: "email",
-          value: profile?.email || "",
-          disabled: true,
-        },
-        {
-          label: "Display Name",
-          name: "display_name",
-          defaultValue: profile?.display_name || "",
-          placeholder: "How others see you",
-        },
-        {
-          label: "Full Name",
-          name: "full_name",
-          defaultValue: profile?.full_name || "",
-          placeholder: "For shipping & invoicing",
-        },
-        {
-          label: "Phone",
-          name: "phone",
-          defaultValue: profile?.phone || "",
-          placeholder: "+1 (555) 000-0000",
-        },
-      ].map((field) => (
-        <div key={field.name}>
-          <label className="block font-sans text-[10px] uppercase tracking-[0.25em] text-white/30 mb-3">
-            {field.label}
-          </label>
-          <input
-            type={field.type || "text"}
-            name={field.name}
-            defaultValue={field.defaultValue}
-            value={field.disabled ? field.value : undefined}
-            disabled={field.disabled}
-            placeholder={field.placeholder}
-            className={`w-full border border-white/10 bg-white/[0.03] px-4 py-3 font-sans text-sm text-white/80 placeholder:text-white/15 focus:outline-none focus:border-gold-muted/40 transition-colors ${
-              field.disabled ? "text-white/30 cursor-not-allowed" : ""
-            }`}
-          />
-        </div>
-      ))}
+    <div className="max-w-xl mx-auto">
+      <form onSubmit={handleSubmit} className="resonance-panel p-10 md:p-12 space-y-8 border-white/10">
+        {[
+          {
+            label: "Email Protocol",
+            name: "email",
+            type: "email",
+            value: profile?.email || "",
+            disabled: true,
+          },
+          {
+            label: "Public Display Name",
+            name: "display_name",
+            defaultValue: profile?.display_name || "",
+            placeholder: "House Alias",
+          },
+          {
+            label: "Member Full Name",
+            name: "full_name",
+            defaultValue: profile?.full_name || "",
+            placeholder: "Legal Identity",
+          },
+          {
+            label: "Private Phone",
+            name: "phone",
+            defaultValue: profile?.phone || "",
+            placeholder: "Encrypted Contact",
+          },
+        ].map((field) => (
+          <div key={field.name} className="space-y-3">
+            <label className="block font-sans text-[10px] font-bold uppercase tracking-[0.4em] text-white/20 ml-4">
+              {field.label}
+            </label>
+            <input
+              type={field.type || "text"}
+              name={field.name}
+              defaultValue={field.defaultValue}
+              value={field.disabled ? field.value : undefined}
+              disabled={field.disabled}
+              placeholder={field.placeholder}
+              className={`w-full border border-white/10 bg-white/[0.02] rounded-full px-8 py-4 font-sans text-[13px] text-white placeholder:text-white/10 focus:outline-none focus:border-resonance-amber/40 transition-all ${field.disabled ? "opacity-30 cursor-not-allowed border-dashed" : "hover:border-white/20"
+                }`}
+            />
+          </div>
+        ))}
 
-      <button
-        type="submit"
-        disabled={saving}
-        className="px-8 py-3 bg-white text-obsidian font-sans text-xs uppercase tracking-[0.2em] hover:bg-champagne transition-colors disabled:opacity-50"
-      >
-        {saving ? "Saving..." : saved ? "✓ Saved" : "Save Changes"}
-      </button>
-    </form>
+        <div className="pt-4">
+          <button
+            type="submit"
+            disabled={saving}
+            className="w-full py-5 bg-white text-obsidian font-sans text-[11px] font-bold uppercase tracking-[0.4em] rounded-full hover:bg-resonance-amber transition-all duration-500 disabled:opacity-50 shadow-[0_0_40px_rgba(255,255,255,0.05)]"
+          >
+            {saving ? "Updating Account..." : saved ? "✓ Protocol Updated" : "Update Profile"}
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }
 
@@ -594,36 +581,36 @@ export default function DashboardPage() {
     <main className="min-h-screen bg-obsidian">
       <Navbar />
 
-      <div className="max-w-6xl mx-auto px-6 md:px-10 pt-28 pb-20">
+      <div className="max-w-7xl mx-auto px-6 md:px-10 pt-48 pb-32">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-12"
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          className="mb-20 text-center"
         >
-          <p className="font-sans text-[10px] uppercase tracking-[0.5em] text-gold-muted/50 mb-3">
-            My Account
+          <p className="font-sans text-[10px] font-bold uppercase tracking-[0.5em] text-resonance-amber mb-6">
+            Private Account
           </p>
-          <h1 className="font-display text-3xl md:text-5xl font-thin text-white/90 tracking-wider uppercase">
+          <h1 className="font-serif text-6xl md:text-8xl font-light tracking-tighter text-white/95 leading-none">
             Dashboard
           </h1>
         </motion.div>
 
         {/* Tab navigation */}
-        <div className="flex gap-0 mb-10 border-b border-white/5">
+        <div className="flex justify-center gap-10 mb-20 border-b border-white/5">
           {tabs.map((t) => (
             <button
               key={t.key}
               onClick={() => setTab(t.key)}
-              className={`px-6 py-4 font-sans text-xs uppercase tracking-[0.2em] transition-colors relative ${
-                tab === t.key ? "text-white/80" : "text-white/25 hover:text-white/50"
-              }`}
+              className={`px-4 pb-8 font-sans text-[11px] font-bold uppercase tracking-[0.3em] transition-all relative ${tab === t.key ? "text-resonance-amber" : "text-white/20 hover:text-white/40"
+                }`}
             >
               {t.label}
               {tab === t.key && (
                 <motion.div
-                  layoutId="dashboard-tab"
-                  className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-gold-muted/60 to-champagne/40"
+                  layoutId="dashboard-tab-underline"
+                  className="absolute bottom-0 left-0 right-0 h-[2px] bg-resonance-amber shadow-[0_0_15px_rgba(245,158,11,0.5)]"
                 />
               )}
             </button>

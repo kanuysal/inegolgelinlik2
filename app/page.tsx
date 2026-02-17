@@ -315,19 +315,19 @@ export default function Home() {
             className="text-center"
           >
             <motion.p
-              initial={{ opacity: 0, letterSpacing: "0.2em" }}
-              animate={{ opacity: 1, letterSpacing: "0.4em" }}
-              transition={{ duration: 1.5, delay: 0.3 }}
-              className="font-display text-[10px] md:text-xs uppercase tracking-[0.4em] text-white/70 mb-6"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1.2, delay: 0.3 }}
+              className="font-sans text-[11px] font-bold uppercase tracking-[0.6em] text-resonance-amber mb-8 resonance-glow"
             >
               The Official Pre-Owned Marketplace
             </motion.p>
 
             <motion.h1
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.6 }}
-              className="font-display text-6xl md:text-8xl lg:text-9xl font-bold tracking-wider text-white drop-shadow-[0_4px_30px_rgba(0,0,0,0.8)]"
+              className="font-sans text-6xl md:text-8xl lg:text-[10rem] font-black tracking-tighter text-white leading-none mb-4"
             >
               RE:GALIA
             </motion.h1>
@@ -336,125 +336,100 @@ export default function Home() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 1, delay: 1.0 }}
-              className="font-display text-sm md:text-base text-white/60 mt-3 tracking-[0.2em] uppercase drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)]"
+              className="font-sans text-sm md:text-base font-medium text-white/50 tracking-[0.3em] uppercase"
             >
               The Eternal Life of Couture
-            </motion.p>
-
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 1.4 }}
-              className="font-serif text-lg md:text-xl text-white/50 mt-2 italic tracking-wide drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)]"
-            >
-              by Galia Lahav
             </motion.p>
 
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 2.0 }}
-              className="mt-14 flex flex-col items-center gap-2"
+              transition={{ duration: 1, delay: 1.8 }}
+              className="mt-20 flex flex-col items-center gap-4"
             >
-              <motion.div
-                animate={{ y: [0, 8, 0] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                className="w-[1px] h-12 bg-gradient-to-b from-transparent to-white/30"
-              />
-              <p className="font-sans text-[9px] uppercase tracking-[0.5em] text-white/40">
+              <div className="w-[1px] h-20 bg-gradient-to-b from-resonance-amber to-transparent opacity-50" />
+              <p className="font-sans text-[10px] uppercase tracking-[0.4em] text-white/30 font-semibold">
                 Scroll to explore
               </p>
             </motion.div>
           </motion.div>
         </section>
 
-        {/* ── BEAT A: THE ICON (0–20%) ── */}
+        {/* ── BEAT A: THE ICON ── */}
         <section className="relative z-10 h-screen flex items-center">
           <motion.div
-            initial={{ opacity: 0, x: -40 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: false, amount: 0.4 }}
             transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-            className="pl-8 md:pl-16 lg:pl-24 max-w-lg"
+            className="pl-8 md:pl-24 max-w-lg"
           >
-            {/* Dark backing panel for readability */}
-            <div className="bg-obsidian/60 backdrop-blur-sm rounded-lg p-6 md:p-8">
-              <p className="font-display text-[10px] uppercase tracking-[0.5em] text-gold-muted mb-3">
-                Chapter I
+            <div className="resonance-panel p-10 md:p-12">
+              <p className="font-sans text-[10px] font-bold uppercase tracking-[0.4em] text-resonance-amber mb-6">
+                Chapter 01
               </p>
-              <h2 className="font-display text-4xl md:text-6xl font-bold text-white leading-tight">
+              <h2 className="font-sans text-4xl md:text-5xl font-bold text-white leading-[1.1] mb-6">
                 The Icon
               </h2>
-              <LuxuryDivider />
-              <p className="font-sans text-sm md:text-base text-white/70 leading-relaxed max-w-md">
+              <p className="font-sans text-base text-white/50 leading-relaxed font-medium">
                 Each Galia Lahav gown is a masterpiece born from thousands of hours
                 of hand-stitching, beading, and draping. A work of art that
-                transcends fashion&mdash;crafted to be worn, cherished, and passed on.
+                transcends fashion&mdash;crafted to be passes on.
               </p>
             </div>
           </motion.div>
         </section>
 
-        {/* ── BEAT B: CERTIFIED LEGACY (25–45%) ── */}
+        {/* ── BEAT B: CERTIFIED LEGACY ── */}
         <section className="relative z-10 h-screen flex items-center justify-end">
           <motion.div
-            initial={{ opacity: 0, x: 40 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: false, amount: 0.4 }}
             transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-            className="pr-8 md:pr-16 lg:pr-24 max-w-lg text-right"
+            className="pr-8 md:pr-24 max-w-lg"
           >
-            <div className="bg-obsidian/60 backdrop-blur-sm rounded-lg p-6 md:p-8">
-              <div className="flex items-center gap-3 mb-3 justify-end">
-                <VerifiedBadge className="w-5 h-5 text-gold-muted" />
-                <p className="font-display text-[10px] uppercase tracking-[0.5em] text-gold-muted">
-                  Chapter II
+            <div className="resonance-panel p-10 md:p-12 border-resonance-amber/20 shadow-[0_0_50px_rgba(255,179,71,0.05)]">
+              <div className="flex items-center gap-3 mb-6">
+                <VerifiedBadge className="w-5 h-5 text-resonance-amber" />
+                <p className="font-sans text-[10px] font-bold uppercase tracking-[0.4em] text-resonance-amber">
+                  Chapter 02
                 </p>
               </div>
-              <h2 className="font-display text-4xl md:text-6xl font-bold text-white leading-tight">
+              <h2 className="font-sans text-4xl md:text-5xl font-bold text-white leading-[1.1] mb-6">
                 Certified Legacy
               </h2>
-              <LuxuryDivider />
-              <p className="font-sans text-sm md:text-base text-white/70 leading-relaxed">
+              <p className="font-sans text-base text-white/50 leading-relaxed font-medium">
                 Unlike peer-to-peer marketplaces, every RE:GALIA gown is verified by
-                the Galia Lahav House for 100% authenticity. Original materials
-                confirmed, provenance traced, and restored to runway-ready condition.
+                the House of Galia Lahav for 100% authenticity. Restored to runway condition.
               </p>
-              <div className="mt-6 flex items-center gap-2 justify-end">
-                <VerifiedBadge className="w-4 h-4 text-emerald-400/80" />
-                <span className="font-sans text-xs text-emerald-400/80 tracking-wider">
-                  Galia Lahav Verified
-                </span>
-              </div>
             </div>
           </motion.div>
         </section>
 
-        {/* ── BEAT C: CIRCULAR LUXURY (50–70%) ── */}
+        {/* ── BEAT C: CIRCULAR LUXURY ── */}
         <section className="relative z-10 h-screen flex items-center">
           <motion.div
-            initial={{ opacity: 0, x: -40 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: false, amount: 0.4 }}
             transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-            className="pl-8 md:pl-16 lg:pl-24 max-w-lg"
+            className="pl-8 md:pl-24 max-w-lg"
           >
-            <div className="bg-obsidian/60 backdrop-blur-sm rounded-lg p-6 md:p-8">
-              <p className="font-display text-[10px] uppercase tracking-[0.5em] text-gold-muted mb-3">
-                Chapter III
+            <div className="resonance-panel p-10 md:p-12">
+              <p className="font-sans text-[10px] font-bold uppercase tracking-[0.4em] text-resonance-amber mb-6">
+                Chapter 03
               </p>
-              <h2 className="font-display text-4xl md:text-6xl font-bold text-white leading-tight">
+              <h2 className="font-sans text-4xl md:text-5xl font-bold text-white leading-[1.1] mb-6">
                 Circular Luxury
               </h2>
-              <LuxuryDivider />
-              <p className="font-sans text-sm md:text-base text-white/70 leading-relaxed">
+              <p className="font-sans text-base text-white/50 leading-relaxed font-medium">
                 Reducing the bridal footprint through the beauty of pre-loved
-                masterpieces. When you pass on your Galia Lahav, you give another
-                woman her dream moment&mdash;and your gown lives on.
+                masterpieces. Your gown lives on through another woman's dream moment.
               </p>
-              <div className="mt-6 inline-flex items-center gap-3 border border-white/15 rounded-full px-5 py-2.5">
-                <div className="w-2 h-2 rounded-full bg-emerald-500/60 animate-pulse" />
-                <span className="font-sans text-xs text-white/50 tracking-wider">
+              <div className="mt-8 flex items-center gap-3">
+                <div className="w-2 h-2 rounded-full bg-resonance-blue animate-pulse" />
+                <span className="font-sans text-[11px] font-bold text-resonance-blue uppercase tracking-widest">
                   Sustainable by design
                 </span>
               </div>
@@ -462,191 +437,127 @@ export default function Home() {
           </motion.div>
         </section>
 
-        {/* ── BEAT D: YOUR DREAM WITHIN REACH (75–95%) ── */}
+        {/* ── BEAT D: YOUR DREAM WITHIN REACH ── */}
         <section className="relative z-10 h-screen flex items-center justify-center">
           <motion.div
-            initial={{ opacity: 0, y: 50 }}
+            initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: false, amount: 0.4 }}
             transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-            className="text-center max-w-xl px-8"
+            className="text-center max-w-2xl px-8"
           >
-            <div className="bg-obsidian/60 backdrop-blur-sm rounded-lg p-8 md:p-12">
-              <p className="font-display text-[10px] uppercase tracking-[0.5em] text-gold-muted mb-3">
-                Chapter IV
+            <div className="resonance-panel p-12 md:p-16">
+              <p className="font-sans text-[10px] font-bold uppercase tracking-[0.4em] text-resonance-amber mb-6">
+                Final Chapter
               </p>
-              <h2 className="font-display text-4xl md:text-6xl font-bold text-white leading-tight">
-                Your Dream,
-                <br />
-                Within Reach
+              <h2 className="font-sans text-4xl md:text-6xl font-black text-white leading-[1.05] mb-8">
+                Your Dream, <br />Within Reach
               </h2>
-              <LuxuryDivider />
-              <p className="font-sans text-sm md:text-base text-white/70 leading-relaxed">
+              <p className="font-sans text-base md:text-lg text-white/50 leading-relaxed font-medium mb-12 max-w-md mx-auto">
                 Browse official samples and pre-owned couture at a fraction of the
-                cost. Iconic craftsmanship, a new price point.
+                cost. Iconic craftsmanship, now accessible.
               </p>
 
               {/* CTA Buttons */}
-              <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <a
                   href="/shop"
-                  className="group relative px-10 py-3.5 bg-white text-obsidian font-display text-sm uppercase tracking-[0.25em] overflow-hidden transition-all duration-500 hover:shadow-[0_0_40px_rgba(201,169,110,0.15)]"
+                  className="w-full sm:w-auto px-10 py-4 bg-white text-black font-sans font-bold text-sm rounded-full hover:bg-resonance-amber transition-all duration-300"
                 >
-                  <span className="relative z-10">Explore the Collection</span>
-                  <div className="absolute inset-0 bg-champagne translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+                  Explore Collection
                 </a>
                 <a
                   href="/sell"
-                  className="px-10 py-3.5 border border-white/30 font-display text-sm uppercase tracking-[0.25em] text-white/70 hover:text-white hover:border-white/50 transition-all duration-500"
+                  className="w-full sm:w-auto px-10 py-4 border border-white/20 font-sans font-bold text-sm text-white rounded-full hover:bg-white/5 transition-all duration-300"
                 >
-                  Consign Your Gown
+                  Consign Gown
                 </a>
               </div>
-
-              {/* Financing note */}
-              <p className="mt-6 font-sans text-[10px] text-white/40 tracking-wider">
-                Starting at $150/mo with Affirm &middot; 0% APR available
-              </p>
             </div>
           </motion.div>
         </section>
       </div>
 
-      {/* ══════════════════════════════════════════════════════
-          BROWSE SECTION — Collections + Gown Listings
-          ══════════════════════════════════════════════════════ */}
-      <section className="relative z-10 bg-obsidian">
-        {/* Transition gradient from hero */}
-        <div className="h-32 bg-gradient-to-b from-obsidian/0 to-obsidian" />
-
-        {/* Collections carousel */}
-        <div className="max-w-7xl mx-auto px-6 md:px-10 pt-8 pb-12">
-          <h2 className="font-display text-2xl md:text-3xl font-bold text-white tracking-wider text-center mb-2">
-            Browse by Collection
-          </h2>
-          <p className="font-sans text-sm text-white/40 text-center mb-10 tracking-wide">
-            Explore authenticated gowns from every Galia Lahav line
-          </p>
-
-          {/* Collection circles */}
-          <div className="flex gap-6 md:gap-8 overflow-x-auto pb-4 scrollbar-hide justify-center flex-wrap">
-            {COLLECTIONS.map((col, i) => (
-              <motion.a
-                key={col.slug}
-                href={`/shop?collection=${col.slug}`}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.08 }}
-                className="flex flex-col items-center gap-3 group shrink-0"
-              >
-                <div className="w-20 h-20 md:w-24 md:h-24 rounded-full border border-white/10 group-hover:border-gold-muted/40 transition-all duration-500 overflow-hidden bg-obsidian/50">
-                  <img
-                    src={`/frames/frame_${padFrame(i * 45 + 10)}.jpg`}
-                    alt={col.name}
-                    className="w-full h-full object-cover opacity-70 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500"
-                  />
-                </div>
-                <span className="font-display text-[10px] md:text-xs uppercase tracking-[0.15em] text-white/50 group-hover:text-champagne transition-colors text-center whitespace-nowrap">
-                  {col.name}
-                </span>
-              </motion.a>
-            ))}
-          </div>
-        </div>
-
-        {/* Divider */}
-        <div className="max-w-7xl mx-auto px-6 md:px-10">
-          <div className="h-[1px] bg-white/5" />
-        </div>
+      {/* ══════════ BROWSE SECTION ══════════ */}
+      <section className="relative z-10 bg-black">
+        <div className="h-40 bg-gradient-to-b from-transparent to-black" />
 
         {/* Tab navigation */}
-        <div className="max-w-7xl mx-auto px-6 md:px-10 pt-10">
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex gap-6">
+        <div className="max-w-7xl mx-auto px-6 md:px-10 pt-10 pb-20">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-8 mb-16">
+            <div className="text-center md:text-left">
+              <h2 className="font-sans text-3xl md:text-5xl font-black text-white tracking-tight mb-2">
+                The Gown Archive
+              </h2>
+              <p className="font-sans text-base text-white/40 font-medium">
+                Authenticated couture masterpieces, awaiting their next story.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2 resonance-panel p-1 rounded-full">
               {(
                 [
                   { key: "featured", label: "Featured" },
-                  { key: "reduced", label: "Price Reduced" },
-                  { key: "new", label: "Newly Listed" },
+                  { key: "reduced", label: "Reduced" },
+                  { key: "new", label: "New" },
                 ] as const
               ).map((tab) => (
                 <button
                   key={tab.key}
                   onClick={() => setActiveTab(tab.key)}
-                  className={`font-display text-xs md:text-sm uppercase tracking-[0.2em] pb-2 border-b-2 transition-all duration-300 ${
-                    activeTab === tab.key
-                      ? "text-white border-gold-muted"
-                      : "text-white/30 border-transparent hover:text-white/50"
-                  }`}
+                  className={`px-6 py-2 rounded-full font-sans text-xs font-bold uppercase tracking-widest transition-all duration-300 ${activeTab === tab.key
+                    ? "bg-white text-black"
+                    : "text-white/40 hover:text-white/70"
+                    }`}
                 >
                   {tab.label}
                 </button>
               ))}
             </div>
-            <Link
-              href="/shop"
-              className="font-display text-xs uppercase tracking-[0.2em] text-gold-muted hover:text-champagne transition-colors"
-            >
-              View All →
-            </Link>
           </div>
 
           {/* Gown grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 pb-16">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-8 mb-20">
             {SAMPLE_GOWNS.map((gown, i) => (
               <motion.a
                 key={gown.id}
                 href={`/shop/${gown.id}`}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
-                className="group cursor-pointer"
+                className="group"
               >
-                {/* Image */}
-                <div className="relative aspect-[3/4] overflow-hidden bg-obsidian/50 mb-3">
+                <div className="relative aspect-[3/4] overflow-hidden rounded-[32px] bg-white/5 mb-6">
                   <img
                     src={gown.image}
                     alt={gown.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   />
-                  {/* Verified badge overlay */}
                   {gown.verified && (
-                    <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-obsidian/70 backdrop-blur-sm rounded-full px-2.5 py-1">
-                      <VerifiedBadge className="w-3 h-3 text-gold-muted" />
-                      <span className="font-sans text-[8px] uppercase tracking-wider text-gold-muted">
-                        Verified
+                    <div className="absolute top-4 left-4 resonance-panel px-4 py-2 rounded-full flex items-center gap-2">
+                      <VerifiedBadge className="w-3 h-3 text-resonance-amber" />
+                      <span className="font-sans text-[9px] font-black uppercase tracking-widest text-white">
+                        House Verified
                       </span>
                     </div>
                   )}
-                  {/* Condition tag */}
-                  <div className="absolute bottom-3 left-3">
-                    <span className="bg-obsidian/70 backdrop-blur-sm text-white/70 text-[9px] uppercase tracking-wider px-2.5 py-1 rounded-full font-sans">
-                      {gown.condition}
-                    </span>
-                  </div>
-                  {/* Hover overlay */}
-                  <div className="absolute inset-0 bg-obsidian/0 group-hover:bg-obsidian/20 transition-colors duration-500" />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-500" />
                 </div>
 
-                {/* Info */}
-                <div>
-                  <h3 className="font-display text-sm md:text-base text-white group-hover:text-champagne transition-colors tracking-wider uppercase">
+                <div className="px-2">
+                  <h3 className="font-sans text-xl font-bold text-white mb-1 group-hover:text-resonance-amber transition-colors">
                     {gown.name}
                   </h3>
-                  <p className="font-sans text-[10px] text-white/40 mt-0.5 tracking-wider">
+                  <p className="font-sans text-sm text-white/40 font-bold uppercase tracking-widest mb-3">
                     {gown.collection} &middot; Size {gown.size}
                   </p>
-                  <div className="flex items-center gap-3 mt-2">
-                    <span className="font-display text-sm text-white tracking-wider">
+                  <div className="flex items-center gap-4">
+                    <span className="font-sans text-lg font-black text-white">
                       ${gown.price.toLocaleString()}
                     </span>
-                    <span className="font-sans text-xs text-white/30 line-through">
+                    <span className="font-sans text-sm text-white/20 line-through font-bold">
                       ${gown.originalPrice.toLocaleString()}
-                    </span>
-                    <span className="font-sans text-[10px] text-emerald-400/80 tracking-wider">
-                      {Math.round(((gown.originalPrice - gown.price) / gown.originalPrice) * 100)}% off
                     </span>
                   </div>
                 </div>
@@ -654,44 +565,42 @@ export default function Home() {
             ))}
           </div>
 
-          {/* CTA */}
-          <div className="text-center pb-20">
+          <div className="text-center">
             <Link
               href="/shop"
-              className="inline-block font-display text-sm uppercase tracking-[0.25em] px-12 py-4 border border-white/20 text-white/60 hover:text-white hover:border-white/40 transition-all duration-500"
+              className="inline-block px-12 py-4 border border-white/10 rounded-full font-sans text-sm font-bold uppercase tracking-widest text-white/60 hover:text-white hover:border-white transition-all duration-300"
             >
-              Browse All Gowns
+              Browse All Masterpieces
             </Link>
           </div>
         </div>
       </section>
 
-      {/* ══════════ FOOTER ══════════ */}
-      <footer className="relative z-10 border-t border-white/5 bg-obsidian py-16 px-8 md:px-16">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+      <footer className="relative z-10 border-t border-white/5 bg-black py-20 px-8 md:px-24">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
           <div className="text-center md:text-left">
-            <h3 className="font-display text-2xl tracking-wider text-white/70 font-bold">
+            <h3 className="font-sans text-2xl font-black text-white tracking-tight">
               RE:GALIA
             </h3>
-            <p className="font-sans text-xs text-white/30 mt-1">
-              by Galia Lahav
+            <p className="font-sans text-xs font-bold text-white/20 mt-2 uppercase tracking-widest">
+              The Official Marketplace
             </p>
           </div>
-          <div className="flex items-center gap-6">
-            {["About", "How It Works", "Authenticity", "Contact"].map(
+          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12">
+            {["Shop", "Works", "Authentic", "Contact"].map(
               (link) => (
                 <a
                   key={link}
                   href="#"
-                  className="font-sans text-xs text-white/30 hover:text-white/60 transition-colors tracking-wider uppercase"
+                  className="font-sans text-xs font-bold text-white/40 hover:text-resonance-amber transition-colors tracking-[0.2em] uppercase"
                 >
                   {link}
                 </a>
               )
             )}
           </div>
-          <p className="font-sans text-[10px] text-white/15 tracking-wider">
-            &copy; {new Date().getFullYear()} Galia Lahav. All rights reserved.
+          <p className="font-sans text-[10px] font-bold text-white/10 tracking-[0.3em] uppercase">
+            &copy; {new Date().getFullYear()} RE:GALIA House
           </p>
         </div>
       </footer>

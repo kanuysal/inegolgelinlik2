@@ -139,14 +139,14 @@ export default function ShopPage() {
       <Navbar />
 
       {/* Hero banner */}
-      <section className="pt-24 pb-10 px-6 md:px-10">
+      <section className="pt-32 pb-12 px-6 md:px-10">
         <div className="max-w-7xl mx-auto">
-          <nav className="flex items-center gap-2 mb-8">
-            <a href="/" className="font-sans text-[10px] uppercase tracking-[0.2em] text-white/25 hover:text-white/50 transition-colors">
+          <nav className="flex items-center gap-3 mb-10">
+            <a href="/" className="font-sans text-[9px] font-bold uppercase tracking-[0.4em] text-white/20 hover:text-white/50 transition-colors">
               Home
             </a>
-            <span className="text-white/15">/</span>
-            <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-white/50">
+            <span className="text-white/10 text-[8px]">•</span>
+            <span className="font-sans text-[9px] font-bold uppercase tracking-[0.4em] text-white/40">
               Shop
             </span>
           </nav>
@@ -154,14 +154,14 @@ export default function ShopPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           >
-            <h1 className="font-serif text-4xl md:text-6xl font-light tracking-wider text-white/90">
+            <h1 className="font-serif text-5xl md:text-7xl font-light tracking-tight text-white/95 leading-none">
               The Collection
             </h1>
-            <p className="font-sans text-sm text-white/30 mt-3 tracking-wide max-w-lg">
+            <p className="font-sans text-sm text-white/30 mt-6 tracking-wide max-w-lg leading-relaxed">
               Authenticated Galia Lahav couture, curated for its next chapter.
-              Every gown verified by the House.
+              Every gown verified by the House of Galia Lahav.
             </p>
           </motion.div>
         </div>
@@ -177,7 +177,7 @@ export default function ShopPage() {
           />
 
           {filtered.length > 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-10 mt-8">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-16 mt-12">
               {filtered.map((listing, i) => (
                 <ProductCard key={listing.id} listing={listing} index={i} />
               ))}
@@ -186,17 +186,17 @@ export default function ShopPage() {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="flex flex-col items-center justify-center py-32"
+              className="flex flex-col items-center justify-center py-40"
             >
-              <p className="font-serif text-2xl text-white/40 tracking-wider mb-3">
+              <p className="font-serif text-3xl text-white/40 tracking-tight mb-4">
                 No gowns found
               </p>
-              <p className="font-sans text-sm text-white/20 mb-6">
-                Try adjusting your filters to discover more pieces.
+              <p className="font-sans text-sm text-white/20 mb-10 max-w-xs text-center leading-relaxed">
+                Try adjusting your search criteria to discover more available pieces.
               </p>
               <button
                 onClick={() => setFilters(DEFAULT_FILTERS)}
-                className="px-6 py-2.5 border border-white/15 font-sans text-xs uppercase tracking-[0.2em] text-white/40 hover:text-white/70 hover:border-white/30 transition-colors"
+                className="px-10 py-3.5 border border-white/10 rounded-full font-sans text-[10px] font-bold uppercase tracking-[0.3em] text-white/40 hover:text-white hover:border-white/30 transition-all hover:bg-white/5"
               >
                 Clear All Filters
               </button>

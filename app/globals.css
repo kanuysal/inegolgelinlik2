@@ -74,7 +74,7 @@ html {
 }
 
 body {
-  background-color: #050505;
+  background-color: #000000;
   color: #ffffff;
   overflow-x: hidden;
 }
@@ -85,27 +85,27 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #050505;
+  background: #000000;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(201, 169, 110, 0.2);
+  background: rgba(255, 179, 71, 0.2);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(201, 169, 110, 0.4);
+  background: rgba(255, 179, 71, 0.4);
 }
 
 /* Firefox */
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(201, 169, 110, 0.2) #050505;
+  scrollbar-color: rgba(255, 179, 71, 0.2) #000000;
 }
 
 /* ── Selection highlight ── */
 ::selection {
-  background-color: rgba(201, 169, 110, 0.15);
+  background-color: rgba(255, 179, 71, 0.15);
   color: #ffffff;
 }
 
@@ -115,12 +115,31 @@ canvas {
   image-rendering: crisp-edges;
 }
 
+/* ── Resonance Utilities ── */
+.resonance-glow {
+  filter: drop-shadow(0 0 15px rgba(255, 179, 71, 0.3));
+}
+
+.resonance-gradient {
+  background: linear-gradient(135deg, #ffb347 0%, #00d2ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.resonance-panel {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 40px;
+}
+
 /* ── Text shimmer for luxury headings ── */
 .text-shimmer {
   background: linear-gradient(
     90deg,
     rgba(255, 255, 255, 0.4) 0%,
-    rgba(201, 169, 110, 0.6) 50%,
+    rgba(255, 179, 71, 0.6) 50%,
     rgba(255, 255, 255, 0.4) 100%
   );
   background-size: 200% 100%;

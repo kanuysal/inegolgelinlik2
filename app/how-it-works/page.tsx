@@ -55,69 +55,50 @@ function HeartIcon() {
   );
 }
 
-/* ── Luxury Divider ── */
-function LuxuryDivider() {
-  return (
-    <div className="flex items-center justify-center gap-4 my-8">
-      <div className="h-[1px] w-16 bg-gradient-to-r from-transparent to-gold-muted/30" />
-      <div className="w-1.5 h-1.5 rounded-full bg-gold-muted/40" />
-      <div className="h-[1px] w-16 bg-gradient-to-l from-transparent to-gold-muted/30" />
-    </div>
-  );
-}
-
 /* ── Data ── */
-const BUYER_STEPS = [
+const BUYING_STEPS = [
   {
     num: "01",
-    title: "Discover",
-    desc: "Browse our curated collection of authenticated Galia Lahav gowns. Filter by collection, size, condition, and price.",
-    icon: "✦",
+    title: "Discover Couture",
+    desc: "Browse our curated collection of authenticated Galia Lahav gowns. Filter by collection, size, condition, and price to find your perfect piece.",
   },
   {
     num: "02",
-    title: "Inquire",
-    desc: "Request more details, additional photos, or measurements. Our team facilitates all communication between buyer and seller.",
-    icon: "💬",
+    title: "Expert Inquiry",
+    desc: "Request additional details, photos, or measurements. Our team facilitates all communication, ensuring clarity and total transparency.",
   },
   {
     num: "03",
-    title: "Purchase",
-    desc: "Secure your gown with our protected checkout. Your payment is held in escrow until you confirm receipt and satisfaction.",
-    icon: "🔒",
+    title: "Secure Purchase",
+    desc: "Transaction security is paramount. Your payment is held in escrow until you confirm the gown's arrival and absolute satisfaction.",
   },
   {
     num: "04",
-    title: "Receive",
-    desc: "Your gown arrives via insured white-glove shipping with full tracking. Inspect it within our 14-day protection window.",
-    icon: "📦",
+    title: "White-Glove Delivery",
+    desc: "Your couture arrives via insured courier with full tracking. A 14-day protection window allows you to inspect every detail at your leisure.",
   },
 ];
 
-const SELLER_STEPS = [
+const SELLING_STEPS = [
   {
     num: "01",
-    title: "Submit",
-    desc: "Tell us about your Galia Lahav gown — collection, condition, measurements, and photos. Takes under 5 minutes.",
-    icon: "📋",
+    title: "Submit Details",
+    desc: "Provide your gown's history, condition, and imagery. Our streamlined process is designed for discretion and ease of use.",
   },
   {
     num: "02",
-    title: "Authenticate",
-    desc: "Our GL experts verify your gown's authenticity and create a premium listing with professional photography guidance.",
-    icon: "✓",
+    title: "GL Verification",
+    desc: "The House authenticates every submission. Our experts verify craftsmanship and provenance to ensure marketplace integrity.",
   },
   {
     num: "03",
-    title: "Sell",
-    desc: "We handle all inquiries, negotiations, and payment processing. You approve every offer before it's accepted.",
-    icon: "💰",
+    title: "Global Showcase",
+    desc: "Your gown is presented to an exclusive global audience of high-intent brides, maximizing exposure and resale value.",
   },
   {
     num: "04",
-    title: "Ship & Get Paid",
-    desc: "We provide pre-paid insured shipping labels. Payment is released within 3 business days of buyer confirmation.",
-    icon: "🚚",
+    title: "Seamless Handover",
+    desc: "We provide insured logistics and manage secure payment processing. You receive payment promptly upon buyer confirmation.",
   },
 ];
 
@@ -125,37 +106,17 @@ const TRUST_FEATURES = [
   {
     icon: <VerifiedBadge size={24} />,
     title: "GL Authentication",
-    desc: "Every gown is verified as an authentic Galia Lahav creation by experts who know the House's craftsmanship.",
+    desc: "Every gown is verified by the House of Galia Lahav, ensuring the integrity of every stitch and silhouette.",
   },
   {
     icon: <ShieldIcon />,
-    title: "Buyer Protection",
-    desc: "Funds held in escrow until you confirm receipt. Full refund if the gown isn't as described.",
+    title: "Escrow Protection",
+    desc: "Funds are held securely and only released when the buyer is satisfied, protecting both parties.",
   },
   {
     icon: <TruckIcon />,
-    title: "Insured Shipping",
-    desc: "White-glove courier service with full insurance and tracking. Your gown arrives safely, guaranteed.",
-  },
-  {
-    icon: <CreditCardIcon />,
-    title: "Secure Payments",
-    desc: "Industry-standard encryption and secure payment processing. Your financial data is never shared.",
-  },
-  {
-    icon: <HeartIcon />,
-    title: "Dedicated Support",
-    desc: "Personal assistance from submission to delivery. Our team is with you every step of the way.",
-  },
-  {
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6">
-        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-        <polyline points="22,6 12,13 2,6" />
-      </svg>
-    ),
-    title: "14-Day Returns",
-    desc: "Not quite right? Return within 14 days of delivery in original condition. No questions asked.",
+    title: "White-Glove Logistics",
+    desc: "Insured, tracked, and handled with the care couture deserves. We manage the journey from door to door.",
   },
 ];
 
@@ -172,174 +133,123 @@ const FAQS = [
     q: "Can I try the gown before purchasing?",
     a: "Due to the nature of online resale, in-person try-ons are not available. However, our 14-day return policy gives you time to receive and inspect the gown. We recommend checking measurements carefully and communicating with sellers for additional details.",
   },
-  {
-    q: "How much can I save?",
-    a: "Most gowns on RE:GALIA are priced 30-70% below original retail. Since Galia Lahav gowns retail from $5,000 to over $20,000, that represents significant savings on authentic couture.",
-  },
-  {
-    q: "How long does shipping take?",
-    a: "Domestic shipping within the US typically takes 3-5 business days. International shipping takes 5-10 business days depending on destination and customs processing. All shipments are fully insured and tracked.",
-  },
-  {
-    q: "What if I want to sell my gown?",
-    a: "Simply visit our Sell page and submit your gown details. Our team will review it within 24-48 hours, help you set the right price, and create a professional listing. You only pay a commission when your gown sells — no upfront costs.",
-  },
 ];
 
 export default function HowItWorksPage() {
-  const [activeView, setActiveView] = useState<"buyer" | "seller">("buyer");
+  const [activeTab, setActiveTab] = useState<"buying" | "selling">("buying");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  const steps = activeView === "buyer" ? BUYER_STEPS : SELLER_STEPS;
-
   return (
-    <main className="min-h-screen bg-obsidian">
+    <main className="min-h-screen bg-obsidian text-white/90">
       <Navbar />
 
-      {/* ── Hero ── */}
-      <section className="pt-28 pb-20 px-6">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="font-sans text-[10px] uppercase tracking-[0.5em] text-gold-muted/50 mb-4"
-          >
-            The RE:GALIA Experience
-          </motion.p>
-          <motion.h1
+      {/* ── Hero section ── */}
+      <section className="pt-48 pb-24 px-6 md:px-10 overflow-hidden relative">
+        <div className="max-w-7xl mx-auto relative z-10 text-center">
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="font-display text-4xl md:text-6xl font-thin text-white/90 mb-6 tracking-wider leading-tight uppercase"
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           >
-            How It Works
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="font-sans text-sm text-white/35 max-w-xl mx-auto leading-relaxed"
-          >
-            The first marketplace dedicated exclusively to certified pre-owned
-            Galia Lahav couture. Whether buying or selling, we make every step
-            seamless.
-          </motion.p>
+            <p className="font-sans text-[10px] font-bold uppercase tracking-[0.5em] text-resonance-amber mb-6">
+              The RE:GALIA Journey
+            </p>
+            <h1 className="font-serif text-6xl md:text-8xl font-light tracking-tighter text-white/95 leading-none mb-10">
+              Seamlessly <br />
+              <span className="italic">Yours</span>
+            </h1>
+            <p className="font-sans text-xl text-white/30 tracking-wide max-w-xl mx-auto leading-relaxed mb-12">
+              Experience the pinnacle of pre-owned luxury bridal. A curated process designed for trust, authenticity, and the signature Galia Lahav experience.
+            </p>
+          </motion.div>
         </div>
       </section>
 
-      {/* ── Toggle: Buyer / Seller ── */}
-      <section className="px-6 pb-20">
-        <div className="max-w-5xl mx-auto">
-          <div className="flex justify-center mb-14">
-            <div className="inline-flex border border-white/10">
-              {(["buyer", "seller"] as const).map((view) => (
-                <button
-                  key={view}
-                  onClick={() => setActiveView(view)}
-                  className={`px-8 py-3 font-sans text-xs uppercase tracking-[0.25em] transition-all duration-300 ${
-                    activeView === view
-                      ? "bg-white text-obsidian"
-                      : "text-white/40 hover:text-white/70"
+      {/* ── Process Tabs ── */}
+      <section className="py-24 px-6 md:px-10">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex justify-center gap-12 mb-20 border-b border-white/5">
+            {["Buying", "Selling"].map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab.toLowerCase() as any)}
+                className={`pb-8 font-sans text-[11px] font-bold uppercase tracking-[0.4em] transition-all relative ${activeTab === tab.toLowerCase()
+                    ? "text-resonance-amber"
+                    : "text-white/20 hover:text-white/40"
                   }`}
-                >
-                  {view === "buyer" ? "I'm Buying" : "I'm Selling"}
-                </button>
-              ))}
-            </div>
+              >
+                {tab}
+                {activeTab === tab.toLowerCase() && (
+                  <motion.div
+                    layoutId="activeTabUnderline"
+                    className="absolute bottom-0 left-0 right-0 h-[2px] bg-resonance-amber shadow-[0_0_15px_rgba(245,158,11,0.5)]"
+                  />
+                )}
+              </button>
+            ))}
           </div>
 
-          {/* Steps */}
           <AnimatePresence mode="wait">
             <motion.div
-              key={activeView}
-              initial={{ opacity: 0, y: 20 }}
+              key={activeTab}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.4 }}
+              exit={{ opacity: 0, y: -30 }}
+              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+              className="grid md:grid-cols-4 gap-10"
             >
-              {/* Numbered steps */}
-              <div className="grid md:grid-cols-4 gap-10 mb-16">
-                {steps.map((step, i) => (
-                  <motion.div
-                    key={step.num}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.1 }}
-                    className="text-center"
-                  >
-                    <div className="w-16 h-16 rounded-full border border-white/10 flex items-center justify-center mx-auto mb-6 relative">
-                      <span className="font-display text-lg text-gold-muted/60 tracking-widest">
-                        {step.num}
-                      </span>
-                      {i < steps.length - 1 && (
-                        <div className="hidden md:block absolute left-full top-1/2 w-[calc(100%-4rem)] h-[1px] bg-gradient-to-r from-white/10 to-transparent -translate-y-1/2 ml-4" />
-                      )}
-                    </div>
-                    <h3 className="font-serif text-xl text-white/80 mb-3 tracking-wide">
-                      {step.title}
-                    </h3>
-                    <p className="font-sans text-xs text-white/30 leading-relaxed max-w-[200px] mx-auto">
-                      {step.desc}
-                    </p>
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* CTA */}
-              <div className="text-center">
-                <Link
-                  href={activeView === "buyer" ? "/shop" : "/sell"}
-                  className="group relative inline-flex items-center gap-3 px-10 py-3.5 bg-white text-obsidian font-sans text-sm uppercase tracking-[0.25em] overflow-hidden transition-all hover:shadow-[0_0_40px_rgba(201,169,110,0.15)]"
-                >
-                  <span className="relative z-10">
-                    {activeView === "buyer" ? "Browse Gowns" : "Start Consigning"}
-                  </span>
-                  <svg className="relative z-10 w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <line x1="5" y1="12" x2="19" y2="12" />
-                    <polyline points="12 5 19 12 12 19" />
-                  </svg>
-                  <div className="absolute inset-0 bg-champagne translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
-                </Link>
-              </div>
+              {(activeTab === "buying" ? BUYING_STEPS : SELLING_STEPS).map((step, i) => (
+                <div key={i} className="resonance-panel p-10 flex flex-col items-start min-h-[360px] relative overflow-hidden group">
+                  <div className="font-serif text-[80px] text-white/[0.03] leading-none absolute -top-4 -right-2 select-none group-hover:text-white/[0.05] transition-colors">
+                    {step.num}
+                  </div>
+                  <div className="w-10 h-10 rounded-full bg-white/[0.03] border border-white/10 flex items-center justify-center font-serif text-resonance-amber mb-8">
+                    {step.num}
+                  </div>
+                  <h3 className="font-serif text-2xl text-white/90 mb-6 tracking-tight leading-tight z-10">
+                    {step.title}
+                  </h3>
+                  <p className="font-sans text-[13px] text-white/30 leading-relaxed tracking-wide mt-auto z-10 group-hover:text-white/40 transition-colors">
+                    {step.desc}
+                  </p>
+                </div>
+              ))}
             </motion.div>
           </AnimatePresence>
+
+          <div className="text-center mt-20">
+            <Link
+              href={activeTab === "buying" ? "/shop" : "/sell"}
+              className="px-16 py-6 bg-white text-obsidian font-sans text-[11px] font-bold uppercase tracking-[0.4em] rounded-full hover:bg-resonance-amber transition-all duration-500 shadow-[0_0_50px_rgba(255,255,255,0.05)]"
+            >
+              {activeTab === "buying" ? "Explore Collection" : "Start Consigning"}
+            </Link>
+          </div>
         </div>
       </section>
 
-      {/* ── Trust & Authenticity ── */}
-      <section id="authenticity" className="py-20 px-6 border-y border-white/5">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-14">
-            <p className="font-sans text-[10px] uppercase tracking-[0.5em] text-gold-muted/50 mb-3">
-              The GL Standard
-            </p>
-            <h2 className="font-serif text-3xl md:text-5xl font-light text-white/90 tracking-wider">
-              Trust & Authenticity
-            </h2>
-            <LuxuryDivider />
-            <p className="font-sans text-sm text-white/30 max-w-lg mx-auto">
-              Every transaction on RE:GALIA is protected by our comprehensive
-              authentication and buyer protection program.
-            </p>
+      {/* ── Trust Section ── */}
+      <section className="py-40 bg-white/[0.01] border-y border-white/5 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-24">
+            <h2 className="font-serif text-5xl md:text-7xl font-light text-white/95 tracking-tight leading-none mb-6">Built on Trust</h2>
+            <p className="font-sans text-sm text-white/20 tracking-widest uppercase">The RE:GALIA Standard of Excellence</p>
           </div>
-
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-3 gap-10">
             {TRUST_FEATURES.map((feature, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.08 }}
-                className="border border-white/5 p-8 hover:border-white/10 transition-all duration-300 group"
+                transition={{ delay: i * 0.1 }}
+                className="resonance-panel p-12 text-center flex flex-col items-center"
               >
-                <span className="text-gold-muted/60 group-hover:text-gold-muted transition-colors">
+                <div className="text-resonance-amber mb-8 opacity-80 group-hover:opacity-100 transition-opacity">
                   {feature.icon}
-                </span>
-                <h3 className="font-serif text-lg text-white/80 mt-5 mb-3 tracking-wide">
-                  {feature.title}
-                </h3>
-                <p className="font-sans text-xs text-white/30 leading-relaxed">
+                </div>
+                <h3 className="font-serif text-2xl text-white/90 mb-4 tracking-tight">{feature.title}</h3>
+                <p className="font-sans text-[13px] text-white/30 leading-relaxed tracking-wide">
                   {feature.desc}
                 </p>
               </motion.div>
@@ -348,112 +258,24 @@ export default function HowItWorksPage() {
         </div>
       </section>
 
-      {/* ── Buyer Protection Detail ── */}
-      <section id="buyer-protection" className="py-20 px-6">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-14">
-            <p className="font-sans text-[10px] uppercase tracking-[0.5em] text-gold-muted/50 mb-3">
-              Peace of Mind
-            </p>
-            <h2 className="font-serif text-3xl md:text-5xl font-light text-white/90 tracking-wider">
-              Buyer Protection
-            </h2>
-            <LuxuryDivider />
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8">
-            {[
-              {
-                title: "Escrow Payment",
-                desc: "Your payment is held securely until you receive and approve your gown. Sellers only get paid after your confirmation.",
-              },
-              {
-                title: "14-Day Inspection",
-                desc: "From the moment your gown arrives, you have 14 days to inspect it. If it's not as described, return it for a full refund.",
-              },
-              {
-                title: "Authenticity Guarantee",
-                desc: "If your gown is found to not be an authentic Galia Lahav piece at any point, we provide a complete refund plus return shipping.",
-              },
-              {
-                title: "Insured Transit",
-                desc: "Every gown ships with comprehensive insurance. If anything happens during transit, you're fully covered.",
-              },
-            ].map((item, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, x: i % 2 === 0 ? -20 : 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="flex gap-5"
-              >
-                <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0 mt-1">
-                  <span className="font-sans text-[10px] text-gold-muted/60 tracking-widest">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                </div>
-                <div>
-                  <h3 className="font-serif text-lg text-white/80 mb-2">{item.title}</h3>
-                  <p className="font-sans text-xs text-white/30 leading-relaxed">{item.desc}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Stats ── */}
-      <section className="border-y border-white/5">
-        <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4">
-          {[
-            { val: "500+", label: "Gowns Sold" },
-            { val: "100%", label: "Authenticated" },
-            { val: "30–70%", label: "Below Retail" },
-            { val: "14 Days", label: "Return Window" },
-          ].map((stat, i) => (
-            <div
-              key={i}
-              className="py-10 px-6 text-center border-r border-white/5 last:border-r-0"
-            >
-              <div className="font-serif text-3xl md:text-4xl font-light text-white/80 mb-2">
-                {stat.val}
-              </div>
-              <div className="font-sans text-[9px] tracking-[0.3em] text-white/25 uppercase">
-                {stat.label}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── FAQ ── */}
-      <section className="py-20 px-6">
+      {/* ── FAQ Section ── */}
+      <section className="py-40 px-6">
         <div className="max-w-3xl mx-auto">
-          <div className="text-center mb-14">
-            <h2 className="font-serif text-3xl md:text-4xl font-light text-white/90 tracking-wider">
-              Frequently Asked Questions
-            </h2>
-            <LuxuryDivider />
+          <div className="text-center mb-20">
+            <h2 className="font-serif text-5xl font-light text-white/95 tracking-tight leading-none">Questions</h2>
           </div>
-
-          <div className="space-y-2">
+          <div className="space-y-4">
             {FAQS.map((faq, i) => (
-              <div
-                key={i}
-                className="border border-white/5 hover:border-white/10 transition-colors"
-              >
+              <div key={i} className="resonance-panel px-8 py-2">
                 <button
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  className="w-full flex items-center justify-between px-6 py-5 text-left"
+                  className="w-full flex items-center justify-between py-6 text-left group"
                 >
-                  <span className="font-sans text-sm text-white/60 pr-4">
-                    {faq.q}
-                  </span>
+                  <span className="font-sans text-[14px] text-white/50 group-hover:text-white/80 transition-colors tracking-wide">{faq.q}</span>
                   <motion.span
                     animate={{ rotate: openFaq === i ? 45 : 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="text-white/20 text-lg leading-none shrink-0"
+                    transition={{ duration: 0.3 }}
+                    className="text-white/20 text-xl font-light"
                   >
                     +
                   </motion.span>
@@ -464,10 +286,10 @@ export default function HowItWorksPage() {
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.25 }}
+                      transition={{ duration: 0.4, ease: "easeInOut" }}
                       className="overflow-hidden"
                     >
-                      <div className="px-6 pb-5 font-sans text-xs text-white/30 leading-relaxed">
+                      <div className="pb-8 font-sans text-[14px] text-white/25 leading-relaxed tracking-wide">
                         {faq.a}
                       </div>
                     </motion.div>
@@ -475,38 +297,6 @@ export default function HowItWorksPage() {
                 </AnimatePresence>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Final CTA ── */}
-      <section className="py-20 px-6 border-t border-white/5">
-        <div className="max-w-3xl mx-auto text-center">
-          <p className="font-sans text-[10px] uppercase tracking-[0.5em] text-gold-muted/40 mb-4">
-            Join the RE:GALIA Community
-          </p>
-          <h2 className="font-serif text-3xl md:text-5xl font-light text-white/90 mb-4 tracking-wider">
-            Ready to Begin?
-          </h2>
-          <LuxuryDivider />
-          <p className="font-sans text-sm text-white/25 mb-10 max-w-md mx-auto">
-            Whether you&apos;re looking for your dream gown or giving yours a
-            second chapter, we&apos;re here to help.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/shop"
-              className="group relative px-10 py-3.5 bg-white text-obsidian font-sans text-sm uppercase tracking-[0.25em] overflow-hidden transition-all inline-flex items-center justify-center gap-3"
-            >
-              <span className="relative z-10">Shop Gowns</span>
-              <div className="absolute inset-0 bg-champagne translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
-            </Link>
-            <Link
-              href="/sell"
-              className="px-10 py-3.5 border border-white/20 font-sans text-sm uppercase tracking-[0.25em] text-white/60 hover:text-white hover:border-white/40 transition-all duration-500 text-center"
-            >
-              Sell Your Gown
-            </Link>
           </div>
         </div>
       </section>

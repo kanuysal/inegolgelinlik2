@@ -48,6 +48,7 @@ export default function Navbar() {
   const [user, setUser] = useState<User | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isStaff, setIsStaff] = useState(false);
 
   const isHome = pathname === "/";
 
@@ -55,15 +56,30 @@ export default function Navbar() {
   useEffect(() => {
     const supabase = createClient();
 
+    const fetchUserAndRole = async (u: User | null) => {
+      setUser(u);
+      if (u) {
+        const { data: roles } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", u.id);
+
+        const staffRoles = (roles as any[])?.some(r => r.role === "admin" || r.role === "moderator");
+        setIsStaff(staffRoles ?? false);
+      } else {
+        setIsStaff(false);
+      }
+      setLoading(false);
+    };
+
     // Get initial session
     supabase.auth.getUser().then(({ data: { user } }) => {
-      setUser(user);
-      setLoading(false);
+      fetchUserAndRole(user);
     });
 
-    // Listen for auth changes (login, logout, token refresh)
+    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
+      fetchUserAndRole(session?.user ?? null);
     });
 
     return () => subscription.unsubscribe();
@@ -93,6 +109,7 @@ export default function Navbar() {
     const supabase = createClient();
     await supabase.auth.signOut();
     setUser(null);
+    setIsStaff(false);
     setDropdownOpen(false);
     router.push("/");
     router.refresh();
@@ -104,11 +121,9 @@ export default function Navbar() {
       ? user.email.charAt(0).toUpperCase()
       : "U";
 
-  const bgClass = isHome
-    ? scrolled
-      ? "bg-obsidian/80 backdrop-blur-md border-b border-white/5"
-      : "bg-transparent"
-    : "bg-obsidian/95 backdrop-blur-md border-b border-white/5";
+  const navClass = scrolled
+    ? "top-4 mx-auto max-w-[90%] rounded-full resonance-panel px-4"
+    : "top-0 w-full bg-transparent";
 
   return (
     <>
@@ -116,15 +131,14 @@ export default function Navbar() {
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        className={`fixed top-0 left-0 right-0 z-[60] transition-all duration-500 ${bgClass}`}
+        className={`fixed left-0 right-0 z-[60] transition-all duration-500 ${navClass}`}
       >
-        <div className="max-w-7xl mx-auto px-6 md:px-10 h-16 flex items-center justify-between">
+        <div className="mx-auto h-16 flex items-center justify-between px-6">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
-            <span className="font-serif text-xl tracking-[0.15em] text-white/90 group-hover:text-white transition-colors">
+            <span className="font-sans font-bold text-xl tracking-tight text-white transition-colors">
               RE:GALIA
             </span>
-            <VerifiedBadgeSmall />
           </Link>
 
           {/* Desktop links */}
@@ -133,11 +147,10 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`font-sans text-xs uppercase tracking-[0.25em] transition-colors duration-300 ${
-                  pathname === link.href
-                    ? "text-champagne"
-                    : "text-white/40 hover:text-white/70"
-                }`}
+                className={`font-sans text-[13px] font-medium transition-colors duration-300 ${pathname === link.href
+                  ? "text-resonance-amber"
+                  : "text-white/50 hover:text-white"
+                  }`}
               >
                 {link.label}
               </Link>
@@ -145,9 +158,21 @@ export default function Navbar() {
           </div>
 
           {/* Desktop right side */}
-          <div className="hidden md:flex items-center gap-5">
+          <div className="hidden md:flex items-center gap-6">
             {!loading && (
               <>
+                {isStaff && (
+                  <Link
+                    href="/admin"
+                    className="flex items-center gap-2 px-4 py-1.5 rounded-full resonance-panel border-resonance-amber/20 hover:border-resonance-amber/40 transition-all group"
+                  >
+                    <span className="w-2 h-2 rounded-full bg-resonance-amber animate-pulse" />
+                    <span className="font-sans text-[10px] font-bold uppercase tracking-[0.2em] text-resonance-amber/80 group-hover:text-resonance-amber">
+                      Console
+                    </span>
+                  </Link>
+                )}
+
                 {user ? (
                   /* Signed in — show account button */
                   <div className="relative">
@@ -162,10 +187,10 @@ export default function Navbar() {
                         <img
                           src={user.user_metadata.avatar_url}
                           alt="Avatar"
-                          className="w-8 h-8 rounded-full border border-white/10 group-hover:border-champagne/40 transition-colors"
+                          className="w-8 h-8 rounded-full border border-white/10 group-hover:border-resonance-amber/40 transition-colors"
                         />
                       ) : (
-                        <span className="w-8 h-8 rounded-full bg-champagne/20 border border-champagne/30 flex items-center justify-center text-champagne text-xs font-sans font-medium">
+                        <span className="w-8 h-8 rounded-full bg-resonance-amber/10 border border-resonance-amber/20 flex items-center justify-center text-resonance-amber text-xs font-sans font-medium">
                           {userInitial}
                         </span>
                       )}
@@ -233,7 +258,7 @@ export default function Navbar() {
             )}
             <Link
               href="/shop"
-              className="font-sans text-xs uppercase tracking-[0.2em] px-5 py-2 bg-white text-obsidian hover:bg-champagne transition-colors duration-300"
+              className="font-sans text-[13px] font-semibold px-6 py-2 bg-white text-black rounded-full hover:bg-resonance-amber transition-colors duration-300"
             >
               Browse
             </Link>
@@ -247,15 +272,15 @@ export default function Navbar() {
           >
             <motion.span
               animate={mobileOpen ? { rotate: 45, y: 6 } : { rotate: 0, y: 0 }}
-              className="block w-5 h-[1px] bg-white/60"
+              className="block w-5 h-[1.5px] bg-white"
             />
             <motion.span
               animate={mobileOpen ? { opacity: 0 } : { opacity: 1 }}
-              className="block w-5 h-[1px] bg-white/60"
+              className="block w-5 h-[1.5px] bg-white"
             />
             <motion.span
               animate={mobileOpen ? { rotate: -45, y: -6 } : { rotate: 0, y: 0 }}
-              className="block w-5 h-[1px] bg-white/60"
+              className="block w-5 h-[1.5px] bg-white"
             />
           </button>
         </div>
@@ -269,7 +294,7 @@ export default function Navbar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-[55] bg-obsidian/98 backdrop-blur-lg flex flex-col items-center justify-center gap-8"
+            className="fixed inset-0 z-[55] bg-black/98 backdrop-blur-xl flex flex-col items-center justify-center gap-10"
           >
             {NAV_LINKS.map((link, i) => (
               <motion.div
@@ -281,9 +306,8 @@ export default function Navbar() {
               >
                 <Link
                   href={link.href}
-                  className={`font-serif text-3xl tracking-wider ${
-                    pathname === link.href ? "text-champagne" : "text-white/70"
-                  }`}
+                  className={`font-sans text-4xl font-bold tracking-tight ${pathname === link.href ? "text-resonance-amber" : "text-white/80"
+                    }`}
                 >
                   {link.label}
                 </Link>
@@ -293,41 +317,49 @@ export default function Navbar() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
-              className="mt-8 flex flex-col items-center gap-4"
+              className="mt-8 flex flex-col items-center gap-6"
             >
               {!loading && (
                 <>
                   {user ? (
                     /* Signed in — mobile account links */
                     <>
-                      <div className="flex items-center gap-3 mb-2">
+                      <div className="flex items-center gap-4 mb-4">
                         {user.user_metadata?.avatar_url ? (
                           <img
                             src={user.user_metadata.avatar_url}
                             alt="Avatar"
-                            className="w-10 h-10 rounded-full border border-white/10"
+                            className="w-12 h-12 rounded-full border border-white/10"
                           />
                         ) : (
-                          <span className="w-10 h-10 rounded-full bg-champagne/20 border border-champagne/30 flex items-center justify-center text-champagne text-sm font-sans font-medium">
+                          <span className="w-12 h-12 rounded-full bg-resonance-amber/20 border border-resonance-amber/30 flex items-center justify-center text-resonance-amber text-lg font-bold">
                             {userInitial}
                           </span>
                         )}
                         <div>
-                          <p className="font-sans text-sm text-white/70">
+                          <p className="font-sans text-lg font-bold text-white">
                             {user.user_metadata?.full_name || "My Account"}
                           </p>
-                          <p className="font-sans text-xs text-white/30">{user.email}</p>
+                          <p className="font-sans text-sm text-white/40">{user.email}</p>
                         </div>
                       </div>
+                      {isStaff && (
+                        <Link
+                          href="/admin"
+                          className="font-sans text-lg font-semibold text-resonance-amber border border-resonance-amber/30 px-6 py-2 rounded-full mb-2"
+                        >
+                          Admin Console
+                        </Link>
+                      )}
                       <Link
                         href="/dashboard"
-                        className="font-sans text-sm uppercase tracking-[0.2em] text-champagne"
+                        className="font-sans text-lg font-semibold text-white/60 mb-2"
                       >
                         Dashboard
                       </Link>
                       <button
                         onClick={handleSignOut}
-                        className="font-sans text-sm uppercase tracking-[0.2em] text-white/30 hover:text-red-400 transition-colors"
+                        className="font-sans text-lg font-semibold text-white/30 hover:text-red-400 transition-colors"
                       >
                         Sign Out
                       </button>
@@ -335,7 +367,7 @@ export default function Navbar() {
                   ) : (
                     <Link
                       href="/auth/login"
-                      className="font-sans text-sm uppercase tracking-[0.2em] text-white/40"
+                      className="font-sans text-xl font-bold text-white/50"
                     >
                       Sign In
                     </Link>

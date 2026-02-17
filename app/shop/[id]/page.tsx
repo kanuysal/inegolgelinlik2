@@ -26,10 +26,10 @@ function fmt(amount: number): string {
 
 function conditionColor(c: Listing["condition"]) {
   const map = {
-    "New Never Worn": "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
-    Excellent: "bg-amber-500/15 text-amber-200 border-amber-500/25",
-    "Very Good": "bg-blue-500/15 text-blue-300 border-blue-500/25",
-    Good: "bg-white/10 text-white/50 border-white/15",
+    "New Never Worn": "bg-emerald-500/10 text-emerald-400/90 border-emerald-500/20",
+    Excellent: "bg-resonance-amber/10 text-resonance-amber border-resonance-amber/20",
+    "Very Good": "bg-resonance-blue/10 text-resonance-blue border-resonance-blue/20",
+    Good: "bg-white/5 text-white/40 border-white/10",
   };
   return map[c];
 }
@@ -95,16 +95,16 @@ function AccordionSection({
 }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="border-t border-white/10">
+    <div className="border-t border-white/5 py-1">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between py-4 text-left"
+        className="w-full flex items-center justify-between py-5 text-left group"
       >
-        <span className="font-sans text-xs uppercase tracking-[0.2em] text-white/70">{title}</span>
+        <span className="font-sans text-[10px] uppercase tracking-[0.3em] font-bold text-white/40 group-hover:text-white/70 transition-colors">{title}</span>
         <motion.span
           animate={{ rotate: open ? 45 : 0 }}
-          transition={{ duration: 0.2 }}
-          className="text-white/40 text-lg leading-none"
+          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          className="text-white/20 text-xl leading-none"
         >
           +
         </motion.span>
@@ -115,10 +115,10 @@ function AccordionSection({
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             className="overflow-hidden"
           >
-            <div className="pb-5">{children}</div>
+            <div className="pb-8">{children}</div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -204,20 +204,20 @@ export default function ProductDetailPage() {
       <Navbar />
 
       {/* Breadcrumb */}
-      <div className="max-w-7xl mx-auto px-5 pt-24 pb-4">
+      <div className="max-w-7xl mx-auto px-5 pt-32 pb-4">
         <div className="flex items-center gap-3">
           <button
             onClick={() => router.back()}
-            className="flex items-center gap-1.5 text-white/40 hover:text-white/70 transition-colors"
+            className="flex items-center justify-center w-8 h-8 rounded-full border border-white/10 text-white/30 hover:text-white hover:border-white/30 transition-all"
           >
             <ChevronLeft />
           </button>
-          <nav className="font-sans text-[11px] uppercase tracking-[0.2em] text-white/30">
-            <Link href="/" className="hover:text-white/60 transition-colors">Home</Link>
-            <span className="mx-2">/</span>
-            <Link href="/shop" className="hover:text-white/60 transition-colors">Shop</Link>
-            <span className="mx-2">/</span>
-            <span className="text-white/60">{listing.title}</span>
+          <nav className="font-sans text-[9px] font-bold uppercase tracking-[0.3em] text-white/20">
+            <Link href="/" className="hover:text-white/50 transition-colors">Home</Link>
+            <span className="mx-2 opacity-50">•</span>
+            <Link href="/shop" className="hover:text-white/50 transition-colors">Shop</Link>
+            <span className="mx-2 opacity-50">•</span>
+            <span className="text-white/40">{listing.title}</span>
           </nav>
         </div>
       </div>
@@ -246,11 +246,11 @@ export default function ProductDetailPage() {
 
               {/* Verified overlay */}
               {listing.verified && (
-                <div className="absolute bottom-4 left-4 flex items-center gap-2 bg-obsidian/60 backdrop-blur-sm px-3 py-2 border border-white/10">
-                  <span className="text-gold-muted">
-                    <VerifiedBadge size={18} />
+                <div className="absolute bottom-6 left-6 flex items-center gap-3 backdrop-blur-xl bg-white/[0.03] px-4 py-2.5 border border-white/10 rounded-full">
+                  <span className="text-resonance-amber">
+                    <VerifiedBadge size={16} />
                   </span>
-                  <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-white/70">
+                  <span className="font-sans text-[9px] font-bold uppercase tracking-[0.3em] text-white/60">
                     Galia Lahav Verified
                   </span>
                 </div>
@@ -258,16 +258,15 @@ export default function ProductDetailPage() {
             </motion.div>
 
             {/* Thumbnail Strip */}
-            <div className="flex gap-2">
+            <div className="flex gap-3 pt-2">
               {images.map((img, i) => (
                 <button
                   key={i}
                   onClick={() => setActiveImage(i)}
-                  className={`relative w-20 h-28 overflow-hidden border-2 transition-all duration-300 ${
-                    activeImage === i
-                      ? "border-champagne/60"
-                      : "border-transparent opacity-50 hover:opacity-80"
-                  }`}
+                  className={`relative w-20 h-28 overflow-hidden rounded-sm border transition-all duration-500 ${activeImage === i
+                      ? "border-resonance-amber/50 scale-[1.02]"
+                      : "border-transparent opacity-40 hover:opacity-70"
+                    }`}
                 >
                   <Image src={img} alt={`View ${i + 1}`} fill className="object-cover" sizes="80px" />
                 </button>
@@ -278,29 +277,29 @@ export default function ProductDetailPage() {
           {/* ──── Right: Product Details ──── */}
           <div className="lg:pt-2">
             {/* Collection */}
-            <p className="font-sans text-[10px] uppercase tracking-[0.35em] text-gold-muted/60 mb-2">
+            <p className="font-sans text-[9px] font-bold uppercase tracking-[0.4em] text-white/30 mb-3">
               {listing.collection}
             </p>
 
             {/* Title */}
-            <h1 className="font-serif text-4xl lg:text-5xl tracking-wide text-white/95 leading-tight">
+            <h1 className="font-serif text-5xl lg:text-7xl tracking-tighter text-white/95 leading-[0.9] mb-4">
               {listing.title}
             </h1>
 
             {/* Designer */}
-            <p className="font-sans text-sm text-white/40 mt-2 tracking-wider">
-              by {listing.designer}
+            <p className="font-sans text-sm text-white/40 tracking-wider mb-8">
+              by <span className="text-white/60 font-medium">{listing.designer}</span>
             </p>
 
             {/* Price Block */}
-            <div className="mt-6 flex items-baseline gap-4">
-              <span className="font-sans text-3xl font-medium text-white tracking-wide">
+            <div className="mt-8 flex items-baseline gap-5">
+              <span className="font-sans text-4xl font-medium text-white tracking-tighter">
                 {fmt(listing.salePrice)}
               </span>
-              <span className="font-sans text-base text-white/25 line-through">
+              <span className="font-sans text-lg text-white/20 line-through">
                 {fmt(listing.originalPrice)}
               </span>
-              <span className="font-sans text-sm text-emerald-400/80 font-medium">
+              <span className="font-sans text-sm font-bold text-resonance-amber/80 tracking-widest uppercase">
                 Save {savePercent}%
               </span>
             </div>
@@ -311,21 +310,21 @@ export default function ProductDetailPage() {
             </p>
 
             {/* Condition Badge */}
-            <div className="mt-6">
+            <div className="mt-8">
               <div
-                className={`inline-flex items-center gap-2 px-3 py-1.5 border text-xs uppercase tracking-wider font-sans ${conditionColor(
+                className={`inline-flex items-center gap-2 px-4 py-2 border rounded-full text-[10px] font-bold uppercase tracking-[0.2em] font-sans backdrop-blur-sm ${conditionColor(
                   listing.condition
                 )}`}
               >
                 {listing.condition}
               </div>
-              <p className="font-sans text-xs text-white/30 mt-2 leading-relaxed max-w-md">
+              <p className="font-sans text-xs text-white/30 mt-3 leading-relaxed max-w-sm">
                 {conditionDescription(listing.condition)}
               </p>
             </div>
 
             {/* Quick Attributes */}
-            <div className="mt-8 grid grid-cols-2 gap-x-8 gap-y-3">
+            <div className="mt-12 grid grid-cols-2 gap-x-12 gap-y-6">
               {[
                 ["Size", listing.size],
                 ["Silhouette", listing.silhouette],
@@ -334,51 +333,50 @@ export default function ProductDetailPage() {
                 ["Color", listing.color],
                 ["Location", listing.sellerLocation],
               ].map(([label, value]) => (
-                <div key={label} className="flex justify-between border-b border-white/5 pb-2">
-                  <span className="font-sans text-[11px] uppercase tracking-wider text-white/30">
+                <div key={label} className="border-b border-white/5 pb-3">
+                  <span className="font-sans text-[9px] font-bold uppercase tracking-[0.3em] text-white/20 block mb-1">
                     {label}
                   </span>
-                  <span className="font-sans text-sm text-white/70">{value}</span>
+                  <span className="font-sans text-[15px] font-medium text-white/80">{value}</span>
                 </div>
               ))}
             </div>
 
             {/* CTA Buttons */}
-            <div className="mt-10 space-y-3">
-              <button className="w-full py-4 bg-white text-obsidian font-sans text-sm uppercase tracking-[0.25em] hover:bg-champagne transition-colors duration-300 group relative overflow-hidden">
-                <span className="relative z-10">Inquire About This Gown</span>
+            <div className="mt-14 space-y-4">
+              <button className="w-full py-5 bg-white text-obsidian font-sans text-xs font-bold uppercase tracking-[0.3em] rounded-full hover:bg-resonance-amber transition-all duration-500 shadow-[0_0_50px_rgba(255,255,255,0.05)]">
+                Inquire About This Gown
               </button>
 
-              <div className="flex gap-3">
-                <button className="flex-1 py-3.5 border border-white/15 font-sans text-xs uppercase tracking-[0.2em] text-white/50 hover:text-white hover:border-white/30 transition-all duration-300">
+              <div className="flex gap-4">
+                <button className="flex-[2] py-4 border border-white/10 rounded-full font-sans text-[10px] font-bold uppercase tracking-[0.25em] text-white/40 hover:text-white hover:border-white/30 hover:bg-white/5 transition-all duration-500">
                   Make an Offer
                 </button>
                 <button
                   onClick={() => setSaved(!saved)}
-                  className={`px-4 py-3.5 border transition-all duration-300 ${
-                    saved
-                      ? "border-rose-400/30 text-rose-400"
-                      : "border-white/15 text-white/40 hover:text-white hover:border-white/30"
-                  }`}
+                  className={`w-14 items-center justify-center flex border rounded-full transition-all duration-500 ${saved
+                      ? "border-resonance-amber/40 text-resonance-amber bg-resonance-amber/5"
+                      : "border-white/10 text-white/40 hover:text-white hover:border-white/30 hover:bg-white/5"
+                    }`}
                 >
                   <HeartIcon filled={saved} />
                 </button>
-                <button className="px-4 py-3.5 border border-white/15 text-white/40 hover:text-white hover:border-white/30 transition-all duration-300">
+                <button className="w-14 items-center justify-center flex border border-white/10 rounded-full text-white/40 hover:text-white hover:border-white/30 hover:bg-white/5 transition-all duration-500">
                   <ShareIcon />
                 </button>
               </div>
             </div>
 
             {/* Trust Signals */}
-            <div className="mt-8 py-4 border-y border-white/10 grid grid-cols-3 gap-4 text-center">
+            <div className="mt-12 py-8 border-y border-white/5 grid grid-cols-3 gap-8 text-center bg-white/[0.01] rounded-3xl">
               {[
-                ["🔒", "Secure\nTransaction"],
-                ["✓", "GL\nAuthenticated"],
-                ["↩", "14-Day\nReturns"],
+                ["🔒", "Secure\nPayment"],
+                ["✨", "GL\nAuthenticated"],
+                ["🌊", "Buyer\nProtection"],
               ].map(([icon, label]) => (
                 <div key={label}>
-                  <span className="text-lg">{icon}</span>
-                  <p className="font-sans text-[9px] uppercase tracking-wider text-white/30 mt-1 whitespace-pre-line leading-relaxed">
+                  <span className="text-xl mb-3 block">{icon}</span>
+                  <p className="font-sans text-[8px] font-bold uppercase tracking-[0.3em] text-white/30 mt-2 whitespace-pre-line leading-[1.6]">
                     {label}
                   </p>
                 </div>

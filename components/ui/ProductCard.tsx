@@ -43,13 +43,13 @@ function formatPrice(amount: number): string {
 function getConditionColor(condition: Listing["condition"]): string {
   switch (condition) {
     case "New Never Worn":
-      return "bg-emerald-500/20 text-emerald-300 border-emerald-500/20";
+      return "bg-emerald-500/10 text-emerald-400/90 border-emerald-500/20";
     case "Excellent":
-      return "bg-amber-500/15 text-amber-200 border-amber-500/15";
+      return "bg-resonance-amber/10 text-resonance-amber border-resonance-amber/20";
     case "Very Good":
-      return "bg-blue-500/15 text-blue-300 border-blue-500/15";
+      return "bg-resonance-blue/10 text-resonance-blue border-resonance-blue/20";
     case "Good":
-      return "bg-white/10 text-white/50 border-white/10";
+      return "bg-white/5 text-white/40 border-white/10";
   }
 }
 
@@ -68,120 +68,119 @@ export default function ProductCard({ listing, index = 0 }: ProductCardProps) {
 
   return (
     <Link href={`/shop/${listing.id}`}>
-    <motion.article
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: index * 0.06, ease: [0.22, 1, 0.36, 1] }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className="group relative cursor-pointer"
-    >
-      {/* Image container */}
-      <div className="relative aspect-[2/3] overflow-hidden bg-white/5">
-        {/* Main image */}
-        <motion.img
-          src={listing.imageUrl}
-          alt={`${listing.title} by ${listing.designer}`}
-          className="absolute inset-0 w-full h-full object-cover"
-          animate={{ scale: isHovered ? 1.05 : 1 }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        />
+      <motion.article
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: index * 0.06, ease: [0.22, 1, 0.36, 1] }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        className="group relative cursor-pointer"
+      >
+        {/* Image container */}
+        <div className="relative aspect-[2/3] overflow-hidden bg-white/5">
+          {/* Main image */}
+          <motion.img
+            src={listing.imageUrl}
+            alt={`${listing.title} by ${listing.designer}`}
+            className="absolute inset-0 w-full h-full object-cover"
+            animate={{ scale: isHovered ? 1.05 : 1 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          />
 
-        {/* Hover overlay */}
-        <motion.div
-          className="absolute inset-0 bg-gradient-to-t from-obsidian/60 via-transparent to-transparent"
-          animate={{ opacity: isHovered ? 1 : 0.3 }}
-          transition={{ duration: 0.3 }}
-        />
+          {/* Hover overlay */}
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-t from-obsidian/60 via-transparent to-transparent"
+            animate={{ opacity: isHovered ? 1 : 0.3 }}
+            transition={{ duration: 0.3 }}
+          />
 
-        {/* Top badges row */}
-        <div className="absolute top-3 left-3 right-3 flex items-start justify-between z-10">
-          {/* Condition badge */}
-          <span
-            className={`px-2.5 py-1 text-[10px] uppercase tracking-wider font-sans border ${getConditionColor(
-              listing.condition
-            )}`}
-          >
-            {listing.condition}
-          </span>
+          {/* Top badges row */}
+          <div className="absolute top-3 left-3 right-3 flex items-start justify-between z-10">
+            {/* Condition badge */}
+            <span
+              className={`px-3 py-1 text-[9px] uppercase tracking-[0.15em] font-sans font-bold border rounded-full backdrop-blur-md ${getConditionColor(
+                listing.condition
+              )}`}
+            >
+              {listing.condition}
+            </span>
 
-          {/* Save % badge */}
-          <span className="px-2.5 py-1 bg-white text-obsidian text-[10px] uppercase tracking-wider font-sans font-medium">
-            Save {savePercent}%
-          </span>
-        </div>
-
-        {/* Heart / save button */}
-        <motion.button
-          onClick={(e) => {
-            e.stopPropagation();
-            setSaved(!saved);
-          }}
-          className={`absolute top-3 right-3 z-20 p-2 transition-colors ${
-            saved ? "text-rose-400" : "text-white/60 hover:text-white"
-          }`}
-          style={{ display: "none" }} /* hidden — save badge takes its spot */
-          whileTap={{ scale: 0.85 }}
-        >
-          <HeartIcon filled={saved} />
-        </motion.button>
-
-        {/* Verified badge (bottom-left on image) */}
-        {listing.verified && (
-          <div className="absolute bottom-3 left-3 flex items-center gap-1.5 z-10">
-            <VerifiedBadge />
-            <span className="font-sans text-[9px] uppercase tracking-[0.2em] text-white/60">
-              GL Verified
+            {/* Save % badge */}
+            <span className="px-3 py-1 bg-white text-obsidian text-[9px] uppercase tracking-[0.15em] font-sans font-bold rounded-full">
+              Save {savePercent}%
             </span>
           </div>
-        )}
 
-        {/* Quick view on hover */}
-        <motion.div
-          className="absolute bottom-3 right-3 z-10"
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: isHovered ? 1 : 0, y: isHovered ? 0 : 8 }}
-          transition={{ duration: 0.25 }}
-        >
-          <button className="px-4 py-2 bg-white/90 backdrop-blur-sm text-obsidian font-sans text-[10px] uppercase tracking-[0.2em] hover:bg-white transition-colors">
-            Quick View
-          </button>
-        </motion.div>
-      </div>
+          {/* Heart / save button */}
+          <motion.button
+            onClick={(e) => {
+              e.stopPropagation();
+              setSaved(!saved);
+            }}
+            className={`absolute top-3 right-3 z-20 p-2 transition-colors ${saved ? "text-rose-400" : "text-white/60 hover:text-white"
+              }`}
+            style={{ display: "none" }} /* hidden — save badge takes its spot */
+            whileTap={{ scale: 0.85 }}
+          >
+            <HeartIcon filled={saved} />
+          </motion.button>
 
-      {/* Card info */}
-      <div className="pt-4 pb-2">
-        {/* Collection */}
-        <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-gold-muted/60 mb-1">
-          {listing.collection}
-        </p>
+          {/* Verified badge (bottom-left on image) */}
+          {listing.verified && (
+            <div className="absolute bottom-3 left-3 flex items-center gap-1.5 z-10">
+              <VerifiedBadge />
+              <span className="font-sans text-[9px] uppercase tracking-[0.2em] text-white/60">
+                GL Verified
+              </span>
+            </div>
+          )}
 
-        {/* Title */}
-        <h3 className="font-serif text-lg tracking-wide text-white/90 group-hover:text-champagne transition-colors duration-300">
-          {listing.title}
-        </h3>
-
-        {/* Attributes row */}
-        <p className="font-sans text-[11px] text-white/30 mt-1 tracking-wide">
-          Size {listing.size} &middot; {listing.silhouette} &middot; {listing.fabric}
-        </p>
-
-        {/* Price row */}
-        <div className="flex items-baseline gap-2.5 mt-2.5">
-          <span className="font-sans text-base font-medium text-white/90 tracking-wide">
-            {formatPrice(listing.salePrice)}
-          </span>
-          <span className="font-sans text-xs text-white/25 line-through">
-            {formatPrice(listing.originalPrice)}
-          </span>
+          {/* Quick view on hover */}
+          <motion.div
+            className="absolute bottom-4 right-4 z-10"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: isHovered ? 1 : 0, y: isHovered ? 0 : 10 }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <button className="px-5 py-2.5 bg-white text-obsidian font-sans text-[10px] font-bold uppercase tracking-[0.25em] rounded-full hover:bg-resonance-amber transition-colors shadow-2xl">
+              Quick View
+            </button>
+          </motion.div>
         </div>
 
-        {/* Financing hint */}
-        <p className="font-sans text-[10px] text-white/20 mt-1">
-          As low as {formatPrice(Math.round(listing.salePrice / 12))}/mo with Affirm
-        </p>
-      </div>
-    </motion.article>
+        {/* Card info */}
+        <div className="pt-5 pb-2">
+          {/* Collection */}
+          <p className="font-sans text-[9px] uppercase tracking-[0.4em] text-white/30 mb-1.5">
+            {listing.collection}
+          </p>
+
+          {/* Title */}
+          <h3 className="font-serif text-xl tracking-wide text-white/90 group-hover:text-resonance-amber transition-colors duration-500">
+            {listing.title}
+          </h3>
+
+          {/* Attributes row */}
+          <p className="font-sans text-[11px] text-white/40 mt-1.5 tracking-wide">
+            Size {listing.size} &middot; {listing.silhouette} &middot; {listing.fabric}
+          </p>
+
+          {/* Price row */}
+          <div className="flex items-baseline gap-3 mt-3">
+            <span className="font-sans text-lg font-medium text-white/95 tracking-tight">
+              {formatPrice(listing.salePrice)}
+            </span>
+            <span className="font-sans text-[13px] text-white/20 line-through">
+              {formatPrice(listing.originalPrice)}
+            </span>
+          </div>
+
+          {/* Financing hint */}
+          <p className="font-sans text-[10px] text-white/10 mt-1.5">
+            As low as {formatPrice(Math.round(listing.salePrice / 12))}/mo with Affirm
+          </p>
+        </div>
+      </motion.article>
     </Link>
   );
 }
