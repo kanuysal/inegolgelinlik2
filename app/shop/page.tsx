@@ -7,6 +7,7 @@ import FilterBar, { ActiveFilters, DEFAULT_FILTERS } from "@/components/ui/Filte
 import ProductCard from "@/components/ui/ProductCard";
 import { mockListings, type Listing } from "@/lib/mock-listings";
 import { getApprovedListings } from "./actions";
+import Footer from "@/components/ui/Footer";
 
 /**
  * Convert a Supabase listing row into the Listing shape
@@ -204,31 +205,7 @@ export default function ShopPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-white/5 bg-obsidian py-12 px-6 md:px-10">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="text-center md:text-left">
-            <h3 className="font-serif text-xl tracking-wider text-white/60">RE:GALIA</h3>
-            <p className="font-sans text-[10px] text-white/20 mt-1 tracking-wider">
-              The Official Pre-Owned Marketplace by Galia Lahav
-            </p>
-          </div>
-          <div className="flex items-center gap-6">
-            {["About", "How It Works", "Authenticity", "Contact"].map((link) => (
-              <a
-                key={link}
-                href="#"
-                className="font-sans text-[10px] text-white/25 hover:text-white/50 transition-colors tracking-wider uppercase"
-              >
-                {link}
-              </a>
-            ))}
-          </div>
-          <p className="font-sans text-[9px] text-white/10 tracking-wider">
-            &copy; {new Date().getFullYear()} Galia Lahav. All rights reserved.
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </main>
   );
 }

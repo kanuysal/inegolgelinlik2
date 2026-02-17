@@ -12,6 +12,7 @@ import Image from "next/image";
 import { mockListings, type Listing } from "@/lib/mock-listings";
 import { getListingById } from "../actions";
 import Navbar from "@/components/ui/Navbar";
+import Footer from "@/components/ui/Footer";
 
 /* ── Helpers ────────────────────────────────────── */
 
@@ -498,6 +499,7 @@ export default function ProductDetailPage() {
           </section>
         )}
       </div>
+      <Footer />
     </div>
   );
 }

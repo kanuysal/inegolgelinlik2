@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/ui/Navbar";
+import Footer from "@/components/ui/Footer";
 
 /* ── Icons (consistent with rest of site) ── */
 function VerifiedBadge({ size = 16 }: { size?: number }) {
@@ -512,27 +513,7 @@ export default function SellPage() {
         </>
       )}
 
-      {/* ── Footer (matches shop page) ── */}
-      <footer className="border-t border-white/5 bg-obsidian py-12 px-6 md:px-10">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="text-center md:text-left">
-            <h3 className="font-serif text-xl tracking-wider text-white/60">RE:GALIA</h3>
-            <p className="font-sans text-[10px] text-white/20 mt-1 tracking-wider">
-              The Official Pre-Owned Marketplace by Galia Lahav
-            </p>
-          </div>
-          <div className="flex items-center gap-6">
-            {["About", "How It Works", "Authenticity", "Contact"].map((link) => (
-              <a key={link} href="#" className="font-sans text-[10px] text-white/25 hover:text-white/50 transition-colors tracking-wider uppercase">
-                {link}
-              </a>
-            ))}
-          </div>
-          <p className="font-sans text-[9px] text-white/10 tracking-wider">
-            &copy; {new Date().getFullYear()} Galia Lahav. All rights reserved.
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </main>
   );
 }
