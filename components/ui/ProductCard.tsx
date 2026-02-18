@@ -43,13 +43,13 @@ function formatPrice(amount: number): string {
 function getConditionColor(condition: Listing["condition"]): string {
   switch (condition) {
     case "New Never Worn":
-      return "bg-emerald-500/10 text-emerald-400/90 border-emerald-500/20";
+      return "bg-emerald-500/10 text-emerald-600/90 border-emerald-500/20";
     case "Excellent":
-      return "bg-resonance-amber/10 text-resonance-amber border-resonance-amber/20";
+      return "bg-gold-muted/10 text-gold-muted border-gold-muted/20";
     case "Very Good":
-      return "bg-resonance-blue/10 text-resonance-blue border-resonance-blue/20";
+      return "bg-blue-500/10 text-blue-600 border-blue-500/20";
     case "Good":
-      return "bg-white/5 text-white/40 border-white/10";
+      return "bg-obsidian/5 text-obsidian/40 border-obsidian/10";
   }
 }
 
@@ -77,7 +77,7 @@ export default function ProductCard({ listing, index = 0 }: ProductCardProps) {
         className="group relative cursor-pointer"
       >
         {/* Image container */}
-        <div className="relative aspect-[2/3] overflow-hidden bg-white/5">
+        <div className="relative aspect-[2/3] overflow-hidden bg-obsidian/[0.03] rounded-2xl">
           {/* Main image */}
           <motion.img
             src={listing.imageUrl}
@@ -89,13 +89,13 @@ export default function ProductCard({ listing, index = 0 }: ProductCardProps) {
 
           {/* Hover overlay */}
           <motion.div
-            className="absolute inset-0 bg-gradient-to-t from-obsidian/60 via-transparent to-transparent"
-            animate={{ opacity: isHovered ? 1 : 0.3 }}
+            className="absolute inset-0 bg-gradient-to-t from-obsidian/40 via-transparent to-transparent"
+            animate={{ opacity: isHovered ? 1 : 0.2 }}
             transition={{ duration: 0.3 }}
           />
 
           {/* Top badges row */}
-          <div className="absolute top-3 left-3 right-3 flex items-start justify-between z-10">
+          <div className="absolute top-4 left-4 right-4 flex items-start justify-between z-10">
             {/* Condition badge */}
             <span
               className={`px-3 py-1 text-[9px] uppercase tracking-[0.15em] font-sans font-bold border rounded-full backdrop-blur-md ${getConditionColor(
@@ -106,30 +106,16 @@ export default function ProductCard({ listing, index = 0 }: ProductCardProps) {
             </span>
 
             {/* Save % badge */}
-            <span className="px-3 py-1 bg-white text-obsidian text-[9px] uppercase tracking-[0.15em] font-sans font-bold rounded-full">
+            <span className="px-3 py-1 bg-[#C5A059] text-white text-[9px] uppercase tracking-[0.15em] font-sans font-bold rounded-full shadow-[0_4px_15px_rgba(197,160,89,0.3)]">
               Save {savePercent}%
             </span>
           </div>
 
-          {/* Heart / save button */}
-          <motion.button
-            onClick={(e) => {
-              e.stopPropagation();
-              setSaved(!saved);
-            }}
-            className={`absolute top-3 right-3 z-20 p-2 transition-colors ${saved ? "text-rose-400" : "text-white/60 hover:text-white"
-              }`}
-            style={{ display: "none" }} /* hidden — save badge takes its spot */
-            whileTap={{ scale: 0.85 }}
-          >
-            <HeartIcon filled={saved} />
-          </motion.button>
-
           {/* Verified badge (bottom-left on image) */}
           {listing.verified && (
-            <div className="absolute bottom-3 left-3 flex items-center gap-1.5 z-10">
+            <div className="absolute bottom-4 left-4 flex items-center gap-1.5 z-10">
               <VerifiedBadge />
-              <span className="font-sans text-[9px] uppercase tracking-[0.2em] text-white/60">
+              <span className="font-sans text-[9px] uppercase tracking-[0.2em] text-white/90">
                 GL Verified
               </span>
             </div>
@@ -137,46 +123,46 @@ export default function ProductCard({ listing, index = 0 }: ProductCardProps) {
 
           {/* Quick view on hover */}
           <motion.div
-            className="absolute bottom-4 right-4 z-10"
+            className="absolute bottom-6 right-6 z-10"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: isHovered ? 1 : 0, y: isHovered ? 0 : 10 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
           >
-            <button className="px-5 py-2.5 bg-white text-obsidian font-sans text-[10px] font-bold uppercase tracking-[0.25em] rounded-full hover:bg-resonance-amber transition-colors shadow-2xl">
+            <button className="px-6 py-3 bg-[#C5A059] text-white font-sans text-[10px] font-bold uppercase tracking-[0.25em] rounded-full hover:bg-[#B38E48] transition-all shadow-2xl scale-110">
               Quick View
             </button>
           </motion.div>
         </div>
 
         {/* Card info */}
-        <div className="pt-5 pb-2">
+        <div className="pt-6 pb-2">
           {/* Collection */}
-          <p className="font-sans text-[9px] uppercase tracking-[0.4em] text-white/30 mb-1.5">
+          <p className="font-sans text-[9px] uppercase tracking-[0.4em] text-obsidian/30 mb-2 font-bold">
             {listing.collection}
           </p>
 
           {/* Title */}
-          <h3 className="font-serif text-xl tracking-wide text-white/90 group-hover:text-resonance-amber transition-colors duration-500">
+          <h3 className="font-serif text-2xl tracking-tight text-obsidian group-hover:text-[#C5A059] transition-colors duration-500">
             {listing.title}
           </h3>
 
           {/* Attributes row */}
-          <p className="font-sans text-[11px] text-white/40 mt-1.5 tracking-wide">
+          <p className="font-sans text-[11px] text-obsidian/40 mt-2 tracking-wide font-medium">
             Size {listing.size} &middot; {listing.silhouette} &middot; {listing.fabric}
           </p>
 
           {/* Price row */}
-          <div className="flex items-baseline gap-3 mt-3">
-            <span className="font-sans text-lg font-medium text-white/95 tracking-tight">
+          <div className="flex items-baseline gap-3 mt-4">
+            <span className="font-sans text-xl font-bold text-obsidian tracking-tight">
               {formatPrice(listing.salePrice)}
             </span>
-            <span className="font-sans text-[13px] text-white/20 line-through">
+            <span className="font-sans text-[14px] text-obsidian/20 line-through">
               {formatPrice(listing.originalPrice)}
             </span>
           </div>
 
           {/* Financing hint */}
-          <p className="font-sans text-[10px] text-white/10 mt-1.5">
+          <p className="font-sans text-[10px] text-obsidian/20 mt-2">
             As low as {formatPrice(Math.round(listing.salePrice / 12))}/mo with Affirm
           </p>
         </div>

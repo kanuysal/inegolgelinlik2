@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import Navbar from '@/components/ui/Navbar'
-import { searchProducts, submitListing, uploadListingImage, removeListingImage } from './actions'
+import { searchProducts, submitListing, uploadListingImage, removeListingImage, getCatalogGowns, getSizeDimensions } from './actions'
 
 /* ── Types ── */
 type Product = {
@@ -115,7 +115,17 @@ const TRAIN_STYLES = [
   { value: 'royal', label: 'Royal' },
 ]
 
-const SIZES = ['0', '2', '4', '6', '8', '10', '12', '14', '16', '18', '20', 'Custom']
+const SIZES = [
+  'US 0 (EU 32)',
+  'US 2 (EU 34)',
+  'US 4 (EU 36)',
+  'US 6 (EU 38)',
+  'US 8 (EU 40)',
+  'US 10 (EU 42)',
+  'US 12 (EU 44)',
+  'US 14 (EU 46)',
+  'Custom'
+]
 
 /* ── Icons ── */
 function CheckIcon() {
@@ -152,17 +162,18 @@ function SearchIcon() {
   )
 }
 
-/* ── Shared Input Style ── */
+/* ── Shared Input Style (Light Mode) ── */
 const inputClass =
-  'w-full px-4 py-3 border border-white/10 bg-white/[0.03] text-white/80 placeholder:text-white/15 font-sans text-sm focus:outline-none focus:border-gold-muted/40 transition-colors'
-const labelClass = 'block font-sans text-xs text-white/40 mb-2 tracking-wider'
+  'w-full px-4 py-3 border border-obsidian/10 bg-white text-obsidian placeholder:text-obsidian/20 font-sans text-sm focus:outline-none focus:border-gold-muted/40 transition-colors'
+const labelClass = 'block font-sans text-[11px] font-bold uppercase text-obsidian/40 mb-2 tracking-[0.2em]'
 const selectClass =
-  'w-full px-4 py-3 border border-white/10 bg-white/[0.03] text-white/80 font-sans text-sm focus:outline-none focus:border-gold-muted/40 transition-colors'
+  'w-full px-4 py-3 border border-obsidian/10 bg-white text-obsidian font-sans text-sm focus:outline-none focus:border-gold-muted/40 transition-colors'
 
 export default function SellWizardPage() {
   const router = useRouter()
   const [step, setStep] = useState(1)
   const [data, setData] = useState<WizardData>(INITIAL_DATA)
+  const [catalogGowns, setCatalogGowns] = useState<any[]>([])
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState<Product[]>([])
   const [searching, setSearching] = useState(false)
@@ -170,6 +181,13 @@ export default function SellWizardPage() {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [submitted, setSubmitted] = useState(false)
+
+  /* ── Load catalog ── */
+  useEffect(() => {
+    getCatalogGowns().then(res => {
+      if (res.gowns) setCatalogGowns(res.gowns)
+    })
+  }, [])
 
   /* ── Search products ── */
   const handleSearch = useCallback(async () => {
@@ -179,6 +197,23 @@ export default function SellWizardPage() {
     setSearchResults(result.products as Product[])
     setSearching(false)
   }, [searchQuery])
+
+  /* ── Intelligent Sizing ── */
+  async function handleSizeChange(sizeLabel: string) {
+    setData(prev => ({ ...prev, size_us: sizeLabel }))
+    if (sizeLabel === 'Custom' || !sizeLabel) return
+
+    const res = await getSizeDimensions(sizeLabel)
+    if (res.dimensions) {
+      setData(prev => ({
+        ...prev,
+        bust_cm: res.dimensions.bust.toString(),
+        waist_cm: res.dimensions.waist.toString(),
+        hips_cm: res.dimensions.hips.toString(),
+        height_cm: res.dimensions.height_with_shoes.toString()
+      }))
+    }
+  }
 
   /* ── Select a product from search ── */
   function selectProduct(product: Product) {
@@ -307,7 +342,7 @@ export default function SellWizardPage() {
   /* ── Success State ── */
   if (submitted) {
     return (
-      <main className="min-h-screen bg-obsidian">
+      <main className="min-h-screen bg-silk">
         <Navbar />
         <section className="pt-32 pb-20 px-6">
           <motion.div
@@ -320,13 +355,13 @@ export default function SellWizardPage() {
                 <polyline points="20 6 9 17 4 12" />
               </svg>
             </div>
-            <h1 className="font-serif text-4xl md:text-5xl font-light text-white/90 mb-4 tracking-wider">
+            <h1 className="font-serif text-4xl md:text-5xl font-light text-obsidian/90 mb-4 tracking-wider">
               Listing Submitted
             </h1>
-            <p className="font-sans text-sm text-white/40 mb-4 leading-relaxed">
-              Your <span className="text-champagne">{data.title}</span> has been submitted for review.
+            <p className="font-sans text-sm text-obsidian/40 mb-4 leading-relaxed">
+              Your <span className="text-gold-muted font-bold">{data.title}</span> has been submitted for review.
             </p>
-            <p className="font-sans text-xs text-white/25 mb-10">
+            <p className="font-sans text-xs text-obsidian/25 mb-10">
               Our authentication team will review your listing within 24–72 hours.
             </p>
             <div className="flex gap-4 justify-center">
@@ -355,36 +390,36 @@ export default function SellWizardPage() {
   }
 
   return (
-    <main className="min-h-screen bg-obsidian">
+    <main className="min-h-screen bg-silk">
       <Navbar />
 
       <div className="pt-28 pb-20 px-6">
         <div className="max-w-3xl mx-auto">
           {/* Header */}
           <div className="text-center mb-10">
-            <p className="font-sans text-[10px] uppercase tracking-[0.5em] text-gold-muted/50 mb-3">
+            <p className="font-sans text-[10px] uppercase tracking-[0.5em] text-gold-muted mb-3">
               List Your Gown
             </p>
-            <h1 className="font-serif text-3xl md:text-4xl font-light text-white/90 tracking-wider">
-              Consignment Submission
+            <h1 className="font-serif text-3xl md:text-5xl font-light text-obsidian tracking-wider">
+              Couture Submission
             </h1>
           </div>
 
           {/* Step Indicator */}
-          <div className="flex items-center justify-between mb-16 relative">
-            <div className="absolute top-1/2 left-0 w-full h-[1px] bg-white/5 -translate-y-1/2" />
+          <div className="flex items-center justify-between mb-20 relative">
+            <div className="absolute top-1/2 left-0 w-full h-[1px] bg-obsidian/5 -translate-y-1/2" />
             <div
-              className="absolute top-1/2 left-0 h-[1px] bg-gold-muted/30 -translate-y-1/2 transition-all duration-700 ease-in-out"
+              className="absolute top-1/2 left-0 h-[1px] bg-gold-muted/40 -translate-y-1/2 transition-all duration-700 ease-in-out"
               style={{ width: `${((step - 1) / (STEPS.length - 1)) * 100}%` }}
             />
             {STEPS.map((s) => (
               <div key={s.num} className="relative z-10 flex flex-col items-center">
                 <div
-                  className={`w-2.5 h-2.5 rounded-full transition-all duration-500 ${step >= s.num ? 'bg-gold-muted shadow-[0_0_10px_rgba(212,175,55,0.4)]' : 'bg-white/10'
+                  className={`w-2.5 h-2.5 rounded-full transition-all duration-500 ${step >= s.num ? 'bg-gold-muted shadow-[0_0_15px_rgba(212,175,55,0.3)]' : 'bg-obsidian/10'
                     }`}
                 />
                 <span
-                  className={`absolute top-6 whitespace-nowrap font-sans text-[9px] tracking-[0.2em] uppercase transition-colors duration-500 ${step === s.num ? 'text-white font-medium' : 'text-white/20'
+                  className={`absolute top-8 whitespace-nowrap font-sans text-[10px] font-bold tracking-[0.2em] uppercase transition-colors duration-500 ${step === s.num ? 'text-obsidian' : 'text-obsidian/20'
                     }`}
                 >
                   {s.label}
@@ -409,91 +444,109 @@ export default function SellWizardPage() {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                className="border border-white/10 bg-white/[0.02] p-8"
+                className="bg-white p-10 shadow-[0_4px_40px_rgba(0,0,0,0.03)] border border-obsidian/5"
               >
-                <h2 className="font-serif text-xl text-white/80 mb-2">Find Your Galia Lahav Gown</h2>
-                <p className="font-sans text-xs text-white/30 mb-8">
-                  Search our catalog to match your gown, or enter details manually.
+                <h2 className="font-serif text-2xl text-obsidian/90 mb-2">Identify Your Masterpiece</h2>
+                <p className="font-sans text-xs text-obsidian/40 mb-8 lowercase tracking-wide">
+                  Select your Galia Lahav style from our archive or enter custom details.
                 </p>
 
+                {/* Catalog dropdown */}
+                <div className="mb-10">
+                  <label className={labelClass}>Collection Archive</label>
+                  <p className="font-sans text-[10px] text-obsidian/20 mb-4 uppercase tracking-[0.1em]">Select your gown style for instant authentication sync</p>
+                  <select
+                    onChange={(e) => {
+                      const gown = catalogGowns.find(g => g.id === e.target.value)
+                      if (gown) {
+                        setData(prev => ({
+                          ...prev,
+                          product_id: gown.id,
+                          product_name: gown.name,
+                          title: gown.name,
+                          stock_images: gown.images || [],
+                          description: gown.description || '',
+                          silhouette: gown.silhouette || '',
+                          category: gown.collection === 'Evening' ? 'evening' : 'bridal'
+                        }))
+                        setStep(2)
+                      }
+                    }}
+                    className={`${selectClass} h-14 border-obsidian/5 focus:border-[#FF6448]/40`}
+                  >
+                    <option value="">Search the Galia Lahav Archive...</option>
+                    {catalogGowns.map(gown => (
+                      <option key={gown.id} value={gown.id}>{gown.name.toUpperCase()} — {gown.collection}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="flex items-center gap-4 mb-10">
+                  <div className="flex-1 h-[1px] bg-obsidian/5" />
+                  <span className="font-sans text-[10px] text-obsidian/20 uppercase tracking-widest font-bold">or find by search</span>
+                  <div className="flex-1 h-[1px] bg-obsidian/5" />
+                </div>
+
                 {/* Search */}
-                <div className="flex gap-3 mb-6">
+                <div className="flex gap-3 mb-12">
                   <div className="relative flex-1">
                     <input
                       type="text"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                      placeholder="Search by style name or SKU..."
-                      className={inputClass}
+                      placeholder="Type style name (e.g. Artemis)..."
+                      className={`${inputClass} h-14 border-obsidian/5 focus:border-[#FF6448]/40`}
                     />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-white/20">
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-obsidian/20">
                       <SearchIcon />
                     </span>
                   </div>
                   <button
                     onClick={handleSearch}
                     disabled={searchQuery.length < 2 || searching}
-                    className="px-6 py-3 bg-gold-muted text-obsidian font-sans text-xs uppercase tracking-widest disabled:opacity-30 hover:bg-champagne transition-colors"
+                    className="px-10 py-3 bg-obsidian text-white font-sans text-[11px] font-bold uppercase tracking-[0.3em] disabled:opacity-30 hover:bg-[#FF6448] transition-all"
                   >
                     {searching ? '...' : 'Search'}
                   </button>
                 </div>
 
-                {/* Category filter */}
-                <div className="flex gap-2 mb-6">
-                  {['bridal', 'evening', 'accessories'].map((cat) => (
-                    <button
-                      key={cat}
-                      onClick={() =>
-                        setData((prev) => ({ ...prev, category: cat as 'bridal' | 'evening' | 'accessories' }))
-                      }
-                      className={`px-4 py-2 text-xs tracking-widest uppercase border transition-colors ${data.category === cat
-                        ? 'border-gold-muted/50 text-gold-muted bg-gold-muted/5'
-                        : 'border-white/10 text-white/30 hover:border-white/20'
-                        }`}
-                    >
-                      {cat}
-                    </button>
-                  ))}
-                </div>
-
                 {/* Results */}
                 {searchResults.length > 0 && (
                   <div className="mb-12">
-                    <p className="font-sans text-[10px] text-white/25 tracking-[0.2em] uppercase mb-6">
-                      CHOOSE YOUR ITEM FROM OUR COLLECTION
+                    <p className="font-sans text-[10px] text-obsidian/30 tracking-[0.2em] uppercase mb-8 font-bold">
+                      ARCHIVAL MATCHES FOUND
                     </p>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
                       {searchResults.map((product) => (
                         <button
                           key={product.id}
                           onClick={() => selectProduct(product)}
                           className="group text-left"
                         >
-                          <div className="relative aspect-[3/4] overflow-hidden bg-white/5 border border-white/5 group-hover:border-gold-muted/40 transition-all duration-500">
+                          <div className="relative aspect-[3/4] overflow-hidden bg-silk rounded-2xl border border-obsidian/5 group-hover:border-[#FF6448]/40 transition-all duration-500">
                             {product.images && product.images[0] ? (
                               <img
                                 src={product.images[0]}
                                 alt={product.style_name}
-                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                               />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center opacity-10">
                                 <UploadIcon />
                               </div>
                             )}
-                            <div className="absolute inset-0 bg-gradient-to-t from-obsidian/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-4">
-                              <span className="font-sans text-[9px] tracking-widest text-gold-muted uppercase">
+                            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-obsidian via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
+                              <span className="font-sans text-[10px] font-bold tracking-[0.3em] text-[#FF6448] uppercase">
                                 Select Style →
                               </span>
                             </div>
                           </div>
-                          <div className="mt-3">
-                            <h3 className="font-serif text-[13px] text-white/80 group-hover:text-white transition-colors">
+                          <div className="mt-4">
+                            <h3 className="font-serif text-xl text-obsidian/80 group-hover:text-[#FF6448] transition-colors italic">
                               {product.style_name}
                             </h3>
-                            <p className="font-sans text-[9px] text-white/25 uppercase tracking-wider mt-1">
+                            <p className="font-sans text-[9px] text-obsidian/30 uppercase tracking-[0.2em] mt-2 font-bold">
                               {product.category}
                             </p>
                           </div>
@@ -504,15 +557,15 @@ export default function SellWizardPage() {
                 )}
 
                 {/* Skip to manual */}
-                <div className="border-t border-white/5 pt-6 text-center">
-                  <p className="font-sans text-xs text-white/25 mb-3">
-                    Can&apos;t find your gown? No problem.
+                <div className="border-t border-obsidian/5 pt-10 text-center">
+                  <p className="font-sans text-[11px] text-obsidian/30 mb-5 tracking-wide uppercase font-bold">
+                    Can&apos;t find your gown?
                   </p>
                   <button
                     onClick={skipToManual}
-                    className="font-sans text-xs text-gold-muted hover:text-champagne transition-colors tracking-widest uppercase"
+                    className="px-10 py-4 border border-obsidian/10 rounded-full font-sans text-[10px] font-bold text-obsidian hover:text-white hover:bg-obsidian transition-all tracking-[0.3em] uppercase"
                   >
-                    Enter Details Manually →
+                    Enter Manually →
                   </button>
                 </div>
               </motion.div>
@@ -525,13 +578,13 @@ export default function SellWizardPage() {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                className="border border-white/10 bg-white/[0.02] p-8"
+                className="bg-white p-10 shadow-[0_4px_40px_rgba(0,0,0,0.03)] border border-obsidian/5"
               >
-                <h2 className="font-serif text-xl text-white/80 mb-2">Item Details</h2>
-                <p className="font-sans text-xs text-white/30 mb-8">
+                <h2 className="font-serif text-2xl text-obsidian/90 mb-2">Heritage Details</h2>
+                <p className="font-sans text-xs text-obsidian/40 mb-8 lowercase tracking-wide">
                   {data.product_name
-                    ? `Pre-filled from ${data.product_name}. Adjust as needed.`
-                    : 'Tell us about your gown.'}
+                    ? `Archival data for "${data.product_name}" synchronized. Verify details below.`
+                    : 'Specify the characteristics of your Galia Lahav gown.'}
                 </p>
 
                 <div className="space-y-6">
@@ -561,23 +614,24 @@ export default function SellWizardPage() {
                         }
                         className={selectClass}
                       >
-                        <option value="bridal" className="bg-obsidian">Bridal Gown</option>
-                        <option value="evening" className="bg-obsidian">Evening Wear</option>
-                        <option value="accessories" className="bg-obsidian">Accessories</option>
+                        <option value="bridal">Bridal Gown</option>
+                        <option value="evening">Evening Wear</option>
+                        <option value="accessories">Accessories</option>
                       </select>
                     </div>
                     <div>
                       <label className={labelClass}>Size (US)</label>
                       <select
                         value={data.size_us}
-                        onChange={(e) => setData((prev) => ({ ...prev, size_us: e.target.value }))}
+                        onChange={(e) => handleSizeChange(e.target.value)}
                         className={selectClass}
                       >
-                        <option value="" className="bg-obsidian">Select size</option>
+                        <option value="">Select size</option>
                         {SIZES.map((s) => (
-                          <option key={s} value={s} className="bg-obsidian">{s}</option>
+                          <option key={s} value={s}>{s}</option>
                         ))}
                       </select>
+                      <p className="font-sans text-[9px] text-obsidian/20 mt-2 uppercase tracking-widest italic">Dimensions auto-populated based on Galia Lahav size chart</p>
                     </div>
                   </div>
 
@@ -590,9 +644,9 @@ export default function SellWizardPage() {
                         onChange={(e) => setData((prev) => ({ ...prev, silhouette: e.target.value }))}
                         className={selectClass}
                       >
-                        <option value="" className="bg-obsidian">Select silhouette</option>
+                        <option value="">Select silhouette</option>
                         {SILHOUETTES.map((s) => (
-                          <option key={s.value} value={s.value} className="bg-obsidian">{s.label}</option>
+                          <option key={s.value} value={s.value}>{s.label}</option>
                         ))}
                       </select>
                     </div>
@@ -603,9 +657,9 @@ export default function SellWizardPage() {
                         onChange={(e) => setData((prev) => ({ ...prev, train_style: e.target.value }))}
                         className={selectClass}
                       >
-                        <option value="" className="bg-obsidian">Select train</option>
+                        <option value="">Select train</option>
                         {TRAIN_STYLES.map((t) => (
-                          <option key={t.value} value={t.value} className="bg-obsidian">{t.label}</option>
+                          <option key={t.value} value={t.value}>{t.label}</option>
                         ))}
                       </select>
                     </div>
@@ -630,15 +684,15 @@ export default function SellWizardPage() {
 
                   {/* Stock Photos Section */}
                   {data.stock_images.length > 0 && (
-                    <div className="pt-6 border-t border-white/5">
-                      <label className={labelClass}>Catalog Stock Photos</label>
-                      <p className="font-sans text-[10px] text-white/20 mb-4 uppercase tracking-[0.2em]">
-                        Official imagery automatically attached
+                    <div className="pt-6 border-t border-obsidian/5">
+                      <label className={labelClass}>Archival Editorial Imagery</label>
+                      <p className="font-sans text-[10px] text-obsidian/20 mb-4 uppercase tracking-[0.2em]">
+                        Syncing stock photos for certification
                       </p>
                       <div className="grid grid-cols-4 gap-4">
                         {data.stock_images.map((img, i) => (
-                          <div key={i} className="aspect-[3/4] bg-white/5 border border-white/5 overflow-hidden">
-                            <img src={img} alt={`Stock ${i}`} className="w-full h-full object-cover opacity-50 transition-opacity hover:opacity-100" />
+                          <div key={i} className="aspect-[3/4] bg-silk border border-obsidian/5 overflow-hidden">
+                            <img src={img} alt={`Stock ${i}`} className="w-full h-full object-cover opacity-60 transition-opacity hover:opacity-100" />
                           </div>
                         ))}
                       </div>
@@ -646,12 +700,12 @@ export default function SellWizardPage() {
                   )}
 
                   {/* Description / Atelier Notice */}
-                  <div className="pt-6 border-t border-white/5">
+                  <div className="pt-6 border-t border-obsidian/5">
                     {data.product_id ? (
-                      <div className="p-6 bg-gold-muted/[0.02] border border-gold-muted/10 resonance-panel">
-                        <p className="font-serif text-[15px] text-gold-muted/90 italic mb-2">Editorial Notice</p>
-                        <p className="font-sans text-[11px] text-white/40 leading-relaxed tracking-wide">
-                          The official product description for your {data.product_name} gown will be curated by the RE:GALIA editorial team. You only need to verify the condition and provide seller photos in the following steps.
+                      <div className="p-8 bg-gold-muted/[0.03] border border-gold-muted/10 resonance-panel rounded-none">
+                        <p className="font-serif text-lg text-gold-muted italic mb-2 tracking-wide">Editorial Curation</p>
+                        <p className="font-sans text-[12px] text-obsidian/50 leading-relaxed tracking-wide">
+                          The official Galia Lahav descriptive assets for your <span className="text-obsidian font-bold">"{data.product_name}"</span> gown will be meticulously curated by the RE:GALIA editorial team. Your submission focus remains on condition verification and unique seller imagery.
                         </p>
                       </div>
                     ) : (
@@ -678,35 +732,35 @@ export default function SellWizardPage() {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                className="border border-white/10 bg-white/[0.02] p-8"
+                className="bg-white p-10 shadow-[0_4px_40px_rgba(0,0,0,0.03)] border border-obsidian/5"
               >
-                <h2 className="font-serif text-xl text-white/80 mb-2">Condition</h2>
-                <p className="font-sans text-xs text-white/30 mb-8">
-                  Select the condition that best describes your gown.
+                <h2 className="font-serif text-2xl text-obsidian/90 mb-2">Preservation Condition</h2>
+                <p className="font-sans text-xs text-obsidian/40 mb-8 lowercase tracking-wide">
+                  Select the condition tier that accurately reflects your gown's history.
                 </p>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {CONDITIONS.map((cond, idx) => {
                     const resalePct = idx === 0 ? '85%' : idx === 1 ? '75%' : '60%';
                     return (
                       <button
                         key={cond.value}
                         onClick={() => setData((prev) => ({ ...prev, condition: cond.value }))}
-                        className={`text-left p-6 border transition-all duration-500 flex flex-col h-full ${data.condition === cond.value
-                          ? 'border-gold-muted/50 bg-gold-muted/[0.03] shadow-[0_0_20px_rgba(212,175,55,0.05)]'
-                          : 'border-white/10 hover:border-white/20'
+                        className={`text-left p-8 border transition-all duration-500 flex flex-col h-full rounded-sm ${data.condition === cond.value
+                          ? 'border-gold-muted bg-gold-muted/[0.04] shadow-[0_10px_30px_rgba(212,175,55,0.08)]'
+                          : 'border-obsidian/5 bg-white hover:border-obsidian/10'
                           }`}
                       >
                         <div className="flex-1">
-                          <div className="font-serif text-lg text-white/90 mb-3">{cond.label}</div>
-                          <div className="font-sans text-[11px] text-white/30 leading-relaxed min-h-[60px]">
+                          <div className="font-serif text-xl text-obsidian/90 mb-4">{cond.label}</div>
+                          <div className="font-sans text-[12px] text-obsidian/40 leading-relaxed min-h-[60px]">
                             {cond.desc}
                           </div>
                         </div>
 
-                        <div className="mt-6 pt-4 border-t border-white/5">
-                          <p className="font-sans text-[9px] text-white/20 uppercase tracking-widest mb-1">Recommended</p>
-                          <p className="font-serif text-xl text-gold-muted/80">{resalePct} <span className="text-[10px] font-sans text-white/20 italic">of MSRP</span></p>
+                        <div className="mt-8 pt-6 border-t border-obsidian/5">
+                          <p className="font-sans text-[9px] text-obsidian/20 uppercase tracking-widest mb-1 font-bold">Resale Potential</p>
+                          <p className="font-serif text-2xl text-gold-muted">{resalePct} <span className="text-[10px] font-sans text-obsidian/20 italic font-normal">of MSRP</span></p>
                         </div>
 
                         {data.condition === cond.value && (
@@ -730,29 +784,29 @@ export default function SellWizardPage() {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                className="border border-white/10 bg-white/[0.02] p-8"
+                className="bg-white p-10 shadow-[0_4px_40px_rgba(0,0,0,0.03)] border border-obsidian/5"
               >
                 <div className="grid md:grid-cols-2 gap-12">
                   <div>
-                    <h2 className="font-serif text-xl text-white/80 mb-2">Seller Photos</h2>
-                    <p className="font-sans text-[11px] text-white/30 mb-8 leading-relaxed uppercase tracking-widest">
-                      Guidance for certification
+                    <h2 className="font-serif text-2xl text-obsidian/90 mb-2">Couture Perspective</h2>
+                    <p className="font-sans text-[11px] text-obsidian/30 mb-8 leading-relaxed uppercase tracking-widest font-bold">
+                      required frames for certification
                     </p>
 
-                    <ul className="space-y-5 mb-10">
+                    <ul className="space-y-6 mb-10">
                       {[
-                        { label: 'Full Frontal Silhouette', desc: 'The gown from head to toe in natural light' },
-                        { label: 'Back & Train Composition', desc: 'Highlighting the flow and back details' },
-                        { label: 'Atelier Interior Labels', icon: '🏷️' },
-                        { label: 'Detail & Texture Focus', desc: 'Close-ups of beading, lace, or flaws' },
+                        { label: 'Architectural Frontier', desc: 'Full frontal gown silhouette in natural lighting' },
+                        { label: 'The Heritage Label', desc: 'Clear macro-shot of the internal atelier tags' },
+                        { label: 'Details & Accents', desc: 'Focus on beading, lace, or unique modifications' },
+                        { label: 'The Grand Train', desc: 'Composition of the train and rear detailing' },
                       ].map((item, i) => (
-                        <li key={i} className="flex gap-4 group">
-                          <div className="w-10 h-10 border border-white/5 bg-white/[0.02] flex items-center justify-center text-xs group-hover:border-gold-muted/30 transition-colors shrink-0">
+                        <li key={i} className="flex gap-5 group">
+                          <div className="w-10 h-10 border border-obsidian/5 bg-silk flex items-center justify-center text-[10px] font-bold group-hover:border-gold-muted/30 transition-colors shrink-0">
                             {i + 1}
                           </div>
                           <div>
-                            <span className="block font-serif text-[13px] text-white/70 group-hover:text-gold-muted/80 transition-colors uppercase tracking-wider">{item.label}</span>
-                            {item.desc && <span className="block font-sans text-[9px] text-white/20 mt-1 uppercase tracking-widest leading-relaxed">{item.desc}</span>}
+                            <span className="block font-serif text-[14px] text-obsidian/70 group-hover:text-gold-muted transition-colors uppercase tracking-wider">{item.label}</span>
+                            {item.desc && <span className="block font-sans text-[9px] text-obsidian/40 mt-1 uppercase tracking-widest leading-relaxed">{item.desc}</span>}
                           </div>
                         </li>
                       ))}
@@ -778,7 +832,7 @@ export default function SellWizardPage() {
                   <div className="space-y-6">
                     {/* Upload zone */}
                     <label
-                      className={`block aspect-[3/4] border-2 border-dashed border-white/5 hover:border-gold-muted/30 bg-white/[0.01] flex flex-col items-center justify-center cursor-pointer transition-all duration-700 relative group rounded-sm overflow-hidden ${uploading ? 'opacity-50 pointer-events-none' : ''
+                      className={`block aspect-[3/4] border-2 border-dashed border-obsidian/5 hover:border-gold-muted/30 bg-silk flex flex-col items-center justify-center cursor-pointer transition-all duration-700 relative group rounded-sm overflow-hidden ${uploading ? 'opacity-50 pointer-events-none' : ''
                         }`}
                     >
                       <input
@@ -789,15 +843,15 @@ export default function SellWizardPage() {
                         className="hidden"
                         disabled={uploading || data.images.length >= 8}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-b from-transparent to-obsidian/40 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                      <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                       <div className="relative z-10 text-gold-muted/20 group-hover:text-gold-muted/50 transition-colors duration-500 scale-125 group-hover:scale-150 transform transition-transform duration-700">
                         <UploadIcon />
                       </div>
                       <div className="relative z-10 mt-6 text-center">
-                        <p className="font-sans text-[10px] text-white/30 uppercase tracking-[0.3em] group-hover:text-white/60 transition-colors">
-                          {uploading ? 'UPLOADING...' : 'PUSH TO UPLOAD'}
+                        <p className="font-sans text-[10px] text-obsidian/30 uppercase tracking-[0.3em] group-hover:text-obsidian transition-colors font-bold">
+                          {uploading ? 'UPLOADING...' : 'ARCHIVE PHOTOS'}
                         </p>
-                        <p className="font-sans text-[8px] text-white/10 uppercase tracking-widest mt-2 block">
+                        <p className="font-sans text-[8px] text-obsidian/10 uppercase tracking-widest mt-2 block">
                           Up to 8 high-resolution frames
                         </p>
                       </div>
@@ -837,11 +891,11 @@ export default function SellWizardPage() {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                className="border border-white/10 bg-white/[0.02] p-8"
+                className="bg-white p-10 shadow-[0_4px_40px_rgba(0,0,0,0.03)] border border-obsidian/5"
               >
-                <h2 className="font-serif text-xl text-white/80 mb-2">Price Your Gown</h2>
-                <p className="font-sans text-[11px] text-white/30 mb-10 leading-relaxed uppercase tracking-widest">
-                  Set your asking price based on our condition guidance
+                <h2 className="font-serif text-2xl text-obsidian/90 mb-2">Investment & Value</h2>
+                <p className="font-sans text-[11px] text-obsidian/30 mb-10 leading-relaxed uppercase tracking-widest font-bold">
+                  Define your market position
                 </p>
 
                 <div className="grid md:grid-cols-2 gap-12">
@@ -869,26 +923,26 @@ export default function SellWizardPage() {
 
                     {/* Commission Advisor */}
                     {price > 0 && (
-                      <div className="p-8 border border-gold-muted/10 bg-gold-muted/[0.02] resonance-panel">
+                      <div className="p-8 border border-gold-muted/10 bg-gold-muted/[0.02] resonance-panel rounded-none">
                         <div className="flex justify-between items-end mb-8">
                           <div>
-                            <p className="font-sans text-[10px] text-white/20 uppercase tracking-[0.2em] mb-2">Your Earnings</p>
-                            <p className="font-serif text-4xl text-gold-muted">${payout.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                            <p className="font-sans text-[10px] text-obsidian/20 uppercase tracking-[0.2em] mb-2 font-bold">Your Earnings</p>
+                            <p className="font-serif text-4xl text-gold-muted font-light">${payout.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
                           </div>
                           <div className="text-right">
-                            <p className="font-sans text-[10px] text-white/20 uppercase tracking-[0.2em] mb-2">Commission</p>
-                            <p className="font-sans text-xs text-white/40 tracking-wider font-light">{commissionRate}% Fee</p>
+                            <p className="font-sans text-[10px] text-obsidian/20 uppercase tracking-[0.2em] mb-2 font-bold">Service Fee</p>
+                            <p className="font-sans text-xs text-obsidian/40 tracking-wider font-light">{commissionRate}% Tier</p>
                           </div>
                         </div>
 
-                        <div className="space-y-4 pt-6 border-t border-white/5">
+                        <div className="space-y-4 pt-6 border-t border-obsidian/5">
                           <div className="flex justify-between text-[11px] font-sans tracking-wide">
-                            <span className="text-white/30 lowercase italic">Listing amount</span>
-                            <span className="text-white/60">${price.toLocaleString()}</span>
+                            <span className="text-obsidian/30 lowercase italic">Listing amount</span>
+                            <span className="text-obsidian/60 font-bold">${price.toLocaleString()}</span>
                           </div>
                           <div className="flex justify-between text-[11px] font-sans tracking-wide">
-                            <span className="text-white/30 lowercase italic">RE:GALIA service fee</span>
-                            <span className="text-white/30">-${commission.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
+                            <span className="text-obsidian/30 lowercase italic">RE:GALIA curation fee</span>
+                            <span className="text-obsidian/30">-${commission.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
                           </div>
                         </div>
                       </div>
@@ -896,32 +950,32 @@ export default function SellWizardPage() {
                   </div>
 
                   {/* Final Review */}
-                  <div className="border border-white/5 bg-white/[0.01] p-8 h-full flex flex-col justify-between">
+                  <div className="border border-obsidian/5 bg-silk p-10 h-full flex flex-col justify-between">
                     <div>
-                      <h3 className="font-serif text-lg text-white/80 mb-8 italic">Submission Review</h3>
-                      <div className="space-y-6">
-                        <div className="flex justify-between border-b border-white/5 pb-3">
-                          <span className="font-sans text-[10px] text-white/20 uppercase tracking-widest">Item</span>
-                          <span className="font-serif text-[14px] text-white/70 tracking-wide">{data.title || '—'}</span>
+                      <h3 className="font-serif text-xl text-obsidian/80 mb-8 italic">Heritage Review</h3>
+                      <div className="space-y-8">
+                        <div className="flex justify-between border-b border-obsidian/5 pb-4">
+                          <span className="font-sans text-[10px] text-obsidian/20 uppercase tracking-widest font-bold">Style Identification</span>
+                          <span className="font-serif text-[15px] text-obsidian/70 tracking-wide">{data.title || '—'}</span>
                         </div>
-                        <div className="flex justify-between border-b border-white/5 pb-3">
-                          <span className="font-sans text-[10px] text-white/20 uppercase tracking-widest">Condition</span>
-                          <span className="font-sans text-[11px] text-white/70 uppercase tracking-wider">{CONDITIONS.find(c => c.value === data.condition)?.label || '—'}</span>
+                        <div className="flex justify-between border-b border-obsidian/5 pb-4">
+                          <span className="font-sans text-[10px] text-obsidian/20 uppercase tracking-widest font-bold">State of Preservation</span>
+                          <span className="font-sans text-[11px] text-obsidian/70 uppercase tracking-wider font-bold">{CONDITIONS.find(c => c.value === data.condition)?.label || '—'}</span>
                         </div>
-                        <div className="flex justify-between border-b border-white/5 pb-3">
-                          <span className="font-sans text-[10px] text-white/20 uppercase tracking-widest">Size</span>
-                          <span className="font-sans text-[11px] text-white/70">{data.size_us || '—'}</span>
+                        <div className="flex justify-between border-b border-obsidian/5 pb-4">
+                          <span className="font-sans text-[10px] text-obsidian/20 uppercase tracking-widest font-bold">Measurement Sync</span>
+                          <span className="font-sans text-[11px] text-obsidian/70 font-bold">{data.size_us || '—'}</span>
                         </div>
-                        <div className="flex justify-between border-b border-white/5 pb-3">
-                          <span className="font-sans text-[10px] text-white/20 uppercase tracking-widest">Imagery</span>
-                          <span className="font-sans text-[11px] text-white/70">{data.images.length} Seller Frames</span>
+                        <div className="flex justify-between border-b border-obsidian/5 pb-4">
+                          <span className="font-sans text-[10px] text-obsidian/20 uppercase tracking-widest font-bold">Seller Imagery</span>
+                          <span className="font-sans text-[11px] text-obsidian/70 font-bold">{data.images.length} Archival Frames</span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="mt-12 p-5 border border-gold-muted/5 bg-gold-muted/[0.01]">
-                      <p className="font-sans text-[10px] text-white/20 leading-relaxed italic text-center">
-                        Our concierge will review your submission for certification within 24 hours. You will be notified via email upon approval.
+                    <div className="mt-12 p-6 border border-gold-muted/10 bg-gold-muted/[0.02]">
+                      <p className="font-sans text-[10px] text-obsidian/30 leading-relaxed italic text-center">
+                        Our internal curation atelier will review your submission for heritage certification within 24 hours.
                       </p>
                     </div>
                   </div>
@@ -931,10 +985,10 @@ export default function SellWizardPage() {
           </AnimatePresence>
 
           {/* ── Navigation ── */}
-          <div className="flex justify-between items-center mt-8">
+          <div className="flex justify-between items-center mt-12">
             <button
               onClick={() => setStep((s) => Math.max(1, s - 1))}
-              className={`px-6 py-3 border border-white/10 font-sans text-xs uppercase tracking-widest text-white/40 hover:text-white/70 hover:border-white/20 transition-colors ${step === 1 ? 'invisible' : ''
+              className={`px-8 py-4 border border-obsidian/10 font-sans text-[11px] font-bold uppercase tracking-[0.2em] text-obsidian/40 hover:text-obsidian hover:border-obsidian/20 transition-all ${step === 1 ? 'invisible' : ''
                 }`}
             >
               ← Back
@@ -944,7 +998,7 @@ export default function SellWizardPage() {
               <button
                 onClick={() => setStep((s) => Math.min(5, s + 1))}
                 disabled={!canProceed()}
-                className="px-8 py-3 bg-gold-muted text-obsidian font-sans text-xs uppercase tracking-widest hover:bg-champagne transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                className="px-10 py-4 bg-obsidian text-white font-sans text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-gold-muted transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-xl shadow-obsidian/10"
               >
                 Continue →
               </button>
@@ -952,9 +1006,9 @@ export default function SellWizardPage() {
               <button
                 onClick={handleSubmit}
                 disabled={!canProceed() || submitting}
-                className="px-10 py-3 bg-white text-obsidian font-sans text-xs uppercase tracking-widest hover:bg-champagne transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                className="px-12 py-4 bg-gold-muted text-white font-sans text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-obsidian transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-xl shadow-gold-muted/20"
               >
-                {submitting ? 'Submitting...' : 'Submit for Review'}
+                {submitting ? 'Authenticating...' : 'Submit to Atelier'}
               </button>
             )}
           </div>

@@ -10,6 +10,7 @@ import {
 } from "framer-motion";
 import Link from "next/link";
 import Navbar from "@/components/ui/Navbar";
+import Footer from "@/components/ui/Footer";
 
 /* ═══════════════════════════════════════════
    FRAME CONFIG — Bleecker collection video:
@@ -41,29 +42,6 @@ function VerifiedBadge({ className = "" }: { className?: string }) {
     </svg>
   );
 }
-
-/* ── Luxury divider ── */
-function LuxuryDivider() {
-  return (
-    <div className="flex items-center gap-4 my-6">
-      <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-amber-100/30" />
-      <div className="w-1 h-1 rounded-full bg-amber-100/40" />
-      <div className="h-[1px] w-12 bg-gradient-to-l from-transparent to-amber-100/30" />
-    </div>
-  );
-}
-
-/* ═══════════════════════════════════════════
-   SAMPLE GOWNS DATA — for browse section
-   ═══════════════════════════════════════════ */
-const COLLECTIONS = [
-  { name: "Bridal Couture", slug: "bridal-couture" },
-  { name: "GALA by GL", slug: "gala" },
-  { name: "Bleecker", slug: "bleecker" },
-  { name: "Victorian Affinity", slug: "victorian-affinity" },
-  { name: "Queen of Hearts", slug: "queen-of-hearts" },
-  { name: "Do Not Disturb", slug: "do-not-disturb" },
-];
 
 const SAMPLE_GOWNS = [
   {
@@ -134,59 +112,31 @@ const SAMPLE_GOWNS = [
   },
 ];
 
-/* ══════════════════════════════════════
-   MAIN PAGE
-   ══════════════════════════════════════ */
 export default function Home() {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const imagesRef = useRef<HTMLImageElement[]>([]);
   const currentFrameRef = useRef(0);
   const rafRef = useRef<number | null>(null);
 
   const [isLoading, setIsLoading] = useState(true);
-  const [loadProgress, setLoadProgress] = useState(0);
-  const [scrollPercent, setScrollPercent] = useState(0);
-  const [activeTab, setActiveTab] = useState<"featured" | "reduced" | "new">("featured");
 
-  /* ── Scroll tracking ── */
-  const { scrollYProgress } = useScroll({
-    target: scrollContainerRef,
-    offset: ["start start", "end end"],
-  });
-
-  const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.0001,
-  });
-
-  /* ── Hero parallax ── */
-  const heroRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress: heroScroll } = useScroll({
-    target: heroRef,
-    offset: ["start start", "end start"],
-  });
-  const heroOpacity = useTransform(heroScroll, [0, 0.5], [1, 0]);
-  const heroY = useTransform(heroScroll, [0, 0.5], [0, -80]);
-  const heroScale = useTransform(heroScroll, [0, 0.5], [1, 0.95]);
-
-  /* ── Draw frame with cover-fit + DPR ── */
+  /* ── Canvas Frame Preloading ── */
   const drawFrame = useCallback((index: number) => {
     const canvas = canvasRef.current;
-    const ctx = canvas?.getContext("2d");
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
     const img = imagesRef.current[index];
-    if (!canvas || !ctx || !img || !img.complete || !img.naturalWidth) return;
+    if (!ctx || !img || !img.complete) return;
 
     const dpr = window.devicePixelRatio || 1;
-    const rect = canvas.getBoundingClientRect();
-    const cw = rect.width;
-    const ch = rect.height;
+    const cw = canvas.clientWidth;
+    const ch = canvas.clientHeight;
 
     if (canvas.width !== cw * dpr || canvas.height !== ch * dpr) {
       canvas.width = cw * dpr;
       canvas.height = ch * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.scale(dpr, dpr);
     }
 
     const iw = img.naturalWidth;
@@ -201,49 +151,31 @@ export default function Home() {
     ctx.drawImage(img, sx, sy, sw, sh);
   }, []);
 
-  /* ── Preload frames (starts at 0) ── */
   useEffect(() => {
     let loaded = 0;
     const images: HTMLImageElement[] = [];
-    let cancelled = false;
-
     for (let i = 0; i < TOTAL_FRAMES; i++) {
       const img = new Image();
       img.src = `${FRAME_PREFIX}${padFrame(i)}${FRAME_EXT}`;
       img.onload = () => {
-        if (cancelled) return;
         loaded++;
-        setLoadProgress(Math.round((loaded / TOTAL_FRAMES) * 100));
-        if (loaded >= TOTAL_FRAMES) {
+        if (loaded === TOTAL_FRAMES) {
           setIsLoading(false);
           drawFrame(0);
-          window.dispatchEvent(new CustomEvent("app-ready"));
-        }
-      };
-      img.onerror = () => {
-        if (cancelled) return;
-        loaded++;
-        setLoadProgress(Math.round((loaded / TOTAL_FRAMES) * 100));
-        if (loaded >= TOTAL_FRAMES) {
-          setIsLoading(false);
-          window.dispatchEvent(new CustomEvent("app-ready"));
         }
       };
       images.push(img);
     }
     imagesRef.current = images;
-    return () => {
-      cancelled = true;
-    };
   }, [drawFrame]);
 
-  /* ── Scroll → frame mapping ── */
-  useMotionValueEvent(smoothProgress, "change", (v) => {
-    setScrollPercent(v);
-    const idx = Math.min(
-      TOTAL_FRAMES - 1,
-      Math.max(0, Math.floor(v * (TOTAL_FRAMES - 1)))
-    );
+  const { scrollYProgress } = useScroll({
+    target: scrollContainerRef,
+    offset: ["start start", "end end"],
+  });
+
+  useMotionValueEvent(scrollYProgress, "change", (v) => {
+    const idx = Math.min(TOTAL_FRAMES - 1, Math.floor(v * TOTAL_FRAMES));
     if (idx !== currentFrameRef.current) {
       currentFrameRef.current = idx;
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
@@ -251,291 +183,205 @@ export default function Home() {
     }
   });
 
-  /* ── Resize handler ── */
-  useEffect(() => {
-    const onResize = () => drawFrame(currentFrameRef.current);
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, [drawFrame]);
-
   return (
-    <main className="relative bg-obsidian selection:bg-amber-100/20 selection:text-white">
-      {/* ── NAVBAR — always visible ── */}
+    <main className="relative bg-silk selection:bg-gold-muted/20 selection:text-obsidian overflow-x-hidden">
       <Navbar />
 
-      {/* ── NAVBAR — always visible ── */}
-      <Navbar />
-
-      {/* ══════════ SCROLL CONTAINER ══════════ */}
-      <div
-        ref={scrollContainerRef}
-        className="relative"
-        style={{ height: "600vh" }}
-      >
-        {/* Fixed fullscreen canvas */}
-        <canvas
-          ref={canvasRef}
-          className="fixed top-0 left-0 w-screen h-screen z-0"
-          style={{ display: isLoading ? "none" : "block" }}
-        />
-
-        {/* Stronger vignette overlay for text readability */}
-        <div className="fixed inset-0 z-[1] pointer-events-none bg-gradient-to-b from-obsidian/60 via-obsidian/20 to-obsidian/70" />
-        {/* Side vignettes for better text contrast */}
-        <div className="fixed inset-0 z-[1] pointer-events-none bg-gradient-to-r from-obsidian/50 via-transparent to-obsidian/50" />
-
-        {/* ── HERO (first viewport) ── */}
-        <section
-          ref={heroRef}
-          className="relative z-10 h-screen flex items-center justify-center"
+      {/* ── SECTION 1: HERO ── */}
+      <section className="relative h-[110vh] flex flex-col items-center justify-center px-6 overflow-hidden bg-obsidian text-silk">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+          className="text-center z-10 max-w-5xl"
         >
-          <motion.div
-            style={{ opacity: heroOpacity, y: heroY, scale: heroScale }}
-            className="text-center"
-          >
-            <motion.p
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1.2, delay: 0.3 }}
-              className="font-sans text-[11px] font-bold uppercase tracking-[0.6em] text-resonance-amber mb-8 resonance-glow"
+          <p className="font-sans text-[10px] font-bold uppercase tracking-[0.5em] text-gold-muted/80 mb-8">
+            Official Marketplace
+          </p>
+          <h1 className="font-serif text-[clamp(3.5rem,10vw,10rem)] leading-[0.85] tracking-tighter mb-12">
+            The Eternal Life <br />
+            <span className="italic">of Couture</span>
+          </h1>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mt-6">
+            <Link
+              href="/shop"
+              className="px-12 py-5 bg-[#C5A059] text-white font-sans text-[11px] font-bold uppercase tracking-[0.3em] rounded-full hover:bg-[#B38E48] transition-all duration-500 min-w-[240px] shadow-[0_10px_30px_rgba(197,160,89,0.4)]"
             >
-              The Official Pre-Owned Marketplace
-            </motion.p>
-
-            <motion.h1
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.6 }}
-              className="font-sans text-6xl md:text-8xl lg:text-[10rem] font-black tracking-tighter text-white leading-none mb-4"
+              Explore Shop
+            </Link>
+            <Link
+              href="/sell"
+              className="px-12 py-5 border border-silk/20 text-silk font-sans text-[11px] font-bold uppercase tracking-[0.3em] rounded-full hover:bg-white/5 transition-all duration-500 min-w-[240px]"
             >
-              RE:GALIA
-            </motion.h1>
+              Consign Gown
+            </Link>
+          </div>
+        </motion.div>
 
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 1.0 }}
-              className="font-sans text-sm md:text-base font-medium text-white/50 tracking-[0.3em] uppercase"
-            >
-              The Eternal Life of Couture
-            </motion.p>
+        {/* Hero Background Elements */}
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-obsidian/20 to-obsidian opacity-60" />
+          <img
+            src="/frames/frame_150.jpg"
+            alt="Bridal Couture"
+            className="w-full h-full object-cover opacity-40 scale-105"
+          />
+        </div>
+      </section>
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 1.8 }}
-              className="mt-20 flex flex-col items-center gap-4"
-            >
-              <div className="w-[1px] h-20 bg-gradient-to-b from-resonance-amber to-transparent opacity-50" />
-              <p className="font-sans text-[10px] uppercase tracking-[0.4em] text-white/30 font-semibold">
-                Scroll to explore
-              </p>
-            </motion.div>
-          </motion.div>
-        </section>
-
-        {/* ── BEAT A: THE ICON ── */}
-        <section className="relative z-10 h-screen flex items-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, amount: 0.4 }}
-            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-            className="pl-8 md:pl-24 max-w-lg"
-          >
-            <div className="resonance-panel p-10 md:p-12">
-              <p className="font-sans text-[10px] font-bold uppercase tracking-[0.4em] text-resonance-amber mb-6">
-                Chapter 01
-              </p>
-              <h2 className="font-sans text-4xl md:text-5xl font-bold text-white leading-[1.1] mb-6">
-                The Icon
-              </h2>
-              <p className="font-sans text-base text-white/50 leading-relaxed font-medium">
-                Each Galia Lahav gown is a masterpiece born from thousands of hours
-                of hand-stitching, beading, and draping. A work of art that
-                transcends fashion&mdash;crafted to be passes on.
-              </p>
-            </div>
-          </motion.div>
-        </section>
-
-        {/* ── BEAT B: CERTIFIED LEGACY ── */}
-        <section className="relative z-10 h-screen flex items-center justify-end">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, amount: 0.4 }}
-            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-            className="pr-8 md:pr-24 max-w-lg"
-          >
-            <div className="resonance-panel p-10 md:p-12 border-resonance-amber/20 shadow-[0_0_50px_rgba(255,179,71,0.05)]">
-              <div className="flex items-center gap-3 mb-6">
-                <VerifiedBadge className="w-5 h-5 text-resonance-amber" />
-                <p className="font-sans text-[10px] font-bold uppercase tracking-[0.4em] text-resonance-amber">
-                  Chapter 02
-                </p>
-              </div>
-              <h2 className="font-sans text-4xl md:text-5xl font-bold text-white leading-[1.1] mb-6">
-                Certified Legacy
-              </h2>
-              <p className="font-sans text-base text-white/50 leading-relaxed font-medium">
-                Unlike peer-to-peer marketplaces, every RE:GALIA gown is verified by
-                the House of Galia Lahav for 100% authenticity. Restored to runway condition.
-              </p>
-            </div>
-          </motion.div>
-        </section>
-
-        {/* ── BEAT C: CIRCULAR LUXURY ── */}
-        <section className="relative z-10 h-screen flex items-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, amount: 0.4 }}
-            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-            className="pl-8 md:pl-24 max-w-lg"
-          >
-            <div className="resonance-panel p-10 md:p-12">
-              <p className="font-sans text-[10px] font-bold uppercase tracking-[0.4em] text-resonance-amber mb-6">
-                Chapter 03
-              </p>
-              <h2 className="font-sans text-4xl md:text-5xl font-bold text-white leading-[1.1] mb-6">
-                Circular Luxury
-              </h2>
-              <p className="font-sans text-base text-white/50 leading-relaxed font-medium">
-                Reducing the bridal footprint through the beauty of pre-loved
-                masterpieces. Your gown lives on through another woman's dream moment.
-              </p>
-              <div className="mt-8 flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-resonance-blue animate-pulse" />
-                <span className="font-sans text-[11px] font-bold text-resonance-blue uppercase tracking-widest">
-                  Sustainable by design
-                </span>
-              </div>
-            </div>
-          </motion.div>
-        </section>
-
-        {/* ── BEAT D: YOUR DREAM WITHIN REACH ── */}
-        <section className="relative z-10 h-screen flex items-center justify-center">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, amount: 0.4 }}
-            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-            className="text-center max-w-2xl px-8"
-          >
-            <div className="resonance-panel p-12 md:p-16">
-              <p className="font-sans text-[10px] font-bold uppercase tracking-[0.4em] text-resonance-amber mb-6">
-                Final Chapter
-              </p>
-              <h2 className="font-sans text-4xl md:text-6xl font-black text-white leading-[1.05] mb-8">
-                Your Dream, <br />Within Reach
-              </h2>
-              <p className="font-sans text-base md:text-lg text-white/50 leading-relaxed font-medium mb-12 max-w-md mx-auto">
-                Browse official samples and pre-owned couture at a fraction of the
-                cost. Iconic craftsmanship, now accessible.
-              </p>
-
-              {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <a
-                  href="/shop"
-                  className="w-full sm:w-auto px-10 py-4 bg-white text-black font-sans font-bold text-sm rounded-full hover:bg-resonance-amber transition-all duration-300"
-                >
-                  Explore Collection
-                </a>
-                <a
-                  href="/sell"
-                  className="w-full sm:w-auto px-10 py-4 border border-white/20 font-sans font-bold text-sm text-white rounded-full hover:bg-white/5 transition-all duration-300"
-                >
-                  Consign Gown
-                </a>
-              </div>
-            </div>
-          </motion.div>
-        </section>
-      </div>
-
-      {/* ══════════ BROWSE SECTION ══════════ */}
-      <section className="relative z-10 bg-black">
-        <div className="h-40 bg-gradient-to-b from-transparent to-black" />
-
-        {/* Tab navigation */}
-        <div className="max-w-7xl mx-auto px-6 md:px-10 pt-10 pb-20">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-8 mb-16">
-            <div className="text-center md:text-left">
-              <h2 className="font-sans text-3xl md:text-5xl font-black text-white tracking-tight mb-2">
-                The Gown Archive
-              </h2>
-              <p className="font-sans text-base text-white/40 font-medium">
-                Authenticated couture masterpieces, awaiting their next story.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-2 resonance-panel p-1 rounded-full">
-              {(
-                [
-                  { key: "featured", label: "Featured" },
-                  { key: "reduced", label: "Reduced" },
-                  { key: "new", label: "New" },
-                ] as const
-              ).map((tab) => (
-                <button
-                  key={tab.key}
-                  onClick={() => setActiveTab(tab.key)}
-                  className={`px-6 py-2 rounded-full font-sans text-xs font-bold uppercase tracking-widest transition-all duration-300 ${activeTab === tab.key
-                    ? "bg-white text-black"
-                    : "text-white/40 hover:text-white/70"
-                    }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
+      {/* ── SECTION 1.5: HERITAGE & MISSION ── */}
+      <section className="bg-silk py-40 px-6 border-b border-black/5">
+        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-24 items-center">
+          <div className="order-2 md:order-1">
+            <div className="aspect-[4/5] rounded-[3rem] overflow-hidden shadow-2xl">
+              <img
+                src="https://www.galialahav.com/cdn/shop/files/GL_Couture_Atelier_1.jpg?width=1000"
+                alt="The Atelier"
+                className="w-full h-full object-cover"
+              />
             </div>
           </div>
+          <div className="order-1 md:order-2">
+            <p className="font-sans text-[10px] font-bold uppercase tracking-[0.5em] text-gold-muted mb-8">
+              Heritage & Craft
+            </p>
+            <h2 className="font-serif text-5xl md:text-7xl font-light text-obsidian leading-tight mb-8">
+              The Art of <br />
+              <span className="italic">Galia Lahav</span>
+            </h2>
+            <p className="font-sans text-lg text-obsidian/60 leading-relaxed mb-10">
+              For over three decades, the House of Galia Lahav has redefined bridal luxury. Each gown is a testament to meticulous craftsmanship, hand-sewn in our Tel Aviv atelier by master artisans who pour hundreds of hours into every stitch.
+            </p>
+            <div className="grid grid-cols-2 gap-10">
+              <div>
+                <p className="font-serif text-3xl text-obsidian mb-2 italic">100%</p>
+                <p className="font-sans text-[9px] uppercase tracking-widest text-obsidian/40 font-bold">Atelier Authenticated</p>
+              </div>
+              <div>
+                <p className="font-serif text-3xl text-obsidian mb-2 italic">Handmade</p>
+                <p className="font-sans text-[9px] uppercase tracking-widest text-obsidian/40 font-bold">In Tel Aviv</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-          {/* Gown grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-8 mb-20">
+      <section className="bg-obsidian text-silk py-40 px-6 overflow-hidden">
+        <div className="max-w-7xl mx-auto flex flex-col items-center text-center">
+          <p className="font-sans text-[10px] font-bold uppercase tracking-[0.5em] text-gold-muted mb-8">
+            Our Commitment
+          </p>
+          <h2 className="font-serif text-5xl md:text-8xl font-light tracking-tight mb-12">
+            Circular <span className="italic">Luxury</span>
+          </h2>
+          <p className="font-sans text-xl text-silk/60 leading-relaxed max-w-3xl mb-16">
+            RE:GALIA is born from a desire to preserve the legacy of couture while embracing a sustainable future. By extending the life of these masterpieces, we celebrate the enduring beauty of exceptional design and reduce the environmental footprint of the bridal industry.
+          </p>
+          <Link
+            href="/how-it-works"
+            className="px-12 py-5 bg-[#C5A059] text-white font-sans text-[11px] font-bold uppercase tracking-[0.3em] rounded-full hover:bg-[#B38E48] transition-all duration-500 shadow-[0_10px_30px_rgba(197,160,89,0.4)]"
+          >
+            Learn About Circularity
+          </Link>
+        </div>
+      </section>
+
+      {/* ── SECTION 2: THE BRIDE SCROLL VIDEO ── */}
+      <section className="relative bg-silk py-32 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row gap-20 items-center">
+            <div className="w-full md:w-1/2">
+              <p className="font-sans text-[10px] font-bold uppercase tracking-[0.5em] text-gold-muted mb-8">
+                The Experience
+              </p>
+              <h2 className="font-serif text-5xl md:text-7xl font-light text-obsidian leading-[1.1] mb-10">
+                Crafted to <br />
+                <span className="italic">Experience Again</span>
+              </h2>
+              <p className="font-sans text-lg text-obsidian/60 leading-relaxed font-medium max-w-md mb-12">
+                Every Galia Lahav gown is a masterpiece of тысячи hours of heritage.
+                We ensure its story lives on through circular luxury.
+              </p>
+              <Link
+                href="/how-it-works"
+                className="inline-block pb-1 border-b-[1.5px] border-gold-muted font-sans text-[10px] font-bold uppercase tracking-[0.3em] text-obsidian hover:text-gold-muted transition-colors"
+              >
+                Our Verification Process
+              </Link>
+            </div>
+
+            {/* The Scrolling Video Frame */}
+            <div className="w-full md:w-1/2 aspect-[4/5] relative rounded-[3rem] overflow-hidden bg-obsidian/[0.03] shadow-2xl">
+              <div ref={scrollContainerRef} className="absolute inset-0 h-[300vh] -top-[100vh] pointer-events-none" />
+              <canvas
+                ref={canvasRef}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-x-0 bottom-0 p-10 bg-gradient-to-t from-obsidian/40 to-transparent flex items-end justify-between">
+                <span className="font-sans text-[9px] font-bold uppercase tracking-[0.4em] text-white/80">
+                  Collection: Bleecker
+                </span>
+                <div className="w-1.5 h-1.5 rounded-full bg-gold-muted animate-pulse" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── SECTION 3: PRODUCT GRID (Pouch Style) ── */}
+      <section className="relative bg-silk pb-40">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex items-end justify-between mb-20 border-b border-black/5 pb-10">
+            <h2 className="font-serif text-4xl md:text-6xl font-light text-obsidian tracking-tight">
+              Featured Masterpieces
+            </h2>
+            <Link
+              href="/shop"
+              className="font-sans text-[10px] font-bold uppercase tracking-[0.4em] text-gold-muted hover:text-obsidian transition-colors"
+            >
+              View All
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
             {SAMPLE_GOWNS.map((gown, i) => (
               <motion.a
                 key={gown.id}
                 href={`/shop/${gown.id}`}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                className="group"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.8, delay: i * 0.1 }}
+                className="group flex flex-col"
               >
-                <div className="relative aspect-[3/4] overflow-hidden rounded-[32px] bg-white/5 mb-6">
+                <div className="aspect-[3/4] rounded-[2.5rem] overflow-hidden bg-obsidian/[0.03] mb-8 relative">
                   <img
                     src={gown.image}
                     alt={gown.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
                   />
                   {gown.verified && (
-                    <div className="absolute top-4 left-4 resonance-panel px-4 py-2 rounded-full flex items-center gap-2">
-                      <VerifiedBadge className="w-3 h-3 text-resonance-amber" />
-                      <span className="font-sans text-[9px] font-black uppercase tracking-widest text-white">
-                        House Verified
+                    <div className="absolute top-6 left-6 px-4 py-2 bg-white/90 backdrop-blur-sm rounded-full flex items-center gap-2 shadow-sm">
+                      <VerifiedBadge className="w-3 h-3 text-gold-muted" />
+                      <span className="font-sans text-[8px] font-bold uppercase tracking-widest text-obsidian/60">
+                        Verified
                       </span>
                     </div>
                   )}
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-500" />
+                  <div className="absolute inset-0 bg-obsidian/0 group-hover:bg-obsidian/5 transition-colors duration-500" />
                 </div>
-
-                <div className="px-2">
-                  <h3 className="font-sans text-xl font-bold text-white mb-1 group-hover:text-resonance-amber transition-colors">
+                <div className="flex flex-col items-center text-center">
+                  <p className="font-sans text-[9px] font-bold text-obsidian/30 uppercase tracking-[0.3em] mb-2">
+                    {gown.collection}
+                  </p>
+                  <h3 className="font-serif text-2xl text-obsidian mb-3 italic">
                     {gown.name}
                   </h3>
-                  <p className="font-sans text-sm text-white/40 font-bold uppercase tracking-widest mb-3">
-                    {gown.collection} &middot; Size {gown.size}
-                  </p>
                   <div className="flex items-center gap-4">
-                    <span className="font-sans text-lg font-black text-white">
+                    <span className="font-sans text-sm font-bold text-obsidian">
                       ${gown.price.toLocaleString()}
                     </span>
-                    <span className="font-sans text-sm text-white/20 line-through font-bold">
+                    <span className="font-sans text-xs text-obsidian/20 line-through">
                       ${gown.originalPrice.toLocaleString()}
                     </span>
                   </div>
@@ -543,46 +389,10 @@ export default function Home() {
               </motion.a>
             ))}
           </div>
-
-          <div className="text-center">
-            <Link
-              href="/shop"
-              className="inline-block px-12 py-4 border border-white/10 rounded-full font-sans text-sm font-bold uppercase tracking-widest text-white/60 hover:text-white hover:border-white transition-all duration-300"
-            >
-              Browse All Masterpieces
-            </Link>
-          </div>
         </div>
       </section>
 
-      <footer className="relative z-10 border-t border-white/5 bg-black py-20 px-8 md:px-24">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
-          <div className="text-center md:text-left">
-            <h3 className="font-sans text-2xl font-black text-white tracking-tight">
-              RE:GALIA
-            </h3>
-            <p className="font-sans text-xs font-bold text-white/20 mt-2 uppercase tracking-widest">
-              The Official Marketplace
-            </p>
-          </div>
-          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12">
-            {["Shop", "Works", "Authentic", "Contact"].map(
-              (link) => (
-                <a
-                  key={link}
-                  href="#"
-                  className="font-sans text-xs font-bold text-white/40 hover:text-resonance-amber transition-colors tracking-[0.2em] uppercase"
-                >
-                  {link}
-                </a>
-              )
-            )}
-          </div>
-          <p className="font-sans text-[10px] font-bold text-white/10 tracking-[0.3em] uppercase">
-            &copy; {new Date().getFullYear()} RE:GALIA House
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </main>
   );
 }

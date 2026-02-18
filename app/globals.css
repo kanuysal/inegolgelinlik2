@@ -10,6 +10,7 @@
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: "PP Monument Extended";
   src: url("/fonts/PPMonumentExtended-ThinItalic.otf") format("opentype");
@@ -17,6 +18,7 @@
   font-style: italic;
   font-display: swap;
 }
+
 @font-face {
   font-family: "PP Monument Extended";
   src: url("/fonts/PPMonumentExtended-Regular.otf") format("opentype");
@@ -24,6 +26,7 @@
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: "PP Monument Extended";
   src: url("/fonts/PPMonumentExtended-RegularItalic.otf") format("opentype");
@@ -31,6 +34,7 @@
   font-style: italic;
   font-display: swap;
 }
+
 @font-face {
   font-family: "PP Monument Extended";
   src: url("/fonts/PPMonumentExtended-Bold.otf") format("opentype");
@@ -38,6 +42,7 @@
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: "PP Monument Extended";
   src: url("/fonts/PPMonumentExtended-BoldItalic.otf") format("opentype");
@@ -45,6 +50,7 @@
   font-style: italic;
   font-display: swap;
 }
+
 @font-face {
   font-family: "PP Monument Extended";
   src: url("/fonts/PPMonumentExtended-Black.otf") format("opentype");
@@ -52,6 +58,7 @@
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: "PP Monument Extended";
   src: url("/fonts/PPMonumentExtended-BlackItalic.otf") format("opentype");
@@ -68,45 +75,58 @@
 }
 
 html {
-  scroll-behavior: auto; /* framer-motion handles smooth scroll */
+  scroll-behavior: auto;
+  /* framer-motion handles smooth scroll */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  background-color: #000000;
-  color: #ffffff;
+  background-color: #FAF9F6;
+  /* Silk */
+  color: #1a1818;
+  /* Obsidian */
   overflow-x: hidden;
+  font-feature-settings: "ss01", "ss02", "cv01", "cv02";
+  -webkit-font-smoothing: antialiased;
 }
 
-/* ── Dark-mode luxury scrollbar ── */
+h1,
+h2,
+h3,
+h4,
+.font-serif {
+  @apply tracking-tighter;
+}
+
+/* ── Minimalist Scrollbar — Pouch Style ── */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #000000;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 179, 71, 0.2);
-  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 179, 71, 0.4);
+  background: rgba(0, 0, 0, 0.15);
 }
 
 /* Firefox */
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 179, 71, 0.2) #000000;
+  scrollbar-color: rgba(0, 0, 0, 0.08) transparent;
 }
 
 /* ── Selection highlight ── */
 ::selection {
-  background-color: rgba(255, 179, 71, 0.15);
-  color: #ffffff;
+  background-color: rgba(197, 160, 89, 0.2);
+  color: #1a1818;
 }
 
 /* ── Canvas rendering optimisation ── */
@@ -115,44 +135,44 @@ canvas {
   image-rendering: crisp-edges;
 }
 
-/* ── Resonance Utilities ── */
+/* ── Resonance Utilities (Light Mode) ── */
 .resonance-glow {
-  filter: drop-shadow(0 0 15px rgba(255, 179, 71, 0.3));
+  filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.2));
 }
 
 .resonance-gradient {
-  background: linear-gradient(135deg, #ffb347 0%, #00d2ff 100%);
+  background: linear-gradient(135deg, #D4AF37 0%, #1a1818 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .resonance-panel {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.02);
   border-radius: 40px;
 }
 
-/* ── Text shimmer for luxury headings ── */
+/* ── Text shimmer for luxury headings (Gold/Obsidian) ── */
 .text-shimmer {
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.4) 0%,
-    rgba(255, 179, 71, 0.6) 50%,
-    rgba(255, 255, 255, 0.4) 100%
-  );
+  background: linear-gradient(90deg,
+      rgba(26, 24, 24, 0.45) 0%,
+      rgba(212, 175, 55, 0.8) 50%,
+      rgba(26, 24, 24, 0.45) 100%);
   background-size: 200% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: shimmer 3s ease-in-out infinite;
+  animation: shimmer 4s ease-in-out infinite;
 }
 
 @keyframes shimmer {
   0% {
     background-position: -200% 0;
   }
+
   100% {
     background-position: 200% 0;
   }
@@ -161,19 +181,15 @@ canvas {
 /* ── Fade overlay mask for beat sections ── */
 @layer utilities {
   .fade-overlay {
-    mask-image: linear-gradient(
-      to bottom,
-      transparent 0%,
-      black 15%,
-      black 85%,
-      transparent 100%
-    );
-    -webkit-mask-image: linear-gradient(
-      to bottom,
-      transparent 0%,
-      black 15%,
-      black 85%,
-      transparent 100%
-    );
+    mask-image: linear-gradient(to bottom,
+        transparent 0%,
+        black 15%,
+        black 85%,
+        transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom,
+        transparent 0%,
+        black 15%,
+        black 85%,
+        transparent 100%);
   }
 }

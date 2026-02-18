@@ -3,6 +3,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { requireAuth } from '@/lib/auth'
 import { listingSchema } from '@/lib/validators/listing'
+import { GOWN_CATALOG } from '@/lib/catalog'
+import { SIZE_DATABASE } from '@/lib/sizes'
 
 // Helper: get an untyped supabase client (DB types don't match runtime schema)
 async function getSupabase() {
@@ -10,17 +12,70 @@ async function getSupabase() {
 }
 
 export async function searchProducts(query: string) {
+  try {
+    const lowercaseQuery = query.toLowerCase()
+
+    // Search in local catalog first
+    const filteredCatalog = GOWN_CATALOG.filter(gown =>
+      gown.name.toLowerCase().includes(lowercaseQuery) ||
+      gown.silhouette.toLowerCase().includes(lowercaseQuery)
+    ).map(gown => ({
+      id: gown.id,
+      style_name: gown.name,
+      sku: null,
+      category: gown.collection === 'Evening' ? 'evening' : 'bridal',
+      silhouette: gown.silhouette,
+      train_style: null,
+      msrp: parseInt(gown.msrp_range.split('-')[1].replace(/[^0-9]/g, '')),
+      images: gown.images
+    }))
+
+    const supabase = await getSupabase()
+    const { data, error } = await supabase
+      .from('products')
+      .select('id, style_name, sku, category, silhouette, train_style, msrp, images')
+      .or(`style_name.ilike.%${query}%,sku.ilike.%${query}%`)
+      .limit(10)
+
+    // Merge results, prioritizing catalog matches
+    const dbProducts = data || []
+    const combined = [...filteredCatalog, ...dbProducts.filter((p: any) => !filteredCatalog.find(c => c.style_name === p.style_name))]
+
+    return { products: combined.slice(0, 10), error: error?.message || null }
+  } catch (err: any) {
+    console.error('Search products crash:', err)
+    return { products: [], error: 'Search failed' }
+  }
+}
+
+export async function getCatalogGowns() {
+  // Return the master catalog directly
+  return { gowns: GOWN_CATALOG, error: null }
+}
+
+export async function getSizeDimensions(sizeLabel: string) {
+  const localSize = SIZE_DATABASE.find(s => s.label === sizeLabel)
+  if (localSize) {
+    return {
+      dimensions: {
+        bust: localSize.bust_cm,
+        waist: localSize.waist_cm,
+        hips: localSize.hips_cm,
+        height_with_shoes: 175 // Default couture height
+      },
+      error: null
+    }
+  }
+
   const supabase = await getSupabase()
-
   const { data, error } = await supabase
-    .from('products')
-    .select('id, style_name, sku, category, silhouette, train_style, msrp, images')
-    .or(`style_name.ilike.%${query}%,sku.ilike.%${query}%`)
-    .eq('is_active', true)
-    .limit(10)
+    .from('universal_sizes')
+    .select('bust, waist, hips, height_with_shoes')
+    .eq('size_label', sizeLabel)
+    .single()
 
-  if (error) return { products: [], error: error.message }
-  return { products: data || [], error: null }
+  if (error) return { dimensions: null, error: error.message }
+  return { dimensions: data, error: null }
 }
 
 export async function submitListing(formData: {

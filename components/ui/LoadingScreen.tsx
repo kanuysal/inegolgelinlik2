@@ -34,10 +34,10 @@ export default function LoadingScreen() {
                             ease: [0.22, 1, 0.36, 1]
                         }
                     }}
-                    className="fixed inset-0 z-[9999] bg-obsidian flex flex-col items-center justify-center overflow-hidden"
+                    className="fixed inset-0 z-[9999] bg-silk flex flex-col items-center justify-center overflow-hidden"
                 >
-                    {/* Subtle Aisle Glow */}
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(212,175,55,0.04),transparent_70%)]" />
+                    {/* Subtle Aisle Glow (Light) */}
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(212,175,55,0.08),transparent_70%)]" />
 
                     <div className="relative flex flex-col items-center">
                         {/* Silhouette Animation Container */}
@@ -47,30 +47,30 @@ export default function LoadingScreen() {
                                 viewBox="0 0 100 100"
                                 fill="none"
                                 xmlns="http://www.w3.org/2000/svg"
-                                className="w-full h-full text-white/10"
+                                className="w-full h-full text-obsidian/5"
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ duration: 1.2 }}
                             >
-                                {/* stylized dress silhouette - more refined curve */}
+                                {/* stylized dress silhouette - obsidian stroke */}
                                 <motion.path
                                     d="M50 22C46 22 43 25 43 28C43 31 45 33 47 35L41 62L32 88H68L59 62L53 35C55 33 57 31 57 28C57 25 54 22 50 22Z"
-                                    stroke="rgba(255,255,255,0.2)"
+                                    stroke="rgba(26, 24, 24, 0.15)"
                                     strokeWidth="0.75"
                                     initial={{ pathLength: 0, opacity: 0 }}
                                     animate={{ pathLength: 1, opacity: 1 }}
                                     transition={{ duration: 2.2, ease: "easeInOut" }}
                                 />
 
-                                {/* Subtle movement hint */}
+                                {/* Subtle movement hint (Gold) */}
                                 <motion.path
                                     d="M38 65Q50 70 62 65"
-                                    stroke="rgba(212,175,55,0.15)"
+                                    stroke="rgba(212, 175, 55, 0.3)"
                                     strokeWidth="0.5"
                                     strokeDasharray="2 4"
                                     animate={{
                                         strokeDashoffset: [0, -6],
-                                        opacity: [0.3, 0.6, 0.3]
+                                        opacity: [0.4, 0.7, 0.4]
                                     }}
                                     transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
                                 />
@@ -78,9 +78,9 @@ export default function LoadingScreen() {
 
                             {/* Animated Walk Ripple */}
                             <motion.div
-                                className="absolute inset-0 rounded-full border border-resonance-amber/10"
+                                className="absolute inset-0 rounded-full border border-gold-muted/20"
                                 initial={{ scale: 0.7, opacity: 0 }}
-                                animate={{ scale: 1.4, opacity: [0, 0.2, 0] }}
+                                animate={{ scale: 1.4, opacity: [0, 0.3, 0] }}
                                 transition={{ duration: 2.5, repeat: Infinity, ease: "circOut" }}
                             />
                         </div>
@@ -92,17 +92,17 @@ export default function LoadingScreen() {
                             transition={{ delay: 0.8, duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
                             className="text-center"
                         >
-                            <h2 className="font-serif text-[13px] tracking-[0.5em] text-white/40 mb-4 uppercase font-light">
+                            <h2 className="font-serif text-[13px] tracking-[0.5em] text-obsidian/60 mb-4 uppercase font-light">
                                 RE : GALIA
                             </h2>
                             <div className="flex gap-1.5 justify-center">
                                 {[0, 1, 2].map((i) => (
                                     <motion.div
                                         key={i}
-                                        className="w-[3px] h-[3px] rounded-full bg-resonance-amber/30"
+                                        className="w-[3px] h-[3px] rounded-full bg-gold-muted/40"
                                         animate={{
                                             scale: [1, 1.5, 1],
-                                            opacity: [0.3, 0.8, 0.3]
+                                            opacity: [0.4, 0.9, 0.4]
                                         }}
                                         transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.25 }}
                                     />

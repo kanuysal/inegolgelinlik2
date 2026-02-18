@@ -13,11 +13,13 @@ const config: Config = {
         display: ["Outfit", "PP Monument Extended", "system-ui", "sans-serif"],
       },
       colors: {
-        obsidian: "#000000",
-        champagne: "#f5e6d3",
-        "gold-muted": "#c9a96e",
-        "resonance-amber": "#ffb347",
-        "resonance-blue": "#00d2ff",
+        obsidian: "#1a1818",
+        silk: "#FAF9F6",
+        "bridal-white": "#FFFFFF",
+        champagne: "#F7E7CE",
+        "gold-muted": "#D4AF37",
+        "resonance-amber": "#c9a96e",
+        "resonance-blue": "#8da9c4",
       },
       keyframes: {
         "fade-up": {

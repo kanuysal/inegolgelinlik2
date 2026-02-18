@@ -121,6 +121,7 @@ function applyFilters(listings: Listing[], filters: ActiveFilters): Listing[] {
 export default function ShopPage() {
   const [filters, setFilters] = useState<ActiveFilters>(DEFAULT_FILTERS);
   const [listings, setListings] = useState<Listing[]>(mockListings);
+  const [visibleItems, setVisibleItems] = useState(8);
 
   // Try to load real listings from Supabase on mount
   useEffect(() => {
@@ -134,19 +135,44 @@ export default function ShopPage() {
 
   const filtered = useMemo(() => applyFilters(listings, filters), [listings, filters]);
 
+  // Reset pagination when filters change
+  useEffect(() => {
+    setVisibleItems(8);
+  }, [filters]);
+
+  const displayedListings = useMemo(() => filtered.slice(0, visibleItems), [filtered, visibleItems]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && visibleItems < filtered.length) {
+          setVisibleItems((prev) => prev + 4);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const trigger = document.getElementById("scroll-trigger");
+    if (trigger) observer.observe(trigger);
+
+    return () => {
+      if (trigger) observer.unobserve(trigger);
+    };
+  }, [filtered.length, visibleItems]);
+
   return (
-    <main className="min-h-screen bg-obsidian">
+    <main className="min-h-screen">
       <Navbar />
 
       {/* Hero banner */}
-      <section className="pt-32 pb-12 px-6 md:px-10">
+      <section className="pt-48 pb-12 px-6 md:px-10">
         <div className="max-w-7xl mx-auto">
           <nav className="flex items-center gap-3 mb-10">
-            <a href="/" className="font-sans text-[9px] font-bold uppercase tracking-[0.4em] text-white/20 hover:text-white/50 transition-colors">
+            <a href="/" className="font-sans text-[9px] font-bold uppercase tracking-[0.4em] text-obsidian/20 hover:text-obsidian/50 transition-colors">
               Home
             </a>
-            <span className="text-white/10 text-[8px]">•</span>
-            <span className="font-sans text-[9px] font-bold uppercase tracking-[0.4em] text-white/40">
+            <span className="text-obsidian/10 text-[8px]">•</span>
+            <span className="font-sans text-[9px] font-bold uppercase tracking-[0.4em] text-obsidian/40">
               Shop
             </span>
           </nav>
@@ -156,10 +182,10 @@ export default function ShopPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           >
-            <h1 className="font-serif text-5xl md:text-7xl font-light tracking-tight text-white/95 leading-none">
+            <h1 className="font-serif text-6xl md:text-8xl font-light tracking-tight text-obsidian leading-none">
               The Collection
             </h1>
-            <p className="font-sans text-sm text-white/30 mt-6 tracking-wide max-w-lg leading-relaxed">
+            <p className="font-sans text-sm text-obsidian/40 mt-8 tracking-wide max-w-lg leading-relaxed">
               Authenticated Galia Lahav couture, curated for its next chapter.
               Every gown verified by the House of Galia Lahav.
             </p>
@@ -168,7 +194,7 @@ export default function ShopPage() {
       </section>
 
       {/* Filters + Grid */}
-      <section className="px-6 md:px-10 pb-20">
+      <section className="px-6 md:px-10 pb-32">
         <div className="max-w-7xl mx-auto">
           <FilterBar
             filters={filters}
@@ -177,26 +203,29 @@ export default function ShopPage() {
           />
 
           {filtered.length > 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-16 mt-12">
-              {filtered.map((listing, i) => (
-                <ProductCard key={listing.id} listing={listing} index={i} />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-16 mt-16">
+                {displayedListings.map((listing, i) => (
+                  <ProductCard key={listing.id} listing={listing} index={i} />
+                ))}
+              </div>
+              <div id="scroll-trigger" className="h-20 w-full" />
+            </>
           ) : (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="flex flex-col items-center justify-center py-40"
             >
-              <p className="font-serif text-3xl text-white/40 tracking-tight mb-4">
+              <p className="font-serif text-3xl text-obsidian/40 tracking-tight mb-4">
                 No gowns found
               </p>
-              <p className="font-sans text-sm text-white/20 mb-10 max-w-xs text-center leading-relaxed">
+              <p className="font-sans text-sm text-obsidian/20 mb-10 max-w-xs text-center leading-relaxed">
                 Try adjusting your search criteria to discover more available pieces.
               </p>
               <button
                 onClick={() => setFilters(DEFAULT_FILTERS)}
-                className="px-10 py-3.5 border border-white/10 rounded-full font-sans text-[10px] font-bold uppercase tracking-[0.3em] text-white/40 hover:text-white hover:border-white/30 transition-all hover:bg-white/5"
+                className="px-12 py-4 border border-obsidian/10 rounded-full font-sans text-[10px] font-bold uppercase tracking-[0.3em] text-obsidian/40 hover:text-obsidian hover:border-obsidian/30 transition-all hover:bg-obsidian/5"
               >
                 Clear All Filters
               </button>

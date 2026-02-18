@@ -122,169 +122,128 @@ export default function Navbar() {
       : "U";
 
   const navClass = scrolled
-    ? "top-4 mx-auto max-w-[90%] rounded-full resonance-panel px-4"
-    : "top-0 w-full bg-transparent";
+    ? "top-6 bg-white/95 backdrop-blur-xl border border-black/5 shadow-2xl"
+    : "top-8 bg-transparent border-transparent";
+
+  const textClass = scrolled ? "text-obsidian" : "text-white";
+  const mutedTextClass = scrolled ? "text-obsidian/40" : "text-white/50";
 
   return (
     <>
-      <motion.nav
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        className={`fixed left-0 right-0 z-[60] transition-all duration-500 ${navClass}`}
-      >
-        <div className="mx-auto h-16 flex items-center justify-between px-6">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <span className="font-sans font-bold text-xl tracking-tight text-white transition-colors">
-              RE:GALIA
-            </span>
-          </Link>
+      <div className="fixed top-0 left-0 right-0 z-[60] flex justify-center pointer-events-none p-6">
+        <motion.nav
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          className={`h-16 flex items-center justify-between px-6 rounded-full transition-all duration-700 pointer-events-auto w-full max-w-5xl relative ${navClass}`}
+        >
+          {/* Menu Toggle & Desktop Links - Left */}
+          <div className="flex-1 flex items-center gap-8">
+            <button
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="flex flex-col gap-[5px] p-2 -ml-2 group z-20"
+              aria-label="Toggle menu"
+            >
+              <motion.span
+                animate={mobileOpen ? { rotate: 45, y: 6 } : { rotate: 0, y: 0 }}
+                className={`block w-6 h-[1.5px] ${textClass} transition-colors duration-500`}
+              />
+              <motion.span
+                animate={mobileOpen ? { rotate: -45, y: -1 } : { rotate: 0, y: 0 }}
+                className={`block w-6 h-[1.5px] ${textClass} transition-colors duration-500`}
+              />
+            </button>
 
-          {/* Desktop links */}
-          <div className="hidden md:flex items-center gap-8">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`font-sans text-[13px] font-medium transition-colors duration-300 ${pathname === link.href
-                  ? "text-resonance-amber"
-                  : "text-white/50 hover:text-white"
-                  }`}
-              >
-                {link.label}
-              </Link>
-            ))}
+            {/* Desktop Navigation Links */}
+            <div className="hidden md:flex items-center gap-8">
+              {NAV_LINKS.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`font-sans text-[10px] font-bold uppercase tracking-[0.2em] transition-all duration-500 whitespace-nowrap ${pathname === link.href
+                    ? "text-[#C5A059]"
+                    : `${mutedTextClass} hover:text-[#C5A059]`
+                    }`}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
           </div>
 
-          {/* Desktop right side */}
-          <div className="hidden md:flex items-center gap-6">
-            {!loading && (
-              <>
-                {isStaff && (
-                  <Link
-                    href="/admin"
-                    className="flex items-center gap-2 px-4 py-1.5 rounded-full resonance-panel border-resonance-amber/20 hover:border-resonance-amber/40 transition-all group"
-                  >
-                    <span className="w-2 h-2 rounded-full bg-resonance-amber animate-pulse" />
-                    <span className="font-sans text-[10px] font-bold uppercase tracking-[0.2em] text-resonance-amber/80 group-hover:text-resonance-amber">
-                      Console
-                    </span>
-                  </Link>
-                )}
+          {/* Logo - Centered (Atmos Style) */}
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+            <Link href="/" className="flex items-center gap-2 group">
+              <span className={`font-sans font-bold text-xl tracking-[0.2em] uppercase transition-colors duration-500 ${textClass}`}>
+                RE:GALIA
+              </span>
+            </Link>
+          </div>
 
+          {/* Actions - Right */}
+          <div className="flex-1 flex items-center justify-end gap-6 text-obsidian">
+            {/* Minimal Desktop Browse */}
+            {!loading && (
+              <div className="flex items-center gap-4">
                 {user ? (
-                  /* Signed in — show account button */
                   <div className="relative">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         setDropdownOpen(!dropdownOpen);
                       }}
-                      className="flex items-center gap-2.5 group"
+                      className="flex items-center gap-2 group"
                     >
-                      {user.user_metadata?.avatar_url ? (
-                        <img
-                          src={user.user_metadata.avatar_url}
-                          alt="Avatar"
-                          className="w-8 h-8 rounded-full border border-white/10 group-hover:border-resonance-amber/40 transition-colors"
-                        />
-                      ) : (
-                        <span className="w-8 h-8 rounded-full bg-resonance-amber/10 border border-resonance-amber/20 flex items-center justify-center text-resonance-amber text-xs font-sans font-medium">
-                          {userInitial}
-                        </span>
-                      )}
-                      <span className="font-sans text-xs uppercase tracking-[0.15em] text-white/50 group-hover:text-white/70 transition-colors">
-                        Account
-                      </span>
+                      <div className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all duration-500 ${scrolled ? 'bg-gold-muted/10 border-gold-muted/20 text-gold-muted' : 'bg-white/10 border-white/20 text-white'}`}>
+                        {user.user_metadata?.avatar_url ? (
+                          <img src={user.user_metadata.avatar_url} alt="Avatar" className="w-full h-full rounded-full" />
+                        ) : (
+                          <span className="text-[10px] font-bold">{userInitial}</span>
+                        )}
+                      </div>
                     </button>
 
-                    {/* Dropdown */}
                     <AnimatePresence>
                       {dropdownOpen && (
                         <motion.div
                           initial={{ opacity: 0, y: 8, scale: 0.96 }}
                           animate={{ opacity: 1, y: 0, scale: 1 }}
                           exit={{ opacity: 0, y: 8, scale: 0.96 }}
-                          transition={{ duration: 0.15 }}
-                          className="absolute right-0 top-12 w-52 bg-[#111] border border-white/10 rounded-sm shadow-2xl overflow-hidden"
+                          className="absolute right-0 top-12 w-52 bg-white border border-black/5 rounded-2xl shadow-2xl overflow-hidden py-2"
                         >
-                          {/* User info */}
-                          <div className="px-4 py-3 border-b border-white/5">
-                            <p className="font-sans text-xs text-white/70 truncate">
-                              {user.user_metadata?.full_name || user.email}
-                            </p>
-                            {user.user_metadata?.full_name && (
-                              <p className="font-sans text-[10px] text-white/30 truncate mt-0.5">
-                                {user.email}
-                              </p>
-                            )}
-                          </div>
-
-                          <div className="py-1">
-                            <Link
-                              href="/dashboard"
-                              className="block px-4 py-2.5 font-sans text-xs uppercase tracking-[0.15em] text-white/50 hover:text-white hover:bg-white/5 transition-colors"
-                            >
-                              Dashboard
-                            </Link>
-                            <Link
-                              href="/sell"
-                              className="block px-4 py-2.5 font-sans text-xs uppercase tracking-[0.15em] text-white/50 hover:text-white hover:bg-white/5 transition-colors"
-                            >
-                              Sell a Gown
-                            </Link>
-                            <button
-                              onClick={handleSignOut}
-                              className="w-full text-left px-4 py-2.5 font-sans text-xs uppercase tracking-[0.15em] text-white/30 hover:text-red-400 hover:bg-white/5 transition-colors"
-                            >
-                              Sign Out
-                            </button>
-                          </div>
+                          <Link href="/dashboard" className="block px-5 py-3 font-sans text-[10px] font-bold uppercase tracking-[0.1em] text-obsidian/60 hover:text-obsidian hover:bg-black/5">Dashboard</Link>
+                          <Link href="/sell" className="block px-5 py-3 font-sans text-[10px] font-bold uppercase tracking-[0.1em] text-obsidian/60 hover:text-obsidian hover:bg-black/5">Sell Gown</Link>
+                          {isStaff && (
+                            <Link href="/admin" className="block px-5 py-3 font-sans text-[10px] font-bold uppercase tracking-[0.1em] text-[#C5A059] hover:text-[#B38E48] hover:bg-black/5 font-bold">Admin Console</Link>
+                          )}
+                          <button onClick={handleSignOut} className="w-full text-left px-5 py-3 font-sans text-[10px] font-bold uppercase tracking-[0.1em] text-red-500/60 hover:text-red-600 hover:bg-red-50">Sign Out</button>
                         </motion.div>
                       )}
                     </AnimatePresence>
                   </div>
                 ) : (
-                  /* Not signed in — show Sign In link */
                   <Link
                     href="/auth/login"
-                    className="font-sans text-xs uppercase tracking-[0.2em] text-white/40 hover:text-white/70 transition-colors"
+                    className={`font-sans text-[10px] font-bold uppercase tracking-[0.2em] transition-colors duration-500 ${mutedTextClass} hover:text-gold-muted`}
                   >
                     Sign In
                   </Link>
                 )}
-              </>
-            )}
-            <Link
-              href="/shop"
-              className="font-sans text-[13px] font-semibold px-6 py-2 bg-white text-black rounded-full hover:bg-resonance-amber transition-colors duration-300"
-            >
-              Browse
-            </Link>
-          </div>
 
-          {/* Mobile hamburger */}
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden flex flex-col gap-1.5 p-2"
-            aria-label="Toggle menu"
-          >
-            <motion.span
-              animate={mobileOpen ? { rotate: 45, y: 6 } : { rotate: 0, y: 0 }}
-              className="block w-5 h-[1.5px] bg-white"
-            />
-            <motion.span
-              animate={mobileOpen ? { opacity: 0 } : { opacity: 1 }}
-              className="block w-5 h-[1.5px] bg-white"
-            />
-            <motion.span
-              animate={mobileOpen ? { rotate: -45, y: -6 } : { rotate: 0, y: 0 }}
-              className="block w-5 h-[1.5px] bg-white"
-            />
-          </button>
-        </div>
-      </motion.nav>
+                <Link
+                  href="/shop"
+                  className={`font-sans text-[10px] font-bold uppercase tracking-[0.2em] px-8 py-3 rounded-full transition-all duration-500 border ${scrolled
+                    ? "bg-[#C5A059] text-white border-[#C5A059] hover:bg-[#B38E48]"
+                    : "bg-[#C5A059] text-white border-[#C5A059] hover:scale-105 active:scale-95"
+                    }`}
+                >
+                  Browse
+                </Link>
+              </div>
+            )}
+          </div>
+        </motion.nav>
+      </div>
 
       {/* Mobile menu */}
       <AnimatePresence>
@@ -294,7 +253,7 @@ export default function Navbar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-[55] bg-black/98 backdrop-blur-xl flex flex-col items-center justify-center gap-10"
+            className="fixed inset-0 z-[55] bg-silk/98 backdrop-blur-xl flex flex-col items-center justify-center gap-10"
           >
             {NAV_LINKS.map((link, i) => (
               <motion.div
@@ -306,7 +265,7 @@ export default function Navbar() {
               >
                 <Link
                   href={link.href}
-                  className={`font-sans text-4xl font-bold tracking-tight ${pathname === link.href ? "text-resonance-amber" : "text-white/80"
+                  className={`font-sans text-4xl font-bold tracking-tight ${pathname === link.href ? "text-gold-muted" : "text-obsidian/80"
                     }`}
                 >
                   {link.label}

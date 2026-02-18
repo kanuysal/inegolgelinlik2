@@ -57,17 +57,32 @@ export const PRICE_RANGES = [
   { label: "Over $12,000", min: 12000, max: 999999 },
 ];
 
-/* placeholder images using gown silhouettes — in production these come from the API */
-const PLACEHOLDER_IMAGES = [
-  "https://images.unsplash.com/photo-1594552072238-b8a33785b261?w=600&h=900&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1519741497674-611481863552?w=600&h=900&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?w=600&h=900&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1549416878-b9ca838fc293?w=600&h=900&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1522276498395-f4f68f7f8b5e?w=600&h=900&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600&h=900&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1585241936939-be4099591252?w=600&h=900&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1550005809-91ad75fb315f?w=600&h=900&fit=crop&q=80",
+const GOWN_DATA = [
+  { name: "Artemis", img: "Artemis_1.jpg", stock: "Artemis_3_1_e4f05321-a228-4bbc-aa4d-c8c13b478d8e.jpg" },
+  { name: "Gaia", img: "Gaia_2_f64decaf-b6c1-4161-8b5b-55250e565f95.jpg", stock: "Gaia_4.jpg" },
+  { name: "Nora", img: "Nora_2.jpg", stock: "Nora_4-2.jpg" },
+  { name: "Catherine", img: "Catherine_White_1_4a482ec0-b216-4414-9c50-25b1f9bc3ebb.jpg", stock: "Catherine_White_2.jpg" },
+  { name: "Eden", img: "Eden_1_73a74c24-81c3-4906-b854-3ea1d04fa17f.jpg", stock: "Eden_4.jpg" },
+  { name: "Tal", img: "Tal_1_b74cb4cd-148f-4498-b31a-3eda97a95f21.jpg", stock: "Tal_2.jpg" },
+  { name: "Camellia", img: "Camellia_1_765abdb6-922a-481d-803c-6e243a2b5578.jpg", stock: "Camellia_2.jpg" },
+  { name: "Hazel", img: "Hazel_White_MF1.jpg", stock: "Hazel_White_B.jpg" },
+  { name: "Meghan", img: "Meghan_F.jpg", stock: "Meghan_MB.jpg" },
+  { name: "Lia", img: "Lia_Top_Lia_Skirt_MF.jpg", stock: "Lia_Top_Lia_Skirt_MF1.jpg" },
+  { name: "Toni", img: "Toni_F1.jpg", stock: "Toni_MF1.jpg" },
+  { name: "Lilah", img: "Lilah_3.jpg", stock: "Lilah_5.jpg" },
+  { name: "Willow", img: "WillowTop_WynterSkirtF.jpg", stock: "WillowTop_WynterSkirtB.jpg" },
+  { name: "Tango", img: "TangoMF.jpg", stock: "TangoB.jpg" },
+  { name: "Stassie", img: "StassieF.jpg", stock: "StassieMF.jpg" },
+  { name: "Hallie", img: "HallieMF1.jpg", stock: "IMG_1478.jpg" },
+  { name: "Courtney", img: "CourtneyF.jpg", stock: "CourtneyB.jpg" },
+  { name: "Ina", img: "InaF.jpg", stock: "InaMB1.jpg" },
+  { name: "Clara", img: "ClaraMF.jpg", stock: "IMG_2295_30aabcee-17d4-447d-a034-d4a1084592d7.jpg" },
+  { name: "Frankie", img: "Frankie_Balconette_1.jpg", stock: "Frankie_Balconette_2.jpg" },
+  { name: "Angel", img: "Angel_Robe_3.jpg", stock: "Angel_Robe_2.jpg" },
+  { name: "Lily", img: "Lily_Bra_1.jpg", stock: "Lily_Bra_2.jpg" },
 ];
+
+const CDN_BASE = "https://www.galialahav.com/cdn/shop/files/";
 
 /* Seeded random number generator — ensures server & client produce identical values */
 function createSeededRandom(seed: number) {
@@ -85,22 +100,15 @@ function generateListings(): Listing[] {
     return arr[Math.floor(random() * arr.length)];
   }
 
-  const names = [
-    "Almeria", "Brianna", "Celine", "Dahlia", "Estelle",
-    "Fiorella", "Giselle", "Helena", "Isla", "Juliana",
-    "Katerina", "Liliana", "Marcella", "Natasha", "Ophelia",
-    "Primrose", "Rosalind", "Seraphina", "Tatiana", "Valentina",
-    "Wisteria", "Xiomara", "Yasmine", "Zephyrine",
-  ];
-
-  return names.map((name, i) => {
-    const original = 5000 + Math.floor(random() * 12000);
+  return GOWN_DATA.map((gown, i) => {
+    const original = 8000 + Math.floor(random() * 15000); // Luxury pricing
     const discount = 0.3 + random() * 0.4; // 30-70% off
     const sale = Math.round(original * (1 - discount));
+    const isGala = i < 12; // Assign first 12 to GALA
     return {
       id: `gl-${String(i + 1).padStart(4, "0")}`,
-      title: name,
-      collection: pickRandom(COLLECTIONS),
+      title: gown.name,
+      collection: isGala ? "GALA by Galia Lahav" : "Bridal Couture",
       designer: "Galia Lahav",
       originalPrice: original,
       salePrice: sale,
@@ -110,19 +118,19 @@ function generateListings(): Listing[] {
       silhouette: pickRandom(SILHOUETTES),
       neckline: pickRandom(NECKLINES),
       fabric: pickRandom(FABRICS),
-      color: pickRandom(["Ivory", "White", "Champagne", "Blush", "Off-White"]),
-      imageUrl: PLACEHOLDER_IMAGES[i % PLACEHOLDER_IMAGES.length],
-      stockImageUrl: PLACEHOLDER_IMAGES[(i + 3) % PLACEHOLDER_IMAGES.length],
+      color: pickRandom(["Ivory", "Soft White", "Champagne", "Blush"]),
+      imageUrl: `${CDN_BASE}${gown.img}?width=1000`,
+      stockImageUrl: `${CDN_BASE}${gown.stock || gown.img}?width=1000`,
       verified: true,
       featured: i < 6,
-      saves: Math.floor(random() * 120) + 5,
-      daysListed: Math.floor(random() * 60) + 1,
-      sellerLocation: pickRandom(["New York, US", "Los Angeles, US", "London, UK", "Paris, FR", "Tel Aviv, IL", "Dubai, AE", "Sydney, AU", "Toronto, CA"]),
+      saves: Math.floor(random() * 450) + 50,
+      daysListed: Math.floor(random() * 30) + 1,
+      sellerLocation: pickRandom(["New York, US", "Los Angeles, US", "London, UK", "Paris, FR", "Tel Aviv, IL", "Dubai, AE"]),
       measurements: {
-        bust: `${32 + Math.floor(random() * 10)}"`,
-        waist: `${24 + Math.floor(random() * 8)}"`,
-        hips: `${34 + Math.floor(random() * 10)}"`,
-        height: `5'${4 + Math.floor(random() * 8)}"`,
+        bust: `${32 + Math.floor(random() * 6)}"`,
+        waist: `${24 + Math.floor(random() * 6)}"`,
+        hips: `${34 + Math.floor(random() * 6)}"`,
+        height: `5'${6 + Math.floor(random() * 6)}"`,
       },
     };
   });

@@ -70,13 +70,13 @@ function FilterDropdown({
       <button
         onClick={() => setOpen(!open)}
         className={`flex items-center gap-2 px-6 py-2 border transition-all duration-500 font-sans text-[10px] font-bold uppercase tracking-[0.2em] rounded-full ${hasActive
-            ? "border-resonance-amber/40 text-resonance-amber bg-resonance-amber/5"
-            : "border-white/10 text-white/40 hover:border-white/30 hover:text-white/80"
+          ? "border-gold-muted/40 text-gold-muted bg-gold-muted/5"
+          : "border-obsidian/10 text-obsidian/40 hover:border-obsidian/30 hover:text-obsidian/80"
           }`}
       >
         <span>{label}</span>
         {hasActive && (
-          <span className="w-4 h-4 flex items-center justify-center bg-resonance-amber/20 text-resonance-amber text-[9px] rounded-full">
+          <span className="w-4 h-4 flex items-center justify-center bg-gold-muted/20 text-gold-muted text-[9px] rounded-full">
             {selected.length}
           </span>
         )}
@@ -107,17 +107,17 @@ function FilterDropdown({
                   key={opt}
                   onClick={() => onToggle(opt)}
                   className={`w-full text-left px-4 py-2.5 font-sans text-[11px] tracking-wide transition-all rounded-xl ${isSelected
-                      ? "text-resonance-amber bg-resonance-amber/5"
-                      : "text-white/50 hover:text-white hover:bg-white/5"
+                    ? "text-gold-muted bg-gold-muted/5"
+                    : "text-obsidian/50 hover:text-obsidian hover:bg-obsidian/5"
                     }`}
                 >
                   <span className="flex items-center gap-2.5">
                     <span
-                      className={`w-3.5 h-3.5 border flex-shrink-0 flex items-center justify-center rounded-sm transition-all ${isSelected ? "border-resonance-amber bg-resonance-amber/20" : "border-white/20"
+                      className={`w-3.5 h-3.5 border flex-shrink-0 flex items-center justify-center rounded-sm transition-all ${isSelected ? "border-gold-muted bg-gold-muted/20" : "border-obsidian/20"
                         }`}
                     >
                       {isSelected && (
-                        <svg className="w-2.5 h-2.5 text-resonance-amber" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <svg className="w-2.5 h-2.5 text-gold-muted" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.5">
                           <path d="M2 6l3 3 5-5" />
                         </svg>
                       )}
@@ -154,10 +154,10 @@ export default function FilterBar({ filters, onFiltersChange, totalResults }: Fi
     (filters.priceRange ? 1 : 0);
 
   return (
-    <div className="border-b border-white/5 pb-5">
+    <div className="border-b border-obsidian/5 pb-8">
       {/* Trust banner */}
-      <div className="flex items-center justify-center gap-3 py-3 mb-8 border border-white/5 bg-white/[0.01] rounded-full">
-        <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-resonance-blue/60">
+      <div className="flex items-center justify-center gap-3 py-4 mb-10 border border-obsidian/5 bg-obsidian/[0.02] rounded-full">
+        <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-gold-muted/60">
           <path
             d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"
             stroke="currentColor"
@@ -167,13 +167,13 @@ export default function FilterBar({ filters, onFiltersChange, totalResults }: Fi
           />
           <path d="M9 12l2 2 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
-        <span className="font-sans text-[9px] font-medium uppercase tracking-[0.4em] text-white/30">
+        <span className="font-sans text-[9px] font-bold uppercase tracking-[0.4em] text-obsidian/40">
           Every gown verified by Galia Lahav &middot; Buyer Protection included
         </span>
       </div>
 
       {/* Filter row */}
-      <div className="flex flex-wrap items-center gap-2.5">
+      <div className="flex flex-wrap items-center gap-3">
         <FilterDropdown
           label="Collection"
           options={COLLECTIONS}
@@ -223,16 +223,16 @@ export default function FilterBar({ filters, onFiltersChange, totalResults }: Fi
                 onFiltersChange({ ...filters, priceRange: { min, max } });
               }
             }}
-            className="appearance-none px-6 py-2 border border-white/10 bg-transparent text-white/40 font-sans text-[10px] font-bold uppercase tracking-[0.2em] cursor-pointer hover:border-white/30 hover:text-white/80 transition-all rounded-full pr-10"
+            className="appearance-none px-6 py-2 border border-obsidian/10 bg-transparent text-obsidian/40 font-sans text-[10px] font-bold uppercase tracking-[0.2em] cursor-pointer hover:border-obsidian/30 hover:text-obsidian/80 transition-all rounded-full pr-10"
           >
-            <option value="" className="bg-obsidian">Price</option>
+            <option value="" className="bg-silk">Price</option>
             {PRICE_RANGES.map((r) => (
-              <option key={r.label} value={`${r.min}-${r.max}`} className="bg-obsidian">
+              <option key={r.label} value={`${r.min}-${r.max}`} className="bg-silk">
                 {r.label}
               </option>
             ))}
           </select>
-          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/20">
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-obsidian/20">
             <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
               <path d="M19 9l-7 7-7-7" />
             </svg>
@@ -249,15 +249,15 @@ export default function FilterBar({ filters, onFiltersChange, totalResults }: Fi
             onChange={(e) =>
               onFiltersChange({ ...filters, sortBy: e.target.value as ActiveFilters["sortBy"] })
             }
-            className="appearance-none px-6 py-2 border border-white/10 bg-transparent text-white/40 font-sans text-[10px] font-bold uppercase tracking-[0.2em] cursor-pointer hover:border-white/30 hover:text-white/80 transition-all rounded-full pr-10"
+            className="appearance-none px-6 py-2 border border-obsidian/10 bg-transparent text-obsidian/40 font-sans text-[10px] font-bold uppercase tracking-[0.2em] cursor-pointer hover:border-obsidian/30 hover:text-obsidian/80 transition-all rounded-full pr-10"
           >
-            <option value="relevance" className="bg-obsidian">Sort: Most Relevant</option>
-            <option value="price-low" className="bg-obsidian">Price: Low to High</option>
-            <option value="price-high" className="bg-obsidian">Price: High to Low</option>
-            <option value="newest" className="bg-obsidian">Newest First</option>
-            <option value="biggest-save" className="bg-obsidian">Biggest Savings</option>
+            <option value="relevance" className="bg-silk">Sort: Most Relevant</option>
+            <option value="price-low" className="bg-silk">Price: Low to High</option>
+            <option value="price-high" className="bg-silk">Price: High to Low</option>
+            <option value="newest" className="bg-silk">Newest First</option>
+            <option value="biggest-save" className="bg-silk">Biggest Savings</option>
           </select>
-          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/20">
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-obsidian/20">
             <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
               <path d="M19 9l-7 7-7-7" />
             </svg>
@@ -266,18 +266,18 @@ export default function FilterBar({ filters, onFiltersChange, totalResults }: Fi
       </div>
 
       {/* Active filters + results count */}
-      <div className="flex items-center justify-between mt-4">
+      <div className="flex items-center justify-between mt-6">
         <div className="flex items-center gap-2 flex-wrap">
           {activeCount > 0 && (
             <button
               onClick={() => onFiltersChange(DEFAULT_FILTERS)}
-              className="font-sans text-[10px] uppercase tracking-[0.2em] text-white/30 hover:text-white/60 transition-colors underline underline-offset-2"
+              className="font-sans text-[10px] uppercase tracking-[0.2em] text-obsidian/30 hover:text-obsidian/60 transition-colors underline underline-offset-4"
             >
               Clear All ({activeCount})
             </button>
           )}
         </div>
-        <p className="font-sans text-[11px] text-white/30 tracking-wider">
+        <p className="font-sans text-[11px] text-obsidian/30 tracking-widest uppercase font-bold">
           {totalResults} {totalResults === 1 ? "gown" : "gowns"} found
         </p>
       </div>

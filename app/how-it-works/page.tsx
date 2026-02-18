@@ -140,7 +140,7 @@ export default function HowItWorksPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
-    <main className="min-h-screen bg-obsidian text-white/90">
+    <main className="min-h-screen">
       <Navbar />
 
       {/* ── Hero section ── */}
@@ -151,14 +151,14 @@ export default function HowItWorksPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           >
-            <p className="font-sans text-[10px] font-bold uppercase tracking-[0.5em] text-resonance-amber mb-6">
+            <p className="font-sans text-[10px] font-bold uppercase tracking-[0.5em] text-gold-muted mb-6">
               The RE:GALIA Journey
             </p>
-            <h1 className="font-serif text-6xl md:text-8xl font-light tracking-tighter text-white/95 leading-none mb-10">
+            <h1 className="font-serif text-6xl md:text-8xl font-light tracking-tighter text-obsidian leading-none mb-10">
               Seamlessly <br />
               <span className="italic">Yours</span>
             </h1>
-            <p className="font-sans text-xl text-white/30 tracking-wide max-w-xl mx-auto leading-relaxed mb-12">
+            <p className="font-sans text-xl text-obsidian/30 tracking-wide max-w-xl mx-auto leading-relaxed mb-12 font-medium">
               Experience the pinnacle of pre-owned luxury bridal. A curated process designed for trust, authenticity, and the signature Galia Lahav experience.
             </p>
           </motion.div>
@@ -168,21 +168,21 @@ export default function HowItWorksPage() {
       {/* ── Process Tabs ── */}
       <section className="py-24 px-6 md:px-10">
         <div className="max-w-7xl mx-auto">
-          <div className="flex justify-center gap-12 mb-20 border-b border-white/5">
+          <div className="flex justify-center gap-16 mb-24 border-b border-obsidian/5">
             {["Buying", "Selling"].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab.toLowerCase() as any)}
-                className={`pb-8 font-sans text-[11px] font-bold uppercase tracking-[0.4em] transition-all relative ${activeTab === tab.toLowerCase()
-                    ? "text-resonance-amber"
-                    : "text-white/20 hover:text-white/40"
+                className={`pb-10 font-sans text-[11px] font-bold uppercase tracking-[0.5em] transition-all relative ${activeTab === tab.toLowerCase()
+                  ? "text-gold-muted"
+                  : "text-obsidian/20 hover:text-obsidian/40"
                   }`}
               >
                 {tab}
                 {activeTab === tab.toLowerCase() && (
                   <motion.div
                     layoutId="activeTabUnderline"
-                    className="absolute bottom-0 left-0 right-0 h-[2px] bg-resonance-amber shadow-[0_0_15px_rgba(245,158,11,0.5)]"
+                    className="absolute bottom-0 left-0 right-0 h-[2px] bg-gold-muted shadow-[0_0_20px_rgba(212,175,55,0.3)]"
                   />
                 )}
               </button>
@@ -196,20 +196,20 @@ export default function HowItWorksPage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -30 }}
               transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              className="grid md:grid-cols-4 gap-10"
+              className="grid md:grid-cols-4 gap-8"
             >
               {(activeTab === "buying" ? BUYING_STEPS : SELLING_STEPS).map((step, i) => (
-                <div key={i} className="resonance-panel p-10 flex flex-col items-start min-h-[360px] relative overflow-hidden group">
-                  <div className="font-serif text-[80px] text-white/[0.03] leading-none absolute -top-4 -right-2 select-none group-hover:text-white/[0.05] transition-colors">
+                <div key={i} className="resonance-panel p-10 flex flex-col items-start min-h-[380px] relative overflow-hidden group shadow-sm hover:shadow-xl transition-shadow duration-700">
+                  <div className="font-serif text-[100px] text-obsidian/[0.02] leading-none absolute -top-4 -right-2 select-none group-hover:text-obsidian/[0.04] transition-colors">
                     {step.num}
                   </div>
-                  <div className="w-10 h-10 rounded-full bg-white/[0.03] border border-white/10 flex items-center justify-center font-serif text-resonance-amber mb-8">
+                  <div className="w-12 h-12 rounded-full bg-obsidian/[0.02] border border-obsidian/5 flex items-center justify-center font-serif text-gold-muted mb-10 text-lg">
                     {step.num}
                   </div>
-                  <h3 className="font-serif text-2xl text-white/90 mb-6 tracking-tight leading-tight z-10">
+                  <h3 className="font-serif text-2xl text-obsidian mb-8 tracking-tight leading-tight z-10 font-light">
                     {step.title}
                   </h3>
-                  <p className="font-sans text-[13px] text-white/30 leading-relaxed tracking-wide mt-auto z-10 group-hover:text-white/40 transition-colors">
+                  <p className="font-sans text-[13px] text-obsidian/40 leading-relaxed tracking-wide mt-auto z-10 group-hover:text-obsidian/60 transition-colors font-medium">
                     {step.desc}
                   </p>
                 </div>
@@ -217,10 +217,10 @@ export default function HowItWorksPage() {
             </motion.div>
           </AnimatePresence>
 
-          <div className="text-center mt-20">
+          <div className="text-center mt-24">
             <Link
               href={activeTab === "buying" ? "/shop" : "/sell"}
-              className="px-16 py-6 bg-white text-obsidian font-sans text-[11px] font-bold uppercase tracking-[0.4em] rounded-full hover:bg-resonance-amber transition-all duration-500 shadow-[0_0_50px_rgba(255,255,255,0.05)]"
+              className="px-20 py-6 bg-obsidian text-silk font-sans text-[11px] font-bold uppercase tracking-[0.4em] rounded-full hover:bg-gold-muted hover:text-obsidian transition-all duration-500 shadow-xl"
             >
               {activeTab === "buying" ? "Explore Collection" : "Start Consigning"}
             </Link>
@@ -229,13 +229,13 @@ export default function HowItWorksPage() {
       </section>
 
       {/* ── Trust Section ── */}
-      <section className="py-40 bg-white/[0.01] border-y border-white/5 px-6">
+      <section className="py-44 bg-obsidian/[0.01] border-y border-obsidian/5 px-6">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-24">
-            <h2 className="font-serif text-5xl md:text-7xl font-light text-white/95 tracking-tight leading-none mb-6">Built on Trust</h2>
-            <p className="font-sans text-sm text-white/20 tracking-widest uppercase">The RE:GALIA Standard of Excellence</p>
+          <div className="text-center mb-28">
+            <h2 className="font-serif text-5xl md:text-8xl font-light text-obsidian tracking-tighter leading-none mb-8">Built on Trust</h2>
+            <p className="font-sans text-[10px] font-bold text-obsidian/20 tracking-[0.5em] uppercase">The RE:GALIA Standard of Excellence</p>
           </div>
-          <div className="grid md:grid-cols-3 gap-10">
+          <div className="grid md:grid-cols-3 gap-12">
             {TRUST_FEATURES.map((feature, i) => (
               <motion.div
                 key={i}
@@ -243,13 +243,13 @@ export default function HowItWorksPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="resonance-panel p-12 text-center flex flex-col items-center"
+                className="resonance-panel p-14 text-center flex flex-col items-center shadow-lg border border-obsidian/5"
               >
-                <div className="text-resonance-amber mb-8 opacity-80 group-hover:opacity-100 transition-opacity">
+                <div className="text-gold-muted mb-10 opacity-70 group-hover:opacity-100 transition-opacity">
                   {feature.icon}
                 </div>
-                <h3 className="font-serif text-2xl text-white/90 mb-4 tracking-tight">{feature.title}</h3>
-                <p className="font-sans text-[13px] text-white/30 leading-relaxed tracking-wide">
+                <h3 className="font-serif text-3xl text-obsidian mb-6 tracking-tight font-light">{feature.title}</h3>
+                <p className="font-sans text-[13px] text-obsidian/40 leading-relaxed tracking-wide font-medium">
                   {feature.desc}
                 </p>
               </motion.div>
@@ -259,23 +259,23 @@ export default function HowItWorksPage() {
       </section>
 
       {/* ── FAQ Section ── */}
-      <section className="py-40 px-6">
-        <div className="max-w-3xl mx-auto">
-          <div className="text-center mb-20">
-            <h2 className="font-serif text-5xl font-light text-white/95 tracking-tight leading-none">Questions</h2>
+      <section className="py-44 px-6 md:px-10">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-24">
+            <h2 className="font-serif text-5xl md:text-7xl font-light text-obsidian tracking-tighter leading-none">Questions</h2>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-6">
             {FAQS.map((faq, i) => (
-              <div key={i} className="resonance-panel px-8 py-2">
+              <div key={i} className="resonance-panel px-10 py-4 border border-obsidian/5 hover:border-obsidian/10 transition-colors">
                 <button
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
                   className="w-full flex items-center justify-between py-6 text-left group"
                 >
-                  <span className="font-sans text-[14px] text-white/50 group-hover:text-white/80 transition-colors tracking-wide">{faq.q}</span>
+                  <span className="font-sans text-[15px] text-obsidian/50 group-hover:text-obsidian transition-colors tracking-wide font-medium">{faq.q}</span>
                   <motion.span
                     animate={{ rotate: openFaq === i ? 45 : 0 }}
                     transition={{ duration: 0.3 }}
-                    className="text-white/20 text-xl font-light"
+                    className="text-obsidian/20 text-2xl font-light"
                   >
                     +
                   </motion.span>
@@ -289,7 +289,7 @@ export default function HowItWorksPage() {
                       transition={{ duration: 0.4, ease: "easeInOut" }}
                       className="overflow-hidden"
                     >
-                      <div className="pb-8 font-sans text-[14px] text-white/25 leading-relaxed tracking-wide">
+                      <div className="pb-10 font-sans text-base text-obsidian/40 leading-relaxed tracking-wide font-medium max-w-2xl">
                         {faq.a}
                       </div>
                     </motion.div>
