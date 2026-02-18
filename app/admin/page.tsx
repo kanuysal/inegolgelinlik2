@@ -441,6 +441,190 @@ function ProductForm({ product, onSubmit, onCancel, isPending, onRefresh }: {
 }
 
 // ═══════════════════════════════════════════════════════
+// PRODUCT CARD (admin catalog card)
+// ═══════════════════════════════════════════════════════
+function AdminProductCard({ product, onEdit, onToggle, onDelete, isPending }: {
+  product: any
+  onEdit: () => void
+  onToggle: () => void
+  onDelete: () => void
+  isPending: boolean
+}) {
+  const [confirmDel, setConfirmDel] = useState(false)
+  const mainImage = product.images?.[0]
+  const imageCount = product.images?.length || 0
+
+  return (
+    <div className={`group relative rounded-2xl overflow-hidden bg-zinc-900/60 border border-zinc-800 transition-all hover:border-zinc-700 ${!product.is_active ? 'opacity-50' : ''}`}>
+      {/* Image */}
+      <div className="relative aspect-[2/3] bg-zinc-800 overflow-hidden cursor-pointer" onClick={onEdit}>
+        {mainImage ? (
+          <img src={mainImage} alt={product.style_name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+        ) : (
+          <div className="w-full h-full flex flex-col items-center justify-center text-zinc-600">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="w-12 h-12 mb-2 opacity-40">
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <path d="M21 15l-5-5L5 21" />
+            </svg>
+            <span className="text-[10px] font-sans uppercase tracking-wider">No Image</span>
+          </div>
+        )}
+
+        {/* Hover overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+        {/* Edit button on hover */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <span className="px-6 py-3 bg-gold-muted text-obsidian font-sans text-[10px] font-bold uppercase tracking-[0.2em] rounded-full shadow-2xl">
+            Edit Product
+          </span>
+        </div>
+
+        {/* Top badges */}
+        <div className="absolute top-3 left-3 right-3 flex items-start justify-between z-10">
+          <span className={`px-2.5 py-1 text-[9px] uppercase tracking-[0.12em] font-sans font-bold rounded-full backdrop-blur-md border ${
+            product.category === 'bridal' ? 'bg-champagne/10 text-champagne border-champagne/20' :
+            product.category === 'evening' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
+            'bg-zinc-700/50 text-zinc-300 border-zinc-600/30'
+          }`}>
+            {product.category}
+          </span>
+          {imageCount > 1 && (
+            <span className="px-2 py-1 text-[9px] font-sans font-bold text-white/70 bg-black/40 rounded-full backdrop-blur-md">
+              {imageCount} photos
+            </span>
+          )}
+        </div>
+
+        {/* Active status dot */}
+        <button
+          onClick={e => { e.stopPropagation(); onToggle() }}
+          disabled={isPending}
+          className="absolute bottom-3 right-3 z-10 w-6 h-6 rounded-full flex items-center justify-center bg-black/40 backdrop-blur-md hover:bg-black/60 transition-colors"
+          title={product.is_active ? 'Active — click to deactivate' : 'Inactive — click to activate'}
+        >
+          <span className={`block w-2.5 h-2.5 rounded-full ${product.is_active ? 'bg-emerald-400' : 'bg-zinc-500'}`} />
+        </button>
+      </div>
+
+      {/* Info */}
+      <div className="p-4">
+        <p className="font-sans text-[9px] uppercase tracking-[0.3em] text-zinc-500 mb-1 font-bold">
+          {product.silhouette?.replace(/_/g, ' ') || 'Galia Lahav'}
+        </p>
+        <h3 className="font-serif text-xl text-champagne tracking-tight leading-tight">
+          {product.style_name}
+        </h3>
+        {product.sku && (
+          <p className="font-sans text-[10px] text-zinc-500 mt-1">SKU: {product.sku}</p>
+        )}
+        <div className="flex items-center justify-between mt-3">
+          <span className="font-sans text-sm text-zinc-300 font-medium">
+            {product.msrp ? `$${Number(product.msrp).toLocaleString()}` : '—'}
+          </span>
+          <div className="flex gap-1.5">
+            <button
+              onClick={onEdit}
+              className="px-3 py-1.5 rounded-lg font-sans text-[10px] uppercase tracking-wider text-zinc-400 hover:text-champagne hover:bg-zinc-800 transition-colors"
+            >
+              Edit
+            </button>
+            {confirmDel ? (
+              <div className="flex gap-1">
+                <button
+                  onClick={() => { onDelete(); setConfirmDel(false) }}
+                  disabled={isPending}
+                  className="px-2 py-1.5 rounded-lg font-sans text-[10px] uppercase tracking-wider text-red-400 bg-red-600/10 hover:bg-red-600/20"
+                >
+                  Yes
+                </button>
+                <button
+                  onClick={() => setConfirmDel(false)}
+                  className="px-2 py-1.5 rounded-lg font-sans text-[10px] uppercase tracking-wider text-zinc-500"
+                >
+                  No
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setConfirmDel(true)}
+                className="px-3 py-1.5 rounded-lg font-sans text-[10px] uppercase tracking-wider text-zinc-600 hover:text-red-400 hover:bg-zinc-800 transition-colors"
+              >
+                Delete
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ═══════════════════════════════════════════════════════
+// PRODUCT EDIT DRAWER (slide-over panel)
+// ═══════════════════════════════════════════════════════
+function ProductEditDrawer({ product, onClose, onSubmit, isPending, onRefresh }: {
+  product: any
+  onClose: () => void
+  onSubmit: (e: React.FormEvent) => void
+  isPending: boolean
+  onRefresh: () => void
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex justify-end" onClick={onClose}>
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+
+      {/* Panel */}
+      <div
+        className="relative w-full max-w-xl bg-obsidian border-l border-zinc-800 overflow-y-auto"
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="sticky top-0 z-10 bg-obsidian/95 backdrop-blur-xl border-b border-zinc-800 px-6 py-4 flex items-center justify-between">
+          <div>
+            <h2 className="font-serif text-2xl text-champagne">{product.style_name}</h2>
+            <p className="font-sans text-xs text-zinc-500 capitalize mt-0.5">{product.category} {product.silhouette ? `· ${product.silhouette.replace(/_/g, ' ')}` : ''}</p>
+          </div>
+          <button onClick={onClose} className="w-10 h-10 rounded-full bg-zinc-800 hover:bg-zinc-700 flex items-center justify-center text-zinc-400 hover:text-white transition-colors">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5"><path d="M18 6L6 18M6 6l12 12" /></svg>
+          </button>
+        </div>
+
+        {/* Image gallery at top */}
+        <div className="px-6 pt-6">
+          {product.images?.length > 0 ? (
+            <div className="grid grid-cols-3 gap-2 mb-6">
+              {product.images.map((url: string, i: number) => (
+                <div key={i} className={`rounded-xl overflow-hidden bg-zinc-800 ${i === 0 ? 'col-span-2 row-span-2 aspect-[3/4]' : 'aspect-square'}`}>
+                  <img src={url} alt="" className="w-full h-full object-cover" />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="aspect-[3/2] rounded-xl bg-zinc-800/50 flex items-center justify-center mb-6">
+              <span className="font-sans text-xs text-zinc-600 uppercase tracking-wider">No images yet</span>
+            </div>
+          )}
+        </div>
+
+        {/* Edit form */}
+        <div className="px-6 pb-8">
+          <ProductForm
+            product={product}
+            onSubmit={onSubmit}
+            onCancel={onClose}
+            isPending={isPending}
+            onRefresh={onRefresh}
+          />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ═══════════════════════════════════════════════════════
 // PRODUCTS CATALOG TAB
 // ═══════════════════════════════════════════════════════
 function ProductsTab() {
@@ -451,7 +635,6 @@ function ProductsTab() {
   const [search, setSearch] = useState('')
   const [catFilter, setCatFilter] = useState('all')
   const [activeFilter, setActiveFilter] = useState<'all' | 'active' | 'inactive'>('all')
-  const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
   const [importMsg, setImportMsg] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
 
@@ -480,8 +663,11 @@ function ProductsTab() {
     startTransition(async () => {
       const res = await updateProduct(editingProduct.id, form)
       if (res.success) {
-        setEditingProduct(null)
-        await refresh()
+        const updated = await getProducts()
+        setProducts(updated)
+        const refreshed = updated.find((p: any) => p.id === editingProduct.id)
+        if (refreshed) setEditingProduct(refreshed)
+        else setEditingProduct(null)
       }
     })
   }
@@ -490,8 +676,8 @@ function ProductsTab() {
     startTransition(async () => {
       const res = await deleteProduct(id)
       if (res.success) {
-        setConfirmDelete(null)
         setProducts(prev => prev.filter(p => p.id !== id))
+        if (editingProduct?.id === id) setEditingProduct(null)
       }
     })
   }
@@ -501,6 +687,7 @@ function ProductsTab() {
       const res = await toggleProductActive(id, !current)
       if (res.success) {
         setProducts(prev => prev.map(p => p.id === id ? { ...p, is_active: !current } : p))
+        if (editingProduct?.id === id) setEditingProduct((prev: any) => prev ? { ...prev, is_active: !current } : null)
       }
     })
   }
@@ -517,59 +704,58 @@ function ProductsTab() {
   return (
     <div>
       {/* Toolbar */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-6">
-        <input
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          placeholder="Search by name or SKU..."
-          className={`flex-1 ${inputClass}`}
-        />
-        <div className="flex gap-2">
+      <div className="flex flex-col gap-4 mb-8">
+        <div className="flex flex-col sm:flex-row gap-4">
+          <input
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Search by name or SKU..."
+            className={`flex-1 ${inputClass}`}
+          />
+          <div className="flex gap-3 items-center">
+            {importMsg && <span className="font-sans text-xs text-emerald-400">{importMsg}</span>}
+            {products.length === 0 && (
+              <button
+                onClick={() => {
+                  startTransition(async () => {
+                    setImportMsg(null)
+                    const res = await bulkImportCatalog()
+                    if (res.success) {
+                      setImportMsg(`Imported ${res.imported} products`)
+                      await refresh()
+                    } else {
+                      setImportMsg(res.error || 'Import failed')
+                    }
+                  })
+                }}
+                disabled={isPending}
+                className="bg-blue-600 text-white px-5 py-2 rounded-lg font-sans text-xs uppercase tracking-widest hover:bg-blue-500 transition-colors disabled:opacity-50 whitespace-nowrap"
+              >
+                {isPending ? 'Importing...' : 'Import Catalog'}
+              </button>
+            )}
+            <button onClick={() => { setShowForm(!showForm); setEditingProduct(null) }} className="bg-gold-muted text-obsidian px-5 py-2 rounded-lg font-sans text-xs uppercase tracking-widest hover:bg-champagne transition-colors whitespace-nowrap">
+              {showForm ? 'Cancel' : '+ Add Product'}
+            </button>
+          </div>
+        </div>
+
+        {/* Filter pills */}
+        <div className="flex flex-wrap gap-2 items-center">
           {['all', 'bridal', 'evening', 'accessories'].map(c => (
-            <button key={c} onClick={() => setCatFilter(c)} className={`px-4 py-2 rounded-full font-sans text-xs uppercase tracking-wider transition-colors ${catFilter === c ? 'bg-gold-muted text-obsidian' : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'}`}>
+            <button key={c} onClick={() => setCatFilter(c)} className={`px-4 py-2 rounded-full font-sans text-[10px] uppercase tracking-[0.15em] font-bold transition-colors ${catFilter === c ? 'bg-gold-muted text-obsidian' : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'}`}>
               {c}
             </button>
           ))}
-        </div>
-        <div className="flex gap-2">
+          <span className="w-px h-5 bg-zinc-700 mx-1" />
           {(['all', 'active', 'inactive'] as const).map(s => (
-            <button key={s} onClick={() => setActiveFilter(s)} className={`px-4 py-2 rounded-full font-sans text-xs uppercase tracking-wider transition-colors ${activeFilter === s ? 'bg-gold-muted text-obsidian' : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'}`}>
+            <button key={s} onClick={() => setActiveFilter(s)} className={`px-4 py-2 rounded-full font-sans text-[10px] uppercase tracking-[0.15em] font-bold transition-colors ${activeFilter === s ? 'bg-gold-muted text-obsidian' : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'}`}>
               {s}
             </button>
           ))}
-        </div>
-      </div>
-
-      {/* Stats + Actions */}
-      <div className="flex justify-between items-center mb-6">
-        <p className="font-sans text-zinc-400 text-sm">
-          {filtered.length} of {products.length} products
-        </p>
-        <div className="flex gap-3 items-center">
-          {importMsg && <span className="font-sans text-xs text-emerald-400">{importMsg}</span>}
-          {products.length === 0 && (
-            <button
-              onClick={() => {
-                startTransition(async () => {
-                  setImportMsg(null)
-                  const res = await bulkImportCatalog()
-                  if (res.success) {
-                    setImportMsg(`Imported ${res.imported} products`)
-                    await refresh()
-                  } else {
-                    setImportMsg(res.error || 'Import failed')
-                  }
-                })
-              }}
-              disabled={isPending}
-              className="bg-blue-600 text-white px-5 py-2 rounded-lg font-sans text-xs uppercase tracking-widest hover:bg-blue-500 transition-colors disabled:opacity-50"
-            >
-              {isPending ? 'Importing...' : 'Import Catalog'}
-            </button>
-          )}
-          <button onClick={() => { setShowForm(!showForm); setEditingProduct(null) }} className="bg-gold-muted text-obsidian px-5 py-2 rounded-lg font-sans text-xs uppercase tracking-widest hover:bg-champagne transition-colors">
-            {showForm ? 'Cancel' : '+ Add Product'}
-          </button>
+          <span className="ml-auto font-sans text-xs text-zinc-500">
+            {filtered.length} of {products.length} products
+          </span>
         </div>
       </div>
 
@@ -578,12 +764,34 @@ function ProductsTab() {
         <ProductForm onSubmit={handleCreate} onCancel={() => setShowForm(false)} isPending={isPending} />
       )}
 
-      {/* Edit form */}
+      {/* Product card grid */}
+      {filtered.length > 0 ? (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-10">
+          {filtered.map((p: any) => (
+            <AdminProductCard
+              key={p.id}
+              product={p}
+              onEdit={() => { setEditingProduct(p); setShowForm(false) }}
+              onToggle={() => handleToggle(p.id, p.is_active)}
+              onDelete={() => handleDelete(p.id)}
+              isPending={isPending}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-20">
+          <div className="text-5xl mb-4">👗</div>
+          <h3 className="font-serif text-2xl text-champagne">No products found</h3>
+          <p className="text-zinc-400 font-sans mt-2">Try adjusting your filters or add a new product</p>
+        </div>
+      )}
+
+      {/* Edit drawer */}
       {editingProduct && (
-        <ProductForm
+        <ProductEditDrawer
           product={editingProduct}
+          onClose={() => setEditingProduct(null)}
           onSubmit={handleUpdate}
-          onCancel={() => setEditingProduct(null)}
           isPending={isPending}
           onRefresh={async () => {
             const updated = await getProducts()
@@ -593,75 +801,6 @@ function ProductsTab() {
           }}
         />
       )}
-
-      {/* Table */}
-      <div className="overflow-x-auto">
-        <table className="w-full text-left">
-          <thead>
-            <tr className="border-b border-zinc-800">
-              <th className="pb-3 font-sans text-xs uppercase tracking-wider text-zinc-500">Style</th>
-              <th className="pb-3 font-sans text-xs uppercase tracking-wider text-zinc-500">SKU</th>
-              <th className="pb-3 font-sans text-xs uppercase tracking-wider text-zinc-500">Category</th>
-              <th className="pb-3 font-sans text-xs uppercase tracking-wider text-zinc-500">Silhouette</th>
-              <th className="pb-3 font-sans text-xs uppercase tracking-wider text-zinc-500">MSRP</th>
-              <th className="pb-3 font-sans text-xs uppercase tracking-wider text-zinc-500">Active</th>
-              <th className="pb-3 font-sans text-xs uppercase tracking-wider text-zinc-500 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-zinc-800/50">
-            {filtered.map((p: any) => (
-              <tr key={p.id} className={`hover:bg-zinc-800/30 ${!p.is_active ? 'opacity-50' : ''}`}>
-                <td className="py-3 font-serif text-champagne">{p.style_name}</td>
-                <td className="py-3 font-sans text-xs text-zinc-400">{p.sku || '—'}</td>
-                <td className="py-3 font-sans text-xs text-zinc-400 capitalize">{p.category}</td>
-                <td className="py-3 font-sans text-xs text-zinc-400 capitalize">{p.silhouette?.replace(/_/g, ' ') || '—'}</td>
-                <td className="py-3 font-sans text-sm text-zinc-300">{p.msrp ? `$${Number(p.msrp).toLocaleString()}` : '—'}</td>
-                <td className="py-3">
-                  <button
-                    onClick={() => handleToggle(p.id, p.is_active)}
-                    disabled={isPending}
-                    className="group relative"
-                    title={p.is_active ? 'Click to deactivate' : 'Click to activate'}
-                  >
-                    {p.is_active
-                      ? <span className="text-emerald-400 group-hover:text-emerald-300">&#9679;</span>
-                      : <span className="text-zinc-600 group-hover:text-zinc-400">&#9679;</span>
-                    }
-                  </button>
-                </td>
-                <td className="py-3 text-right">
-                  <div className="flex items-center justify-end gap-2">
-                    <button
-                      onClick={() => { setEditingProduct(p); setShowForm(false) }}
-                      className="text-zinc-500 hover:text-champagne font-sans text-xs transition-colors px-2 py-1 rounded hover:bg-zinc-800"
-                    >
-                      Edit
-                    </button>
-                    {confirmDelete === p.id ? (
-                      <span className="flex items-center gap-1">
-                        <button onClick={() => handleDelete(p.id)} disabled={isPending} className="text-red-400 hover:text-red-300 font-sans text-xs px-2 py-1 rounded bg-red-600/10 hover:bg-red-600/20">
-                          Confirm
-                        </button>
-                        <button onClick={() => setConfirmDelete(null)} className="text-zinc-500 font-sans text-xs px-2 py-1">
-                          Cancel
-                        </button>
-                      </span>
-                    ) : (
-                      <button
-                        onClick={() => setConfirmDelete(p.id)}
-                        className="text-zinc-600 hover:text-red-400 font-sans text-xs transition-colors px-2 py-1 rounded hover:bg-zinc-800"
-                      >
-                        Delete
-                      </button>
-                    )}
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {filtered.length === 0 && <p className="text-center text-zinc-500 py-8 font-sans">No products match your filters</p>}
-      </div>
     </div>
   )
 }
