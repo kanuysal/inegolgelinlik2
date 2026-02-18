@@ -475,38 +475,50 @@ export async function syncCatalogImages() {
   const { GOWN_CATALOG } = await import('@/lib/catalog')
 
   // Get all existing products
-  const { data: products } = await supabase.from('products').select('id, style_name, images')
+  const { data: products } = await supabase.from('products').select('id, style_name, images, description')
   if (!products) return { error: 'Failed to fetch products' }
 
-  // Build lookup from catalog name -> images
-  const catalogMap = new Map<string, string[]>()
+  // Build lookup from catalog name -> {images, description}
+  const catalogMap = new Map<string, { images: string[], description: string }>()
   for (const g of GOWN_CATALOG) {
-    if (g.images.length > 0) {
-      catalogMap.set(g.name.toLowerCase(), g.images)
-    }
+    catalogMap.set(g.name.toLowerCase(), { images: g.images, description: g.description })
   }
 
   let updated = 0
   let skipped = 0
 
   for (const product of products) {
-    const catalogImages = catalogMap.get(product.style_name.toLowerCase())
-    if (!catalogImages || catalogImages.length === 0) {
+    const catalogEntry = catalogMap.get(product.style_name.toLowerCase())
+    if (!catalogEntry) {
       skipped++
       continue
     }
+    const catalogImages = catalogEntry.images
 
-    // Only update if the product currently has no images or fewer images
+    // Build update payload
+    const updates: Record<string, any> = { updated_at: new Date().toISOString() }
+
+    // Sync images if catalog has more
     const rawImages = product.images
     const currentImages: string[] = Array.isArray(rawImages) ? rawImages.filter((u: string) => u && u.startsWith('http')) : []
-    if (currentImages.length >= catalogImages.length) {
+    if (catalogImages.length > currentImages.length) {
+      updates.images = catalogImages
+    }
+
+    // Sync description if catalog has one and product doesn't
+    const catalogDesc = catalogEntry.description
+    if (catalogDesc && (!product.description || product.description.length < catalogDesc.length)) {
+      updates.description = catalogDesc
+    }
+
+    if (Object.keys(updates).length <= 1) {
       skipped++
       continue
     }
 
     const { error } = await supabase
       .from('products')
-      .update({ images: catalogImages, updated_at: new Date().toISOString() })
+      .update(updates)
       .eq('id', product.id)
 
     if (!error) updated++

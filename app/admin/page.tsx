@@ -979,7 +979,6 @@ function ProductsTab() {
             <span className="font-sans text-xs text-emerald-700">{importMsg}</span>
           </div>
         )}
-        </div>
 
         {/* Filter pills — shop style */}
         <div className="flex flex-wrap gap-2 items-center">
