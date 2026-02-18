@@ -12,6 +12,9 @@ import {
   setUserRole,
   getProducts,
   createProduct,
+  updateProduct,
+  deleteProduct,
+  toggleProductActive,
   getClaims,
   resolveClaim,
 } from './actions'
@@ -280,16 +283,79 @@ function UsersTab() {
 }
 
 // ═══════════════════════════════════════════════════════
+// PRODUCT FORM (shared between create & edit)
+// ═══════════════════════════════════════════════════════
+const inputClass = "bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 font-sans text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-gold-muted"
+
+function ProductForm({ product, onSubmit, onCancel, isPending }: {
+  product?: any
+  onSubmit: (e: React.FormEvent) => void
+  onCancel: () => void
+  isPending: boolean
+}) {
+  return (
+    <form onSubmit={onSubmit} className="bg-zinc-900/60 border border-zinc-800 rounded-lg p-6 mb-6 grid grid-cols-2 gap-4">
+      <div className="col-span-2">
+        <input name="style_name" required defaultValue={product?.style_name || ''} placeholder="Style Name (e.g., GALA 1001)" className={`w-full ${inputClass}`} />
+      </div>
+      <input name="sku" defaultValue={product?.sku || ''} placeholder="SKU (optional)" className={inputClass} />
+      <select name="category" required defaultValue={product?.category || 'bridal'} className={inputClass}>
+        <option value="bridal">Bridal</option>
+        <option value="evening">Evening</option>
+        <option value="accessories">Accessories</option>
+      </select>
+      <select name="silhouette" defaultValue={product?.silhouette || ''} className={inputClass}>
+        <option value="">Silhouette (optional)</option>
+        <option value="a_line">A-Line</option>
+        <option value="ball_gown">Ball Gown</option>
+        <option value="mermaid">Mermaid</option>
+        <option value="trumpet">Trumpet</option>
+        <option value="sheath">Sheath</option>
+        <option value="fit_and_flare">Fit & Flare</option>
+        <option value="empire">Empire</option>
+        <option value="column">Column</option>
+      </select>
+      <select name="train_style" defaultValue={product?.train_style || ''} className={inputClass}>
+        <option value="">Train (optional)</option>
+        <option value="none">None</option>
+        <option value="sweep">Sweep</option>
+        <option value="court">Court</option>
+        <option value="chapel">Chapel</option>
+        <option value="cathedral">Cathedral</option>
+        <option value="royal">Royal</option>
+      </select>
+      <input name="msrp" type="number" defaultValue={product?.msrp || ''} placeholder="MSRP (optional)" className={inputClass} />
+      <textarea name="description" defaultValue={product?.description || ''} placeholder="Description (optional)" className={`col-span-2 ${inputClass} min-h-[80px]`} />
+      <div className="col-span-2 flex gap-3">
+        <button type="submit" disabled={isPending} className="bg-gold-muted text-obsidian px-8 py-3 font-sans text-xs uppercase tracking-widest hover:bg-champagne transition-colors disabled:opacity-50">
+          {isPending ? 'Saving...' : product ? 'Save Changes' : 'Create Product'}
+        </button>
+        <button type="button" onClick={onCancel} className="px-6 py-3 font-sans text-xs uppercase tracking-widest text-zinc-400 hover:text-zinc-200 transition-colors">
+          Cancel
+        </button>
+      </div>
+    </form>
+  )
+}
+
+// ═══════════════════════════════════════════════════════
 // PRODUCTS CATALOG TAB
 // ═══════════════════════════════════════════════════════
 function ProductsTab() {
   const [products, setProducts] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
+  const [editingProduct, setEditingProduct] = useState<any | null>(null)
+  const [search, setSearch] = useState('')
+  const [catFilter, setCatFilter] = useState('all')
+  const [activeFilter, setActiveFilter] = useState<'all' | 'active' | 'inactive'>('all')
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
 
+  const refresh = () => getProducts().then(setProducts)
+
   useEffect(() => {
-    getProducts().then(d => { setProducts(d); setLoading(false) })
+    refresh().then(() => setLoading(false))
   }, [])
 
   const handleCreate = (e: React.FormEvent) => {
@@ -299,61 +365,99 @@ function ProductsTab() {
       const res = await createProduct(form)
       if (res.success) {
         setShowForm(false)
-        const updated = await getProducts()
-        setProducts(updated)
+        await refresh()
+      }
+    })
+  }
+
+  const handleUpdate = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!editingProduct) return
+    const form = new FormData(e.target as HTMLFormElement)
+    startTransition(async () => {
+      const res = await updateProduct(editingProduct.id, form)
+      if (res.success) {
+        setEditingProduct(null)
+        await refresh()
+      }
+    })
+  }
+
+  const handleDelete = (id: string) => {
+    startTransition(async () => {
+      const res = await deleteProduct(id)
+      if (res.success) {
+        setConfirmDelete(null)
+        setProducts(prev => prev.filter(p => p.id !== id))
+      }
+    })
+  }
+
+  const handleToggle = (id: string, current: boolean) => {
+    startTransition(async () => {
+      const res = await toggleProductActive(id, !current)
+      if (res.success) {
+        setProducts(prev => prev.map(p => p.id === id ? { ...p, is_active: !current } : p))
       }
     })
   }
 
   if (loading) return <LoadingSkeleton />
 
+  const filtered = products.filter(p => {
+    const matchSearch = !search || p.style_name?.toLowerCase().includes(search.toLowerCase()) || p.sku?.toLowerCase().includes(search.toLowerCase())
+    const matchCat = catFilter === 'all' || p.category === catFilter
+    const matchActive = activeFilter === 'all' || (activeFilter === 'active' ? p.is_active : !p.is_active)
+    return matchSearch && matchCat && matchActive
+  })
+
   return (
     <div>
+      {/* Toolbar */}
+      <div className="flex flex-col sm:flex-row gap-4 mb-6">
+        <input
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          placeholder="Search by name or SKU..."
+          className={`flex-1 ${inputClass}`}
+        />
+        <div className="flex gap-2">
+          {['all', 'bridal', 'evening', 'accessories'].map(c => (
+            <button key={c} onClick={() => setCatFilter(c)} className={`px-4 py-2 rounded-full font-sans text-xs uppercase tracking-wider transition-colors ${catFilter === c ? 'bg-gold-muted text-obsidian' : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'}`}>
+              {c}
+            </button>
+          ))}
+        </div>
+        <div className="flex gap-2">
+          {(['all', 'active', 'inactive'] as const).map(s => (
+            <button key={s} onClick={() => setActiveFilter(s)} className={`px-4 py-2 rounded-full font-sans text-xs uppercase tracking-wider transition-colors ${activeFilter === s ? 'bg-gold-muted text-obsidian' : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'}`}>
+              {s}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Stats + Add button */}
       <div className="flex justify-between items-center mb-6">
-        <p className="font-sans text-zinc-400 text-sm">{products.length} products in catalog</p>
-        <button onClick={() => setShowForm(!showForm)} className="bg-gold-muted text-obsidian px-5 py-2 font-sans text-xs uppercase tracking-widest hover:bg-champagne transition-colors">
+        <p className="font-sans text-zinc-400 text-sm">
+          {filtered.length} of {products.length} products
+        </p>
+        <button onClick={() => { setShowForm(!showForm); setEditingProduct(null) }} className="bg-gold-muted text-obsidian px-5 py-2 rounded-lg font-sans text-xs uppercase tracking-widest hover:bg-champagne transition-colors">
           {showForm ? 'Cancel' : '+ Add Product'}
         </button>
       </div>
 
-      {showForm && (
-        <form onSubmit={handleCreate} className="bg-zinc-900/60 border border-zinc-800 rounded-lg p-6 mb-6 grid grid-cols-2 gap-4">
-          <div className="col-span-2">
-            <input name="style_name" required placeholder="Style Name (e.g., GALA 1001)" className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 font-sans text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-gold-muted" />
-          </div>
-          <input name="sku" placeholder="SKU (optional)" className="bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 font-sans text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-gold-muted" />
-          <select name="category" required className="bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 font-sans text-sm text-white focus:outline-none focus:border-gold-muted">
-            <option value="bridal">Bridal</option>
-            <option value="evening">Evening</option>
-            <option value="accessories">Accessories</option>
-          </select>
-          <select name="silhouette" className="bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 font-sans text-sm text-white focus:outline-none focus:border-gold-muted">
-            <option value="">Silhouette (optional)</option>
-            <option value="a_line">A-Line</option>
-            <option value="ball_gown">Ball Gown</option>
-            <option value="mermaid">Mermaid</option>
-            <option value="trumpet">Trumpet</option>
-            <option value="sheath">Sheath</option>
-            <option value="fit_and_flare">Fit & Flare</option>
-          </select>
-          <select name="train_style" className="bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 font-sans text-sm text-white focus:outline-none focus:border-gold-muted">
-            <option value="">Train (optional)</option>
-            <option value="none">None</option>
-            <option value="sweep">Sweep</option>
-            <option value="court">Court</option>
-            <option value="chapel">Chapel</option>
-            <option value="cathedral">Cathedral</option>
-          </select>
-          <input name="msrp" type="number" placeholder="MSRP (optional)" className="bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 font-sans text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-gold-muted" />
-          <textarea name="description" placeholder="Description (optional)" className="col-span-2 bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 font-sans text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-gold-muted min-h-[80px]" />
-          <div className="col-span-2">
-            <button type="submit" disabled={isPending} className="bg-gold-muted text-obsidian px-8 py-3 font-sans text-xs uppercase tracking-widest hover:bg-champagne transition-colors disabled:opacity-50">
-              {isPending ? 'Creating...' : 'Create Product'}
-            </button>
-          </div>
-        </form>
+      {/* Create form */}
+      {showForm && !editingProduct && (
+        <ProductForm onSubmit={handleCreate} onCancel={() => setShowForm(false)} isPending={isPending} />
       )}
 
+      {/* Edit form */}
+      {editingProduct && (
+        <ProductForm product={editingProduct} onSubmit={handleUpdate} onCancel={() => setEditingProduct(null)} isPending={isPending} />
+      )}
+
+      {/* Table */}
       <div className="overflow-x-auto">
         <table className="w-full text-left">
           <thead>
@@ -361,22 +465,65 @@ function ProductsTab() {
               <th className="pb-3 font-sans text-xs uppercase tracking-wider text-zinc-500">Style</th>
               <th className="pb-3 font-sans text-xs uppercase tracking-wider text-zinc-500">SKU</th>
               <th className="pb-3 font-sans text-xs uppercase tracking-wider text-zinc-500">Category</th>
+              <th className="pb-3 font-sans text-xs uppercase tracking-wider text-zinc-500">Silhouette</th>
               <th className="pb-3 font-sans text-xs uppercase tracking-wider text-zinc-500">MSRP</th>
               <th className="pb-3 font-sans text-xs uppercase tracking-wider text-zinc-500">Active</th>
+              <th className="pb-3 font-sans text-xs uppercase tracking-wider text-zinc-500 text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-zinc-800/50">
-            {products.map((p: any) => (
-              <tr key={p.id} className="hover:bg-zinc-800/30">
+            {filtered.map((p: any) => (
+              <tr key={p.id} className={`hover:bg-zinc-800/30 ${!p.is_active ? 'opacity-50' : ''}`}>
                 <td className="py-3 font-serif text-champagne">{p.style_name}</td>
                 <td className="py-3 font-sans text-xs text-zinc-400">{p.sku || '—'}</td>
                 <td className="py-3 font-sans text-xs text-zinc-400 capitalize">{p.category}</td>
-                <td className="py-3 font-sans text-sm text-zinc-300">{p.msrp ? `$${p.msrp.toLocaleString()}` : '—'}</td>
-                <td className="py-3">{p.is_active ? <span className="text-emerald-400">●</span> : <span className="text-zinc-600">●</span>}</td>
+                <td className="py-3 font-sans text-xs text-zinc-400 capitalize">{p.silhouette?.replace(/_/g, ' ') || '—'}</td>
+                <td className="py-3 font-sans text-sm text-zinc-300">{p.msrp ? `$${Number(p.msrp).toLocaleString()}` : '—'}</td>
+                <td className="py-3">
+                  <button
+                    onClick={() => handleToggle(p.id, p.is_active)}
+                    disabled={isPending}
+                    className="group relative"
+                    title={p.is_active ? 'Click to deactivate' : 'Click to activate'}
+                  >
+                    {p.is_active
+                      ? <span className="text-emerald-400 group-hover:text-emerald-300">&#9679;</span>
+                      : <span className="text-zinc-600 group-hover:text-zinc-400">&#9679;</span>
+                    }
+                  </button>
+                </td>
+                <td className="py-3 text-right">
+                  <div className="flex items-center justify-end gap-2">
+                    <button
+                      onClick={() => { setEditingProduct(p); setShowForm(false) }}
+                      className="text-zinc-500 hover:text-champagne font-sans text-xs transition-colors px-2 py-1 rounded hover:bg-zinc-800"
+                    >
+                      Edit
+                    </button>
+                    {confirmDelete === p.id ? (
+                      <span className="flex items-center gap-1">
+                        <button onClick={() => handleDelete(p.id)} disabled={isPending} className="text-red-400 hover:text-red-300 font-sans text-xs px-2 py-1 rounded bg-red-600/10 hover:bg-red-600/20">
+                          Confirm
+                        </button>
+                        <button onClick={() => setConfirmDelete(null)} className="text-zinc-500 font-sans text-xs px-2 py-1">
+                          Cancel
+                        </button>
+                      </span>
+                    ) : (
+                      <button
+                        onClick={() => setConfirmDelete(p.id)}
+                        className="text-zinc-600 hover:text-red-400 font-sans text-xs transition-colors px-2 py-1 rounded hover:bg-zinc-800"
+                      >
+                        Delete
+                      </button>
+                    )}
+                  </div>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
+        {filtered.length === 0 && <p className="text-center text-zinc-500 py-8 font-sans">No products match your filters</p>}
       </div>
     </div>
   )

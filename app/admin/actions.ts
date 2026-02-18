@@ -243,6 +243,59 @@ export async function createProduct(formData: FormData) {
   return { success: true }
 }
 
+export async function updateProduct(productId: string, formData: FormData) {
+  await requireAdminRole()
+  const supabase = await adminDb()
+
+  const updates: Record<string, any> = {
+    style_name: formData.get('style_name') as string,
+    category: formData.get('category') as string,
+    sku: (formData.get('sku') as string) || null,
+    silhouette: (formData.get('silhouette') as string) || null,
+    train_style: (formData.get('train_style') as string) || null,
+    msrp: formData.get('msrp') ? Number(formData.get('msrp')) : null,
+    description: (formData.get('description') as string) || null,
+    updated_at: new Date().toISOString(),
+  }
+
+  const { error } = await supabase
+    .from('products')
+    .update(updates)
+    .eq('id', productId)
+
+  if (error) return { error: error.message }
+  revalidatePath('/admin')
+  return { success: true }
+}
+
+export async function deleteProduct(productId: string) {
+  await requireAdminRole()
+  const supabase = await adminDb()
+
+  const { error } = await supabase
+    .from('products')
+    .delete()
+    .eq('id', productId)
+
+  if (error) return { error: error.message }
+  revalidatePath('/admin')
+  return { success: true }
+}
+
+export async function toggleProductActive(productId: string, isActive: boolean) {
+  await requireAdminRole()
+  const supabase = await adminDb()
+
+  const { error } = await supabase
+    .from('products')
+    .update({ is_active: isActive, updated_at: new Date().toISOString() })
+    .eq('id', productId)
+
+  if (error) return { error: error.message }
+  revalidatePath('/admin')
+  return { success: true }
+}
+
 // ── Claims / Disputes ────────────────────────────────
 export async function getClaims() {
   await requireModRole()
