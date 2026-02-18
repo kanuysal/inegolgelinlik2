@@ -446,7 +446,7 @@ export async function bulkImportCatalog() {
       category: collectionToCategory(g.collection),
       silhouette: silhouetteMap[g.silhouette] || null,
       description: g.description || null,
-      images: g.images.length > 0 ? g.images : '{}',
+      images: g.images.length > 0 ? g.images : [],
       msrp: null,
       is_active: true,
     }))
@@ -466,6 +466,55 @@ export async function bulkImportCatalog() {
 
   revalidatePath('/admin')
   return { success: true, imported }
+}
+
+export async function syncCatalogImages() {
+  await requireAdminRole()
+  const supabase = await adminDb()
+
+  const { GOWN_CATALOG } = await import('@/lib/catalog')
+
+  // Get all existing products
+  const { data: products } = await supabase.from('products').select('id, style_name, images')
+  if (!products) return { error: 'Failed to fetch products' }
+
+  // Build lookup from catalog name -> images
+  const catalogMap = new Map<string, string[]>()
+  for (const g of GOWN_CATALOG) {
+    if (g.images.length > 0) {
+      catalogMap.set(g.name.toLowerCase(), g.images)
+    }
+  }
+
+  let updated = 0
+  let skipped = 0
+
+  for (const product of products) {
+    const catalogImages = catalogMap.get(product.style_name.toLowerCase())
+    if (!catalogImages || catalogImages.length === 0) {
+      skipped++
+      continue
+    }
+
+    // Only update if the product currently has no images or fewer images
+    const rawImages = product.images
+    const currentImages: string[] = Array.isArray(rawImages) ? rawImages.filter((u: string) => u && u.startsWith('http')) : []
+    if (currentImages.length >= catalogImages.length) {
+      skipped++
+      continue
+    }
+
+    const { error } = await supabase
+      .from('products')
+      .update({ images: catalogImages, updated_at: new Date().toISOString() })
+      .eq('id', product.id)
+
+    if (!error) updated++
+    else skipped++
+  }
+
+  revalidatePath('/admin')
+  return { success: true, updated, skipped }
 }
 
 // ── Claims / Disputes ────────────────────────────────

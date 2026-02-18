@@ -19,6 +19,7 @@ import {
   removeProductImage,
   addProductImageUrl,
   bulkImportCatalog,
+  syncCatalogImages,
   getClaims,
   resolveClaim,
 } from './actions'
@@ -944,6 +945,26 @@ function ProductsTab() {
                 className="px-6 py-3 bg-[#C5A059] text-white font-sans text-[10px] font-bold uppercase tracking-[0.2em] rounded-full hover:bg-[#B38E48] transition-all shadow-lg disabled:opacity-50 whitespace-nowrap"
               >
                 {isPending ? 'Importing...' : 'Import Catalog'}
+              </button>
+            )}
+            {products.length > 0 && (
+              <button
+                onClick={() => {
+                  startTransition(async () => {
+                    setImportMsg(null)
+                    const res = await syncCatalogImages()
+                    if (res.success) {
+                      setImportMsg(`Synced images: ${res.updated} updated, ${res.skipped} skipped`)
+                      await refresh()
+                    } else {
+                      setImportMsg(res.error || 'Sync failed')
+                    }
+                  })
+                }}
+                disabled={isPending}
+                className="px-6 py-3 bg-obsidian text-white font-sans text-[10px] font-bold uppercase tracking-[0.2em] rounded-full hover:bg-obsidian/80 transition-all shadow-lg disabled:opacity-50 whitespace-nowrap"
+              >
+                {isPending ? 'Syncing...' : 'Sync Images'}
               </button>
             )}
             <button
