@@ -925,8 +925,7 @@ function ProductsTab() {
             placeholder="Search by name or SKU..."
             className={`flex-1 ${lightInputClass}`}
           />
-          <div className="flex gap-3 items-center">
-            {importMsg && <span className="font-sans text-xs text-emerald-600">{importMsg}</span>}
+          <div className="flex gap-3 items-center flex-shrink-0">
             {products.length === 0 && (
               <button
                 onClick={() => {
@@ -974,6 +973,12 @@ function ProductsTab() {
               {showForm ? 'Cancel' : '+ Add Product'}
             </button>
           </div>
+        </div>
+        {importMsg && (
+          <div className="px-4 py-2.5 bg-emerald-50 border border-emerald-200 rounded-xl">
+            <span className="font-sans text-xs text-emerald-700">{importMsg}</span>
+          </div>
+        )}
         </div>
 
         {/* Filter pills — shop style */}
