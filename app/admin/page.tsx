@@ -15,6 +15,7 @@ import {
   updateProduct,
   deleteProduct,
   toggleProductActive,
+  bulkImportCatalog,
   getClaims,
   resolveClaim,
 } from './actions'
@@ -350,6 +351,7 @@ function ProductsTab() {
   const [catFilter, setCatFilter] = useState('all')
   const [activeFilter, setActiveFilter] = useState<'all' | 'active' | 'inactive'>('all')
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
+  const [importMsg, setImportMsg] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
 
   const refresh = () => getProducts().then(setProducts)
@@ -437,14 +439,37 @@ function ProductsTab() {
         </div>
       </div>
 
-      {/* Stats + Add button */}
+      {/* Stats + Actions */}
       <div className="flex justify-between items-center mb-6">
         <p className="font-sans text-zinc-400 text-sm">
           {filtered.length} of {products.length} products
         </p>
-        <button onClick={() => { setShowForm(!showForm); setEditingProduct(null) }} className="bg-gold-muted text-obsidian px-5 py-2 rounded-lg font-sans text-xs uppercase tracking-widest hover:bg-champagne transition-colors">
-          {showForm ? 'Cancel' : '+ Add Product'}
-        </button>
+        <div className="flex gap-3 items-center">
+          {importMsg && <span className="font-sans text-xs text-emerald-400">{importMsg}</span>}
+          {products.length === 0 && (
+            <button
+              onClick={() => {
+                startTransition(async () => {
+                  setImportMsg(null)
+                  const res = await bulkImportCatalog()
+                  if (res.success) {
+                    setImportMsg(`Imported ${res.imported} products`)
+                    await refresh()
+                  } else {
+                    setImportMsg(res.error || 'Import failed')
+                  }
+                })
+              }}
+              disabled={isPending}
+              className="bg-blue-600 text-white px-5 py-2 rounded-lg font-sans text-xs uppercase tracking-widest hover:bg-blue-500 transition-colors disabled:opacity-50"
+            >
+              {isPending ? 'Importing...' : 'Import Catalog'}
+            </button>
+          )}
+          <button onClick={() => { setShowForm(!showForm); setEditingProduct(null) }} className="bg-gold-muted text-obsidian px-5 py-2 rounded-lg font-sans text-xs uppercase tracking-widest hover:bg-champagne transition-colors">
+            {showForm ? 'Cancel' : '+ Add Product'}
+          </button>
+        </div>
       </div>
 
       {/* Create form */}

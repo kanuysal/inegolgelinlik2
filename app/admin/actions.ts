@@ -296,6 +296,65 @@ export async function toggleProductActive(productId: string, isActive: boolean) 
   return { success: true }
 }
 
+export async function bulkImportCatalog() {
+  await requireAdminRole()
+  const supabase = await adminDb()
+
+  // Import from static catalog
+  const { GOWN_CATALOG } = await import('@/lib/catalog')
+
+  // Map catalog collection to DB category enum
+  const collectionToCategory = (collection: string): 'bridal' | 'evening' | 'accessories' => {
+    if (collection === 'Evening') return 'evening'
+    if (collection === 'Accessories') return 'accessories'
+    return 'bridal'
+  }
+
+  // Map catalog silhouette to DB enum
+  const silhouetteMap: Record<string, string> = {
+    'Mermaid': 'mermaid',
+    'A-Line': 'a_line',
+    'Ball Gown': 'ball_gown',
+    'Sheath': 'sheath',
+    'Fit & Flare': 'fit_and_flare',
+    'Trumpet': 'trumpet',
+    'Empire': 'empire',
+    'Column': 'column',
+  }
+
+  // Get existing products to avoid duplicates
+  const { data: existing } = await supabase.from('products').select('style_name')
+  const existingNames = new Set((existing || []).map((p: any) => p.style_name.toLowerCase()))
+
+  const newProducts = GOWN_CATALOG
+    .filter(g => !existingNames.has(g.name.toLowerCase()))
+    .map(g => ({
+      style_name: g.name,
+      category: collectionToCategory(g.collection),
+      silhouette: silhouetteMap[g.silhouette] || null,
+      description: g.description || null,
+      images: g.images.length > 0 ? g.images : '{}',
+      msrp: null,
+      is_active: true,
+    }))
+
+  if (newProducts.length === 0) {
+    return { success: true, imported: 0, message: 'All products already exist' }
+  }
+
+  // Insert in batches of 50
+  let imported = 0
+  for (let i = 0; i < newProducts.length; i += 50) {
+    const batch = newProducts.slice(i, i + 50)
+    const { error } = await supabase.from('products').insert(batch)
+    if (error) return { error: error.message, imported }
+    imported += batch.length
+  }
+
+  revalidatePath('/admin')
+  return { success: true, imported }
+}
+
 // ── Claims / Disputes ────────────────────────────────
 export async function getClaims() {
   await requireModRole()
