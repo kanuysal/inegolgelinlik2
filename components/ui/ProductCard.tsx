@@ -3,7 +3,39 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import type { Listing } from "@/lib/mock-listings";
+import type { Listing, ListingType } from "@/lib/mock-listings";
+
+function SellerTypeBadge({ type }: { type: ListingType }) {
+  if (type === "brand_direct") {
+    return (
+      <div className="flex items-center gap-1.5">
+        <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5 flex-shrink-0">
+          <path
+            d="M12 2L14.09 4.26L17 3.64L17.18 6.57L19.82 8.07L18.56 10.74L20 13.14L17.72 14.72L17.5 17.66L14.58 17.95L12.73 20.39L10.27 18.76L7.27 19.5L6.27 16.73L3.53 15.32L4.63 12.56L3.27 10L5.57 8.45L5.82 5.51L8.74 5.27L10.64 2.87L12 2Z"
+            fill="#C5A059"
+          />
+          <path d="M9 12L11 14L15 10" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        <span className="font-sans text-[9px] uppercase tracking-[0.15em] text-white/95 font-bold">
+          Galia Lahav
+        </span>
+      </div>
+    );
+  }
+  return (
+    <div className="flex items-center gap-1.5">
+      <svg viewBox="0 0 24 24" fill="none" className="w-3 h-3 flex-shrink-0 text-white/70">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <circle cx="9" cy="7" r="4" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      </svg>
+      <span className="font-sans text-[9px] uppercase tracking-[0.15em] text-white/80 font-bold">
+        {type === "sample_sale" ? "Sample Sale" : "Bride to Bride"}
+      </span>
+    </div>
+  );
+}
 
 function VerifiedBadge() {
   return (
@@ -111,15 +143,10 @@ export default function ProductCard({ listing, index = 0 }: ProductCardProps) {
             </span>
           </div>
 
-          {/* Verified badge (bottom-left on image) */}
-          {listing.verified && (
-            <div className="absolute bottom-4 left-4 flex items-center gap-1.5 z-10">
-              <VerifiedBadge />
-              <span className="font-sans text-[9px] uppercase tracking-[0.2em] text-white/90">
-                GL Verified
-              </span>
-            </div>
-          )}
+          {/* Seller type badge (bottom-left on image) */}
+          <div className="absolute bottom-4 left-4 z-10">
+            <SellerTypeBadge type={listing.listingType} />
+          </div>
 
           {/* Quick view on hover */}
           <motion.div

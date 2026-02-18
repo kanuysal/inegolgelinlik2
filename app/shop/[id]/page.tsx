@@ -9,7 +9,7 @@ import { useParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import { mockListings, type Listing } from "@/lib/mock-listings";
+import { mockListings, type Listing, type ListingType } from "@/lib/mock-listings";
 import { getListingById } from "../actions";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
@@ -80,6 +80,38 @@ function AccordionSection({
   );
 }
 
+function SellerBadge({ type }: { type: ListingType }) {
+  if (type === "brand_direct") {
+    return (
+      <div className="flex items-center gap-2 px-3 py-1.5 bg-[#C5A059]/10 rounded-full border border-[#C5A059]/20">
+        <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5 flex-shrink-0">
+          <path
+            d="M12 2L14.09 4.26L17 3.64L17.18 6.57L19.82 8.07L18.56 10.74L20 13.14L17.72 14.72L17.5 17.66L14.58 17.95L12.73 20.39L10.27 18.76L7.27 19.5L6.27 16.73L3.53 15.32L4.63 12.56L3.27 10L5.57 8.45L5.82 5.51L8.74 5.27L10.64 2.87L12 2Z"
+            fill="#C5A059"
+          />
+          <path d="M9 12L11 14L15 10" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-[#C5A059] font-bold">
+          Sold by Galia Lahav
+        </span>
+      </div>
+    );
+  }
+  return (
+    <div className="flex items-center gap-2 px-3 py-1.5 bg-obsidian/[0.03] rounded-full border border-obsidian/5">
+      <svg viewBox="0 0 24 24" fill="none" className="w-3 h-3 flex-shrink-0 text-obsidian/30">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <circle cx="9" cy="7" r="4" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      </svg>
+      <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-obsidian/40 font-bold">
+        {type === "sample_sale" ? "Sample Sale" : "Bride to Bride"}
+      </span>
+    </div>
+  );
+}
+
 export default function ProductDetailPage() {
   const params = useParams();
   const [activeImage, setActiveImage] = useState(0);
@@ -113,6 +145,7 @@ export default function ProductDetailPage() {
           saves: 0,
           daysListed: 0,
           sellerLocation: "Worldwide",
+          listingType: dbRow.listing_type || "peer_to_peer",
           measurements: {
             bust: dbRow.bust_cm ? `${dbRow.bust_cm}cm` : "—",
             waist: dbRow.waist_cm ? `${dbRow.waist_cm}cm` : "—",
@@ -186,9 +219,13 @@ export default function ProductDetailPage() {
           {/* ──── RIGHT: SCROLLING CONTENT COLUMN ──── */}
           <div className="w-full lg:w-[45%] lg:pt-10">
             <div className="max-w-xl">
-              <p className="font-sans text-[11px] font-bold uppercase tracking-[0.4em] text-gold-muted mb-4">
-                {listing.collection} Collection
-              </p>
+              <div className="flex items-center gap-4 mb-4">
+                <p className="font-sans text-[11px] font-bold uppercase tracking-[0.4em] text-gold-muted">
+                  {listing.collection} Collection
+                </p>
+                <span className="text-obsidian/10">|</span>
+                <SellerBadge type={listing.listingType} />
+              </div>
               <h1 className="font-serif text-6xl md:text-8xl leading-none tracking-tighter mb-8 italic">
                 {listing.title}
               </h1>
@@ -216,7 +253,7 @@ export default function ProductDetailPage() {
                   ["Silhouette", listing.silhouette],
                   ["Neckline", listing.neckline],
                   ["Color", listing.color],
-                  ["Designer", listing.designer],
+                  ["Sold by", listing.listingType === "brand_direct" ? "Galia Lahav" : listing.listingType === "sample_sale" ? "Sample Sale" : "Private Seller"],
                   ["Condition", listing.condition],
                 ].map(([label, value]) => (
                   <div key={label}>

@@ -54,6 +54,7 @@ function mapDbListing(row: any): Listing {
     saves: 0,
     daysListed: Math.floor((Date.now() - new Date(row.created_at).getTime()) / 86400000),
     sellerLocation: "Worldwide",
+    listingType: row.listing_type || "peer_to_peer",
     measurements: {
       bust: row.bust_cm ? `${row.bust_cm}cm` : "—",
       waist: row.waist_cm ? `${row.waist_cm}cm` : "—",

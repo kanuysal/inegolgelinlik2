@@ -2,6 +2,8 @@
    Mock Listing Data — RE:GALIA Shop
    ══════════════════════════════════════════════════ */
 
+export type ListingType = "peer_to_peer" | "sample_sale" | "brand_direct";
+
 export interface Listing {
   id: string;
   title: string;
@@ -23,6 +25,7 @@ export interface Listing {
   saves: number;
   daysListed: number;
   sellerLocation: string;
+  listingType: ListingType;
   measurements: {
     bust: string;
     waist: string;
@@ -126,6 +129,7 @@ function generateListings(): Listing[] {
       saves: Math.floor(random() * 450) + 50,
       daysListed: Math.floor(random() * 30) + 1,
       sellerLocation: pickRandom(["New York, US", "Los Angeles, US", "London, UK", "Paris, FR", "Tel Aviv, IL", "Dubai, AE"]),
+      listingType: i < 4 ? "brand_direct" : (i < 6 ? "sample_sale" : "peer_to_peer"),
       measurements: {
         bust: `${32 + Math.floor(random() * 6)}"`,
         waist: `${24 + Math.floor(random() * 6)}"`,
