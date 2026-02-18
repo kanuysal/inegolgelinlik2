@@ -441,7 +441,7 @@ function ProductForm({ product, onSubmit, onCancel, isPending, onRefresh }: {
 }
 
 // ═══════════════════════════════════════════════════════
-// PRODUCT CARD (admin catalog card)
+// PRODUCT CARD (shop-style catalog card with admin overlays)
 // ═══════════════════════════════════════════════════════
 function AdminProductCard({ product, onEdit, onToggle, onDelete, isPending }: {
   product: any
@@ -451,105 +451,144 @@ function AdminProductCard({ product, onEdit, onToggle, onDelete, isPending }: {
   isPending: boolean
 }) {
   const [confirmDel, setConfirmDel] = useState(false)
+  const [isHovered, setIsHovered] = useState(false)
   const mainImage = product.images?.[0]
   const imageCount = product.images?.length || 0
 
+  const silhouetteLabel: Record<string, string> = {
+    a_line: 'A-Line', ball_gown: 'Ball Gown', mermaid: 'Mermaid',
+    trumpet: 'Trumpet', sheath: 'Sheath', fit_and_flare: 'Fit & Flare',
+    empire: 'Empire', column: 'Column',
+  }
+
   return (
-    <div className={`group relative rounded-2xl overflow-hidden bg-zinc-900/60 border border-zinc-800 transition-all hover:border-zinc-700 ${!product.is_active ? 'opacity-50' : ''}`}>
-      {/* Image */}
-      <div className="relative aspect-[2/3] bg-zinc-800 overflow-hidden cursor-pointer" onClick={onEdit}>
+    <article
+      className={`group relative cursor-pointer ${!product.is_active ? 'opacity-40' : ''}`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {/* Image container — matches shop ProductCard */}
+      <div className="relative aspect-[2/3] overflow-hidden bg-obsidian/[0.03] rounded-2xl" onClick={onEdit}>
         {mainImage ? (
-          <img src={mainImage} alt={product.style_name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+          <img
+            src={mainImage}
+            alt={product.style_name}
+            className={`absolute inset-0 w-full h-full object-cover transition-transform duration-600 ease-[cubic-bezier(0.22,1,0.36,1)] ${isHovered ? 'scale-105' : 'scale-100'}`}
+          />
         ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center text-zinc-600">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="w-12 h-12 mb-2 opacity-40">
+          <div className="absolute inset-0 w-full h-full flex flex-col items-center justify-center bg-obsidian/[0.04]">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="0.8" className="w-16 h-16 mb-3 text-obsidian/10">
               <rect x="3" y="3" width="18" height="18" rx="2" />
               <circle cx="8.5" cy="8.5" r="1.5" />
               <path d="M21 15l-5-5L5 21" />
             </svg>
-            <span className="text-[10px] font-sans uppercase tracking-wider">No Image</span>
+            <span className="text-[10px] font-sans font-bold uppercase tracking-[0.2em] text-obsidian/15">No Image</span>
           </div>
         )}
 
-        {/* Hover overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-        {/* Edit button on hover */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <span className="px-6 py-3 bg-gold-muted text-obsidian font-sans text-[10px] font-bold uppercase tracking-[0.2em] rounded-full shadow-2xl">
-            Edit Product
-          </span>
-        </div>
+        {/* Hover gradient overlay */}
+        <div className={`absolute inset-0 bg-gradient-to-t from-obsidian/40 via-transparent to-transparent transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-20'}`} />
 
         {/* Top badges */}
-        <div className="absolute top-3 left-3 right-3 flex items-start justify-between z-10">
-          <span className={`px-2.5 py-1 text-[9px] uppercase tracking-[0.12em] font-sans font-bold rounded-full backdrop-blur-md border ${
-            product.category === 'bridal' ? 'bg-champagne/10 text-champagne border-champagne/20' :
-            product.category === 'evening' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
-            'bg-zinc-700/50 text-zinc-300 border-zinc-600/30'
+        <div className="absolute top-4 left-4 right-4 flex items-start justify-between z-10">
+          {/* Category badge */}
+          <span className={`px-3 py-1 text-[9px] uppercase tracking-[0.15em] font-sans font-bold border rounded-full backdrop-blur-md ${
+            product.category === 'bridal'
+              ? 'bg-emerald-500/10 text-emerald-600/90 border-emerald-500/20'
+              : product.category === 'evening'
+              ? 'bg-blue-500/10 text-blue-600 border-blue-500/20'
+              : 'bg-obsidian/5 text-obsidian/40 border-obsidian/10'
           }`}>
             {product.category}
           </span>
-          {imageCount > 1 && (
-            <span className="px-2 py-1 text-[9px] font-sans font-bold text-white/70 bg-black/40 rounded-full backdrop-blur-md">
-              {imageCount} photos
+
+          {/* Photo count badge */}
+          {imageCount > 0 && (
+            <span className="px-3 py-1 bg-[#C5A059] text-white text-[9px] uppercase tracking-[0.15em] font-sans font-bold rounded-full shadow-[0_4px_15px_rgba(197,160,89,0.3)]">
+              {imageCount} {imageCount === 1 ? 'Photo' : 'Photos'}
             </span>
           )}
         </div>
 
-        {/* Active status dot */}
-        <button
-          onClick={e => { e.stopPropagation(); onToggle() }}
-          disabled={isPending}
-          className="absolute bottom-3 right-3 z-10 w-6 h-6 rounded-full flex items-center justify-center bg-black/40 backdrop-blur-md hover:bg-black/60 transition-colors"
-          title={product.is_active ? 'Active — click to deactivate' : 'Inactive — click to activate'}
-        >
-          <span className={`block w-2.5 h-2.5 rounded-full ${product.is_active ? 'bg-emerald-400' : 'bg-zinc-500'}`} />
-        </button>
+        {/* Active status + edit on hover (bottom of image) */}
+        <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between z-10">
+          {/* Active status indicator */}
+          <button
+            onClick={e => { e.stopPropagation(); onToggle() }}
+            disabled={isPending}
+            className="flex items-center gap-1.5"
+            title={product.is_active ? 'Active — click to deactivate' : 'Inactive — click to activate'}
+          >
+            <span className={`block w-2 h-2 rounded-full ${product.is_active ? 'bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.6)]' : 'bg-red-400 shadow-[0_0_6px_rgba(248,113,113,0.6)]'}`} />
+            <span className="font-sans text-[9px] uppercase tracking-[0.2em] text-white/90">
+              {product.is_active ? 'Active' : 'Inactive'}
+            </span>
+          </button>
+
+          {/* Edit button on hover */}
+          <div className={`transition-all duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] ${isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
+            <span className="px-6 py-3 bg-[#C5A059] text-white font-sans text-[10px] font-bold uppercase tracking-[0.25em] rounded-full hover:bg-[#B38E48] transition-all shadow-2xl">
+              Edit Product
+            </span>
+          </div>
+        </div>
       </div>
 
-      {/* Info */}
-      <div className="p-4">
-        <p className="font-sans text-[9px] uppercase tracking-[0.3em] text-zinc-500 mb-1 font-bold">
-          {product.silhouette?.replace(/_/g, ' ') || 'Galia Lahav'}
+      {/* Card info — matches shop ProductCard layout */}
+      <div className="pt-6 pb-2">
+        {/* Collection / Silhouette */}
+        <p className="font-sans text-[9px] uppercase tracking-[0.4em] text-obsidian/30 mb-2 font-bold">
+          {silhouetteLabel[product.silhouette] || product.category || 'Galia Lahav'}
         </p>
-        <h3 className="font-serif text-xl text-champagne tracking-tight leading-tight">
+
+        {/* Title */}
+        <h3 className="font-serif text-2xl tracking-tight text-obsidian group-hover:text-[#C5A059] transition-colors duration-500">
           {product.style_name}
         </h3>
-        {product.sku && (
-          <p className="font-sans text-[10px] text-zinc-500 mt-1">SKU: {product.sku}</p>
-        )}
-        <div className="flex items-center justify-between mt-3">
-          <span className="font-sans text-sm text-zinc-300 font-medium">
-            {product.msrp ? `$${Number(product.msrp).toLocaleString()}` : '—'}
-          </span>
-          <div className="flex gap-1.5">
+
+        {/* Attributes */}
+        <p className="font-sans text-[11px] text-obsidian/40 mt-2 tracking-wide font-medium">
+          {product.category ? product.category.charAt(0).toUpperCase() + product.category.slice(1) : ''}{product.silhouette ? ` · ${silhouetteLabel[product.silhouette] || product.silhouette}` : ''}{product.sku ? ` · ${product.sku}` : ''}
+        </p>
+
+        {/* Price + admin actions */}
+        <div className="flex items-baseline justify-between mt-4">
+          <div className="flex items-baseline gap-3">
+            {product.msrp ? (
+              <span className="font-sans text-xl font-bold text-obsidian tracking-tight">
+                ${Number(product.msrp).toLocaleString()}
+              </span>
+            ) : (
+              <span className="font-sans text-sm text-obsidian/20">MSRP not set</span>
+            )}
+          </div>
+          <div className="flex gap-1.5 items-center">
             <button
               onClick={onEdit}
-              className="px-3 py-1.5 rounded-lg font-sans text-[10px] uppercase tracking-wider text-zinc-400 hover:text-champagne hover:bg-zinc-800 transition-colors"
+              className="px-3 py-1.5 rounded-full font-sans text-[9px] font-bold uppercase tracking-[0.15em] text-obsidian/30 hover:text-[#C5A059] hover:bg-obsidian/5 transition-colors"
             >
               Edit
             </button>
             {confirmDel ? (
-              <div className="flex gap-1">
+              <div className="flex gap-1 items-center">
                 <button
                   onClick={() => { onDelete(); setConfirmDel(false) }}
                   disabled={isPending}
-                  className="px-2 py-1.5 rounded-lg font-sans text-[10px] uppercase tracking-wider text-red-400 bg-red-600/10 hover:bg-red-600/20"
+                  className="px-2.5 py-1.5 rounded-full font-sans text-[9px] font-bold uppercase tracking-[0.1em] text-red-500 bg-red-50 hover:bg-red-100"
                 >
-                  Yes
+                  Confirm
                 </button>
                 <button
                   onClick={() => setConfirmDel(false)}
-                  className="px-2 py-1.5 rounded-lg font-sans text-[10px] uppercase tracking-wider text-zinc-500"
+                  className="px-2 py-1.5 rounded-full font-sans text-[9px] font-bold uppercase tracking-[0.1em] text-obsidian/20"
                 >
                   No
                 </button>
               </div>
             ) : (
               <button
-                onClick={() => setConfirmDel(true)}
-                className="px-3 py-1.5 rounded-lg font-sans text-[10px] uppercase tracking-wider text-zinc-600 hover:text-red-400 hover:bg-zinc-800 transition-colors"
+                onClick={(e) => { e.stopPropagation(); setConfirmDel(true) }}
+                className="px-3 py-1.5 rounded-full font-sans text-[9px] font-bold uppercase tracking-[0.15em] text-obsidian/15 hover:text-red-400 transition-colors"
               >
                 Delete
               </button>
@@ -557,13 +596,15 @@ function AdminProductCard({ product, onEdit, onToggle, onDelete, isPending }: {
           </div>
         </div>
       </div>
-    </div>
+    </article>
   )
 }
 
 // ═══════════════════════════════════════════════════════
-// PRODUCT EDIT DRAWER (slide-over panel)
+// PRODUCT EDIT DRAWER (slide-over panel — light theme)
 // ═══════════════════════════════════════════════════════
+const lightInputClass = "bg-obsidian/[0.03] border border-obsidian/10 rounded-xl px-4 py-3 font-sans text-sm text-obsidian placeholder:text-obsidian/25 focus:outline-none focus:border-[#C5A059]/50 transition-colors"
+
 function ProductEditDrawer({ product, onClose, onSubmit, isPending, onRefresh }: {
   product: any
   onClose: () => void
@@ -574,58 +615,208 @@ function ProductEditDrawer({ product, onClose, onSubmit, isPending, onRefresh }:
   return (
     <div className="fixed inset-0 z-50 flex justify-end" onClick={onClose}>
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+      <div className="absolute inset-0 bg-obsidian/30 backdrop-blur-sm" />
 
       {/* Panel */}
       <div
-        className="relative w-full max-w-xl bg-obsidian border-l border-zinc-800 overflow-y-auto"
+        className="relative w-full max-w-xl bg-white overflow-y-auto shadow-2xl"
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="sticky top-0 z-10 bg-obsidian/95 backdrop-blur-xl border-b border-zinc-800 px-6 py-4 flex items-center justify-between">
+        <div className="sticky top-0 z-10 bg-white/95 backdrop-blur-xl border-b border-obsidian/5 px-8 py-5 flex items-center justify-between">
           <div>
-            <h2 className="font-serif text-2xl text-champagne">{product.style_name}</h2>
-            <p className="font-sans text-xs text-zinc-500 capitalize mt-0.5">{product.category} {product.silhouette ? `· ${product.silhouette.replace(/_/g, ' ')}` : ''}</p>
+            <p className="font-sans text-[9px] uppercase tracking-[0.4em] text-obsidian/30 font-bold mb-1">{product.category}</p>
+            <h2 className="font-serif text-3xl text-obsidian tracking-tight">{product.style_name}</h2>
           </div>
-          <button onClick={onClose} className="w-10 h-10 rounded-full bg-zinc-800 hover:bg-zinc-700 flex items-center justify-center text-zinc-400 hover:text-white transition-colors">
+          <button onClick={onClose} className="w-10 h-10 rounded-full bg-obsidian/5 hover:bg-obsidian/10 flex items-center justify-center text-obsidian/30 hover:text-obsidian transition-colors">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5"><path d="M18 6L6 18M6 6l12 12" /></svg>
           </button>
         </div>
 
         {/* Image gallery at top */}
-        <div className="px-6 pt-6">
+        <div className="px-8 pt-6">
           {product.images?.length > 0 ? (
-            <div className="grid grid-cols-3 gap-2 mb-6">
+            <div className="grid grid-cols-3 gap-2 mb-8">
               {product.images.map((url: string, i: number) => (
-                <div key={i} className={`rounded-xl overflow-hidden bg-zinc-800 ${i === 0 ? 'col-span-2 row-span-2 aspect-[3/4]' : 'aspect-square'}`}>
+                <div key={i} className={`rounded-2xl overflow-hidden bg-obsidian/[0.03] ${i === 0 ? 'col-span-2 row-span-2 aspect-[3/4]' : 'aspect-square'}`}>
                   <img src={url} alt="" className="w-full h-full object-cover" />
                 </div>
               ))}
             </div>
           ) : (
-            <div className="aspect-[3/2] rounded-xl bg-zinc-800/50 flex items-center justify-center mb-6">
-              <span className="font-sans text-xs text-zinc-600 uppercase tracking-wider">No images yet</span>
+            <div className="aspect-[3/2] rounded-2xl bg-obsidian/[0.03] flex flex-col items-center justify-center mb-8">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="0.8" className="w-12 h-12 mb-2 text-obsidian/10">
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <circle cx="8.5" cy="8.5" r="1.5" />
+                <path d="M21 15l-5-5L5 21" />
+              </svg>
+              <span className="font-sans text-[10px] text-obsidian/20 uppercase tracking-[0.2em] font-bold">No images yet</span>
             </div>
           )}
         </div>
 
-        {/* Edit form */}
-        <div className="px-6 pb-8">
-          <ProductForm
-            product={product}
-            onSubmit={onSubmit}
-            onCancel={onClose}
-            isPending={isPending}
-            onRefresh={onRefresh}
-          />
+        {/* Edit form — light themed */}
+        <div className="px-8 pb-10">
+          <form onSubmit={onSubmit} className="grid grid-cols-2 gap-4">
+            <div className="col-span-2">
+              <label className="font-sans text-[9px] uppercase tracking-[0.3em] text-obsidian/30 font-bold mb-2 block">Style Name</label>
+              <input name="style_name" required defaultValue={product?.style_name || ''} placeholder="e.g., GALA 1001" className={`w-full ${lightInputClass}`} />
+            </div>
+            <div>
+              <label className="font-sans text-[9px] uppercase tracking-[0.3em] text-obsidian/30 font-bold mb-2 block">SKU</label>
+              <input name="sku" defaultValue={product?.sku || ''} placeholder="Optional" className={lightInputClass} />
+            </div>
+            <div>
+              <label className="font-sans text-[9px] uppercase tracking-[0.3em] text-obsidian/30 font-bold mb-2 block">Category</label>
+              <select name="category" required defaultValue={product?.category || 'bridal'} className={lightInputClass}>
+                <option value="bridal">Bridal</option>
+                <option value="evening">Evening</option>
+                <option value="accessories">Accessories</option>
+              </select>
+            </div>
+            <div>
+              <label className="font-sans text-[9px] uppercase tracking-[0.3em] text-obsidian/30 font-bold mb-2 block">Silhouette</label>
+              <select name="silhouette" defaultValue={product?.silhouette || ''} className={lightInputClass}>
+                <option value="">None</option>
+                <option value="a_line">A-Line</option>
+                <option value="ball_gown">Ball Gown</option>
+                <option value="mermaid">Mermaid</option>
+                <option value="trumpet">Trumpet</option>
+                <option value="sheath">Sheath</option>
+                <option value="fit_and_flare">Fit & Flare</option>
+                <option value="empire">Empire</option>
+                <option value="column">Column</option>
+              </select>
+            </div>
+            <div>
+              <label className="font-sans text-[9px] uppercase tracking-[0.3em] text-obsidian/30 font-bold mb-2 block">Train Style</label>
+              <select name="train_style" defaultValue={product?.train_style || ''} className={lightInputClass}>
+                <option value="">None</option>
+                <option value="sweep">Sweep</option>
+                <option value="court">Court</option>
+                <option value="chapel">Chapel</option>
+                <option value="cathedral">Cathedral</option>
+                <option value="royal">Royal</option>
+              </select>
+            </div>
+            <div>
+              <label className="font-sans text-[9px] uppercase tracking-[0.3em] text-obsidian/30 font-bold mb-2 block">MSRP</label>
+              <input name="msrp" type="number" defaultValue={product?.msrp || ''} placeholder="Optional" className={lightInputClass} />
+            </div>
+            <div className="col-span-2">
+              <label className="font-sans text-[9px] uppercase tracking-[0.3em] text-obsidian/30 font-bold mb-2 block">Description</label>
+              <textarea name="description" defaultValue={product?.description || ''} placeholder="Optional description..." className={`${lightInputClass} min-h-[80px] w-full`} />
+            </div>
+
+            {/* Image management */}
+            {product?.id && onRefresh && (
+              <LightImageManager productId={product.id} images={product.images || []} onUpdate={onRefresh} />
+            )}
+
+            <div className="col-span-2 flex gap-3 mt-2">
+              <button type="submit" disabled={isPending} className="px-10 py-4 bg-[#C5A059] text-white font-sans text-[10px] font-bold uppercase tracking-[0.25em] rounded-full hover:bg-[#B38E48] transition-all shadow-lg disabled:opacity-50">
+                {isPending ? 'Saving...' : 'Save Changes'}
+              </button>
+              <button type="button" onClick={onClose} className="px-8 py-4 border border-obsidian/10 rounded-full font-sans text-[10px] font-bold uppercase tracking-[0.2em] text-obsidian/30 hover:text-obsidian hover:border-obsidian/20 transition-all">
+                Cancel
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
   )
 }
 
+// Light-themed image manager for the edit drawer
+function LightImageManager({ productId, images, onUpdate }: {
+  productId: string
+  images: string[]
+  onUpdate: () => void
+}) {
+  const [uploading, setUploading] = useState(false)
+  const [urlInput, setUrlInput] = useState('')
+  const [error, setError] = useState<string | null>(null)
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploading(true)
+    setError(null)
+    const formData = new FormData()
+    formData.append('file', file)
+    const res = await uploadProductImage(productId, formData)
+    if (res.error) setError(res.error)
+    else onUpdate()
+    setUploading(false)
+    e.target.value = ''
+  }
+
+  const handleRemove = async (url: string) => {
+    setError(null)
+    const res = await removeProductImage(productId, url)
+    if (res.error) setError(res.error)
+    else onUpdate()
+  }
+
+  const handleAddUrl = async () => {
+    if (!urlInput.trim()) return
+    setError(null)
+    const res = await addProductImageUrl(productId, urlInput.trim())
+    if (res.error) setError(res.error)
+    else { setUrlInput(''); onUpdate() }
+  }
+
+  return (
+    <div className="col-span-2 space-y-3">
+      <label className="font-sans text-[9px] uppercase tracking-[0.3em] text-obsidian/30 font-bold block">Images</label>
+
+      {images.length > 0 && (
+        <div className="flex flex-wrap gap-3">
+          {images.map((url, i) => (
+            <div key={i} className="relative group w-24 h-24 rounded-xl overflow-hidden bg-obsidian/[0.03] border border-obsidian/5">
+              <img src={url} alt="" className="w-full h-full object-cover" />
+              <button
+                type="button"
+                onClick={() => handleRemove(url)}
+                className="absolute inset-0 bg-obsidian/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-[9px] font-sans font-bold uppercase tracking-wider"
+              >
+                Remove
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="flex gap-3 items-center">
+        <label className={`cursor-pointer px-4 py-2.5 rounded-full font-sans text-[9px] font-bold uppercase tracking-[0.15em] transition-colors border ${uploading ? 'border-obsidian/5 text-obsidian/15' : 'border-obsidian/10 text-obsidian/40 hover:text-obsidian hover:border-obsidian/20'}`}>
+          {uploading ? 'Uploading...' : 'Upload Image'}
+          <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handleUpload} disabled={uploading} className="hidden" />
+        </label>
+        <span className="text-obsidian/15 font-sans text-[10px]">or</span>
+        <input
+          value={urlInput}
+          onChange={e => setUrlInput(e.target.value)}
+          placeholder="Paste image URL..."
+          className={`flex-1 ${lightInputClass} text-xs py-2.5`}
+        />
+        <button
+          type="button"
+          onClick={handleAddUrl}
+          disabled={!urlInput.trim()}
+          className="px-4 py-2.5 rounded-full font-sans text-[9px] font-bold uppercase tracking-[0.15em] border border-obsidian/10 text-obsidian/40 hover:text-obsidian hover:border-obsidian/20 transition-colors disabled:opacity-30"
+        >
+          Add
+        </button>
+      </div>
+
+      {error && <p className="font-sans text-xs text-red-500">{error}</p>}
+    </div>
+  )
+}
+
 // ═══════════════════════════════════════════════════════
-// PRODUCTS CATALOG TAB
+// PRODUCTS CATALOG TAB (shop-style light theme)
 // ═══════════════════════════════════════════════════════
 function ProductsTab() {
   const [products, setProducts] = useState<any[]>([])
@@ -692,7 +883,17 @@ function ProductsTab() {
     })
   }
 
-  if (loading) return <LoadingSkeleton />
+  if (loading) {
+    return (
+      <div className="bg-white rounded-3xl p-12">
+        <div className="space-y-8">
+          {[1, 2].map(i => (
+            <div key={i} className="h-48 bg-obsidian/[0.03] rounded-2xl animate-pulse" />
+          ))}
+        </div>
+      </div>
+    )
+  }
 
   const filtered = products.filter(p => {
     const matchSearch = !search || p.style_name?.toLowerCase().includes(search.toLowerCase()) || p.sku?.toLowerCase().includes(search.toLowerCase())
@@ -702,18 +903,29 @@ function ProductsTab() {
   })
 
   return (
-    <div>
+    /* Light background panel that mimics the shop page */
+    <div className="bg-white rounded-3xl -mx-6 px-6 md:px-10 py-10">
+      {/* Hero section */}
+      <div className="max-w-7xl mx-auto mb-10">
+        <h2 className="font-serif text-5xl md:text-6xl font-light tracking-tight text-obsidian leading-none">
+          Product Catalog
+        </h2>
+        <p className="font-sans text-sm text-obsidian/40 mt-4 tracking-wide max-w-lg leading-relaxed">
+          Manage the official Galia Lahav catalog. Add images, edit details, and control which products are visible on the marketplace.
+        </p>
+      </div>
+
       {/* Toolbar */}
-      <div className="flex flex-col gap-4 mb-8">
+      <div className="max-w-7xl mx-auto flex flex-col gap-5 mb-10">
         <div className="flex flex-col sm:flex-row gap-4">
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search by name or SKU..."
-            className={`flex-1 ${inputClass}`}
+            className={`flex-1 ${lightInputClass}`}
           />
           <div className="flex gap-3 items-center">
-            {importMsg && <span className="font-sans text-xs text-emerald-400">{importMsg}</span>}
+            {importMsg && <span className="font-sans text-xs text-emerald-600">{importMsg}</span>}
             {products.length === 0 && (
               <button
                 onClick={() => {
@@ -729,62 +941,133 @@ function ProductsTab() {
                   })
                 }}
                 disabled={isPending}
-                className="bg-blue-600 text-white px-5 py-2 rounded-lg font-sans text-xs uppercase tracking-widest hover:bg-blue-500 transition-colors disabled:opacity-50 whitespace-nowrap"
+                className="px-6 py-3 bg-[#C5A059] text-white font-sans text-[10px] font-bold uppercase tracking-[0.2em] rounded-full hover:bg-[#B38E48] transition-all shadow-lg disabled:opacity-50 whitespace-nowrap"
               >
                 {isPending ? 'Importing...' : 'Import Catalog'}
               </button>
             )}
-            <button onClick={() => { setShowForm(!showForm); setEditingProduct(null) }} className="bg-gold-muted text-obsidian px-5 py-2 rounded-lg font-sans text-xs uppercase tracking-widest hover:bg-champagne transition-colors whitespace-nowrap">
+            <button
+              onClick={() => { setShowForm(!showForm); setEditingProduct(null) }}
+              className="px-6 py-3 bg-[#C5A059] text-white font-sans text-[10px] font-bold uppercase tracking-[0.2em] rounded-full hover:bg-[#B38E48] transition-all shadow-lg whitespace-nowrap"
+            >
               {showForm ? 'Cancel' : '+ Add Product'}
             </button>
           </div>
         </div>
 
-        {/* Filter pills */}
+        {/* Filter pills — shop style */}
         <div className="flex flex-wrap gap-2 items-center">
           {['all', 'bridal', 'evening', 'accessories'].map(c => (
-            <button key={c} onClick={() => setCatFilter(c)} className={`px-4 py-2 rounded-full font-sans text-[10px] uppercase tracking-[0.15em] font-bold transition-colors ${catFilter === c ? 'bg-gold-muted text-obsidian' : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'}`}>
+            <button
+              key={c}
+              onClick={() => setCatFilter(c)}
+              className={`px-5 py-2.5 rounded-full font-sans text-[9px] uppercase tracking-[0.2em] font-bold transition-all ${
+                catFilter === c
+                  ? 'bg-obsidian text-white'
+                  : 'bg-obsidian/[0.03] text-obsidian/30 hover:text-obsidian/60 hover:bg-obsidian/[0.06] border border-obsidian/5'
+              }`}
+            >
               {c}
             </button>
           ))}
-          <span className="w-px h-5 bg-zinc-700 mx-1" />
+          <span className="w-px h-4 bg-obsidian/10 mx-2" />
           {(['all', 'active', 'inactive'] as const).map(s => (
-            <button key={s} onClick={() => setActiveFilter(s)} className={`px-4 py-2 rounded-full font-sans text-[10px] uppercase tracking-[0.15em] font-bold transition-colors ${activeFilter === s ? 'bg-gold-muted text-obsidian' : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'}`}>
+            <button
+              key={s}
+              onClick={() => setActiveFilter(s)}
+              className={`px-5 py-2.5 rounded-full font-sans text-[9px] uppercase tracking-[0.2em] font-bold transition-all ${
+                activeFilter === s
+                  ? 'bg-obsidian text-white'
+                  : 'bg-obsidian/[0.03] text-obsidian/30 hover:text-obsidian/60 hover:bg-obsidian/[0.06] border border-obsidian/5'
+              }`}
+            >
               {s}
             </button>
           ))}
-          <span className="ml-auto font-sans text-xs text-zinc-500">
-            {filtered.length} of {products.length} products
+          <span className="ml-auto font-sans text-[10px] font-bold uppercase tracking-[0.2em] text-obsidian/20">
+            {filtered.length} of {products.length}
           </span>
         </div>
       </div>
 
       {/* Create form */}
       {showForm && !editingProduct && (
-        <ProductForm onSubmit={handleCreate} onCancel={() => setShowForm(false)} isPending={isPending} />
+        <div className="max-w-7xl mx-auto mb-10">
+          <form onSubmit={handleCreate} className="bg-obsidian/[0.02] border border-obsidian/5 rounded-2xl p-8 grid grid-cols-2 gap-4">
+            <div className="col-span-2">
+              <input name="style_name" required placeholder="Style Name (e.g., GALA 1001)" className={`w-full ${lightInputClass}`} />
+            </div>
+            <input name="sku" placeholder="SKU (optional)" className={lightInputClass} />
+            <select name="category" required defaultValue="bridal" className={lightInputClass}>
+              <option value="bridal">Bridal</option>
+              <option value="evening">Evening</option>
+              <option value="accessories">Accessories</option>
+            </select>
+            <select name="silhouette" className={lightInputClass}>
+              <option value="">Silhouette (optional)</option>
+              <option value="a_line">A-Line</option>
+              <option value="ball_gown">Ball Gown</option>
+              <option value="mermaid">Mermaid</option>
+              <option value="trumpet">Trumpet</option>
+              <option value="sheath">Sheath</option>
+              <option value="fit_and_flare">Fit & Flare</option>
+              <option value="empire">Empire</option>
+              <option value="column">Column</option>
+            </select>
+            <select name="train_style" className={lightInputClass}>
+              <option value="">Train (optional)</option>
+              <option value="sweep">Sweep</option>
+              <option value="court">Court</option>
+              <option value="chapel">Chapel</option>
+              <option value="cathedral">Cathedral</option>
+              <option value="royal">Royal</option>
+            </select>
+            <input name="msrp" type="number" placeholder="MSRP (optional)" className={lightInputClass} />
+            <textarea name="description" placeholder="Description (optional)" className={`col-span-2 ${lightInputClass} min-h-[80px]`} />
+            <div className="col-span-2 flex gap-3">
+              <button type="submit" disabled={isPending} className="px-10 py-4 bg-[#C5A059] text-white font-sans text-[10px] font-bold uppercase tracking-[0.25em] rounded-full hover:bg-[#B38E48] transition-all shadow-lg disabled:opacity-50">
+                {isPending ? 'Creating...' : 'Create Product'}
+              </button>
+              <button type="button" onClick={() => setShowForm(false)} className="px-8 py-4 border border-obsidian/10 rounded-full font-sans text-[10px] font-bold uppercase tracking-[0.2em] text-obsidian/30 hover:text-obsidian hover:border-obsidian/20 transition-all">
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
       )}
 
-      {/* Product card grid */}
-      {filtered.length > 0 ? (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-10">
-          {filtered.map((p: any) => (
-            <AdminProductCard
-              key={p.id}
-              product={p}
-              onEdit={() => { setEditingProduct(p); setShowForm(false) }}
-              onToggle={() => handleToggle(p.id, p.is_active)}
-              onDelete={() => handleDelete(p.id)}
-              isPending={isPending}
-            />
-          ))}
-        </div>
-      ) : (
-        <div className="text-center py-20">
-          <div className="text-5xl mb-4">👗</div>
-          <h3 className="font-serif text-2xl text-champagne">No products found</h3>
-          <p className="text-zinc-400 font-sans mt-2">Try adjusting your filters or add a new product</p>
-        </div>
-      )}
+      {/* Product card grid — shop page style */}
+      <div className="max-w-7xl mx-auto">
+        {filtered.length > 0 ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-16">
+            {filtered.map((p: any) => (
+              <AdminProductCard
+                key={p.id}
+                product={p}
+                onEdit={() => { setEditingProduct(p); setShowForm(false) }}
+                onToggle={() => handleToggle(p.id, p.is_active)}
+                onDelete={() => handleDelete(p.id)}
+                isPending={isPending}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-40">
+            <p className="font-serif text-3xl text-obsidian/40 tracking-tight mb-4">
+              No products found
+            </p>
+            <p className="font-sans text-sm text-obsidian/20 mb-10 max-w-xs text-center leading-relaxed">
+              Try adjusting your filters or add a new product to the catalog.
+            </p>
+            <button
+              onClick={() => { setCatFilter('all'); setActiveFilter('all'); setSearch('') }}
+              className="px-12 py-4 border border-obsidian/10 rounded-full font-sans text-[10px] font-bold uppercase tracking-[0.3em] text-obsidian/40 hover:text-obsidian hover:border-obsidian/30 transition-all hover:bg-obsidian/5"
+            >
+              Clear All Filters
+            </button>
+          </div>
+        )}
+      </div>
 
       {/* Edit drawer */}
       {editingProduct && (
