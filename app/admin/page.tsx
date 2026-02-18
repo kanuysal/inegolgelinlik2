@@ -15,6 +15,9 @@ import {
   updateProduct,
   deleteProduct,
   toggleProductActive,
+  uploadProductImage,
+  removeProductImage,
+  addProductImageUrl,
   bulkImportCatalog,
   getClaims,
   resolveClaim,
@@ -284,15 +287,107 @@ function UsersTab() {
 }
 
 // ═══════════════════════════════════════════════════════
+// IMAGE MANAGER (for editing existing product images)
+// ═══════════════════════════════════════════════════════
+function ImageManager({ productId, images, onUpdate }: {
+  productId: string
+  images: string[]
+  onUpdate: () => void
+}) {
+  const [uploading, setUploading] = useState(false)
+  const [urlInput, setUrlInput] = useState('')
+  const [error, setError] = useState<string | null>(null)
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploading(true)
+    setError(null)
+    const formData = new FormData()
+    formData.append('file', file)
+    const res = await uploadProductImage(productId, formData)
+    if (res.error) setError(res.error)
+    else onUpdate()
+    setUploading(false)
+    e.target.value = ''
+  }
+
+  const handleRemove = async (url: string) => {
+    setError(null)
+    const res = await removeProductImage(productId, url)
+    if (res.error) setError(res.error)
+    else onUpdate()
+  }
+
+  const handleAddUrl = async () => {
+    if (!urlInput.trim()) return
+    setError(null)
+    const res = await addProductImageUrl(productId, urlInput.trim())
+    if (res.error) setError(res.error)
+    else { setUrlInput(''); onUpdate() }
+  }
+
+  return (
+    <div className="col-span-2 space-y-3">
+      <label className="font-sans text-xs uppercase tracking-wider text-zinc-500">Images</label>
+
+      {/* Current images */}
+      {images.length > 0 && (
+        <div className="flex flex-wrap gap-3">
+          {images.map((url, i) => (
+            <div key={i} className="relative group w-24 h-24 rounded-lg overflow-hidden bg-zinc-800 border border-zinc-700">
+              <img src={url} alt="" className="w-full h-full object-cover" />
+              <button
+                type="button"
+                onClick={() => handleRemove(url)}
+                className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-red-400 text-xs font-sans font-bold"
+              >
+                Remove
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Upload + URL input */}
+      <div className="flex gap-3 items-center">
+        <label className={`cursor-pointer px-4 py-2 rounded-lg font-sans text-xs uppercase tracking-widest transition-colors ${uploading ? 'bg-zinc-700 text-zinc-500' : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700 border border-zinc-700'}`}>
+          {uploading ? 'Uploading...' : 'Upload Image'}
+          <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handleUpload} disabled={uploading} className="hidden" />
+        </label>
+        <span className="text-zinc-600 font-sans text-xs">or</span>
+        <input
+          value={urlInput}
+          onChange={e => setUrlInput(e.target.value)}
+          placeholder="Paste image URL..."
+          className={`flex-1 ${inputClass} text-xs py-2`}
+        />
+        <button
+          type="button"
+          onClick={handleAddUrl}
+          disabled={!urlInput.trim()}
+          className="px-4 py-2 rounded-lg font-sans text-xs uppercase tracking-widest bg-zinc-800 text-zinc-300 hover:bg-zinc-700 border border-zinc-700 disabled:opacity-40"
+        >
+          Add
+        </button>
+      </div>
+
+      {error && <p className="font-sans text-xs text-red-400">{error}</p>}
+    </div>
+  )
+}
+
+// ═══════════════════════════════════════════════════════
 // PRODUCT FORM (shared between create & edit)
 // ═══════════════════════════════════════════════════════
 const inputClass = "bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 font-sans text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-gold-muted"
 
-function ProductForm({ product, onSubmit, onCancel, isPending }: {
+function ProductForm({ product, onSubmit, onCancel, isPending, onRefresh }: {
   product?: any
   onSubmit: (e: React.FormEvent) => void
   onCancel: () => void
   isPending: boolean
+  onRefresh?: () => void
 }) {
   return (
     <form onSubmit={onSubmit} className="bg-zinc-900/60 border border-zinc-800 rounded-lg p-6 mb-6 grid grid-cols-2 gap-4">
@@ -327,6 +422,12 @@ function ProductForm({ product, onSubmit, onCancel, isPending }: {
       </select>
       <input name="msrp" type="number" defaultValue={product?.msrp || ''} placeholder="MSRP (optional)" className={inputClass} />
       <textarea name="description" defaultValue={product?.description || ''} placeholder="Description (optional)" className={`col-span-2 ${inputClass} min-h-[80px]`} />
+
+      {/* Image management — only for existing products */}
+      {product?.id && onRefresh && (
+        <ImageManager productId={product.id} images={product.images || []} onUpdate={onRefresh} />
+      )}
+
       <div className="col-span-2 flex gap-3">
         <button type="submit" disabled={isPending} className="bg-gold-muted text-obsidian px-8 py-3 font-sans text-xs uppercase tracking-widest hover:bg-champagne transition-colors disabled:opacity-50">
           {isPending ? 'Saving...' : product ? 'Save Changes' : 'Create Product'}
@@ -479,7 +580,18 @@ function ProductsTab() {
 
       {/* Edit form */}
       {editingProduct && (
-        <ProductForm product={editingProduct} onSubmit={handleUpdate} onCancel={() => setEditingProduct(null)} isPending={isPending} />
+        <ProductForm
+          product={editingProduct}
+          onSubmit={handleUpdate}
+          onCancel={() => setEditingProduct(null)}
+          isPending={isPending}
+          onRefresh={async () => {
+            const updated = await getProducts()
+            setProducts(updated)
+            const refreshed = updated.find((p: any) => p.id === editingProduct.id)
+            if (refreshed) setEditingProduct(refreshed)
+          }}
+        />
       )}
 
       {/* Table */}

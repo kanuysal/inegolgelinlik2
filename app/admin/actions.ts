@@ -296,6 +296,119 @@ export async function toggleProductActive(productId: string, isActive: boolean) 
   return { success: true }
 }
 
+export async function uploadProductImage(productId: string, formData: FormData) {
+  await requireAdminRole()
+  const supabase = await adminDb()
+
+  const file = formData.get('file') as File
+  if (!file) return { error: 'No file provided' }
+
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']
+  if (!allowedTypes.includes(file.type)) {
+    return { error: 'Only JPEG, PNG, and WebP images are allowed' }
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    return { error: 'Image must be under 5MB' }
+  }
+
+  const ext = file.name.split('.').pop() || 'jpg'
+  const fileName = `products/${productId}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+
+  const { data, error } = await supabase.storage
+    .from('listing-images')
+    .upload(fileName, file, { cacheControl: '3600', upsert: false })
+
+  if (error) return { error: 'Failed to upload image' }
+
+  const { data: { publicUrl } } = supabase.storage
+    .from('listing-images')
+    .getPublicUrl(data.path)
+
+  // Append to product images array
+  const { data: product } = await supabase
+    .from('products')
+    .select('images')
+    .eq('id', productId)
+    .single()
+
+  const currentImages = product?.images || []
+  const { error: updateError } = await supabase
+    .from('products')
+    .update({
+      images: [...currentImages, publicUrl],
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', productId)
+
+  if (updateError) return { error: updateError.message }
+
+  revalidatePath('/admin')
+  return { success: true, url: publicUrl }
+}
+
+export async function removeProductImage(productId: string, imageUrl: string) {
+  await requireAdminRole()
+  const supabase = await adminDb()
+
+  // Remove from product images array
+  const { data: product } = await supabase
+    .from('products')
+    .select('images')
+    .eq('id', productId)
+    .single()
+
+  const currentImages: string[] = product?.images || []
+  const updatedImages = currentImages.filter((img: string) => img !== imageUrl)
+
+  const { error } = await supabase
+    .from('products')
+    .update({
+      images: updatedImages,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', productId)
+
+  if (error) return { error: error.message }
+
+  // Try to remove from storage (best-effort, URL might be external)
+  try {
+    const url = new URL(imageUrl)
+    const storagePath = url.pathname.split('/listing-images/')[1]
+    if (storagePath) {
+      await supabase.storage.from('listing-images').remove([decodeURIComponent(storagePath)])
+    }
+  } catch { /* external URL, skip */ }
+
+  revalidatePath('/admin')
+  return { success: true }
+}
+
+export async function addProductImageUrl(productId: string, imageUrl: string) {
+  await requireAdminRole()
+  const supabase = await adminDb()
+
+  const { data: product } = await supabase
+    .from('products')
+    .select('images')
+    .eq('id', productId)
+    .single()
+
+  const currentImages: string[] = product?.images || []
+
+  const { error } = await supabase
+    .from('products')
+    .update({
+      images: [...currentImages, imageUrl],
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', productId)
+
+  if (error) return { error: error.message }
+  revalidatePath('/admin')
+  return { success: true }
+}
+
 export async function bulkImportCatalog() {
   await requireAdminRole()
   const supabase = await adminDb()
