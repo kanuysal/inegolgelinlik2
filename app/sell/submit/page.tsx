@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import Navbar from '@/components/ui/Navbar'
-import { searchProducts, submitListing, getCatalogGowns, getSizeDimensions } from './actions'
+import { searchProducts, submitListing, getCatalogGowns, getSizeDimensions, getProductByName } from './actions'
 import { createClient } from '@/lib/supabase/client'
 
 /* ── Types ── */
@@ -18,6 +18,8 @@ type Product = {
   train_style: string | null
   msrp: number | null
   images: string[]
+  description: string | null
+  stockist_data: any | null
 }
 
 type UploadedImage = {
@@ -216,8 +218,11 @@ export default function SellWizardPage() {
     }
   }
 
-  /* ── Select a product from search ── */
+  /* ── Select a product from search or catalog ── */
   function selectProduct(product: Product) {
+    const retailPrice = product.stockist_data?.retailPrice?.amount
+    const msrp = product.msrp || retailPrice || null
+
     setData((prev) => ({
       ...prev,
       product_id: product.id,
@@ -226,7 +231,8 @@ export default function SellWizardPage() {
       category: product.category as 'bridal' | 'evening' | 'accessories',
       silhouette: product.silhouette || '',
       train_style: product.train_style || '',
-      msrp: product.msrp?.toString() || '',
+      description: product.description || '',
+      msrp: msrp?.toString() || '',
       stock_images: product.images || [],
     }))
     setStep(2)
@@ -480,20 +486,27 @@ export default function SellWizardPage() {
                   <label className={labelClass}>Collection Archive</label>
                   <p className="font-sans text-[10px] text-obsidian/20 mb-4 uppercase tracking-[0.1em]">Select your gown style for instant authentication sync</p>
                   <select
-                    onChange={(e) => {
+                    onChange={async (e) => {
                       const gown = catalogGowns.find(g => g.id === e.target.value)
                       if (gown) {
-                        setData(prev => ({
-                          ...prev,
-                          product_id: gown.id,
-                          product_name: gown.name,
-                          title: gown.name,
-                          stock_images: gown.images || [],
-                          description: gown.description || '',
-                          silhouette: gown.silhouette || '',
-                          category: gown.collection === 'Evening' ? 'evening' : 'bridal'
-                        }))
-                        setStep(2)
+                        // Try to get enriched DB product (with stockist pricing & details)
+                        const { product: dbProduct } = await getProductByName(gown.name)
+                        if (dbProduct) {
+                          selectProduct(dbProduct as Product)
+                        } else {
+                          // Fallback to catalog data only
+                          setData(prev => ({
+                            ...prev,
+                            product_id: gown.id,
+                            product_name: gown.name,
+                            title: gown.name,
+                            stock_images: gown.images || [],
+                            description: gown.description || '',
+                            silhouette: gown.silhouette || '',
+                            category: gown.collection === 'Evening' ? 'evening' : 'bridal'
+                          }))
+                          setStep(2)
+                        }
                       }
                     }}
                     className={`${selectClass} h-14 border-obsidian/5 focus:border-[#FF6448]/40`}

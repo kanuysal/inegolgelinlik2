@@ -13,38 +13,67 @@ async function getSupabase() {
 
 export async function searchProducts(query: string) {
   try {
-    const lowercaseQuery = query.toLowerCase()
-
-    // Search in local catalog first
-    const filteredCatalog = GOWN_CATALOG.filter(gown =>
-      gown.name.toLowerCase().includes(lowercaseQuery) ||
-      gown.silhouette.toLowerCase().includes(lowercaseQuery)
-    ).map(gown => ({
-      id: gown.id,
-      style_name: gown.name,
-      sku: null,
-      category: gown.collection === 'Evening' ? 'evening' : 'bridal',
-      silhouette: gown.silhouette,
-      train_style: null,
-      msrp: parseInt(gown.msrp_range.split('-')[1].replace(/[^0-9]/g, '')),
-      images: gown.images
-    }))
-
     const supabase = await getSupabase()
-    const { data, error } = await supabase
+
+    // Search DB products first (has stockist-enriched data)
+    const { data: dbProducts } = await supabase
       .from('products')
-      .select('id, style_name, sku, category, silhouette, train_style, msrp, images')
+      .select('id, style_name, sku, category, silhouette, train_style, msrp, images, description, stockist_data')
       .or(`style_name.ilike.%${query}%,sku.ilike.%${query}%`)
       .limit(10)
 
-    // Merge results, prioritizing catalog matches
-    const dbProducts = data || []
-    const combined = [...filteredCatalog, ...dbProducts.filter((p: any) => !filteredCatalog.find(c => c.style_name === p.style_name))]
+    const dbResults = (dbProducts || []).map((p: any) => ({
+      ...p,
+      source: 'db' as const,
+    }))
 
-    return { products: combined.slice(0, 10), error: error?.message || null }
+    // Fill remaining slots from local catalog (for gowns not yet synced to DB)
+    const lowercaseQuery = query.toLowerCase()
+    const dbNames = new Set(dbResults.map((p: any) => p.style_name.toLowerCase()))
+    const catalogFallback = GOWN_CATALOG
+      .filter(gown =>
+        !dbNames.has(gown.name.toLowerCase()) &&
+        (gown.name.toLowerCase().includes(lowercaseQuery) ||
+         gown.silhouette.toLowerCase().includes(lowercaseQuery))
+      )
+      .map(gown => ({
+        id: gown.id,
+        style_name: gown.name,
+        sku: null,
+        category: gown.collection === 'Evening' ? 'evening' : 'bridal',
+        silhouette: gown.silhouette,
+        train_style: null,
+        msrp: parseInt(gown.msrp_range.split('-')[1]?.replace(/[^0-9]/g, '') || '0'),
+        images: gown.images,
+        description: gown.description,
+        stockist_data: null,
+        source: 'catalog' as const,
+      }))
+
+    return { products: [...dbResults, ...catalogFallback].slice(0, 10), error: null }
   } catch (err: any) {
     console.error('Search products crash:', err)
     return { products: [], error: 'Search failed' }
+  }
+}
+
+/**
+ * Fetch a single product by name from the DB (with all stockist data).
+ * Used to enrich catalog selections with real pricing and details.
+ */
+export async function getProductByName(name: string) {
+  try {
+    const supabase = await getSupabase()
+    const { data } = await supabase
+      .from('products')
+      .select('id, style_name, sku, category, silhouette, train_style, msrp, images, description, stockist_data')
+      .ilike('style_name', name)
+      .limit(1)
+      .single()
+
+    return { product: data || null }
+  } catch {
+    return { product: null }
   }
 }
 
