@@ -41,19 +41,19 @@ function OverviewTab() {
   if (!stats) return <LoadingSkeleton />
 
   const cards = [
-    { label: 'Pending Review', value: stats.pendingReview, color: 'text-yellow-400', icon: '⏳' },
-    { label: 'Total Listings', value: stats.totalListings, color: 'text-[#1c1c1c]/70', icon: '👗' },
-    { label: 'Total Orders', value: stats.totalOrders, color: 'text-emerald-400', icon: '📦' },
-    { label: 'Total Users', value: stats.totalUsers, color: 'text-blue-400', icon: '👥' },
+    { label: 'Pending Review', value: stats.pendingReview, color: 'text-yellow-600', icon: '⏳' },
+    { label: 'Total Listings', value: stats.totalListings, color: 'text-[#1c1c1c]', icon: '👗' },
+    { label: 'Total Orders', value: stats.totalOrders, color: 'text-emerald-600', icon: '📦' },
+    { label: 'Total Users', value: stats.totalUsers, color: 'text-blue-600', icon: '👥' },
   ]
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
       {cards.map(c => (
-        <div key={c.label} className="bg-zinc-900/60 border border-zinc-800 rounded-xl p-6 text-center">
+        <div key={c.label} className="border border-[#1c1c1c]/5 rounded-xl p-6 text-center">
           <div className="text-3xl mb-2">{c.icon}</div>
-          <p className={`font-serif text-3xl ${c.color}`}>{c.value}</p>
-          <p className="font-sans text-xs text-zinc-500 uppercase tracking-wider mt-1">{c.label}</p>
+          <p className={`font-serif text-3xl font-light ${c.color}`}>{c.value}</p>
+          <p className="font-sans text-[10px] text-[#1c1c1c]/30 uppercase tracking-[0.15em] mt-1 font-light">{c.label}</p>
         </div>
       ))}
     </div>
@@ -99,41 +99,41 @@ function ModerationTab() {
     return (
       <div className="text-center py-20">
         <div className="text-5xl mb-4">✅</div>
-        <h3 className="font-serif text-2xl text-[#1c1c1c]/70">All clear</h3>
-        <p className="text-zinc-400 font-sans mt-2">No listings pending review</p>
+        <h3 className="font-serif text-2xl text-[#1c1c1c] font-light">All clear</h3>
+        <p className="text-[#1c1c1c]/40 font-sans mt-2 font-light">No listings pending review</p>
       </div>
     )
   }
 
   return (
     <div className="space-y-4">
-      <p className="font-sans text-sm text-yellow-400 mb-4">⏳ {pending.length} listing{pending.length !== 1 ? 's' : ''} awaiting review</p>
+      <p className="font-sans text-sm text-yellow-600 mb-4 font-light">⏳ {pending.length} listing{pending.length !== 1 ? 's' : ''} awaiting review</p>
       {pending.map((listing: any) => (
-        <div key={listing.id} className="bg-zinc-900/60 border border-zinc-800 rounded-lg p-5">
+        <div key={listing.id} className="border border-[#1c1c1c]/5 rounded-lg p-5 hover:border-[#1c1c1c]/10 transition-colors">
           <div className="flex gap-5">
             <div className="flex gap-2 flex-shrink-0">
               {listing.images?.slice(0, 3).map((img: string, i: number) => (
-                <div key={i} className="w-20 h-20 bg-zinc-800 rounded-lg overflow-hidden">
+                <div key={i} className="w-20 h-20 bg-[#1c1c1c]/[0.03] rounded-lg overflow-hidden">
                   <img src={img} alt="" className="w-full h-full object-cover" />
                 </div>
               ))}
               {(!listing.images || listing.images.length === 0) && (
-                <div className="w-20 h-20 bg-zinc-800 rounded-lg flex items-center justify-center text-zinc-600">👗</div>
+                <div className="w-20 h-20 bg-[#1c1c1c]/[0.03] rounded-lg flex items-center justify-center text-[#1c1c1c]/20">👗</div>
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-serif text-xl text-[#1c1c1c]/70">{listing.title}</h3>
-              <p className="font-sans text-xs text-zinc-500 mt-1">
+              <h3 className="font-serif text-xl text-[#1c1c1c] font-light">{listing.title}</h3>
+              <p className="font-sans text-xs text-[#1c1c1c]/30 mt-1 font-light">
                 By {listing.profiles?.display_name || listing.profiles?.full_name || 'Unknown'} · {listing.category} · Size {listing.size_us || '—'} · ${listing.price?.toLocaleString()}
               </p>
               {listing.description && (
-                <p className="font-sans text-sm text-zinc-400 mt-2 line-clamp-2">{listing.description}</p>
+                <p className="font-sans text-sm text-[#1c1c1c]/40 mt-2 line-clamp-2 font-light">{listing.description}</p>
               )}
               <div className="flex gap-3 mt-4">
-                <button onClick={() => handleApprove(listing.id)} disabled={isPending} className="bg-emerald-600 text-white px-5 py-2 rounded-lg font-sans text-xs uppercase tracking-widest hover:bg-emerald-500 transition-colors disabled:opacity-50">
+                <button onClick={() => handleApprove(listing.id)} disabled={isPending} className="bg-emerald-600 text-white px-5 py-2 rounded-full font-sans text-[10px] font-bold uppercase tracking-[0.15em] hover:bg-emerald-500 transition-colors disabled:opacity-50">
                   ✓ Approve
                 </button>
-                <button onClick={() => setRejectId(listing.id)} disabled={isPending} className="bg-red-600/20 text-red-400 px-5 py-2 rounded-lg font-sans text-xs uppercase tracking-widest hover:bg-red-600/30 transition-colors border border-red-600/30">
+                <button onClick={() => setRejectId(listing.id)} disabled={isPending} className="bg-red-50 text-red-500 px-5 py-2 rounded-full font-sans text-[10px] font-bold uppercase tracking-[0.15em] hover:bg-red-100 transition-colors border border-red-200">
                   ✕ Reject
                 </button>
               </div>
@@ -142,18 +142,18 @@ function ModerationTab() {
 
           {/* Rejection modal inline */}
           {rejectId === listing.id && (
-            <div className="mt-4 pt-4 border-t border-zinc-800">
+            <div className="mt-4 pt-4 border-t border-[#1c1c1c]/5">
               <textarea
                 value={rejectReason}
                 onChange={e => setRejectReason(e.target.value)}
                 placeholder="Reason for rejection (required)..."
-                className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 font-sans text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-red-500 min-h-[80px]"
+                className="w-full bg-[#1c1c1c]/[0.03] border border-[#1c1c1c]/10 rounded-xl px-4 py-3 font-sans text-sm text-[#1c1c1c] placeholder:text-[#1c1c1c]/25 focus:outline-none focus:border-red-400 min-h-[80px]"
               />
               <div className="flex gap-2 mt-3">
-                <button onClick={handleReject} disabled={!rejectReason.trim() || isPending} className="bg-red-600 text-white px-5 py-2 rounded-lg font-sans text-xs uppercase tracking-widest hover:bg-red-500 disabled:opacity-50">
+                <button onClick={handleReject} disabled={!rejectReason.trim() || isPending} className="bg-red-600 text-white px-5 py-2 rounded-full font-sans text-[10px] font-bold uppercase tracking-[0.15em] hover:bg-red-500 disabled:opacity-50">
                   Confirm Rejection
                 </button>
-                <button onClick={() => { setRejectId(null); setRejectReason('') }} className="text-zinc-400 font-sans text-xs hover:text-zinc-300">
+                <button onClick={() => { setRejectId(null); setRejectReason('') }} className="text-[#1c1c1c]/30 font-sans text-xs font-light hover:text-[#1c1c1c]">
                   Cancel
                 </button>
               </div>
@@ -184,7 +184,7 @@ function AllListingsTab() {
     <div>
       <div className="flex flex-wrap gap-2 mb-6">
         {statuses.map(s => (
-          <button key={s} onClick={() => setFilter(s)} className={`px-4 py-1.5 rounded-full font-sans text-xs uppercase tracking-wider transition-colors ${filter === s ? 'bg-[#1c1c1c] text-obsidian' : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'}`}>
+          <button key={s} onClick={() => setFilter(s)} className={`px-5 py-2.5 rounded-full font-sans text-[9px] uppercase tracking-[0.2em] font-bold transition-all ${filter === s ? 'bg-[#1c1c1c] text-white' : 'bg-[#1c1c1c]/[0.03] text-[#1c1c1c]/30 hover:text-[#1c1c1c]/60 hover:bg-[#1c1c1c]/[0.06] border border-[#1c1c1c]/5'}`}>
             {s.replace(/_/g, ' ')}
           </button>
         ))}
@@ -193,27 +193,27 @@ function AllListingsTab() {
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="border-b border-zinc-800">
-                <th className="pb-3 font-sans text-xs uppercase tracking-wider text-zinc-500">Title</th>
-                <th className="pb-3 font-sans text-xs uppercase tracking-wider text-zinc-500">Seller</th>
-                <th className="pb-3 font-sans text-xs uppercase tracking-wider text-zinc-500">Price</th>
-                <th className="pb-3 font-sans text-xs uppercase tracking-wider text-zinc-500">Status</th>
-                <th className="pb-3 font-sans text-xs uppercase tracking-wider text-zinc-500">Date</th>
+              <tr className="border-b border-[#1c1c1c]/5">
+                <th className="pb-3 font-sans text-[10px] uppercase tracking-[0.15em] text-[#1c1c1c]/30 font-light">Title</th>
+                <th className="pb-3 font-sans text-[10px] uppercase tracking-[0.15em] text-[#1c1c1c]/30 font-light">Seller</th>
+                <th className="pb-3 font-sans text-[10px] uppercase tracking-[0.15em] text-[#1c1c1c]/30 font-light">Price</th>
+                <th className="pb-3 font-sans text-[10px] uppercase tracking-[0.15em] text-[#1c1c1c]/30 font-light">Status</th>
+                <th className="pb-3 font-sans text-[10px] uppercase tracking-[0.15em] text-[#1c1c1c]/30 font-light">Date</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-800/50">
+            <tbody className="divide-y divide-[#1c1c1c]/5">
               {listings.map((l: any) => (
-                <tr key={l.id} className="hover:bg-zinc-800/30">
-                  <td className="py-3 font-serif text-[#1c1c1c]/70">{l.title}</td>
-                  <td className="py-3 font-sans text-sm text-zinc-400">{l.profiles?.display_name || l.profiles?.full_name || '—'}</td>
-                  <td className="py-3 font-sans text-sm text-zinc-300">${l.price?.toLocaleString()}</td>
+                <tr key={l.id} className="hover:bg-[#1c1c1c]/[0.02] transition-colors">
+                  <td className="py-3 font-serif text-[#1c1c1c] font-light">{l.title}</td>
+                  <td className="py-3 font-sans text-sm text-[#1c1c1c]/40 font-light">{l.profiles?.display_name || l.profiles?.full_name || '—'}</td>
+                  <td className="py-3 font-sans text-sm text-[#1c1c1c] font-light">${l.price?.toLocaleString()}</td>
                   <td className="py-3"><StatusBadge status={l.status} /></td>
-                  <td className="py-3 font-sans text-xs text-zinc-500">{new Date(l.created_at).toLocaleDateString()}</td>
+                  <td className="py-3 font-sans text-xs text-[#1c1c1c]/30 font-light">{new Date(l.created_at).toLocaleDateString()}</td>
                 </tr>
               ))}
             </tbody>
           </table>
-          {listings.length === 0 && <p className="text-center text-zinc-500 py-8 font-sans">No listings match this filter</p>}
+          {listings.length === 0 && <p className="text-center text-[#1c1c1c]/30 py-8 font-sans font-light">No listings match this filter</p>}
         </div>
       )}
     </div>
@@ -245,26 +245,26 @@ function UsersTab() {
     <div className="overflow-x-auto">
       <table className="w-full text-left">
         <thead>
-          <tr className="border-b border-zinc-800">
-            <th className="pb-3 font-sans text-xs uppercase tracking-wider text-zinc-500">User</th>
-            <th className="pb-3 font-sans text-xs uppercase tracking-wider text-zinc-500">Joined</th>
-            <th className="pb-3 font-sans text-xs uppercase tracking-wider text-zinc-500">Role</th>
-            <th className="pb-3 font-sans text-xs uppercase tracking-wider text-zinc-500">Actions</th>
+          <tr className="border-b border-[#1c1c1c]/5">
+            <th className="pb-3 font-sans text-[10px] uppercase tracking-[0.15em] text-[#1c1c1c]/30 font-light">User</th>
+            <th className="pb-3 font-sans text-[10px] uppercase tracking-[0.15em] text-[#1c1c1c]/30 font-light">Joined</th>
+            <th className="pb-3 font-sans text-[10px] uppercase tracking-[0.15em] text-[#1c1c1c]/30 font-light">Role</th>
+            <th className="pb-3 font-sans text-[10px] uppercase tracking-[0.15em] text-[#1c1c1c]/30 font-light">Actions</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-zinc-800/50">
+        <tbody className="divide-y divide-[#1c1c1c]/5">
           {users.map((u: any) => (
-            <tr key={u.id} className="hover:bg-zinc-800/30">
+            <tr key={u.id} className="hover:bg-[#1c1c1c]/[0.02] transition-colors">
               <td className="py-3">
-                <p className="font-serif text-[#1c1c1c]/70">{u.display_name || u.full_name || 'No name'}</p>
-                <p className="font-sans text-xs text-zinc-500">{u.id.slice(0, 8)}...</p>
+                <p className="font-serif text-[#1c1c1c] font-light">{u.display_name || u.full_name || 'No name'}</p>
+                <p className="font-sans text-xs text-[#1c1c1c]/25 font-light">{u.id.slice(0, 8)}...</p>
               </td>
-              <td className="py-3 font-sans text-xs text-zinc-500">{new Date(u.created_at).toLocaleDateString()}</td>
+              <td className="py-3 font-sans text-xs text-[#1c1c1c]/30 font-light">{new Date(u.created_at).toLocaleDateString()}</td>
               <td className="py-3">
-                <span className={`text-xs font-sans px-2.5 py-1 rounded-full ${
-                  u.roles?.includes('admin') ? 'bg-red-600/20 text-red-400' :
-                  u.roles?.includes('moderator') ? 'bg-blue-600/20 text-blue-400' :
-                  'bg-zinc-700 text-zinc-400'
+                <span className={`text-[9px] font-sans font-bold uppercase tracking-[0.1em] px-2.5 py-1 rounded-full ${
+                  u.roles?.includes('admin') ? 'bg-red-50 text-red-500 border border-red-200' :
+                  u.roles?.includes('moderator') ? 'bg-blue-50 text-blue-500 border border-blue-200' :
+                  'bg-[#1c1c1c]/[0.03] text-[#1c1c1c]/30 border border-[#1c1c1c]/5'
                 }`}>
                   {u.roles?.includes('admin') ? 'Admin' : u.roles?.includes('moderator') ? 'Moderator' : 'User'}
                 </span>
@@ -274,7 +274,7 @@ function UsersTab() {
                   value={u.roles?.includes('admin') ? 'admin' : u.roles?.includes('moderator') ? 'moderator' : 'user'}
                   onChange={e => handleRoleChange(u.id, e.target.value as any)}
                   disabled={isPending}
-                  className="bg-zinc-800 border border-zinc-700 rounded px-2 py-1 font-sans text-xs text-white"
+                  className="bg-[#1c1c1c]/[0.03] border border-[#1c1c1c]/10 rounded-lg px-2 py-1 font-sans text-xs text-[#1c1c1c] focus:outline-none focus:border-[#1c1c1c]/30"
                 >
                   <option value="user">User</option>
                   <option value="moderator">Moderator</option>
@@ -332,18 +332,18 @@ function ImageManager({ productId, images, onUpdate }: {
 
   return (
     <div className="col-span-2 space-y-3">
-      <label className="font-sans text-xs uppercase tracking-wider text-zinc-500">Images</label>
+      <label className="font-sans text-[9px] uppercase tracking-[0.3em] text-[#1c1c1c]/30 font-bold">Images</label>
 
       {/* Current images */}
       {images.length > 0 && (
         <div className="flex flex-wrap gap-3">
           {images.map((url, i) => (
-            <div key={i} className="relative group w-24 h-24 rounded-lg overflow-hidden bg-zinc-800 border border-zinc-700">
+            <div key={i} className="relative group w-24 h-24 rounded-xl overflow-hidden bg-[#1c1c1c]/[0.03] border border-[#1c1c1c]/5">
               <img src={url} alt="" className="w-full h-full object-cover" />
               <button
                 type="button"
                 onClick={() => handleRemove(url)}
-                className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-red-400 text-xs font-sans font-bold"
+                className="absolute inset-0 bg-obsidian/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-[9px] font-sans font-bold uppercase tracking-wider"
               >
                 Remove
               </button>
@@ -354,11 +354,11 @@ function ImageManager({ productId, images, onUpdate }: {
 
       {/* Upload + URL input */}
       <div className="flex gap-3 items-center">
-        <label className={`cursor-pointer px-4 py-2 rounded-lg font-sans text-xs uppercase tracking-widest transition-colors ${uploading ? 'bg-zinc-700 text-zinc-500' : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700 border border-zinc-700'}`}>
+        <label className={`cursor-pointer px-4 py-2.5 rounded-full font-sans text-[9px] font-bold uppercase tracking-[0.15em] transition-colors border ${uploading ? 'border-[#1c1c1c]/5 text-[#1c1c1c]/15' : 'border-[#1c1c1c]/10 text-[#1c1c1c]/40 hover:text-[#1c1c1c] hover:border-[#1c1c1c]/20'}`}>
           {uploading ? 'Uploading...' : 'Upload Image'}
           <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handleUpload} disabled={uploading} className="hidden" />
         </label>
-        <span className="text-zinc-600 font-sans text-xs">or</span>
+        <span className="text-[#1c1c1c]/15 font-sans text-[10px]">or</span>
         <input
           value={urlInput}
           onChange={e => setUrlInput(e.target.value)}
@@ -369,13 +369,13 @@ function ImageManager({ productId, images, onUpdate }: {
           type="button"
           onClick={handleAddUrl}
           disabled={!urlInput.trim()}
-          className="px-4 py-2 rounded-lg font-sans text-xs uppercase tracking-widest bg-zinc-800 text-zinc-300 hover:bg-zinc-700 border border-zinc-700 disabled:opacity-40"
+          className="px-4 py-2.5 rounded-full font-sans text-[9px] font-bold uppercase tracking-[0.15em] border border-[#1c1c1c]/10 text-[#1c1c1c]/40 hover:text-[#1c1c1c] hover:border-[#1c1c1c]/20 transition-colors disabled:opacity-30"
         >
           Add
         </button>
       </div>
 
-      {error && <p className="font-sans text-xs text-red-400">{error}</p>}
+      {error && <p className="font-sans text-xs text-red-500">{error}</p>}
     </div>
   )
 }
@@ -383,7 +383,7 @@ function ImageManager({ productId, images, onUpdate }: {
 // ═══════════════════════════════════════════════════════
 // PRODUCT FORM (shared between create & edit)
 // ═══════════════════════════════════════════════════════
-const inputClass = "bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 font-sans text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-[#1c1c1c]/30"
+const inputClass = "bg-[#1c1c1c]/[0.03] border border-[#1c1c1c]/10 rounded-xl px-4 py-3 font-sans text-sm text-[#1c1c1c] placeholder:text-[#1c1c1c]/25 focus:outline-none focus:border-[#1c1c1c]/30 transition-colors"
 
 function ProductForm({ product, onSubmit, onCancel, isPending, onRefresh }: {
   product?: any
@@ -393,7 +393,7 @@ function ProductForm({ product, onSubmit, onCancel, isPending, onRefresh }: {
   onRefresh?: () => void
 }) {
   return (
-    <form onSubmit={onSubmit} className="bg-zinc-900/60 border border-zinc-800 rounded-lg p-6 mb-6 grid grid-cols-2 gap-4">
+    <form onSubmit={onSubmit} className="bg-[#1c1c1c]/[0.02] border border-[#1c1c1c]/5 rounded-2xl p-8 mb-6 grid grid-cols-2 gap-4">
       <div className="col-span-2">
         <input name="style_name" required defaultValue={product?.style_name || ''} placeholder="Style Name (e.g., GALA 1001)" className={`w-full ${inputClass}`} />
       </div>
@@ -432,10 +432,10 @@ function ProductForm({ product, onSubmit, onCancel, isPending, onRefresh }: {
       )}
 
       <div className="col-span-2 flex gap-3">
-        <button type="submit" disabled={isPending} className="bg-[#1c1c1c] text-obsidian px-8 py-3 font-sans text-xs uppercase tracking-widest hover:bg-champagne transition-colors disabled:opacity-50">
+        <button type="submit" disabled={isPending} className="px-10 py-4 bg-[#1c1c1c] text-white font-sans text-[10px] font-bold uppercase tracking-[0.25em] rounded-full hover:bg-[#333] transition-all shadow-lg disabled:opacity-50">
           {isPending ? 'Saving...' : product ? 'Save Changes' : 'Create Product'}
         </button>
-        <button type="button" onClick={onCancel} className="px-6 py-3 font-sans text-xs uppercase tracking-widest text-zinc-400 hover:text-zinc-200 transition-colors">
+        <button type="button" onClick={onCancel} className="px-8 py-4 border border-[#1c1c1c]/10 rounded-full font-sans text-[10px] font-bold uppercase tracking-[0.2em] text-[#1c1c1c]/30 hover:text-[#1c1c1c] hover:border-[#1c1c1c]/20 transition-all">
           Cancel
         </button>
       </div>
@@ -1231,8 +1231,8 @@ function ClaimsTab() {
     return (
       <div className="text-center py-20">
         <div className="text-5xl mb-4">🛡️</div>
-        <h3 className="font-serif text-2xl text-[#1c1c1c]/70">No claims</h3>
-        <p className="text-zinc-400 font-sans mt-2">All disputes have been handled</p>
+        <h3 className="font-serif text-2xl text-[#1c1c1c] font-light">No claims</h3>
+        <p className="text-[#1c1c1c]/40 font-sans mt-2 font-light">All disputes have been handled</p>
       </div>
     )
   }
@@ -1240,29 +1240,29 @@ function ClaimsTab() {
   return (
     <div className="space-y-4">
       {claims.map((claim: any) => (
-        <div key={claim.id} className="bg-zinc-900/60 border border-zinc-800 rounded-lg p-5">
+        <div key={claim.id} className="border border-[#1c1c1c]/5 rounded-lg p-5 hover:border-[#1c1c1c]/10 transition-colors">
           <div className="flex items-start justify-between">
             <div>
-              <h3 className="font-serif text-lg text-[#1c1c1c]/70">{claim.reason}</h3>
-              <p className="font-sans text-xs text-zinc-500 mt-1">
+              <h3 className="font-serif text-lg text-[#1c1c1c] font-light">{claim.reason}</h3>
+              <p className="font-sans text-xs text-[#1c1c1c]/30 mt-1 font-light">
                 Order #{claim.order_id?.slice(0, 8)} · {claim.orders?.listings?.title || 'Unknown listing'}
               </p>
-              {claim.description && <p className="font-sans text-sm text-zinc-400 mt-2">{claim.description}</p>}
+              {claim.description && <p className="font-sans text-sm text-[#1c1c1c]/40 mt-2 font-light">{claim.description}</p>}
             </div>
             <StatusBadge status={claim.status} />
           </div>
           {claim.status === 'open' && (
-            <div className="mt-4 pt-4 border-t border-zinc-800">
+            <div className="mt-4 pt-4 border-t border-[#1c1c1c]/5">
               {resolveId === claim.id ? (
                 <div>
-                  <textarea value={resolveNotes} onChange={e => setResolveNotes(e.target.value)} placeholder="Resolution notes..." className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 font-sans text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-[#1c1c1c]/30 min-h-[60px]" />
+                  <textarea value={resolveNotes} onChange={e => setResolveNotes(e.target.value)} placeholder="Resolution notes..." className="w-full bg-[#1c1c1c]/[0.03] border border-[#1c1c1c]/10 rounded-xl px-4 py-3 font-sans text-sm text-[#1c1c1c] placeholder:text-[#1c1c1c]/25 focus:outline-none focus:border-[#1c1c1c]/30 min-h-[60px]" />
                   <div className="flex gap-2 mt-2">
-                    <button onClick={handleResolve} disabled={isPending} className="bg-emerald-600 text-white px-4 py-2 rounded-lg font-sans text-xs uppercase tracking-widest">Resolve</button>
-                    <button onClick={() => setResolveId(null)} className="text-zinc-400 font-sans text-xs">Cancel</button>
+                    <button onClick={handleResolve} disabled={isPending} className="bg-emerald-600 text-white px-5 py-2 rounded-full font-sans text-[10px] font-bold uppercase tracking-[0.15em]">Resolve</button>
+                    <button onClick={() => setResolveId(null)} className="text-[#1c1c1c]/30 font-sans text-xs font-light hover:text-[#1c1c1c]">Cancel</button>
                   </div>
                 </div>
               ) : (
-                <button onClick={() => setResolveId(claim.id)} className="text-gold-muted font-sans text-xs hover:text-[#1c1c1c]/70 transition-colors">
+                <button onClick={() => setResolveId(claim.id)} className="font-sans text-[13px] font-light text-[#1c1c1c]/40 hover:text-[#1c1c1c] transition-colors">
                   Resolve Claim →
                 </button>
               )}
@@ -1277,15 +1277,22 @@ function ClaimsTab() {
 // ═══════════════════════════════════════════════════════
 // SHARED COMPONENTS
 // ═══════════════════════════════════════════════════════
-const STATUS_COLORS: Record<string, string> = {
-  draft: 'bg-zinc-600', pending_review: 'bg-yellow-600', approved: 'bg-emerald-600',
-  rejected: 'bg-red-600', sold: 'bg-blue-600', archived: 'bg-zinc-500',
-  open: 'bg-yellow-600', under_review: 'bg-blue-500', resolved: 'bg-emerald-600', dismissed: 'bg-zinc-500',
+const STATUS_STYLES: Record<string, string> = {
+  draft: 'bg-[#1c1c1c]/[0.04] text-[#1c1c1c]/40 border border-[#1c1c1c]/10',
+  pending_review: 'bg-yellow-50 text-yellow-700 border border-yellow-200',
+  approved: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
+  rejected: 'bg-red-50 text-red-600 border border-red-200',
+  sold: 'bg-blue-50 text-blue-700 border border-blue-200',
+  archived: 'bg-[#1c1c1c]/[0.03] text-[#1c1c1c]/30 border border-[#1c1c1c]/5',
+  open: 'bg-yellow-50 text-yellow-700 border border-yellow-200',
+  under_review: 'bg-blue-50 text-blue-600 border border-blue-200',
+  resolved: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
+  dismissed: 'bg-[#1c1c1c]/[0.03] text-[#1c1c1c]/30 border border-[#1c1c1c]/5',
 }
 
 function StatusBadge({ status }: { status: string }) {
   return (
-    <span className={`${STATUS_COLORS[status] || 'bg-zinc-600'} text-white text-xs px-2.5 py-1 rounded-full font-sans uppercase tracking-wider`}>
+    <span className={`${STATUS_STYLES[status] || 'bg-[#1c1c1c]/[0.04] text-[#1c1c1c]/40 border border-[#1c1c1c]/10'} text-[9px] px-2.5 py-1 rounded-full font-sans font-bold uppercase tracking-[0.1em]`}>
       {status.replace(/_/g, ' ')}
     </span>
   )
@@ -1295,9 +1302,9 @@ function LoadingSkeleton() {
   return (
     <div className="space-y-4">
       {[1, 2, 3].map(i => (
-        <div key={i} className="bg-zinc-900/60 border border-zinc-800 rounded-lg p-5 animate-pulse">
-          <div className="h-4 bg-zinc-800 rounded w-1/3 mb-3" />
-          <div className="h-3 bg-zinc-800 rounded w-1/2" />
+        <div key={i} className="border border-[#1c1c1c]/5 rounded-lg p-5 animate-pulse">
+          <div className="h-4 bg-[#1c1c1c]/[0.06] rounded w-1/3 mb-3" />
+          <div className="h-3 bg-[#1c1c1c]/[0.04] rounded w-1/2" />
         </div>
       ))}
     </div>
@@ -1319,20 +1326,20 @@ export default function AdminPage() {
 
   if (authorized === null) {
     return (
-      <div className="min-h-screen bg-obsidian flex items-center justify-center">
-        <div className="animate-pulse font-sans text-zinc-500">Verifying access...</div>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="animate-pulse font-sans text-[#1c1c1c]/30">Verifying access...</div>
       </div>
     )
   }
 
   if (authorized === false) {
     return (
-      <div className="min-h-screen bg-obsidian flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <div className="text-5xl mb-4">🔒</div>
-          <h1 className="font-serif text-3xl text-[#1c1c1c]/70 mb-2">Access Denied</h1>
-          <p className="text-zinc-400 font-sans mb-6">You need admin or moderator privileges to access this page.</p>
-          <Link href="/dashboard" className="text-gold-muted font-sans text-sm hover:text-[#1c1c1c]/70 transition-colors">
+          <h1 className="font-serif text-3xl text-[#1c1c1c] mb-2">Access Denied</h1>
+          <p className="text-[#1c1c1c]/40 font-sans mb-6 font-light">You need admin or moderator privileges to access this page.</p>
+          <Link href="/dashboard" className="font-sans text-[13px] font-light uppercase tracking-[0.08em] text-[#1c1c1c]/40 hover:text-[#1c1c1c] transition-colors">
             ← Back to Dashboard
           </Link>
         </div>
@@ -1350,20 +1357,20 @@ export default function AdminPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-obsidian">
-      <header className="border-b border-zinc-800">
+    <div className="min-h-screen bg-white">
+      <header className="border-b border-[#1c1c1c]/5">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link href="/" className="font-serif text-2xl tracking-[0.3em] text-[#1c1c1c]/70">
+            <Link href="/" className="font-serif text-2xl tracking-[0.3em] text-[#1c1c1c] font-light">
               RE:GALIA
             </Link>
-            <span className="bg-red-600/20 text-red-400 text-xs px-2.5 py-1 rounded-full font-sans uppercase tracking-wider">Admin</span>
+            <span className="bg-[#1c1c1c] text-white text-[9px] px-3 py-1 rounded-full font-sans uppercase tracking-[0.15em] font-bold">Admin</span>
           </div>
-          <div className="flex items-center gap-4">
-            <Link href="/dashboard" className="font-sans text-xs uppercase tracking-widest text-zinc-400 hover:text-[#1c1c1c]/70 transition-colors">
+          <div className="flex items-center gap-6">
+            <Link href="/dashboard" className="font-sans text-[13px] font-light uppercase tracking-[0.08em] text-[#1c1c1c]/40 hover:text-[#1c1c1c] transition-colors">
               Dashboard
             </Link>
-            <Link href="/shop" className="font-sans text-xs uppercase tracking-widest text-zinc-400 hover:text-[#1c1c1c]/70 transition-colors">
+            <Link href="/shop" className="font-sans text-[13px] font-light uppercase tracking-[0.08em] text-[#1c1c1c]/40 hover:text-[#1c1c1c] transition-colors">
               Shop
             </Link>
           </div>
@@ -1371,11 +1378,11 @@ export default function AdminPage() {
       </header>
 
       <div className="max-w-7xl mx-auto px-6 py-8">
-        <h1 className="font-serif text-4xl text-[#1c1c1c]/70 mb-8">Admin Center</h1>
+        <h1 className="font-serif text-4xl text-[#1c1c1c] mb-8 font-light">Admin Center</h1>
 
-        <div className="flex gap-1 mb-8 border-b border-zinc-800 overflow-x-auto">
+        <div className="flex gap-1 mb-8 border-b border-[#1c1c1c]/5 overflow-x-auto">
           {tabs.map(t => (
-            <button key={t.key} onClick={() => setTab(t.key)} className={`px-5 py-3 font-sans text-sm whitespace-nowrap transition-colors relative ${tab === t.key ? 'text-[#1c1c1c]/70' : 'text-zinc-500 hover:text-zinc-300'}`}>
+            <button key={t.key} onClick={() => setTab(t.key)} className={`px-5 py-3 font-sans text-sm font-light whitespace-nowrap transition-colors relative ${tab === t.key ? 'text-[#1c1c1c]' : 'text-[#1c1c1c]/30 hover:text-[#1c1c1c]/60'}`}>
               <span className="mr-1.5">{t.icon}</span>
               {t.label}
               {tab === t.key && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#1c1c1c]" />}
