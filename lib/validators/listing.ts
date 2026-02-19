@@ -23,7 +23,7 @@ export const listingSchema = z.object({
   listing_type: z.enum(['peer_to_peer', 'sample_sale', 'brand_direct']).default('peer_to_peer'),
   size_us: z
     .string()
-    .max(10)
+    .max(20)
     .optional(),
   bust_cm: z
     .number()
@@ -67,7 +67,7 @@ export const listingSchema = z.object({
     .max(999999.99, 'MSRP is too high')
     .optional()
     .nullable(),
-  product_id: z.string().uuid().optional().nullable(),
+  product_id: z.string().optional().nullable(),
 })
 
 export type ListingInput = z.infer<typeof listingSchema>
