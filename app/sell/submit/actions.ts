@@ -137,6 +137,12 @@ export async function submitListing(formData: {
     return { error: result.error.issues[0].message }
   }
 
+  // Only pass product_id if it's a valid UUID (catalog IDs like "gl-xxx" would break the FK)
+  const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+  const productId = result.data.product_id && UUID_RE.test(result.data.product_id)
+    ? result.data.product_id
+    : null
+
   // Insert listing
   const { data, error } = await supabase
     .from('listings')
@@ -156,7 +162,7 @@ export async function submitListing(formData: {
       train_style: result.data.train_style ?? null,
       price: result.data.price,
       msrp: result.data.msrp ?? null,
-      product_id: result.data.product_id ?? null,
+      product_id: productId,
       images: formData.images || [],
       status: 'pending_review',
     })
@@ -165,7 +171,7 @@ export async function submitListing(formData: {
 
   if (error) {
     console.error('Listing insert error:', error)
-    return { error: 'Failed to submit listing. Please try again.' }
+    return { error: `Failed to submit listing: ${error.message}` }
   }
 
   return { success: true, listingId: data.id }
