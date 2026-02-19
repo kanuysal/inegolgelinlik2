@@ -97,7 +97,10 @@ export async function startConversation(listingId: string, sellerId: string, mes
         .select('id')
         .single()
 
-      if (convError || !conv) return { error: 'Failed to create conversation' }
+      if (convError || !conv) {
+        console.error('Conversation insert failed:', convError?.message, convError?.code)
+        return { error: 'Failed to create conversation: ' + (convError?.message || 'unknown') }
+      }
       conversationId = conv.id
     }
 
@@ -110,7 +113,10 @@ export async function startConversation(listingId: string, sellerId: string, mes
         content: message.trim(),
       })
 
-    if (msgError) return { error: msgError.message }
+    if (msgError) {
+      console.error('Message insert failed:', msgError.message, msgError.code)
+      return { error: 'Failed to send message: ' + msgError.message }
+    }
 
     await supabase
       .from('conversations')
@@ -138,7 +144,8 @@ export async function startConversation(listingId: string, sellerId: string, mes
     }).catch(() => {})
 
     return { success: true, conversationId }
-  } catch {
-    return { error: 'Something went wrong' }
+  } catch (err) {
+    console.error('startConversation threw:', err)
+    return { error: 'Something went wrong. Please try again.' }
   }
 }

@@ -222,29 +222,39 @@ export default function ProductDetailPage() {
   }, [params.id]);
 
   const handleInquiry = async () => {
-    if (!inquiryMsg.trim() || !sellerId) return;
+    if (!inquiryMsg.trim()) return;
+    if (!sellerId) {
+      setInquiryError("Unable to contact seller. Please try again later.");
+      return;
+    }
     setInquirySending(true);
     setInquiryError(null);
 
-    const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
+    try {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setInquirySending(false);
+        router.push(`/auth/login?redirect=/shop/${params.id}`);
+        return;
+      }
+
+      const result = await startConversation(params.id as string, sellerId, inquiryMsg.trim());
       setInquirySending(false);
-      router.push(`/auth/login?redirect=/shop/${params.id}`);
-      return;
+
+      if (result.error) {
+        setInquiryError(result.error);
+        return;
+      }
+
+      setShowInquiry(false);
+      setInquiryMsg("");
+      router.push("/dashboard?tab=messages");
+    } catch (err) {
+      setInquirySending(false);
+      setInquiryError("Failed to send message. Please try again.");
+      console.error("Inquiry error:", err);
     }
-
-    const result = await startConversation(params.id as string, sellerId, inquiryMsg.trim());
-    setInquirySending(false);
-
-    if (result.error) {
-      setInquiryError(result.error);
-      return;
-    }
-
-    setShowInquiry(false);
-    setInquiryMsg("");
-    router.push("/dashboard?tab=messages");
   };
 
   if (!listing) return null;
