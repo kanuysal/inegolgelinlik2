@@ -17,6 +17,7 @@
 # misc
 .DS_Store
 *.pem
+tmp_*.json
 
 # debug
 npm-debug.log*
@@ -28,6 +29,9 @@ yarn-error.log*
 
 # one-off scripts with credentials
 /scripts/
+
+# supabase
+supabase/.temp/
 
 # vercel
 .vercel

@@ -52,8 +52,9 @@ export async function getProfile(userId: string) {
  * Get the user's roles from the user_roles table.
  */
 export async function getUserRoles(userId: string): Promise<UserRole[]> {
-  const supabase = createClient()
-  const { data, error } = await supabase
+  // Use admin client to bypass RLS on user_roles table
+  const supabase = createAdminClient()
+  const { data, error } = await (supabase as any)
     .from('user_roles')
     .select('role')
     .eq('user_id', userId)

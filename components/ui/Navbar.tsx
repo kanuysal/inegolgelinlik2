@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { checkIsStaff } from "@/app/auth/actions";
 import type { User } from "@supabase/supabase-js";
 
 function VerifiedBadgeSmall() {
@@ -59,13 +60,9 @@ export default function Navbar() {
     const fetchUserAndRole = async (u: User | null) => {
       setUser(u);
       if (u) {
-        const { data: roles } = await supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", u.id);
-
-        const staffRoles = (roles as any[])?.some(r => r.role === "admin" || r.role === "moderator");
-        setIsStaff(staffRoles ?? false);
+        // Use server action (admin client) to bypass RLS on user_roles
+        const staff = await checkIsStaff();
+        setIsStaff(staff);
       } else {
         setIsStaff(false);
       }
@@ -288,37 +285,37 @@ export default function Navbar() {
                           <img
                             src={user.user_metadata.avatar_url}
                             alt="Avatar"
-                            className="w-12 h-12 rounded-full border border-white/10"
+                            className="w-12 h-12 rounded-full border border-obsidian/10"
                           />
                         ) : (
-                          <span className="w-12 h-12 rounded-full bg-resonance-amber/20 border border-resonance-amber/30 flex items-center justify-center text-resonance-amber text-lg font-bold">
+                          <span className="w-12 h-12 rounded-full bg-gold-muted/10 border border-gold-muted/20 flex items-center justify-center text-gold-muted text-lg font-bold">
                             {userInitial}
                           </span>
                         )}
                         <div>
-                          <p className="font-sans text-lg font-bold text-white">
+                          <p className="font-sans text-lg font-bold text-obsidian">
                             {user.user_metadata?.full_name || "My Account"}
                           </p>
-                          <p className="font-sans text-sm text-white/40">{user.email}</p>
+                          <p className="font-sans text-sm text-obsidian/40">{user.email}</p>
                         </div>
                       </div>
                       {isStaff && (
                         <Link
                           href="/admin"
-                          className="font-sans text-lg font-semibold text-resonance-amber border border-resonance-amber/30 px-6 py-2 rounded-full mb-2"
+                          className="font-sans text-lg font-semibold text-gold-muted border border-gold-muted/30 px-6 py-2 rounded-full mb-2"
                         >
                           Admin Console
                         </Link>
                       )}
                       <Link
                         href="/dashboard"
-                        className="font-sans text-lg font-semibold text-white/60 mb-2"
+                        className="font-sans text-lg font-semibold text-obsidian/60 mb-2"
                       >
                         Dashboard
                       </Link>
                       <button
                         onClick={handleSignOut}
-                        className="font-sans text-lg font-semibold text-white/30 hover:text-red-400 transition-colors"
+                        className="font-sans text-lg font-semibold text-obsidian/30 hover:text-red-400 transition-colors"
                       >
                         Sign Out
                       </button>
@@ -326,7 +323,7 @@ export default function Navbar() {
                   ) : (
                     <Link
                       href="/auth/login"
-                      className="font-sans text-xl font-bold text-white/50"
+                      className="font-sans text-xl font-bold text-obsidian/50"
                     >
                       Sign In
                     </Link>

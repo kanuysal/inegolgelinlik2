@@ -391,7 +391,7 @@ export default function SellWizardPage() {
             <div className="flex gap-4 justify-center">
               <Link
                 href="/shop"
-                className="px-8 py-3 border border-white/15 font-sans text-xs uppercase tracking-[0.2em] text-white/50 hover:text-white hover:border-white/30 transition-all"
+                className="px-8 py-3 border border-obsidian/10 font-sans text-xs uppercase tracking-[0.2em] text-obsidian/50 hover:text-obsidian hover:border-obsidian/30 transition-all"
               >
                 BROWSE GOWNS
               </Link>
@@ -402,7 +402,7 @@ export default function SellWizardPage() {
                   setStep(1)
                   setSubmitted(false)
                 }}
-                className="px-8 py-3 bg-white text-obsidian font-sans text-xs uppercase tracking-[0.2em] hover:bg-champagne transition-all"
+                className="px-8 py-3 bg-obsidian text-white font-sans text-xs uppercase tracking-[0.2em] hover:bg-gold-muted transition-all"
               >
                 SUBMIT ANOTHER
               </Link>
@@ -839,17 +839,17 @@ export default function SellWizardPage() {
                     {/* Mobile Hint */}
                     <div className="p-6 border border-gold-muted/10 bg-gold-muted/[0.01] flex items-center justify-between">
                       <div className="flex items-center gap-4">
-                        <div className="w-7 h-11 border border-white/20 rounded-[4px] relative bg-white/5 overflow-hidden">
-                          <div className="absolute top-1 left-1/2 -translate-x-1/2 w-3 h-[0.5px] bg-white/40" />
-                          <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full border border-white/20" />
+                        <div className="w-7 h-11 border border-obsidian/10 rounded-[4px] relative bg-obsidian/[0.02] overflow-hidden">
+                          <div className="absolute top-1 left-1/2 -translate-x-1/2 w-3 h-[0.5px] bg-obsidian/20" />
+                          <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full border border-obsidian/10" />
                           <div className="absolute inset-0 bg-gold-muted/5 opacity-40 animate-pulse" />
                         </div>
-                        <p className="font-sans text-[9px] text-white/30 uppercase tracking-[0.2em] leading-relaxed">
-                          MOBILE SYNC ACTIVE<br /><span className="text-white/10 italic normal-case tracking-normal">Sync with your device for instant camera access</span>
+                        <p className="font-sans text-[9px] text-obsidian/30 uppercase tracking-[0.2em] leading-relaxed">
+                          MOBILE FRIENDLY<br /><span className="text-obsidian/15 italic normal-case tracking-normal">Upload directly from your phone camera</span>
                         </p>
                       </div>
-                      <div className="h-6 w-[1px] bg-white/5 mx-2" />
-                      <span className="text-[10px] text-gold-muted/50 font-serif italic">Syncing...</span>
+                      <div className="h-6 w-[1px] bg-obsidian/5 mx-2" />
+                      <span className="text-[10px] text-gold-muted/50 font-serif italic">Ready</span>
                     </div>
                   </div>
 
@@ -1037,7 +1037,7 @@ export default function SellWizardPage() {
             )}
           </div>
 
-          <p className="font-sans text-[10px] text-white/15 text-center mt-6 tracking-wider">
+          <p className="font-sans text-[10px] text-obsidian/20 text-center mt-6 tracking-wider">
             Your listing will be reviewed within 24–72 hours before going live.
           </p>
         </div>

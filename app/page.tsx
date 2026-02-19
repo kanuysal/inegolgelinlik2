@@ -299,7 +299,7 @@ export default function Home() {
                 <span className="italic">Experience Again</span>
               </h2>
               <p className="font-sans text-lg text-obsidian/60 leading-relaxed font-medium max-w-md mb-12">
-                Every Galia Lahav gown is a masterpiece of тысячи hours of heritage.
+                Every Galia Lahav gown is a masterpiece born from thousands of hours of heritage.
                 We ensure its story lives on through circular luxury.
               </p>
               <Link
@@ -347,7 +347,7 @@ export default function Home() {
             {SAMPLE_GOWNS.map((gown, i) => (
               <motion.a
                 key={gown.id}
-                href={`/shop/${gown.id}`}
+                href="/shop"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-100px" }}

@@ -86,6 +86,25 @@ export async function signOut() {
   redirect('/')
 }
 
+/**
+ * Check if the currently logged-in user has admin/moderator role.
+ * Uses admin client to bypass RLS on user_roles table.
+ */
+export async function checkIsStaff(): Promise<boolean> {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return false
+
+  const { createAdminClient } = await import('@/lib/supabase/server')
+  const admin = createAdminClient()
+  const { data: roles } = await (admin as any)
+    .from('user_roles')
+    .select('role')
+    .eq('user_id', user.id)
+
+  return (roles || []).some((r: any) => r.role === 'admin' || r.role === 'moderator')
+}
+
 export async function signInWithGoogle() {
   const supabase = createClient()
 
