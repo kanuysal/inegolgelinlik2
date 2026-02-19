@@ -2,25 +2,25 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-obsidian/5 bg-silk">
+    <footer className="border-t border-[#1c1c1c]/5 bg-white">
       {/* Main footer */}
-      <div className="max-w-7xl mx-auto px-6 md:px-10 py-24">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-16 md:gap-8">
+      <div className="max-w-[85rem] mx-auto px-6 md:px-16 py-20 md:py-24">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-14 md:gap-8">
           {/* Brand */}
           <div className="md:col-span-1">
             <Link href="/" className="inline-block">
-              <h3 className="font-display text-2xl tracking-[0.2em] text-obsidian">
+              <h3 className="font-serif text-2xl tracking-[0.25em] text-[#1c1c1c] font-light uppercase">
                 RE:GALIA
               </h3>
             </Link>
-            <p className="font-sans text-[11px] text-obsidian/40 mt-6 leading-relaxed max-w-[240px] font-medium">
+            <p className="font-sans text-[13px] text-[#1c1c1c]/40 mt-6 leading-relaxed max-w-[260px] font-light">
               The official certified pre-owned marketplace by Galia Lahav. Every gown authenticated by the House.
             </p>
           </div>
 
           {/* Shop */}
           <div>
-            <h4 className="font-sans text-[10px] uppercase tracking-[0.4em] text-obsidian/20 mb-8 font-bold">
+            <h4 className="font-sans text-[11px] uppercase tracking-[0.15em] text-[#1c1c1c]/30 mb-8 font-light">
               Shop
             </h4>
             <ul className="space-y-4">
@@ -33,7 +33,7 @@ export default function Footer() {
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="font-sans text-xs text-obsidian/40 hover:text-gold-muted transition-colors tracking-widest uppercase font-bold"
+                    className="font-sans text-[13px] text-[#1c1c1c]/50 hover:text-[#1c1c1c] transition-colors font-light"
                   >
                     {link.label}
                   </Link>
@@ -44,7 +44,7 @@ export default function Footer() {
 
           {/* Sell */}
           <div>
-            <h4 className="font-sans text-[10px] uppercase tracking-[0.4em] text-obsidian/20 mb-8 font-bold">
+            <h4 className="font-sans text-[11px] uppercase tracking-[0.15em] text-[#1c1c1c]/30 mb-8 font-light">
               Sell
             </h4>
             <ul className="space-y-4">
@@ -57,7 +57,7 @@ export default function Footer() {
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="font-sans text-xs text-obsidian/40 hover:text-gold-muted transition-colors tracking-widest uppercase font-bold"
+                    className="font-sans text-[13px] text-[#1c1c1c]/50 hover:text-[#1c1c1c] transition-colors font-light"
                   >
                     {link.label}
                   </Link>
@@ -68,7 +68,7 @@ export default function Footer() {
 
           {/* Company */}
           <div>
-            <h4 className="font-sans text-[10px] uppercase tracking-[0.4em] text-obsidian/20 mb-8 font-bold">
+            <h4 className="font-sans text-[11px] uppercase tracking-[0.15em] text-[#1c1c1c]/30 mb-8 font-light">
               Company
             </h4>
             <ul className="space-y-4">
@@ -81,7 +81,7 @@ export default function Footer() {
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="font-sans text-xs text-obsidian/40 hover:text-gold-muted transition-colors tracking-widest uppercase font-bold"
+                    className="font-sans text-[13px] text-[#1c1c1c]/50 hover:text-[#1c1c1c] transition-colors font-light"
                   >
                     {link.label}
                   </Link>
@@ -93,17 +93,17 @@ export default function Footer() {
       </div>
 
       {/* Bottom bar */}
-      <div className="border-t border-obsidian/5">
-        <div className="max-w-7xl mx-auto px-6 md:px-10 py-10 flex flex-col md:flex-row justify-between items-center gap-6">
-          <p className="font-sans text-[10px] text-obsidian/20 tracking-[0.2em] font-bold uppercase">
-            &copy; {new Date().getFullYear()} Galia Lahav. The Eternal Life of Couture.
+      <div className="border-t border-[#1c1c1c]/5">
+        <div className="max-w-[85rem] mx-auto px-6 md:px-16 py-8 flex flex-col md:flex-row justify-between items-center gap-6">
+          <p className="font-sans text-[12px] text-[#1c1c1c]/30 font-light">
+            &copy; {new Date().getFullYear()} Galia Lahav. All rights reserved.
           </p>
           <div className="flex items-center gap-8">
             {["Privacy Policy", "Terms of Service", "Cookie Policy"].map((text) => (
               <a
                 key={text}
                 href="#"
-                className="font-sans text-[10px] text-obsidian/20 hover:text-obsidian/40 transition-colors tracking-[0.2em] font-bold uppercase"
+                className="font-sans text-[12px] text-[#1c1c1c]/30 hover:text-[#1c1c1c]/60 transition-colors font-light"
               >
                 {text}
               </a>

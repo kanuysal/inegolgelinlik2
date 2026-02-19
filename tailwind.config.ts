@@ -8,18 +8,20 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        serif: ["Cormorant Garamond", "Georgia", "serif"],
-        sans: ["Outfit", "Inter", "system-ui", "sans-serif"],
-        display: ["Outfit", "PP Monument Extended", "system-ui", "sans-serif"],
+        serif: ["Cormorant Garamond", "Georgia", "Times New Roman", "serif"],
+        sans: ["Outfit", "system-ui", "Segoe UI", "sans-serif"],
+        display: ["PP Monument Extended", "Outfit", "system-ui", "sans-serif"],
       },
       colors: {
-        obsidian: "#1a1818",
-        silk: "#FAF9F6",
+        obsidian: "#1c1c1c",
+        silk: "#FFFFFF",
         "bridal-white": "#FFFFFF",
         champagne: "#F7E7CE",
         "gold-muted": "#D4AF37",
         "resonance-amber": "#c9a96e",
         "resonance-blue": "#8da9c4",
+        neutral: "#efefef",
+        border: "#cfcfcf",
       },
       keyframes: {
         "fade-up": {
@@ -30,10 +32,15 @@ const config: Config = {
           "0%": { backgroundPosition: "-200% 0" },
           "100%": { backgroundPosition: "200% 0" },
         },
+        marquee: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
       },
       animation: {
         "fade-up": "fade-up 0.8s ease-out forwards",
         shimmer: "shimmer 2s linear infinite",
+        marquee: "marquee 40s linear infinite",
       },
     },
   },

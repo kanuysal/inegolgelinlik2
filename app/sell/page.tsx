@@ -32,7 +32,7 @@ export default function SellPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen bg-white">
       <Navbar />
 
       {/* ── Hero section ── */}
@@ -44,26 +44,26 @@ export default function SellPage() {
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             className="max-w-4xl"
           >
-            <p className="font-sans text-[10px] font-bold uppercase tracking-[0.5em] text-gold-muted mb-6">
+            <p className="font-sans text-[11px] font-light uppercase tracking-[0.4em] text-[#1c1c1c]/40 mb-6">
               The House Marketplace
             </p>
-            <h1 className="font-serif text-6xl md:text-9xl font-light tracking-tighter text-obsidian leading-[0.85] mb-10">
+            <h1 className="font-serif text-5xl md:text-8xl font-light tracking-[-0.02em] text-[#1c1c1c] leading-[0.88] mb-10">
               Consign Your <br />
-              <span className="italic text-gold-muted">Galia Lahav</span>
+              <span className="italic">Galia Lahav</span>
             </h1>
-            <p className="font-sans text-xl text-obsidian/30 tracking-wide max-w-xl leading-relaxed mb-14 font-medium">
+            <p className="font-sans text-lg text-[#1c1c1c]/40 tracking-wide max-w-xl leading-relaxed mb-14 font-light">
               Entrust your couture to the experts who designed it. Our premium sell wizard guides you through a verified submission process in under 5 minutes.
             </p>
-            <div className="flex flex-col sm:flex-row gap-6">
+            <div className="flex flex-col sm:flex-row gap-4">
               <Link
                 href="/sell/submit"
-                className="px-12 py-6 bg-obsidian text-silk font-sans text-[11px] font-bold uppercase tracking-[0.3em] rounded-full hover:bg-gold-muted hover:text-obsidian transition-all duration-500 text-center shadow-xl"
+                className="px-14 py-5 bg-[#1c1c1c] text-white font-sans text-[13px] font-light uppercase tracking-[0.08em] hover:bg-[#333] transition-all duration-300 text-center"
               >
                 Start Premium Wizard
               </Link>
               <Link
                 href="/how-it-works"
-                className="px-12 py-6 border border-obsidian/10 text-obsidian/40 font-sans text-[11px] font-bold uppercase tracking-[0.3em] rounded-full hover:text-obsidian hover:border-obsidian/30 hover:bg-obsidian/[0.03] transition-all duration-500 text-center font-medium"
+                className="px-14 py-5 border border-[#1c1c1c]/10 text-[#1c1c1c]/50 font-sans text-[13px] font-light uppercase tracking-[0.08em] hover:text-[#1c1c1c] hover:border-[#1c1c1c]/30 transition-all duration-300 text-center"
               >
                 The Process
               </Link>
@@ -73,7 +73,7 @@ export default function SellPage() {
       </section>
 
       {/* ── Stats Bar ── */}
-      <section className="border-y border-obsidian/5 bg-obsidian/[0.01]">
+      <section className="border-y border-[#1c1c1c]/5">
         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4">
           {[
             { val: "500+", label: "Couture Items Sold" },
@@ -81,18 +81,18 @@ export default function SellPage() {
             { val: "85%", label: "Seller Return Rate" },
             { val: "Verified", label: "By Galia Lahav" },
           ].map((stat, i) => (
-            <div key={i} className="py-14 px-10 text-center border-r border-obsidian/5 last:border-r-0">
-              <div className="font-serif text-4xl font-light text-obsidian mb-3 tracking-tighter">{stat.val}</div>
-              <div className="font-sans text-[10px] font-bold tracking-[0.4em] text-obsidian/20 uppercase">{stat.label}</div>
+            <div key={i} className="py-14 px-10 text-center border-r border-[#1c1c1c]/5 last:border-r-0">
+              <div className="font-serif text-4xl font-light text-[#1c1c1c] mb-3 tracking-[-0.02em]">{stat.val}</div>
+              <div className="font-sans text-[10px] font-light tracking-[0.15em] text-[#1c1c1c]/25 uppercase">{stat.label}</div>
             </div>
           ))}
         </div>
       </section>
 
       {/* ── Why Consign ── */}
-      <section className="py-44 px-6 md:px-10">
+      <section className="py-32 md:py-44 px-6 md:px-10">
         <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-3 gap-12">
+          <div className="grid md:grid-cols-3 gap-10">
             {[
               {
                 title: "Authenticity First",
@@ -107,7 +107,7 @@ export default function SellPage() {
               {
                 title: "Full Security",
                 desc: "Encrypted payments and white-glove logistics. We handle the process from end-to-end.",
-                icon: "🔒",
+                icon: "↗",
               },
             ].map((item, i) => (
               <motion.div
@@ -116,13 +116,13 @@ export default function SellPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="resonance-panel p-14 flex flex-col items-start shadow-lg border border-obsidian/5"
+                className="p-12 border border-[#1c1c1c]/5 flex flex-col items-start"
               >
-                <div className="w-16 h-16 rounded-full bg-obsidian/[0.02] border border-obsidian/5 flex items-center justify-center text-2xl text-gold-muted mb-10 shadow-inner">
+                <div className="w-14 h-14 bg-[#1c1c1c]/[0.03] border border-[#1c1c1c]/5 flex items-center justify-center text-xl text-[#1c1c1c]/40 mb-8">
                   {item.icon}
                 </div>
-                <h3 className="font-serif text-3xl text-obsidian mb-6 tracking-tight font-light">{item.title}</h3>
-                <p className="font-sans text-[13px] text-obsidian/40 leading-relaxed tracking-wide font-medium">
+                <h3 className="font-serif text-2xl text-[#1c1c1c] mb-5 tracking-[-0.02em] font-light">{item.title}</h3>
+                <p className="font-sans text-[13px] text-[#1c1c1c]/40 leading-relaxed font-light">
                   {item.desc}
                 </p>
               </motion.div>
@@ -132,21 +132,21 @@ export default function SellPage() {
       </section>
 
       {/* ── The Process ── */}
-      <section className="py-44 bg-obsidian/[0.01] border-y border-obsidian/5">
+      <section className="py-32 md:py-44 bg-[#1c1c1c]/[0.02] border-y border-[#1c1c1c]/5">
         <div className="max-w-7xl mx-auto px-6 md:px-10">
-          <div className="text-center mb-28">
-            <p className="font-sans text-[10px] font-bold uppercase tracking-[0.5em] text-gold-muted mb-6">The Journey</p>
-            <h2 className="font-serif text-5xl md:text-8xl font-light text-obsidian tracking-tighter leading-none">How It Works</h2>
+          <div className="text-center mb-24">
+            <p className="font-sans text-[11px] font-light uppercase tracking-[0.4em] text-[#1c1c1c]/40 mb-6">The Journey</p>
+            <h2 className="font-serif text-4xl md:text-7xl font-light text-[#1c1c1c] tracking-[-0.02em] leading-none">How It Works</h2>
           </div>
-          <div className="grid md:grid-cols-4 gap-16">
+          <div className="grid md:grid-cols-4 gap-12">
             {HOW_IT_WORKS_STEPS.map((step, i) => (
               <div key={i} className="relative">
-                <div className="font-serif text-[100px] text-obsidian/[0.02] leading-none absolute -top-10 -left-6 select-none">
+                <div className="font-serif text-[100px] text-[#1c1c1c]/[0.03] leading-none absolute -top-10 -left-6 select-none">
                   {step.num}
                 </div>
                 <div className="relative z-10">
-                  <h3 className="font-serif text-2xl text-obsidian mb-6 tracking-tight font-light">{step.title}</h3>
-                  <p className="font-sans text-[13px] text-obsidian/40 leading-relaxed tracking-wide font-medium">{step.desc}</p>
+                  <h3 className="font-serif text-2xl text-[#1c1c1c] mb-5 tracking-[-0.02em] font-light">{step.title}</h3>
+                  <p className="font-sans text-[13px] text-[#1c1c1c]/40 leading-relaxed font-light">{step.desc}</p>
                 </div>
               </div>
             ))}
@@ -155,19 +155,16 @@ export default function SellPage() {
       </section>
 
       {/* ── CTA Section ── */}
-      <section className="py-44 px-6">
+      <section className="py-32 md:py-44 px-6">
         <div className="max-w-5xl mx-auto">
-          <div className="resonance-panel p-20 text-center bg-obsidian/[0.01] border-gold-muted/10 relative overflow-hidden shadow-2xl">
-            <div className="absolute top-0 right-0 w-80 h-80 bg-gold-muted/5 blur-[120px] -z-10" />
-            <div className="absolute bottom-0 left-0 w-80 h-80 bg-gold-muted/5 blur-[120px] -z-10" />
-
-            <h2 className="font-serif text-5xl md:text-7xl font-light text-obsidian mb-10 tracking-tighter">Ready to <span className="italic">Galia</span> Your Gown?</h2>
-            <p className="font-sans text-sm text-obsidian/40 tracking-[0.3em] uppercase mb-16 max-w-xl mx-auto leading-relaxed font-bold">
+          <div className="p-16 md:p-20 text-center border border-[#1c1c1c]/5">
+            <h2 className="font-serif text-4xl md:text-6xl font-light text-[#1c1c1c] mb-8 tracking-[-0.02em]">Ready to <span className="italic">Consign</span>?</h2>
+            <p className="font-sans text-[13px] text-[#1c1c1c]/40 tracking-[0.08em] uppercase mb-14 max-w-xl mx-auto leading-relaxed font-light">
               Join the official House marketplace. Our premium wizard will help you list in minutes.
             </p>
             <Link
               href="/sell/submit"
-              className="inline-block px-18 py-7 bg-obsidian text-silk font-sans text-[11px] font-bold uppercase tracking-[0.4em] rounded-full hover:bg-gold-muted hover:text-obsidian transition-all duration-500 shadow-2xl"
+              className="inline-block px-16 py-5 bg-[#1c1c1c] text-white font-sans text-[13px] font-light uppercase tracking-[0.08em] hover:bg-[#333] transition-all duration-300"
             >
               Launch Sell Wizard
             </Link>
@@ -176,23 +173,23 @@ export default function SellPage() {
       </section>
 
       {/* ── Pricing Table ── */}
-      <section className="py-44 bg-obsidian/[0.01] border-y border-obsidian/5">
+      <section className="py-32 md:py-44 bg-[#1c1c1c]/[0.02] border-y border-[#1c1c1c]/5">
         <div className="max-w-4xl mx-auto px-6">
-          <div className="text-center mb-24">
-            <h2 className="font-serif text-5xl md:text-6xl font-light text-obsidian tracking-tighter">Pricing Guide</h2>
-            <p className="font-sans text-[10px] font-bold text-obsidian/20 tracking-[0.5em] uppercase mt-6">Calculated to maximize your return</p>
+          <div className="text-center mb-20">
+            <h2 className="font-serif text-4xl md:text-6xl font-light text-[#1c1c1c] tracking-[-0.02em]">Pricing Guide</h2>
+            <p className="font-sans text-[11px] font-light text-[#1c1c1c]/25 tracking-[0.15em] uppercase mt-5">Calculated to maximize your return</p>
           </div>
-          <div className="resonance-panel overflow-hidden shadow-xl border border-obsidian/5">
-            <div className="grid grid-cols-3 border-b border-obsidian/5 bg-obsidian/[0.02]">
-              <div className="px-12 py-8 font-sans text-[10px] font-bold tracking-[0.4em] text-obsidian/30 uppercase">Sale Price</div>
-              <div className="px-12 py-8 font-sans text-[10px] font-bold tracking-[0.4em] text-obsidian/30 uppercase text-center">Service Fee</div>
-              <div className="px-12 py-8 font-sans text-[10px] font-bold tracking-[0.4em] text-obsidian/30 uppercase text-right">Owner Payout</div>
+          <div className="overflow-hidden border border-[#1c1c1c]/5">
+            <div className="grid grid-cols-3 border-b border-[#1c1c1c]/5 bg-[#1c1c1c]/[0.02]">
+              <div className="px-10 py-6 font-sans text-[11px] font-light tracking-[0.1em] text-[#1c1c1c]/30 uppercase">Sale Price</div>
+              <div className="px-10 py-6 font-sans text-[11px] font-light tracking-[0.1em] text-[#1c1c1c]/30 uppercase text-center">Service Fee</div>
+              <div className="px-10 py-6 font-sans text-[11px] font-light tracking-[0.1em] text-[#1c1c1c]/30 uppercase text-right">Owner Payout</div>
             </div>
             {COMMISSION_TIERS.map((tier, i) => (
-              <div key={i} className="grid grid-cols-3 border-b last:border-0 border-obsidian/[0.03] hover:bg-obsidian/[0.01] transition-colors">
-                <div className="px-12 py-8 font-sans text-[15px] text-obsidian/60 font-medium">{tier.range}</div>
-                <div className="px-12 py-8 font-sans text-[15px] text-obsidian/40 text-center font-medium">{tier.rate}</div>
-                <div className="px-12 py-8 font-sans text-[15px] text-gold-muted font-bold text-right">{tier.you}</div>
+              <div key={i} className="grid grid-cols-3 border-b last:border-0 border-[#1c1c1c]/[0.03] hover:bg-[#1c1c1c]/[0.02] transition-colors">
+                <div className="px-10 py-6 font-sans text-[14px] text-[#1c1c1c]/50 font-light">{tier.range}</div>
+                <div className="px-10 py-6 font-sans text-[14px] text-[#1c1c1c]/30 text-center font-light">{tier.rate}</div>
+                <div className="px-10 py-6 font-sans text-[14px] text-[#1c1c1c] text-right font-light">{tier.you}</div>
               </div>
             ))}
           </div>
@@ -200,22 +197,22 @@ export default function SellPage() {
       </section>
 
       {/* ── FAQ ── */}
-      <section className="py-44 px-6">
+      <section className="py-32 md:py-44 px-6">
         <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-24">
-            <h2 className="font-serif text-5xl font-light text-obsidian tracking-tighter">Support</h2>
+          <div className="text-center mb-20">
+            <h2 className="font-serif text-4xl md:text-5xl font-light text-[#1c1c1c] tracking-[-0.02em]">Support</h2>
           </div>
-          <div className="space-y-6">
+          <div className="space-y-4">
             {FAQS.map((faq, i) => (
-              <div key={i} className="resonance-panel px-10 py-4 border border-obsidian/5 hover:border-obsidian/10 transition-colors">
+              <div key={i} className="border border-[#1c1c1c]/5 px-8 md:px-10 py-2 hover:border-[#1c1c1c]/10 transition-colors">
                 <button onClick={() => setOpenFaq(openFaq === i ? null : i)} className="w-full flex items-center justify-between py-6 text-left group">
-                  <span className="font-sans text-[15px] text-obsidian/50 group-hover:text-obsidian transition-colors tracking-wide font-medium">{faq.q}</span>
-                  <motion.span animate={{ rotate: openFaq === i ? 45 : 0 }} className="text-obsidian/20 text-2xl font-light transition-transform">+</motion.span>
+                  <span className="font-sans text-[14px] text-[#1c1c1c]/50 group-hover:text-[#1c1c1c] transition-colors font-light">{faq.q}</span>
+                  <motion.span animate={{ rotate: openFaq === i ? 45 : 0 }} className="text-[#1c1c1c]/20 text-2xl font-light transition-transform">+</motion.span>
                 </button>
                 <AnimatePresence>
                   {openFaq === i && (
                     <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
-                      <div className="pb-10 font-sans text-[15px] text-obsidian/40 leading-relaxed tracking-wide font-medium max-w-2xl">{faq.a}</div>
+                      <div className="pb-8 font-sans text-[14px] text-[#1c1c1c]/40 leading-relaxed font-light max-w-2xl">{faq.a}</div>
                     </motion.div>
                   )}
                 </AnimatePresence>

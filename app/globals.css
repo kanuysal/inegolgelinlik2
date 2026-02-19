@@ -76,16 +76,13 @@
 
 html {
   scroll-behavior: auto;
-  /* framer-motion handles smooth scroll */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  background-color: #FAF9F6;
-  /* Silk */
-  color: #1a1818;
-  /* Obsidian */
+  background-color: #FFFFFF;
+  color: #1c1c1c;
   overflow-x: hidden;
   font-feature-settings: "ss01", "ss02", "cv01", "cv02";
   -webkit-font-smoothing: antialiased;
@@ -96,10 +93,10 @@ h2,
 h3,
 h4,
 .font-serif {
-  @apply tracking-tighter;
+  letter-spacing: -0.02em;
 }
 
-/* ── Minimalist Scrollbar — Pouch Style ── */
+/* ── Minimalist Scrollbar ── */
 ::-webkit-scrollbar {
   width: 4px;
 }
@@ -109,24 +106,24 @@ h4,
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.08);
+  background: rgba(0, 0, 0, 0.1);
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.15);
+  background: rgba(0, 0, 0, 0.2);
 }
 
 /* Firefox */
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.08) transparent;
+  scrollbar-color: rgba(0, 0, 0, 0.1) transparent;
 }
 
 /* ── Selection highlight ── */
 ::selection {
-  background-color: rgba(197, 160, 89, 0.2);
-  color: #1a1818;
+  background-color: rgba(28, 28, 28, 0.1);
+  color: #1c1c1c;
 }
 
 /* ── Canvas rendering optimisation ── */
@@ -135,47 +132,12 @@ canvas {
   image-rendering: crisp-edges;
 }
 
-/* ── Resonance Utilities (Light Mode) ── */
-.resonance-glow {
-  filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.2));
-}
-
-.resonance-gradient {
-  background: linear-gradient(135deg, #D4AF37 0%, #1a1818 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
+/* ── Utility Classes ── */
 .resonance-panel {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(0, 0, 0, 0.04);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.02);
-  border-radius: 40px;
-}
-
-/* ── Text shimmer for luxury headings (Gold/Obsidian) ── */
-.text-shimmer {
-  background: linear-gradient(90deg,
-      rgba(26, 24, 24, 0.45) 0%,
-      rgba(212, 175, 55, 0.8) 50%,
-      rgba(26, 24, 24, 0.45) 100%);
-  background-size: 200% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: shimmer 4s ease-in-out infinite;
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-
-  100% {
-    background-position: 200% 0;
-  }
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
 }
 
 /* ── Fade overlay mask for beat sections ── */

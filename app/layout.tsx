@@ -38,7 +38,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${cormorant.variable} ${outfit.variable}`}>
-      <body className="bg-silk text-obsidian antialiased">
+      <body className="bg-white text-[#1c1c1c] antialiased">
         <SmoothScroll>
           <LoadingScreen />
           {children}

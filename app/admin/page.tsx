@@ -42,7 +42,7 @@ function OverviewTab() {
 
   const cards = [
     { label: 'Pending Review', value: stats.pendingReview, color: 'text-yellow-400', icon: '⏳' },
-    { label: 'Total Listings', value: stats.totalListings, color: 'text-champagne', icon: '👗' },
+    { label: 'Total Listings', value: stats.totalListings, color: 'text-[#1c1c1c]/70', icon: '👗' },
     { label: 'Total Orders', value: stats.totalOrders, color: 'text-emerald-400', icon: '📦' },
     { label: 'Total Users', value: stats.totalUsers, color: 'text-blue-400', icon: '👥' },
   ]
@@ -99,7 +99,7 @@ function ModerationTab() {
     return (
       <div className="text-center py-20">
         <div className="text-5xl mb-4">✅</div>
-        <h3 className="font-serif text-2xl text-champagne">All clear</h3>
+        <h3 className="font-serif text-2xl text-[#1c1c1c]/70">All clear</h3>
         <p className="text-zinc-400 font-sans mt-2">No listings pending review</p>
       </div>
     )
@@ -122,7 +122,7 @@ function ModerationTab() {
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-serif text-xl text-champagne">{listing.title}</h3>
+              <h3 className="font-serif text-xl text-[#1c1c1c]/70">{listing.title}</h3>
               <p className="font-sans text-xs text-zinc-500 mt-1">
                 By {listing.profiles?.display_name || listing.profiles?.full_name || 'Unknown'} · {listing.category} · Size {listing.size_us || '—'} · ${listing.price?.toLocaleString()}
               </p>
@@ -184,7 +184,7 @@ function AllListingsTab() {
     <div>
       <div className="flex flex-wrap gap-2 mb-6">
         {statuses.map(s => (
-          <button key={s} onClick={() => setFilter(s)} className={`px-4 py-1.5 rounded-full font-sans text-xs uppercase tracking-wider transition-colors ${filter === s ? 'bg-gold-muted text-obsidian' : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'}`}>
+          <button key={s} onClick={() => setFilter(s)} className={`px-4 py-1.5 rounded-full font-sans text-xs uppercase tracking-wider transition-colors ${filter === s ? 'bg-[#1c1c1c] text-obsidian' : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'}`}>
             {s.replace(/_/g, ' ')}
           </button>
         ))}
@@ -204,7 +204,7 @@ function AllListingsTab() {
             <tbody className="divide-y divide-zinc-800/50">
               {listings.map((l: any) => (
                 <tr key={l.id} className="hover:bg-zinc-800/30">
-                  <td className="py-3 font-serif text-champagne">{l.title}</td>
+                  <td className="py-3 font-serif text-[#1c1c1c]/70">{l.title}</td>
                   <td className="py-3 font-sans text-sm text-zinc-400">{l.profiles?.display_name || l.profiles?.full_name || '—'}</td>
                   <td className="py-3 font-sans text-sm text-zinc-300">${l.price?.toLocaleString()}</td>
                   <td className="py-3"><StatusBadge status={l.status} /></td>
@@ -256,7 +256,7 @@ function UsersTab() {
           {users.map((u: any) => (
             <tr key={u.id} className="hover:bg-zinc-800/30">
               <td className="py-3">
-                <p className="font-serif text-champagne">{u.display_name || u.full_name || 'No name'}</p>
+                <p className="font-serif text-[#1c1c1c]/70">{u.display_name || u.full_name || 'No name'}</p>
                 <p className="font-sans text-xs text-zinc-500">{u.id.slice(0, 8)}...</p>
               </td>
               <td className="py-3 font-sans text-xs text-zinc-500">{new Date(u.created_at).toLocaleDateString()}</td>
@@ -383,7 +383,7 @@ function ImageManager({ productId, images, onUpdate }: {
 // ═══════════════════════════════════════════════════════
 // PRODUCT FORM (shared between create & edit)
 // ═══════════════════════════════════════════════════════
-const inputClass = "bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 font-sans text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-gold-muted"
+const inputClass = "bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 font-sans text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-[#1c1c1c]/30"
 
 function ProductForm({ product, onSubmit, onCancel, isPending, onRefresh }: {
   product?: any
@@ -432,7 +432,7 @@ function ProductForm({ product, onSubmit, onCancel, isPending, onRefresh }: {
       )}
 
       <div className="col-span-2 flex gap-3">
-        <button type="submit" disabled={isPending} className="bg-gold-muted text-obsidian px-8 py-3 font-sans text-xs uppercase tracking-widest hover:bg-champagne transition-colors disabled:opacity-50">
+        <button type="submit" disabled={isPending} className="bg-[#1c1c1c] text-obsidian px-8 py-3 font-sans text-xs uppercase tracking-widest hover:bg-champagne transition-colors disabled:opacity-50">
           {isPending ? 'Saving...' : product ? 'Save Changes' : 'Create Product'}
         </button>
         <button type="button" onClick={onCancel} className="px-6 py-3 font-sans text-xs uppercase tracking-widest text-zinc-400 hover:text-zinc-200 transition-colors">
@@ -507,7 +507,7 @@ function AdminProductCard({ product, onEdit, onToggle, onDelete, isPending }: {
 
           {/* Photo count badge */}
           {imageCount > 0 && (
-            <span className="px-3 py-1 bg-[#C5A059] text-white text-[9px] uppercase tracking-[0.15em] font-sans font-bold rounded-full shadow-[0_4px_15px_rgba(197,160,89,0.3)]">
+            <span className="px-3 py-1 bg-[#1c1c1c] text-white text-[9px] uppercase tracking-[0.15em] font-sans font-bold rounded-full shadow-[0_4px_15px_rgba(197,160,89,0.3)]">
               {imageCount} {imageCount === 1 ? 'Photo' : 'Photos'}
             </span>
           )}
@@ -530,7 +530,7 @@ function AdminProductCard({ product, onEdit, onToggle, onDelete, isPending }: {
 
           {/* Edit button on hover */}
           <div className={`transition-all duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] ${isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
-            <span className="px-6 py-3 bg-[#C5A059] text-white font-sans text-[10px] font-bold uppercase tracking-[0.25em] rounded-full hover:bg-[#B38E48] transition-all shadow-2xl">
+            <span className="px-6 py-3 bg-[#1c1c1c] text-white font-sans text-[10px] font-bold uppercase tracking-[0.25em] rounded-full hover:bg-[#333] transition-all shadow-2xl">
               Edit Product
             </span>
           </div>
@@ -545,7 +545,7 @@ function AdminProductCard({ product, onEdit, onToggle, onDelete, isPending }: {
         </p>
 
         {/* Title */}
-        <h3 className="font-serif text-2xl tracking-tight text-obsidian group-hover:text-[#C5A059] transition-colors duration-500">
+        <h3 className="font-serif text-2xl tracking-tight text-obsidian group-hover:text-[#1c1c1c] transition-colors duration-500">
           {product.style_name}
         </h3>
 
@@ -568,7 +568,7 @@ function AdminProductCard({ product, onEdit, onToggle, onDelete, isPending }: {
           <div className="flex gap-1.5 items-center">
             <button
               onClick={onEdit}
-              className="px-3 py-1.5 rounded-full font-sans text-[9px] font-bold uppercase tracking-[0.15em] text-obsidian/30 hover:text-[#C5A059] hover:bg-obsidian/5 transition-colors"
+              className="px-3 py-1.5 rounded-full font-sans text-[9px] font-bold uppercase tracking-[0.15em] text-obsidian/30 hover:text-[#1c1c1c] hover:bg-obsidian/5 transition-colors"
             >
               Edit
             </button>
@@ -606,7 +606,7 @@ function AdminProductCard({ product, onEdit, onToggle, onDelete, isPending }: {
 // ═══════════════════════════════════════════════════════
 // PRODUCT EDIT DRAWER (slide-over panel — light theme)
 // ═══════════════════════════════════════════════════════
-const lightInputClass = "bg-obsidian/[0.03] border border-obsidian/10 rounded-xl px-4 py-3 font-sans text-sm text-obsidian placeholder:text-obsidian/25 focus:outline-none focus:border-[#C5A059]/50 transition-colors"
+const lightInputClass = "bg-obsidian/[0.03] border border-obsidian/10 rounded-xl px-4 py-3 font-sans text-sm text-obsidian placeholder:text-obsidian/25 focus:outline-none focus:border-[#1c1c1c]/30 transition-colors"
 
 function ProductEditDrawer({ product, onClose, onSubmit, isPending, onRefresh }: {
   product: any
@@ -717,7 +717,7 @@ function ProductEditDrawer({ product, onClose, onSubmit, isPending, onRefresh }:
             )}
 
             <div className="col-span-2 flex gap-3 mt-2">
-              <button type="submit" disabled={isPending} className="px-10 py-4 bg-[#C5A059] text-white font-sans text-[10px] font-bold uppercase tracking-[0.25em] rounded-full hover:bg-[#B38E48] transition-all shadow-lg disabled:opacity-50">
+              <button type="submit" disabled={isPending} className="px-10 py-4 bg-[#1c1c1c] text-white font-sans text-[10px] font-bold uppercase tracking-[0.25em] rounded-full hover:bg-[#333] transition-all shadow-lg disabled:opacity-50">
                 {isPending ? 'Saving...' : 'Save Changes'}
               </button>
               <button type="button" onClick={onClose} className="px-8 py-4 border border-obsidian/10 rounded-full font-sans text-[10px] font-bold uppercase tracking-[0.2em] text-obsidian/30 hover:text-obsidian hover:border-obsidian/20 transition-all">
@@ -1028,7 +1028,7 @@ function ProductsTab() {
                   })
                 }}
                 disabled={isPending}
-                className="px-6 py-3 bg-[#C5A059] text-white font-sans text-[10px] font-bold uppercase tracking-[0.2em] rounded-full hover:bg-[#B38E48] transition-all shadow-lg disabled:opacity-50 whitespace-nowrap"
+                className="px-6 py-3 bg-[#1c1c1c] text-white font-sans text-[10px] font-bold uppercase tracking-[0.2em] rounded-full hover:bg-[#333] transition-all shadow-lg disabled:opacity-50 whitespace-nowrap"
               >
                 {isPending ? 'Importing...' : 'Import Catalog'}
               </button>
@@ -1056,7 +1056,7 @@ function ProductsTab() {
             <StockistSyncButton onDone={refresh} disabled={isPending} onMessage={setImportMsg} />
             <button
               onClick={() => { setShowForm(!showForm); setEditingProduct(null) }}
-              className="px-6 py-3 bg-[#C5A059] text-white font-sans text-[10px] font-bold uppercase tracking-[0.2em] rounded-full hover:bg-[#B38E48] transition-all shadow-lg whitespace-nowrap"
+              className="px-6 py-3 bg-[#1c1c1c] text-white font-sans text-[10px] font-bold uppercase tracking-[0.2em] rounded-full hover:bg-[#333] transition-all shadow-lg whitespace-nowrap"
             >
               {showForm ? 'Cancel' : '+ Add Product'}
             </button>
@@ -1138,7 +1138,7 @@ function ProductsTab() {
             <input name="msrp" type="number" placeholder="MSRP (optional)" className={lightInputClass} />
             <textarea name="description" placeholder="Description (optional)" className={`col-span-2 ${lightInputClass} min-h-[80px]`} />
             <div className="col-span-2 flex gap-3">
-              <button type="submit" disabled={isPending} className="px-10 py-4 bg-[#C5A059] text-white font-sans text-[10px] font-bold uppercase tracking-[0.25em] rounded-full hover:bg-[#B38E48] transition-all shadow-lg disabled:opacity-50">
+              <button type="submit" disabled={isPending} className="px-10 py-4 bg-[#1c1c1c] text-white font-sans text-[10px] font-bold uppercase tracking-[0.25em] rounded-full hover:bg-[#333] transition-all shadow-lg disabled:opacity-50">
                 {isPending ? 'Creating...' : 'Create Product'}
               </button>
               <button type="button" onClick={() => setShowForm(false)} className="px-8 py-4 border border-obsidian/10 rounded-full font-sans text-[10px] font-bold uppercase tracking-[0.2em] text-obsidian/30 hover:text-obsidian hover:border-obsidian/20 transition-all">
@@ -1231,7 +1231,7 @@ function ClaimsTab() {
     return (
       <div className="text-center py-20">
         <div className="text-5xl mb-4">🛡️</div>
-        <h3 className="font-serif text-2xl text-champagne">No claims</h3>
+        <h3 className="font-serif text-2xl text-[#1c1c1c]/70">No claims</h3>
         <p className="text-zinc-400 font-sans mt-2">All disputes have been handled</p>
       </div>
     )
@@ -1243,7 +1243,7 @@ function ClaimsTab() {
         <div key={claim.id} className="bg-zinc-900/60 border border-zinc-800 rounded-lg p-5">
           <div className="flex items-start justify-between">
             <div>
-              <h3 className="font-serif text-lg text-champagne">{claim.reason}</h3>
+              <h3 className="font-serif text-lg text-[#1c1c1c]/70">{claim.reason}</h3>
               <p className="font-sans text-xs text-zinc-500 mt-1">
                 Order #{claim.order_id?.slice(0, 8)} · {claim.orders?.listings?.title || 'Unknown listing'}
               </p>
@@ -1255,14 +1255,14 @@ function ClaimsTab() {
             <div className="mt-4 pt-4 border-t border-zinc-800">
               {resolveId === claim.id ? (
                 <div>
-                  <textarea value={resolveNotes} onChange={e => setResolveNotes(e.target.value)} placeholder="Resolution notes..." className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 font-sans text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-gold-muted min-h-[60px]" />
+                  <textarea value={resolveNotes} onChange={e => setResolveNotes(e.target.value)} placeholder="Resolution notes..." className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 font-sans text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-[#1c1c1c]/30 min-h-[60px]" />
                   <div className="flex gap-2 mt-2">
                     <button onClick={handleResolve} disabled={isPending} className="bg-emerald-600 text-white px-4 py-2 rounded-lg font-sans text-xs uppercase tracking-widest">Resolve</button>
                     <button onClick={() => setResolveId(null)} className="text-zinc-400 font-sans text-xs">Cancel</button>
                   </div>
                 </div>
               ) : (
-                <button onClick={() => setResolveId(claim.id)} className="text-gold-muted font-sans text-xs hover:text-champagne transition-colors">
+                <button onClick={() => setResolveId(claim.id)} className="text-gold-muted font-sans text-xs hover:text-[#1c1c1c]/70 transition-colors">
                   Resolve Claim →
                 </button>
               )}
@@ -1330,9 +1330,9 @@ export default function AdminPage() {
       <div className="min-h-screen bg-obsidian flex items-center justify-center">
         <div className="text-center">
           <div className="text-5xl mb-4">🔒</div>
-          <h1 className="font-serif text-3xl text-champagne mb-2">Access Denied</h1>
+          <h1 className="font-serif text-3xl text-[#1c1c1c]/70 mb-2">Access Denied</h1>
           <p className="text-zinc-400 font-sans mb-6">You need admin or moderator privileges to access this page.</p>
-          <Link href="/dashboard" className="text-gold-muted font-sans text-sm hover:text-champagne transition-colors">
+          <Link href="/dashboard" className="text-gold-muted font-sans text-sm hover:text-[#1c1c1c]/70 transition-colors">
             ← Back to Dashboard
           </Link>
         </div>
@@ -1354,16 +1354,16 @@ export default function AdminPage() {
       <header className="border-b border-zinc-800">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link href="/" className="font-serif text-2xl tracking-[0.3em] text-champagne">
+            <Link href="/" className="font-serif text-2xl tracking-[0.3em] text-[#1c1c1c]/70">
               RE:GALIA
             </Link>
             <span className="bg-red-600/20 text-red-400 text-xs px-2.5 py-1 rounded-full font-sans uppercase tracking-wider">Admin</span>
           </div>
           <div className="flex items-center gap-4">
-            <Link href="/dashboard" className="font-sans text-xs uppercase tracking-widest text-zinc-400 hover:text-champagne transition-colors">
+            <Link href="/dashboard" className="font-sans text-xs uppercase tracking-widest text-zinc-400 hover:text-[#1c1c1c]/70 transition-colors">
               Dashboard
             </Link>
-            <Link href="/shop" className="font-sans text-xs uppercase tracking-widest text-zinc-400 hover:text-champagne transition-colors">
+            <Link href="/shop" className="font-sans text-xs uppercase tracking-widest text-zinc-400 hover:text-[#1c1c1c]/70 transition-colors">
               Shop
             </Link>
           </div>
@@ -1371,14 +1371,14 @@ export default function AdminPage() {
       </header>
 
       <div className="max-w-7xl mx-auto px-6 py-8">
-        <h1 className="font-serif text-4xl text-champagne mb-8">Admin Center</h1>
+        <h1 className="font-serif text-4xl text-[#1c1c1c]/70 mb-8">Admin Center</h1>
 
         <div className="flex gap-1 mb-8 border-b border-zinc-800 overflow-x-auto">
           {tabs.map(t => (
-            <button key={t.key} onClick={() => setTab(t.key)} className={`px-5 py-3 font-sans text-sm whitespace-nowrap transition-colors relative ${tab === t.key ? 'text-champagne' : 'text-zinc-500 hover:text-zinc-300'}`}>
+            <button key={t.key} onClick={() => setTab(t.key)} className={`px-5 py-3 font-sans text-sm whitespace-nowrap transition-colors relative ${tab === t.key ? 'text-[#1c1c1c]/70' : 'text-zinc-500 hover:text-zinc-300'}`}>
               <span className="mr-1.5">{t.icon}</span>
               {t.label}
-              {tab === t.key && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gold-muted" />}
+              {tab === t.key && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#1c1c1c]" />}
             </button>
           ))}
         </div>
