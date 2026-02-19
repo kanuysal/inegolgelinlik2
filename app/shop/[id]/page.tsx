@@ -369,15 +369,12 @@ export default function ProductDetailPage() {
                 ))}
               </div>
 
-              <div className="space-y-3 mb-16">
+              <div className="mb-16">
                 <button
                   onClick={() => setShowInquiry(true)}
                   className="w-full py-5 bg-[#1c1c1c] text-white font-sans text-[13px] font-light uppercase tracking-[0.08em] hover:bg-[#333] transition-all duration-300"
                 >
                   Inquire Now
-                </button>
-                <button className="w-full py-5 border border-[#1c1c1c]/10 text-[#1c1c1c]/40 font-sans text-[13px] font-light uppercase tracking-[0.08em] hover:bg-[#1c1c1c]/[0.03] transition-all duration-300">
-                  Professional Sizing Help
                 </button>
               </div>
 
