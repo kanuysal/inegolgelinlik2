@@ -3,6 +3,7 @@
 import { useRef, useEffect, useState, useCallback } from "react";
 import {
   motion,
+  AnimatePresence,
   useScroll,
   useTransform,
   useMotionValueEvent,
@@ -186,9 +187,56 @@ export default function Home() {
 
       {/* ── HERO ── */}
       <section className="relative h-[100vh] flex flex-col items-center justify-end px-6 overflow-hidden bg-[#1c1c1c] text-white pb-20">
+        {/* Inline loading state with GL logo */}
+        <AnimatePresence>
+          {isLoading && (
+            <motion.div
+              key="hero-loader"
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+              className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-[#1c1c1c]"
+            >
+              <motion.img
+                src="/images/SYMBOL_BLACK.png"
+                alt="GL"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+                className="w-16 h-16 md:w-20 md:h-20 invert mb-8"
+              />
+              <motion.div
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                className="w-24 h-[1px] bg-white/20 origin-center mb-6"
+              />
+              <motion.p
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+                className="font-serif text-xl tracking-[0.35em] text-white/60 font-light uppercase"
+              >
+                RE:GALIA
+              </motion.p>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8 }}
+                className="mt-10"
+              >
+                <motion.div
+                  className="w-8 h-[1px] bg-white/20"
+                  animate={{ scaleX: [0.3, 1, 0.3], opacity: [0.2, 0.5, 0.2] }}
+                  transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                />
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <motion.div
           initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
+          animate={isLoading ? {} : { opacity: 1, y: 0 }}
           transition={{ duration: 1.2, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
           className="text-center z-10 max-w-5xl"
         >

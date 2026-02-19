@@ -226,7 +226,7 @@ export default function ShopPage() {
               </p>
               <button
                 onClick={() => setFilters(DEFAULT_FILTERS)}
-                className="px-12 py-4 border border-obsidian/10 rounded-full font-sans text-[10px] font-bold uppercase tracking-[0.3em] text-obsidian/40 hover:text-obsidian hover:border-obsidian/30 transition-all hover:bg-obsidian/5"
+                className="px-14 py-4 border border-[#1c1c1c]/10 font-sans text-[13px] font-light uppercase tracking-[0.08em] text-[#1c1c1c]/40 hover:text-[#1c1c1c] hover:border-[#1c1c1c]/30 transition-all"
               >
                 Clear All Filters
               </button>

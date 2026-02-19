@@ -542,7 +542,7 @@ export default function SellWizardPage() {
                   <button
                     onClick={handleSearch}
                     disabled={searchQuery.length < 2 || searching}
-                    className="px-10 py-3 bg-[#1c1c1c] text-white font-sans text-[11px] font-bold uppercase tracking-[0.3em] disabled:opacity-30 hover:bg-[#333] transition-all"
+                    className="px-10 py-3 bg-[#1c1c1c] text-white font-sans text-[13px] font-light uppercase tracking-[0.08em] disabled:opacity-30 hover:bg-[#333] transition-all"
                   >
                     {searching ? '...' : 'Search'}
                   </button>

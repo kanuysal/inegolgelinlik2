@@ -28,7 +28,6 @@ export const metadata: Metadata = {
   },
 };
 
-import LoadingScreen from "@/components/ui/LoadingScreen";
 import SmoothScroll from "@/components/ui/SmoothScroll";
 
 export default function RootLayout({
@@ -40,7 +39,6 @@ export default function RootLayout({
     <html lang="en" className={`${cormorant.variable} ${outfit.variable}`}>
       <body className="bg-white text-[#1c1c1c] antialiased">
         <SmoothScroll>
-          <LoadingScreen />
           {children}
         </SmoothScroll>
       </body>

@@ -97,7 +97,7 @@ function EmptyState({
       {cta && href && (
         <Link
           href={href}
-          className="inline-block px-8 py-3 bg-white text-obsidian font-sans text-xs uppercase tracking-[0.2em] hover:bg-champagne transition-colors"
+          className="inline-block px-14 py-4 bg-white text-[#1c1c1c] font-sans text-[13px] font-light uppercase tracking-[0.08em] hover:bg-white/90 transition-all duration-300"
         >
           {cta}
         </Link>
