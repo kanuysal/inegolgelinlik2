@@ -44,14 +44,37 @@ export interface StockistProduct {
 
 // ── Helpers ────────────────────────────────────────────
 
+/** Get Set-Cookie header values, compatible with Node.js 18+ */
+function getSetCookieHeaders(headers: Headers): string[] {
+  // Node.js 20+ has getSetCookie()
+  if (typeof headers.getSetCookie === 'function') {
+    return headers.getSetCookie()
+  }
+  // Node.js 18 fallback: parse the raw 'set-cookie' header
+  // Headers.get('set-cookie') joins multiple values with ', '
+  // But cookie values contain '=' and may contain ','
+  // We split on patterns like ", NAME=" where NAME is a known cookie
+  const raw = headers.get('set-cookie')
+  if (!raw) return []
+  // Split on ", " followed by a cookie name (word chars followed by =)
+  return raw.split(/,\s*(?=[A-Za-z_][A-Za-z0-9_]*=)/)
+}
+
+/** Parse a single Set-Cookie string into {name, value} */
+function parseCookie(setCookie: string): { name: string; value: string } | null {
+  const [pair] = setCookie.split(';')
+  const eqIdx = pair.indexOf('=')
+  if (eqIdx === -1) return null
+  return { name: pair.slice(0, eqIdx).trim(), value: pair.slice(eqIdx + 1).trim() }
+}
+
 /** Parse cookies from Set-Cookie headers into a cookie string */
 function extractCookies(headers: Headers): string {
   const cookies: Record<string, string> = {}
-  headers.getSetCookie?.().forEach((sc) => {
-    const [pair] = sc.split(';')
-    const [name, ...rest] = pair.split('=')
-    cookies[name.trim()] = rest.join('=').trim()
-  })
+  for (const sc of getSetCookieHeaders(headers)) {
+    const parsed = parseCookie(sc)
+    if (parsed) cookies[parsed.name] = parsed.value
+  }
   return Object.entries(cookies)
     .map(([k, v]) => `${k}=${v}`)
     .join('; ')
@@ -62,15 +85,14 @@ function mergeCookies(existing: string, newHeaders: Headers): string {
   const map: Record<string, string> = {}
   // Parse existing
   existing.split('; ').forEach((c) => {
-    const [k, ...v] = c.split('=')
-    if (k) map[k.trim()] = v.join('=')
+    const eqIdx = c.indexOf('=')
+    if (eqIdx > 0) map[c.slice(0, eqIdx).trim()] = c.slice(eqIdx + 1)
   })
   // Merge new
-  newHeaders.getSetCookie?.().forEach((sc) => {
-    const [pair] = sc.split(';')
-    const [name, ...rest] = pair.split('=')
-    map[name.trim()] = rest.join('=').trim()
-  })
+  for (const sc of getSetCookieHeaders(newHeaders)) {
+    const parsed = parseCookie(sc)
+    if (parsed) map[parsed.name] = parsed.value
+  }
   return Object.entries(map)
     .filter(([k]) => k.length > 0)
     .map(([k, v]) => `${k}=${v}`)
@@ -133,6 +155,10 @@ export async function loginToStockist(): Promise<{ cookies: string; version: str
 export async function fetchStockistDresses(): Promise<StockistProduct[]> {
   const { cookies, version } = await loginToStockist()
 
+  if (!cookies || cookies.length < 10) {
+    throw new Error(`Login failed: no session cookies received`)
+  }
+
   const allDresses: StockistProduct[] = []
   let page = 1
   let lastPage = 1
@@ -148,15 +174,30 @@ export async function fetchStockistDresses(): Promise<StockistProduct[]> {
       },
     })
 
-    const json = await res.json()
+    const text = await res.text()
+    let json: any
+    try {
+      json = JSON.parse(text)
+    } catch {
+      // HTML response — parse Inertia data-page from it
+      const m = text.match(/data-page="([^"]+)"/)
+      if (m) {
+        const raw = m[1].replace(/&quot;/g, '"').replace(/&amp;/g, '&')
+        json = JSON.parse(raw)
+      } else {
+        throw new Error(`Page ${page}: unexpected response (not JSON or Inertia HTML)`)
+      }
+    }
 
     // If redirected to login, session expired
     if (json.component === 'Auth/Login') {
-      throw new Error('Stockist session expired during pagination')
+      throw new Error(`Stockist session expired on page ${page}`)
     }
 
     const productsPage = json.props?.products
-    if (!productsPage?.data) break
+    if (!productsPage?.data) {
+      throw new Error(`Page ${page}: no products data in response (component: ${json.component})`)
+    }
 
     // Update last page from pagination metadata
     if (page === 1) {
