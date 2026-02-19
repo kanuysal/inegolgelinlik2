@@ -397,9 +397,9 @@ export default function SellWizardPage() {
             <div className="flex gap-4 justify-center">
               <Link
                 href="/shop"
-                className="px-8 py-3 border border-[#1c1c1c]/10 font-sans text-xs font-light uppercase tracking-[0.08em] text-[#1c1c1c]/50 hover:text-[#1c1c1c] hover:border-[#1c1c1c]/30 transition-all"
+                className="px-8 py-3 border border-[#1c1c1c]/10 font-sans text-[11px] font-light uppercase tracking-[0.15em] text-[#1c1c1c]/50 hover:text-[#1c1c1c] hover:border-[#1c1c1c]/30 transition-all"
               >
-                BROWSE GOWNS
+                Browse Gowns
               </Link>
               <Link
                 href="/sell/submit"
@@ -408,9 +408,9 @@ export default function SellWizardPage() {
                   setStep(1)
                   setSubmitted(false)
                 }}
-                className="px-8 py-3 bg-[#1c1c1c] text-white font-sans text-xs font-light uppercase tracking-[0.08em] hover:bg-[#333] transition-all"
+                className="px-8 py-3 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-[#333] transition-all"
               >
-                SUBMIT ANOTHER
+                Submit Another
               </Link>
             </div>
           </motion.div>
@@ -542,7 +542,7 @@ export default function SellWizardPage() {
                   <button
                     onClick={handleSearch}
                     disabled={searchQuery.length < 2 || searching}
-                    className="px-10 py-3 bg-[#1c1c1c] text-white font-sans text-[13px] font-light uppercase tracking-[0.08em] disabled:opacity-30 hover:bg-[#333] transition-all"
+                    className="px-10 py-3 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] disabled:opacity-30 hover:bg-[#333] transition-all"
                   >
                     {searching ? '...' : 'Search'}
                   </button>
@@ -600,7 +600,7 @@ export default function SellWizardPage() {
                   </p>
                   <button
                     onClick={skipToManual}
-                    className="px-10 py-4 border border-[#1c1c1c]/10 font-sans text-[12px] font-light text-[#1c1c1c] hover:text-white hover:bg-[#333] transition-all tracking-[0.08em] uppercase"
+                    className="px-10 py-4 border border-[#1c1c1c]/10 font-sans text-[11px] font-light text-[#1c1c1c] hover:text-white hover:bg-[#333] transition-all tracking-[0.15em] uppercase"
                   >
                     Enter Manually →
                   </button>
@@ -1025,7 +1025,7 @@ export default function SellWizardPage() {
           <div className="flex justify-between items-center mt-12">
             <button
               onClick={() => setStep((s) => Math.max(1, s - 1))}
-              className={`px-8 py-4 border border-[#1c1c1c]/10 font-sans text-[11px] font-bold uppercase tracking-[0.2em] text-[#1c1c1c]/40 hover:text-[#1c1c1c] hover:border-[#1c1c1c]/20 transition-all ${step === 1 ? 'invisible' : ''
+              className={`px-8 py-4 border border-[#1c1c1c]/10 font-sans text-[11px] font-light uppercase tracking-[0.15em] text-[#1c1c1c]/40 hover:text-[#1c1c1c] hover:border-[#1c1c1c]/20 transition-all ${step === 1 ? 'invisible' : ''
                 }`}
             >
               ← Back
@@ -1035,7 +1035,7 @@ export default function SellWizardPage() {
               <button
                 onClick={() => setStep((s) => Math.min(5, s + 1))}
                 disabled={!canProceed()}
-                className="px-10 py-4 bg-[#1c1c1c] text-white font-sans text-[12px] font-light uppercase tracking-[0.08em] hover:bg-[#333] transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                className="px-10 py-4 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-[#333] transition-all disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 Continue →
               </button>
@@ -1043,7 +1043,7 @@ export default function SellWizardPage() {
               <button
                 onClick={handleSubmit}
                 disabled={!canProceed() || submitting}
-                className="px-12 py-4 bg-[#1c1c1c] text-white font-sans text-[12px] font-light uppercase tracking-[0.08em] hover:bg-[#333] transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                className="px-12 py-4 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-[#333] transition-all disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 {submitting ? 'Authenticating...' : 'Submit to Atelier'}
               </button>

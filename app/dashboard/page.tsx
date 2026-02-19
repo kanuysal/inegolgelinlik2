@@ -23,26 +23,26 @@ import {
 type Tab = "listings" | "purchases" | "messages" | "profile";
 
 const STATUS_STYLES: Record<string, string> = {
-  draft: "border-white/10 text-white/30",
-  pending_review: "border-amber-500/30 text-amber-300",
-  approved: "border-emerald-500/30 text-emerald-300",
-  rejected: "border-red-500/30 text-red-300",
-  sold: "border-blue-500/30 text-blue-300",
-  archived: "border-white/10 text-white/20",
-  pending: "border-amber-500/30 text-amber-300",
-  confirmed: "border-blue-500/30 text-blue-300",
-  shipped: "border-purple-500/30 text-purple-300",
-  delivered: "border-emerald-500/30 text-emerald-300",
-  completed: "border-emerald-500/30 text-emerald-300",
-  cancelled: "border-red-500/30 text-red-300",
-  refunded: "border-orange-500/30 text-orange-300",
+  draft: "bg-[#1c1c1c]/[0.04] text-[#1c1c1c]/40 border border-[#1c1c1c]/10",
+  pending_review: "bg-yellow-50 text-yellow-700 border border-yellow-200",
+  approved: "bg-emerald-50 text-emerald-700 border border-emerald-200",
+  rejected: "bg-red-50 text-red-600 border border-red-200",
+  sold: "bg-blue-50 text-blue-700 border border-blue-200",
+  archived: "bg-[#1c1c1c]/[0.04] text-[#1c1c1c]/30 border border-[#1c1c1c]/10",
+  pending: "bg-yellow-50 text-yellow-700 border border-yellow-200",
+  confirmed: "bg-blue-50 text-blue-700 border border-blue-200",
+  shipped: "bg-purple-50 text-purple-700 border border-purple-200",
+  delivered: "bg-emerald-50 text-emerald-700 border border-emerald-200",
+  completed: "bg-emerald-50 text-emerald-700 border border-emerald-200",
+  cancelled: "bg-red-50 text-red-600 border border-red-200",
+  refunded: "bg-orange-50 text-orange-600 border border-orange-200",
 };
 
 function StatusBadge({ status }: { status: string }) {
-  const styles = STATUS_STYLES[status] || "border-white/10 text-white/30";
+  const styles = STATUS_STYLES[status] || "bg-[#1c1c1c]/[0.04] text-[#1c1c1c]/40 border border-[#1c1c1c]/10";
   return (
     <span
-      className={`${styles} border-none font-sans text-[9px] font-bold uppercase tracking-[0.2em] px-3 py-1.5 rounded-full bg-white/[0.03] backdrop-blur-sm`}
+      className={`${styles} font-sans text-[9px] font-light uppercase tracking-[0.15em] px-3 py-1.5`}
     >
       {status.replace(/_/g, " ")}
     </span>
@@ -56,13 +56,13 @@ function LoadingSkeleton() {
       {[1, 2, 3].map((i) => (
         <div
           key={i}
-          className="border border-white/5 p-6 animate-pulse"
+          className="border border-[#1c1c1c]/5 p-6 animate-pulse"
         >
           <div className="flex gap-5">
-            <div className="w-20 h-24 bg-white/5" />
+            <div className="w-20 h-24 bg-[#1c1c1c]/[0.03]" />
             <div className="flex-1 space-y-3">
-              <div className="h-4 bg-white/5 w-1/3" />
-              <div className="h-3 bg-white/5 w-1/2" />
+              <div className="h-4 bg-[#1c1c1c]/[0.03] w-1/3" />
+              <div className="h-3 bg-[#1c1c1c]/[0.03] w-1/2" />
             </div>
           </div>
         </div>
@@ -87,17 +87,17 @@ function EmptyState({
 }) {
   return (
     <div className="text-center py-24">
-      <div className="text-4xl mb-6 opacity-30">{icon}</div>
-      <h3 className="font-serif text-2xl text-white/60 mb-2 tracking-wide">
+      <div className="text-4xl mb-6 opacity-20">{icon}</div>
+      <h3 className="font-serif text-2xl text-[#1c1c1c]/60 mb-2 tracking-wide">
         {title}
       </h3>
-      <p className="font-sans text-xs text-white/25 mb-8 max-w-xs mx-auto">
+      <p className="font-sans text-xs text-[#1c1c1c]/30 mb-8 max-w-xs mx-auto font-light">
         {subtitle}
       </p>
       {cta && href && (
         <Link
           href={href}
-          className="inline-block px-14 py-4 bg-white text-[#1c1c1c] font-sans text-[13px] font-light uppercase tracking-[0.08em] hover:bg-white/90 transition-all duration-300"
+          className="inline-block px-14 py-5 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-[#333] transition-all duration-300"
         >
           {cta}
         </Link>
@@ -134,7 +134,7 @@ function ListingsTab() {
   if (listings.length === 0) {
     return (
       <EmptyState
-        icon="👗"
+        icon="&#x1F457;"
         title="No listings yet"
         subtitle="Start selling your Galia Lahav gown today"
         cta="Create Listing"
@@ -146,67 +146,67 @@ function ListingsTab() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between mb-10">
-        <p className="font-sans text-[11px] font-bold text-white/20 uppercase tracking-[0.3em]">
+        <p className="font-sans text-[11px] font-light text-[#1c1c1c]/30 uppercase tracking-[0.15em]">
           {listings.length} item{listings.length !== 1 ? "s" : ""} listed
         </p>
         <Link
           href="/sell/submit"
-          className="px-8 py-3.5 bg-white text-obsidian font-sans text-[10px] font-bold uppercase tracking-[0.3em] rounded-full hover:bg-resonance-amber transition-all duration-500 shadow-[0_0_40px_rgba(255,255,255,0.05)]"
+          className="px-8 py-3.5 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-[#333] transition-all duration-300"
         >
           + New Listing
         </Link>
       </div>
 
-      <div className="grid gap-6">
+      <div className="grid gap-4">
         {listings.map((listing: any) => (
           <div
             key={listing.id}
-            className="resonance-panel p-6 flex gap-8 items-center group transition-all duration-500 hover:bg-white/[0.03]"
+            className="p-6 flex gap-8 items-center group transition-all duration-300 border border-[#1c1c1c]/5 hover:border-[#1c1c1c]/10"
           >
-            <div className="w-24 h-32 bg-white/[0.03] rounded-xl flex-shrink-0 overflow-hidden border border-white/5 group-hover:border-white/10 transition-colors shadow-inner">
+            <div className="w-24 h-32 bg-[#1c1c1c]/[0.02] flex-shrink-0 overflow-hidden border border-[#1c1c1c]/5">
               {listing.images?.[0] ? (
                 <img
                   src={listing.images[0]}
                   alt=""
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-white/10 text-3xl">👗</div>
+                <div className="w-full h-full flex items-center justify-center text-[#1c1c1c]/10 text-3xl">&#x1F457;</div>
               )}
             </div>
 
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between gap-4 mb-4">
                 <div>
-                  <h3 className="font-serif text-2xl text-white/90 tracking-tight mb-2 group-hover:text-white transition-colors">
+                  <h3 className="font-serif text-2xl text-[#1c1c1c] tracking-tight mb-2 font-light">
                     {listing.title}
                   </h3>
                   <div className="flex flex-wrap gap-x-4 gap-y-2">
-                    <span className="font-sans text-[11px] font-medium text-white/30 uppercase tracking-widest">{listing.category}</span>
-                    <span className="font-sans text-[11px] font-medium text-white/30 uppercase tracking-widest">Size {listing.size_us || "—"}</span>
-                    <span className="font-sans text-[11px] font-bold text-resonance-amber uppercase tracking-widest">${listing.price?.toLocaleString()}</span>
+                    <span className="font-sans text-[11px] font-light text-[#1c1c1c]/30 uppercase tracking-[0.1em]">{listing.category}</span>
+                    <span className="font-sans text-[11px] font-light text-[#1c1c1c]/30 uppercase tracking-[0.1em]">Size {listing.size_us || "\u2014"}</span>
+                    <span className="font-sans text-[11px] font-light text-[#1c1c1c] uppercase tracking-[0.1em]">${listing.price?.toLocaleString()}</span>
                   </div>
                 </div>
                 <StatusBadge status={listing.status} />
               </div>
 
               {listing.rejection_reason && (
-                <div className="mb-4 p-3 bg-red-500/5 border border-red-500/10 rounded-xl">
-                  <p className="text-red-400/80 text-[11px] font-sans leading-relaxed">
-                    <span className="font-bold uppercase mr-2 tracking-tighter">Issue:</span> {listing.rejection_reason}
+                <div className="mb-4 p-3 bg-red-50 border border-red-200">
+                  <p className="text-red-600 text-[11px] font-sans leading-relaxed font-light">
+                    <span className="font-medium uppercase mr-2">Issue:</span> {listing.rejection_reason}
                   </p>
                 </div>
               )}
 
               <div className="flex items-center gap-6">
-                <p className="text-white/10 text-[9px] font-sans font-bold uppercase tracking-[0.2em]">
+                <p className="text-[#1c1c1c]/20 text-[9px] font-sans font-light uppercase tracking-[0.15em]">
                   Added {new Date(listing.created_at).toLocaleDateString()}
                 </p>
                 {(listing.status === "draft" || listing.status === "rejected") && (
                   <button
                     onClick={() => handleDelete(listing.id)}
                     disabled={isPending}
-                    className="text-red-400/40 text-[9px] font-bold font-sans uppercase tracking-[0.25em] hover:text-red-400 transition-colors"
+                    className="text-red-400 text-[9px] font-light font-sans uppercase tracking-[0.15em] hover:text-red-600 transition-colors"
                   >
                     Delete
                   </button>
@@ -243,48 +243,52 @@ function PurchasesTab() {
 
   return (
     <div>
-      <div className="flex justify-center mb-12">
-        <div className="inline-flex bg-white/[0.03] p-1 rounded-full border border-white/5 backdrop-blur-md">
-          {(["purchases", "sales"] as const).map((v) => (
-            <button
-              key={v}
-              onClick={() => setView(v)}
-              className={`px-8 py-3 font-sans text-[10px] font-bold uppercase tracking-[0.3em] transition-all rounded-full ${view === v
-                  ? "bg-white text-obsidian shadow-lg"
-                  : "text-white/30 hover:text-white/60"
-                }`}
-            >
-              {v === "purchases" ? `Purchases (${purchases.length})` : `Sales (${sales.length})`}
-            </button>
-          ))}
-        </div>
+      <div className="flex justify-center gap-12 mb-12 border-b border-[#1c1c1c]/5">
+        {(["purchases", "sales"] as const).map((v) => (
+          <button
+            key={v}
+            onClick={() => setView(v)}
+            className={`pb-4 font-sans text-[11px] font-light uppercase tracking-[0.15em] transition-all relative ${view === v
+                ? "text-[#1c1c1c]"
+                : "text-[#1c1c1c]/20 hover:text-[#1c1c1c]/50"
+              }`}
+          >
+            {v === "purchases" ? `Purchases (${purchases.length})` : `Sales (${sales.length})`}
+            {view === v && (
+              <motion.div
+                layoutId="orders-tab"
+                className="absolute bottom-0 left-0 right-0 h-[1px] bg-[#1c1c1c]"
+              />
+            )}
+          </button>
+        ))}
       </div>
 
       {orders.length === 0 ? (
         <EmptyState
-          icon={view === "purchases" ? "🛍️" : "💰"}
+          icon={view === "purchases" ? "\uD83D\uDECD\uFE0F" : "\uD83D\uDCB0"}
           title={`No ${view} yet`}
           subtitle={
             view === "purchases"
               ? "Browse the shop to find your dream gown"
               : "Create a listing to start selling"
           }
-          cta={view === "purchases" ? "Browse Shop" : "/sell/submit"}
+          cta={view === "purchases" ? "Browse Shop" : "Create Listing"}
           href={view === "purchases" ? "/shop" : "/sell/submit"}
         />
       ) : (
-        <div className="grid gap-6">
+        <div className="grid gap-4">
           {orders.map((order: any) => (
             <div
               key={order.id}
-              className="resonance-panel p-8 hover:bg-white/[0.03] transition-all duration-500 group"
+              className="p-8 border border-[#1c1c1c]/5 hover:border-[#1c1c1c]/10 transition-all duration-300 group"
             >
               <div className="flex items-start justify-between mb-8">
                 <div>
-                  <h3 className="font-serif text-2xl text-white/90 tracking-tight group-hover:text-white transition-colors">
+                  <h3 className="font-serif text-2xl text-[#1c1c1c] tracking-tight font-light">
                     {order.listings?.title || "Signature Couture"}
                   </h3>
-                  <p className="font-sans text-[10px] font-bold text-white/15 mt-2 uppercase tracking-[0.3em]">
+                  <p className="font-sans text-[10px] font-light text-[#1c1c1c]/20 mt-2 uppercase tracking-[0.15em]">
                     Reference #{order.id.slice(0, 8)} ·{" "}
                     {new Date(order.created_at).toLocaleDateString()}
                   </p>
@@ -292,29 +296,29 @@ function PurchasesTab() {
                 <StatusBadge status={order.status} />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-8 border-t border-white/5">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-8 border-t border-[#1c1c1c]/5">
                 <div className="space-y-1">
-                  <p className="text-white/10 text-[9px] font-bold font-sans uppercase tracking-[0.4em]">Transaction Total</p>
-                  <p className="text-white/80 font-serif text-2xl">${order.total?.toLocaleString()}</p>
+                  <p className="text-[#1c1c1c]/25 text-[9px] font-light font-sans uppercase tracking-[0.15em]">Transaction Total</p>
+                  <p className="text-[#1c1c1c] font-serif text-2xl font-light">${order.total?.toLocaleString()}</p>
                 </div>
 
                 {view === "sales" && (
                   <>
                     <div className="space-y-1">
-                      <p className="text-white/10 text-[9px] font-bold font-sans uppercase tracking-[0.4em]">House Commission</p>
-                      <p className="text-white/30 font-sans text-sm">${order.commission_amount?.toLocaleString()}</p>
+                      <p className="text-[#1c1c1c]/25 text-[9px] font-light font-sans uppercase tracking-[0.15em]">House Commission</p>
+                      <p className="text-[#1c1c1c]/40 font-sans text-sm font-light">${order.commission_amount?.toLocaleString()}</p>
                     </div>
                     <div className="space-y-1">
-                      <p className="text-white/10 text-[9px] font-bold font-sans uppercase tracking-[0.4em]">Final Payout</p>
-                      <p className="text-resonance-amber font-serif text-2xl">${order.seller_payout?.toLocaleString()}</p>
+                      <p className="text-[#1c1c1c]/25 text-[9px] font-light font-sans uppercase tracking-[0.15em]">Final Payout</p>
+                      <p className="text-[#1c1c1c] font-serif text-2xl font-light">${order.seller_payout?.toLocaleString()}</p>
                     </div>
                   </>
                 )}
 
                 {order.tracking_number && (
                   <div className="space-y-1">
-                    <p className="text-white/10 text-[9px] font-bold font-sans uppercase tracking-[0.4em]">Consignment Tracking</p>
-                    <p className="text-resonance-amber font-sans text-sm tracking-widest">{order.tracking_number}</p>
+                    <p className="text-[#1c1c1c]/25 text-[9px] font-light font-sans uppercase tracking-[0.15em]">Consignment Tracking</p>
+                    <p className="text-[#1c1c1c] font-sans text-sm tracking-widest font-light">{order.tracking_number}</p>
                   </div>
                 )}
               </div>
@@ -366,7 +370,7 @@ function MessagesTab() {
   if (conversations.length === 0) {
     return (
       <EmptyState
-        icon="💬"
+        icon="\uD83D\uDCAC"
         title="No messages yet"
         subtitle="Conversations will appear here when buyers contact you"
       />
@@ -374,15 +378,15 @@ function MessagesTab() {
   }
 
   return (
-    <div className="resonance-panel grid grid-cols-1 md:grid-cols-3 overflow-hidden min-h-[600px] border-white/10">
+    <div className="grid grid-cols-1 md:grid-cols-3 overflow-hidden min-h-[600px] border border-[#1c1c1c]/5">
       {/* Conversation list */}
-      <div className="md:col-span-1 border-r border-white/5 bg-white/[0.01]">
-        <div className="px-8 py-6 border-b border-white/5 bg-white/[0.02]">
-          <h3 className="font-sans text-[10px] font-bold uppercase tracking-[0.4em] text-white/20">
+      <div className="md:col-span-1 border-r border-[#1c1c1c]/5">
+        <div className="px-8 py-6 border-b border-[#1c1c1c]/5 bg-[#1c1c1c]/[0.02]">
+          <h3 className="font-sans text-[10px] font-light uppercase tracking-[0.15em] text-[#1c1c1c]/30">
             Inbox
           </h3>
         </div>
-        <div className="divide-y divide-white/[0.03] overflow-y-auto max-h-[520px]">
+        <div className="divide-y divide-[#1c1c1c]/5 overflow-y-auto max-h-[520px]">
           {conversations.map((conv: any) => {
             const lastMsg = conv.messages?.[conv.messages.length - 1];
             const unread = conv.messages?.filter((m: any) => !m.is_read).length || 0;
@@ -392,17 +396,17 @@ function MessagesTab() {
               <button
                 key={conv.id}
                 onClick={() => openConversation(conv.id)}
-                className={`w-full text-left px-8 py-6 transition-all duration-300 ${isActive ? "bg-white/[0.05] border-l-2 border-resonance-amber" : "hover:bg-white/[0.02]"
+                className={`w-full text-left px-8 py-6 transition-all duration-300 ${isActive ? "bg-[#1c1c1c]/[0.04] border-l-2 border-[#1c1c1c]" : "hover:bg-[#1c1c1c]/[0.02]"
                   }`}
               >
-                <p className={`font-serif text-lg tracking-tight transition-colors ${isActive ? "text-white" : "text-white/60"}`}>
+                <p className={`font-serif text-lg tracking-tight transition-colors font-light ${isActive ? "text-[#1c1c1c]" : "text-[#1c1c1c]/50"}`}>
                   {conv.listings?.title || "Couture Inquiry"}
                 </p>
-                <p className="font-sans text-[11px] text-white/20 truncate mt-2 tracking-wide font-medium">
+                <p className="font-sans text-[11px] text-[#1c1c1c]/25 truncate mt-2 tracking-wide font-light">
                   {lastMsg?.content || "Archive thread"}
                 </p>
                 {unread > 0 && (
-                  <span className="inline-block mt-3 bg-resonance-amber text-obsidian text-[8px] px-2 py-0.5 font-bold font-sans uppercase tracking-widest rounded-full">
+                  <span className="inline-block mt-3 bg-[#1c1c1c] text-white text-[8px] px-2 py-0.5 font-light font-sans uppercase tracking-[0.15em]">
                     {unread} New
                   </span>
                 )}
@@ -413,21 +417,21 @@ function MessagesTab() {
       </div>
 
       {/* Message thread */}
-      <div className="md:col-span-2 flex flex-col bg-obsidian/20 backdrop-blur-sm">
+      <div className="md:col-span-2 flex flex-col bg-[#1c1c1c]/[0.01]">
         {activeConv ? (
           <>
-            <div className="flex-1 p-8 space-y-6 overflow-y-auto max-h-[500px] scrollbar-thin scrollbar-thumb-white/5">
+            <div className="flex-1 p-8 space-y-6 overflow-y-auto max-h-[500px]">
               {messages.map((msg: any) => {
                 const isBuyer = msg.sender_id === conversations.find((c: any) => c.id === activeConv)?.buyer_id;
                 return (
                   <div key={msg.id} className={`flex ${isBuyer ? "justify-start" : "justify-end"}`}>
-                    <div className={`max-w-[80%] rounded-3xl px-6 py-4 transition-all duration-500 hover:shadow-lg ${isBuyer
-                        ? "resonance-panel rounded-bl-none border-white/10 text-white/70"
-                        : "bg-white/[0.04] rounded-br-none border border-resonance-amber/20 text-resonance-amber/90"
+                    <div className={`max-w-[80%] px-6 py-4 transition-all duration-300 ${isBuyer
+                        ? "bg-[#1c1c1c]/[0.03] border border-[#1c1c1c]/5 text-[#1c1c1c]/70"
+                        : "bg-[#1c1c1c] text-white"
                       }`}
                     >
-                      <p className="font-sans text-[13px] leading-relaxed tracking-wide">{msg.content}</p>
-                      <p className="font-sans text-[9px] font-bold text-white/10 mt-3 uppercase tracking-widest">
+                      <p className="font-sans text-[13px] leading-relaxed font-light">{msg.content}</p>
+                      <p className="font-sans text-[9px] font-light text-[#1c1c1c]/20 mt-3 uppercase tracking-[0.1em]">
                         {new Date(msg.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                       </p>
                     </div>
@@ -436,20 +440,20 @@ function MessagesTab() {
               })}
             </div>
 
-            <div className="p-6 border-t border-white/5 bg-white/[0.01]">
-              <div className="flex gap-4 p-1 bg-white/[0.02] border border-white/10 rounded-full focus-within:border-resonance-amber/40 transition-all shadow-inner">
+            <div className="p-6 border-t border-[#1c1c1c]/5">
+              <div className="flex gap-4">
                 <input
                   type="text"
                   value={newMsg}
                   onChange={(e) => setNewMsg(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleSend()}
                   placeholder="Draft your reply..."
-                  className="flex-1 bg-transparent px-8 py-3.5 font-sans text-[13px] text-white/80 placeholder:text-white/10 focus:outline-none"
+                  className="flex-1 px-6 py-4 border border-[#1c1c1c]/10 bg-white text-[#1c1c1c] placeholder:text-[#1c1c1c]/20 font-sans text-sm font-light focus:outline-none focus:border-[#1c1c1c]/30 transition-colors"
                 />
                 <button
                   onClick={handleSend}
                   disabled={isPending || !newMsg.trim()}
-                  className="px-8 py-3.5 bg-white text-obsidian font-sans text-[10px] font-bold uppercase tracking-[0.3em] rounded-full hover:bg-resonance-amber transition-all duration-500 disabled:opacity-30 disabled:grayscale-[0.5]"
+                  className="px-8 py-4 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-[#333] transition-all duration-300 disabled:opacity-30"
                 >
                   Send
                 </button>
@@ -457,9 +461,8 @@ function MessagesTab() {
             </div>
           </>
         ) : (
-          <div className="flex-1 flex flex-col items-center justify-center opacity-10">
-            <div className="text-6xl mb-6">✧</div>
-            <p className="font-sans text-[10px] font-bold text-white uppercase tracking-[0.4em]">
+          <div className="flex-1 flex flex-col items-center justify-center">
+            <p className="font-sans text-[11px] font-light text-[#1c1c1c]/15 uppercase tracking-[0.15em]">
               Select a conversation
             </p>
           </div>
@@ -501,36 +504,36 @@ function ProfileTab() {
 
   return (
     <div className="max-w-xl mx-auto">
-      <form onSubmit={handleSubmit} className="resonance-panel p-10 md:p-12 space-y-8 border-white/10">
+      <form onSubmit={handleSubmit} className="p-10 md:p-12 space-y-8 border border-[#1c1c1c]/5">
         {[
           {
-            label: "Email Protocol",
+            label: "Email",
             name: "email",
             type: "email",
             value: profile?.email || "",
             disabled: true,
           },
           {
-            label: "Public Display Name",
+            label: "Display Name",
             name: "display_name",
             defaultValue: profile?.display_name || "",
-            placeholder: "House Alias",
+            placeholder: "Your display name",
           },
           {
-            label: "Member Full Name",
+            label: "Full Name",
             name: "full_name",
             defaultValue: profile?.full_name || "",
-            placeholder: "Legal Identity",
+            placeholder: "Your full name",
           },
           {
-            label: "Private Phone",
+            label: "Phone",
             name: "phone",
             defaultValue: profile?.phone || "",
-            placeholder: "Encrypted Contact",
+            placeholder: "Contact number",
           },
         ].map((field) => (
-          <div key={field.name} className="space-y-3">
-            <label className="block font-sans text-[10px] font-bold uppercase tracking-[0.4em] text-white/20 ml-4">
+          <div key={field.name} className="space-y-2">
+            <label className="block font-sans text-[11px] font-light uppercase tracking-[0.15em] text-[#1c1c1c]/40">
               {field.label}
             </label>
             <input
@@ -540,7 +543,7 @@ function ProfileTab() {
               value={field.disabled ? field.value : undefined}
               disabled={field.disabled}
               placeholder={field.placeholder}
-              className={`w-full border border-white/10 bg-white/[0.02] rounded-full px-8 py-4 font-sans text-[13px] text-white placeholder:text-white/10 focus:outline-none focus:border-resonance-amber/40 transition-all ${field.disabled ? "opacity-30 cursor-not-allowed border-dashed" : "hover:border-white/20"
+              className={`w-full border border-[#1c1c1c]/10 bg-white px-5 py-4 font-sans text-sm text-[#1c1c1c] placeholder:text-[#1c1c1c]/20 font-light focus:outline-none focus:border-[#1c1c1c]/30 transition-all ${field.disabled ? "opacity-40 cursor-not-allowed border-dashed" : "hover:border-[#1c1c1c]/20"
                 }`}
             />
           </div>
@@ -550,9 +553,9 @@ function ProfileTab() {
           <button
             type="submit"
             disabled={saving}
-            className="w-full py-5 bg-white text-obsidian font-sans text-[11px] font-bold uppercase tracking-[0.4em] rounded-full hover:bg-resonance-amber transition-all duration-500 disabled:opacity-50 shadow-[0_0_40px_rgba(255,255,255,0.05)]"
+            className="w-full py-5 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-[#333] transition-all duration-300 disabled:opacity-50"
           >
-            {saving ? "Updating Account..." : saved ? "✓ Protocol Updated" : "Update Profile"}
+            {saving ? "Updating..." : saved ? "Updated" : "Update Profile"}
           </button>
         </div>
       </form>
@@ -581,7 +584,7 @@ function DashboardContent() {
   ];
 
   return (
-    <main className="min-h-screen bg-obsidian">
+    <main className="min-h-screen bg-white">
       <Navbar />
 
       <div className="max-w-7xl mx-auto px-6 md:px-10 pt-48 pb-32">
@@ -592,28 +595,28 @@ function DashboardContent() {
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           className="mb-20 text-center"
         >
-          <p className="font-sans text-[10px] font-bold uppercase tracking-[0.5em] text-resonance-amber mb-6">
+          <p className="font-sans text-[11px] font-light uppercase tracking-[0.4em] text-[#1c1c1c]/30 mb-6">
             Private Account
           </p>
-          <h1 className="font-serif text-6xl md:text-8xl font-light tracking-tighter text-white/95 leading-none">
+          <h1 className="font-serif text-6xl md:text-8xl font-light tracking-[-0.02em] text-[#1c1c1c] leading-none">
             Dashboard
           </h1>
         </motion.div>
 
         {/* Tab navigation */}
-        <div className="flex justify-center gap-10 mb-20 border-b border-white/5">
+        <div className="flex justify-center gap-12 mb-20 border-b border-[#1c1c1c]/5">
           {tabs.map((t) => (
             <button
               key={t.key}
               onClick={() => setTab(t.key)}
-              className={`px-4 pb-8 font-sans text-[11px] font-bold uppercase tracking-[0.3em] transition-all relative ${tab === t.key ? "text-resonance-amber" : "text-white/20 hover:text-white/40"
+              className={`pb-6 font-sans text-[12px] font-light uppercase tracking-[0.2em] transition-all relative ${tab === t.key ? "text-[#1c1c1c]" : "text-[#1c1c1c]/20 hover:text-[#1c1c1c]/50"
                 }`}
             >
               {t.label}
               {tab === t.key && (
                 <motion.div
                   layoutId="dashboard-tab-underline"
-                  className="absolute bottom-0 left-0 right-0 h-[2px] bg-resonance-amber shadow-[0_0_15px_rgba(245,158,11,0.5)]"
+                  className="absolute bottom-0 left-0 right-0 h-[1px] bg-[#1c1c1c]"
                 />
               )}
             </button>

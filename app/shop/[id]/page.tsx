@@ -372,7 +372,7 @@ export default function ProductDetailPage() {
               <div className="mb-16">
                 <button
                   onClick={() => setShowInquiry(true)}
-                  className="w-full py-5 bg-[#1c1c1c] text-white font-sans text-[13px] font-light uppercase tracking-[0.08em] hover:bg-[#333] transition-all duration-300"
+                  className="w-full py-5 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-[#333] transition-all duration-300"
                 >
                   Inquire Now
                 </button>
@@ -428,7 +428,7 @@ export default function ProductDetailPage() {
                       <button
                         onClick={handleInquiry}
                         disabled={!inquiryMsg.trim() || inquirySending}
-                        className="w-full py-4 bg-[#1c1c1c] text-white font-sans text-[13px] font-light uppercase tracking-[0.08em] hover:bg-[#333] transition-all disabled:opacity-30"
+                        className="w-full py-4 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-[#333] transition-all disabled:opacity-30"
                       >
                         {inquirySending ? "Sending..." : "Send Message"}
                       </button>

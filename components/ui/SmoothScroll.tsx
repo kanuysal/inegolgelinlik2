@@ -15,14 +15,14 @@ export default function SmoothScroll({
     // Disable smooth scroll on admin pages — Lenis interferes with fixed drawers and complex layouts
     const isAdmin = pathname?.startsWith("/admin");
 
+    // Scroll to top on route change
     useEffect(() => {
-        function update(time: number) {
-            lenisRef.current?.lenis?.raf(time);
+        if (lenisRef.current?.lenis) {
+            lenisRef.current.lenis.scrollTo(0, { immediate: true });
+        } else {
+            window.scrollTo(0, 0);
         }
-
-        // Some GSAP or Framer Motion integrations might need the raf loop
-        // but ReactLenis handles the basic loop by default.
-    }, []);
+    }, [pathname]);
 
     if (isAdmin) {
         return <>{children}</>;

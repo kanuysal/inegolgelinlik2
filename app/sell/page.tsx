@@ -57,13 +57,13 @@ export default function SellPage() {
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
                 href="/sell/submit"
-                className="px-14 py-5 bg-[#1c1c1c] text-white font-sans text-[13px] font-light uppercase tracking-[0.08em] hover:bg-[#333] transition-all duration-300 text-center"
+                className="px-14 py-5 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-[#333] transition-all duration-300 text-center"
               >
                 Start Premium Wizard
               </Link>
               <Link
                 href="/how-it-works"
-                className="px-14 py-5 border border-[#1c1c1c]/10 text-[#1c1c1c]/50 font-sans text-[13px] font-light uppercase tracking-[0.08em] hover:text-[#1c1c1c] hover:border-[#1c1c1c]/30 transition-all duration-300 text-center"
+                className="px-14 py-5 border border-[#1c1c1c]/10 text-[#1c1c1c]/50 font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:text-[#1c1c1c] hover:border-[#1c1c1c]/30 transition-all duration-300 text-center"
               >
                 The Process
               </Link>
@@ -164,7 +164,7 @@ export default function SellPage() {
             </p>
             <Link
               href="/sell/submit"
-              className="inline-block px-16 py-5 bg-[#1c1c1c] text-white font-sans text-[13px] font-light uppercase tracking-[0.08em] hover:bg-[#333] transition-all duration-300"
+              className="inline-block px-16 py-5 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-[#333] transition-all duration-300"
             >
               Launch Sell Wizard
             </Link>

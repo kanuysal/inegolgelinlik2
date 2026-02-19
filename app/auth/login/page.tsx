@@ -37,13 +37,10 @@ function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen bg-obsidian flex flex-col">
+    <div className="min-h-screen bg-white flex flex-col">
       <Navbar />
 
       <div className="flex-1 flex items-center justify-center px-6 py-20 relative overflow-hidden">
-        {/* Ambient Glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-resonance-amber/5 rounded-full blur-[120px] pointer-events-none" />
-
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -52,16 +49,16 @@ function LoginForm() {
         >
           {/* Header */}
           <div className="text-center mb-12">
-            <h1 className="font-serif text-5xl md:text-6xl font-light tracking-tighter text-white/95 mb-4">
+            <h1 className="font-serif text-5xl md:text-6xl font-light tracking-[-0.02em] text-[#1c1c1c] mb-4">
               Welcome <br />
               <span className="italic">Back</span>
             </h1>
-            <p className="font-sans text-[10px] font-bold uppercase tracking-[0.4em] text-white/20">
+            <p className="font-sans text-[11px] font-light uppercase tracking-[0.4em] text-[#1c1c1c]/30">
               The Official Resale Destination
             </p>
           </div>
 
-          <div className="resonance-panel p-10 md:p-12">
+          <div className="p-10 md:p-12 border border-[#1c1c1c]/5">
             {/* Status Messages */}
             {(message || authError || error) && (
               <motion.div
@@ -70,12 +67,12 @@ function LoginForm() {
                 className="mb-8"
               >
                 {message && (
-                  <div className="p-4 bg-resonance-blue/5 border border-resonance-blue/20 text-resonance-blue text-[11px] font-sans tracking-wide text-center rounded-xl">
+                  <div className="p-4 bg-blue-50 border border-blue-200 text-blue-700 text-[11px] font-sans font-light tracking-wide text-center">
                     {message}
                   </div>
                 )}
                 {(authError || error) && (
-                  <div className="p-4 bg-red-500/5 border border-red-500/20 text-red-400/90 text-[11px] font-sans tracking-wide text-center rounded-xl">
+                  <div className="p-4 bg-red-50 border border-red-200 text-red-600 text-[11px] font-sans font-light tracking-wide text-center">
                     {authError || error}
                   </div>
                 )}
@@ -84,7 +81,7 @@ function LoginForm() {
 
             <form action={handleSubmit} className="space-y-8">
               <div className="space-y-2">
-                <label htmlFor="email" className="block font-sans text-[10px] font-bold uppercase tracking-[0.3em] text-white/20 ml-4">
+                <label htmlFor="email" className="block font-sans text-[11px] font-light uppercase tracking-[0.15em] text-[#1c1c1c]/40">
                   Email Address
                 </label>
                 <input
@@ -93,17 +90,17 @@ function LoginForm() {
                   type="email"
                   required
                   autoComplete="email"
-                  className="w-full bg-white/[0.02] border border-white/10 rounded-full px-8 py-4 font-sans text-[13px] focus:border-resonance-amber/50 focus:outline-none transition-all placeholder:text-white/10"
+                  className="w-full bg-white border border-[#1c1c1c]/10 px-5 py-4 font-sans text-sm text-[#1c1c1c] font-light focus:border-[#1c1c1c]/30 focus:outline-none transition-all placeholder:text-[#1c1c1c]/20"
                   placeholder="name@example.com"
                 />
               </div>
 
               <div className="space-y-2">
-                <div className="flex justify-between items-center ml-4">
-                  <label htmlFor="password" className="block font-sans text-[10px] font-bold uppercase tracking-[0.3em] text-white/20">
+                <div className="flex justify-between items-center">
+                  <label htmlFor="password" className="block font-sans text-[11px] font-light uppercase tracking-[0.15em] text-[#1c1c1c]/40">
                     Password
                   </label>
-                  <a href="mailto:hello@regalia.com" className="font-sans text-[9px] font-bold uppercase tracking-[0.2em] text-white/20 hover:text-resonance-amber transition-colors mr-4">
+                  <a href="mailto:hello@regalia.com" className="font-sans text-[10px] font-light uppercase tracking-[0.1em] text-[#1c1c1c]/25 hover:text-[#1c1c1c]/60 transition-colors">
                     Forgot?
                   </a>
                 </div>
@@ -113,7 +110,7 @@ function LoginForm() {
                   type="password"
                   required
                   autoComplete="current-password"
-                  className="w-full bg-white/[0.02] border border-white/10 rounded-full px-8 py-4 font-sans text-[13px] focus:border-resonance-amber/50 focus:outline-none transition-all placeholder:text-white/10"
+                  className="w-full bg-white border border-[#1c1c1c]/10 px-5 py-4 font-sans text-sm text-[#1c1c1c] font-light focus:border-[#1c1c1c]/30 focus:outline-none transition-all placeholder:text-[#1c1c1c]/20"
                   placeholder="••••••••"
                 />
               </div>
@@ -121,22 +118,22 @@ function LoginForm() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-6 bg-white text-obsidian font-sans text-[11px] font-bold uppercase tracking-[0.4em] rounded-full hover:bg-resonance-amber transition-all duration-500 disabled:opacity-50 shadow-[0_0_50px_rgba(255,255,255,0.05)]"
+                className="w-full py-5 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-[#333] transition-all duration-300 disabled:opacity-50"
               >
                 {loading ? 'Authenticating...' : 'Sign In'}
               </button>
             </form>
 
-            <div className="flex items-center my-10 px-4">
-              <div className="flex-1 h-[1px] bg-white/[0.05]" />
-              <span className="px-6 font-sans text-[9px] font-bold text-white/15 uppercase tracking-[0.3em]">or</span>
-              <div className="flex-1 h-[1px] bg-white/[0.05]" />
+            <div className="flex items-center my-10">
+              <div className="flex-1 h-[1px] bg-[#1c1c1c]/5" />
+              <span className="px-6 font-sans text-[9px] font-light text-[#1c1c1c]/20 uppercase tracking-[0.15em]">or</span>
+              <div className="flex-1 h-[1px] bg-[#1c1c1c]/5" />
             </div>
 
             <button
               onClick={handleGoogleSignIn}
               disabled={loading}
-              className="w-full py-5 border border-white/10 text-white font-sans text-[11px] font-bold uppercase tracking-[0.4em] rounded-full hover:bg-white/5 hover:border-white/20 transition-all duration-500 flex items-center justify-center gap-4 disabled:opacity-50"
+              className="w-full py-5 border border-[#1c1c1c]/10 text-[#1c1c1c] font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:border-[#1c1c1c]/30 transition-all duration-300 flex items-center justify-center gap-4 disabled:opacity-50"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24">
                 <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />
@@ -148,8 +145,8 @@ function LoginForm() {
             </button>
           </div>
 
-          <p className="text-center font-sans text-[11px] text-white/20 mt-10 tracking-[0.2em] uppercase">
-            New here? <Link href="/auth/signup" className="text-white/60 hover:text-resonance-amber transition-colors ml-2">Create Account</Link>
+          <p className="text-center font-sans text-[11px] text-[#1c1c1c]/30 mt-10 tracking-[0.15em] uppercase font-light">
+            New here? <Link href="/auth/signup" className="text-[#1c1c1c]/60 hover:text-[#1c1c1c] transition-colors ml-2">Create Account</Link>
           </p>
         </motion.div>
       </div>
@@ -161,8 +158,8 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-obsidian flex items-center justify-center">
-          <div className="font-sans text-[10px] font-bold text-white/20 uppercase tracking-[0.5em] animate-pulse">
+        <div className="min-h-screen bg-white flex items-center justify-center">
+          <div className="font-sans text-[11px] font-light text-[#1c1c1c]/20 uppercase tracking-[0.15em]">
             Loading...
           </div>
         </div>

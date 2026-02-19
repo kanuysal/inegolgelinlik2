@@ -249,7 +249,7 @@ export default function Home() {
           </h1>
           <Link
             href="/shop"
-            className="inline-block px-14 py-4 bg-white text-[#1c1c1c] font-sans text-[13px] font-light uppercase tracking-[0.08em] hover:bg-white/90 transition-all duration-300"
+            className="inline-block px-14 py-5 bg-white text-[#1c1c1c] font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-white/90 transition-all duration-300"
           >
             Shop Now
           </Link>
@@ -294,7 +294,7 @@ export default function Home() {
             </div>
             <Link
               href="/shop"
-              className="hidden md:inline-block font-sans text-[13px] font-light uppercase tracking-[0.08em] text-[#1c1c1c] border-b border-[#1c1c1c] pb-1 hover:opacity-60 transition-opacity"
+              className="hidden md:inline-block font-sans text-[11px] font-light uppercase tracking-[0.15em] text-[#1c1c1c] border-b border-[#1c1c1c] pb-1 hover:opacity-60 transition-opacity"
             >
               View All
             </Link>
@@ -342,7 +342,7 @@ export default function Home() {
                     </span>
                   </div>
                   <div className="absolute bottom-4 right-4 md:bottom-6 md:right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                    <span className="px-6 py-3 bg-white text-[#1c1c1c] font-sans text-[11px] font-light uppercase tracking-[0.08em]">
+                    <span className="px-6 py-3 bg-white text-[#1c1c1c] font-sans text-[11px] font-light uppercase tracking-[0.15em]">
                       Shop Now
                     </span>
                   </div>
@@ -405,7 +405,7 @@ export default function Home() {
           <div className="flex justify-center mt-16 md:mt-20">
             <Link
               href="/shop"
-              className="px-16 py-4 bg-[#1c1c1c] text-white font-sans text-[13px] font-light uppercase tracking-[0.08em] hover:bg-[#333] transition-all duration-300"
+              className="px-16 py-5 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-[#333] transition-all duration-300"
             >
               Shop All Gowns
             </Link>
@@ -433,7 +433,7 @@ export default function Home() {
             </p>
             <Link
               href="/how-it-works"
-              className="inline-block px-14 py-4 bg-white text-[#1c1c1c] font-sans text-[13px] font-light uppercase tracking-[0.08em] hover:bg-white/90 transition-all duration-300"
+              className="inline-block px-14 py-5 bg-white text-[#1c1c1c] font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-white/90 transition-all duration-300"
             >
               How It Works
             </Link>
@@ -508,7 +508,7 @@ export default function Home() {
               </p>
               <Link
                 href="/how-it-works"
-                className="inline-block font-sans text-[13px] font-light uppercase tracking-[0.08em] text-[#1c1c1c] border-b border-[#1c1c1c] pb-1 hover:opacity-60 transition-opacity"
+                className="inline-block font-sans text-[11px] font-light uppercase tracking-[0.15em] text-[#1c1c1c] border-b border-[#1c1c1c] pb-1 hover:opacity-60 transition-opacity"
               >
                 Our Verification Process
               </Link>
@@ -541,7 +541,7 @@ export default function Home() {
           </p>
           <Link
             href="/sell"
-            className="inline-block px-14 py-4 bg-white text-[#1c1c1c] font-sans text-[13px] font-light uppercase tracking-[0.08em] hover:bg-white/90 transition-all duration-300"
+            className="inline-block px-14 py-5 bg-white text-[#1c1c1c] font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-white/90 transition-all duration-300"
           >
             Consign Your Gown
           </Link>

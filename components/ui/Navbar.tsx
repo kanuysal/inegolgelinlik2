@@ -196,7 +196,7 @@ export default function Navbar() {
 
                   <Link
                     href="/shop"
-                    className="font-sans text-[13px] font-light uppercase tracking-[0.08em] px-7 py-3 bg-[#1c1c1c] text-white hover:bg-[#333] transition-all duration-300"
+                    className="font-sans text-[11px] font-light uppercase tracking-[0.15em] px-7 py-3 bg-[#1c1c1c] text-white hover:bg-[#333] transition-all duration-300"
                   >
                     Browse
                   </Link>
