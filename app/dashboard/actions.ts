@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { requireAuth } from '@/lib/auth'
 import { revalidatePath } from 'next/cache'
+import { notifyNewMessage } from '@/lib/notify'
 
 async function db() {
   return (await createClient()) as any
@@ -156,7 +157,27 @@ export async function sendMessage(conversationId: string, content: string) {
     .from('conversations')
     .update({ last_message_at: new Date().toISOString() })
     .eq('id', conversationId)
-    .or(`buyer_id.eq.${user.id},seller_id.eq.${user.id}`) // Redundant check
+
+  // Notify the other participant (non-blocking)
+  const recipientId = conv.buyer_id === user.id ? conv.seller_id : conv.buyer_id
+  const { data: listing } = await supabase
+    .from('conversations')
+    .select('listings(title)')
+    .eq('id', conversationId)
+    .single()
+  const { data: senderProfile } = await supabase
+    .from('profiles')
+    .select('display_name')
+    .eq('id', user.id)
+    .single()
+
+  notifyNewMessage({
+    recipientId,
+    senderName: senderProfile?.display_name || 'Someone',
+    listingTitle: listing?.listings?.title || 'a gown',
+    messagePreview: trimmed,
+    conversationLink: '/dashboard?tab=messages',
+  }).catch(() => {}) // Best-effort
 
   revalidatePath('/dashboard')
   return { success: true }

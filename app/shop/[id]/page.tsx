@@ -10,10 +10,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { mockListings, type Listing, type ListingType } from "@/lib/mock-listings";
-import { getListingById } from "../actions";
+import { getListingById, startConversation } from "../actions";
 import { GOWN_CATALOG } from "@/lib/catalog";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
+import { createClient } from "@/lib/supabase/client";
 
 /* ── Helpers ────────────────────────────────────── */
 
@@ -133,16 +134,23 @@ interface StockistData {
 
 export default function ProductDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const [activeImage, setActiveImage] = useState(0);
   const [listing, setListing] = useState<Listing | null>(null);
   const [productDescription, setProductDescription] = useState<string>("");
   const [stockistData, setStockistData] = useState<StockistData | null>(null);
   const [allImages, setAllImages] = useState<string[]>([]);
+  const [sellerId, setSellerId] = useState<string | null>(null);
+  const [showInquiry, setShowInquiry] = useState(false);
+  const [inquiryMsg, setInquiryMsg] = useState("");
+  const [inquirySending, setInquirySending] = useState(false);
+  const [inquiryError, setInquiryError] = useState<string | null>(null);
 
   useEffect(() => {
     const id = params.id as string;
     getListingById(id).then((dbRow) => {
       if (dbRow) {
+        setSellerId(dbRow.seller_id);
         const condMap: Record<string, Listing["condition"]> = { new_unworn: "New Never Worn", excellent: "Excellent", good: "Good" };
         const silMap: Record<string, Listing["silhouette"]> = { a_line: "A-Line", mermaid: "Mermaid", ball_gown: "Ball Gown", sheath: "Sheath", fit_and_flare: "Fit & Flare", trumpet: "Mermaid" };
         const mainImg = dbRow.images?.[0] || "/placeholder-gown.jpg";
@@ -218,6 +226,33 @@ export default function ProductDetailPage() {
       }
     });
   }, [params.id]);
+
+  const handleInquiry = async () => {
+    if (!inquiryMsg.trim() || !sellerId) return;
+    setInquirySending(true);
+    setInquiryError(null);
+
+    // Check if logged in first
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      setInquirySending(false);
+      router.push(`/auth/login?redirect=/shop/${params.id}`);
+      return;
+    }
+
+    const result = await startConversation(params.id as string, sellerId, inquiryMsg.trim());
+    setInquirySending(false);
+
+    if (result.error) {
+      setInquiryError(result.error);
+      return;
+    }
+
+    setShowInquiry(false);
+    setInquiryMsg("");
+    router.push("/dashboard?tab=messages");
+  };
 
   if (!listing) return null;
 
@@ -332,13 +367,75 @@ export default function ProductDetailPage() {
               </div>
 
               <div className="space-y-4 mb-16">
-                <button className="w-full py-6 bg-obsidian text-white font-sans text-[11px] font-bold uppercase tracking-[0.4em] rounded-full hover:bg-gold-muted transition-all duration-500 shadow-xl">
+                <button
+                  onClick={() => setShowInquiry(true)}
+                  className="w-full py-6 bg-obsidian text-white font-sans text-[11px] font-bold uppercase tracking-[0.4em] rounded-full hover:bg-gold-muted transition-all duration-500 shadow-xl"
+                >
                   Inquire Now
                 </button>
                 <button className="w-full py-6 border border-black/10 text-obsidian/40 font-sans text-[11px] font-bold uppercase tracking-[0.4em] rounded-full hover:bg-black/5 transition-all duration-500">
                   Professional Sizing Help
                 </button>
               </div>
+
+              {/* Inquiry Modal */}
+              <AnimatePresence>
+                {showInquiry && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="fixed inset-0 z-50 flex items-center justify-center px-6"
+                  >
+                    <div className="absolute inset-0 bg-obsidian/60 backdrop-blur-sm" onClick={() => setShowInquiry(false)} />
+                    <motion.div
+                      initial={{ opacity: 0, y: 20, scale: 0.97 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 20, scale: 0.97 }}
+                      className="relative bg-white w-full max-w-lg p-10 shadow-2xl"
+                    >
+                      <button
+                        onClick={() => setShowInquiry(false)}
+                        className="absolute top-6 right-6 text-obsidian/20 hover:text-obsidian transition-colors"
+                      >
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                      </button>
+
+                      <p className="font-sans text-[10px] font-bold uppercase tracking-[0.4em] text-gold-muted mb-3">
+                        Private Inquiry
+                      </p>
+                      <h3 className="font-serif text-3xl text-obsidian mb-2 italic tracking-tight">
+                        {listing.title}
+                      </h3>
+                      <p className="font-sans text-xs text-obsidian/30 mb-8">
+                        Your message will be sent directly to the seller. No contact info is shared.
+                      </p>
+
+                      {inquiryError && (
+                        <div className="mb-4 p-3 border border-red-500/20 bg-red-500/5 text-red-500 text-sm text-center">
+                          {inquiryError}
+                        </div>
+                      )}
+
+                      <textarea
+                        value={inquiryMsg}
+                        onChange={(e) => setInquiryMsg(e.target.value)}
+                        placeholder="Hi, I'm interested in this gown. Is it still available?"
+                        rows={4}
+                        className="w-full px-4 py-3 border border-obsidian/10 bg-silk text-obsidian placeholder:text-obsidian/20 font-sans text-sm focus:outline-none focus:border-gold-muted/40 transition-colors resize-none mb-6"
+                      />
+
+                      <button
+                        onClick={handleInquiry}
+                        disabled={!inquiryMsg.trim() || inquirySending}
+                        className="w-full py-5 bg-obsidian text-white font-sans text-[11px] font-bold uppercase tracking-[0.3em] rounded-full hover:bg-gold-muted transition-all disabled:opacity-30"
+                      >
+                        {inquirySending ? "Sending..." : "Send Message"}
+                      </button>
+                    </motion.div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               <div className="space-y-2">
                 <AccordionSection title="About This Gown" defaultOpen>

@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { notifyNewMessage } from '@/lib/notify'
 
 async function db() {
   return (await createClient()) as any
@@ -115,6 +116,26 @@ export async function startConversation(listingId: string, sellerId: string, mes
       .from('conversations')
       .update({ last_message_at: new Date().toISOString() })
       .eq('id', conversationId)
+
+    // Notify seller about the inquiry (non-blocking)
+    const { data: listing } = await supabase
+      .from('listings')
+      .select('title')
+      .eq('id', listingId)
+      .single()
+    const { data: buyerProfile } = await supabase
+      .from('profiles')
+      .select('display_name')
+      .eq('id', user.id)
+      .single()
+
+    notifyNewMessage({
+      recipientId: sellerId,
+      senderName: buyerProfile?.display_name || 'A buyer',
+      listingTitle: listing?.title || 'your gown',
+      messagePreview: message.trim(),
+      conversationLink: '/dashboard?tab=messages',
+    }).catch(() => {})
 
     return { success: true, conversationId }
   } catch {

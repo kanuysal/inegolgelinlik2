@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, useTransition } from "react";
+import { useState, useEffect, useTransition, Suspense } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
@@ -562,8 +563,10 @@ function ProfileTab() {
 /* ══════════════════════════════════════════════════
    MAIN DASHBOARD PAGE
    ══════════════════════════════════════════════════ */
-export default function DashboardPage() {
-  const [tab, setTab] = useState<Tab>("listings");
+function DashboardContent() {
+  const searchParams = useSearchParams();
+  const initialTab = (searchParams.get("tab") as Tab) || "listings";
+  const [tab, setTab] = useState<Tab>(initialTab);
   const [notifications, setNotifications] = useState<any[]>([]);
 
   useEffect(() => {
@@ -626,5 +629,13 @@ export default function DashboardPage() {
 
       <Footer />
     </main>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense>
+      <DashboardContent />
+    </Suspense>
   );
 }
