@@ -143,6 +143,9 @@ export async function submitListing(formData: {
     ? result.data.product_id
     : null
 
+  // Strip EU portion from size — DB check constraint expects "US 8" not "US 8 (EU 40)"
+  const sizeUs = result.data.size_us?.replace(/\s*\(EU\s*\d+\)/, '') || null
+
   // Insert listing
   const { data, error } = await supabase
     .from('listings')
@@ -153,7 +156,7 @@ export async function submitListing(formData: {
       category: result.data.category,
       condition: result.data.condition,
       listing_type: result.data.listing_type,
-      size_us: result.data.size_us || null,
+      size_us: sizeUs,
       bust_cm: result.data.bust_cm ?? null,
       waist_cm: result.data.waist_cm ?? null,
       hips_cm: result.data.hips_cm ?? null,
