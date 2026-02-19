@@ -5,7 +5,8 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import Navbar from '@/components/ui/Navbar'
-import { searchProducts, submitListing, uploadListingImage, removeListingImage, getCatalogGowns, getSizeDimensions } from './actions'
+import { searchProducts, submitListing, getCatalogGowns, getSizeDimensions } from './actions'
+import { createClient } from '@/lib/supabase/client'
 
 /* ── Types ── */
 type Product = {
@@ -237,7 +238,7 @@ export default function SellWizardPage() {
     setStep(2)
   }
 
-  /* ── Photo upload ── */
+  /* ── Photo upload (client-side direct to Supabase storage) ── */
   async function handlePhotoUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const files = e.target.files
     if (!files || files.length === 0) return
@@ -245,37 +246,60 @@ export default function SellWizardPage() {
     setUploading(true)
     setError(null)
 
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      setError('Please sign in to upload photos')
+      setUploading(false)
+      return
+    }
+
     for (const file of Array.from(files)) {
       if (data.images.length >= 8) {
         setError('Maximum 8 photos allowed')
         break
       }
 
-      const formData = new FormData()
-      formData.append('file', file)
-
-      const result = await uploadListingImage(formData)
-      if (result.error) {
-        setError(result.error)
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']
+      if (!allowedTypes.includes(file.type)) {
+        setError('Only JPEG, PNG, and WebP images are allowed')
+        break
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        setError('Image must be under 5MB')
         break
       }
 
-      if (result.url && result.path) {
-        setData((prev) => ({
-          ...prev,
-          images: [...prev.images, { url: result.url!, path: result.path! }],
-        }))
+      const ext = file.name.split('.').pop() || 'jpg'
+      const fileName = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('listing-images')
+        .upload(fileName, file, { cacheControl: '3600', upsert: false })
+
+      if (uploadError) {
+        setError('Failed to upload image')
+        break
       }
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('listing-images')
+        .getPublicUrl(uploadData.path)
+
+      setData((prev) => ({
+        ...prev,
+        images: [...prev.images, { url: publicUrl, path: uploadData.path }],
+      }))
     }
 
     setUploading(false)
-    // Reset input
     e.target.value = ''
   }
 
   async function handleRemovePhoto(index: number) {
     const image = data.images[index]
-    await removeListingImage(image.path)
+    const supabase = createClient()
+    await supabase.storage.from('listing-images').remove([image.path])
     setData((prev) => ({
       ...prev,
       images: prev.images.filter((_, i) => i !== index),
