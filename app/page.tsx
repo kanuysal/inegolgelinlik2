@@ -151,20 +151,30 @@ export default function Home() {
 
   useEffect(() => {
     let loaded = 0;
+    let done = false;
     const images: HTMLImageElement[] = [];
+
+    const markReady = () => {
+      if (done) return;
+      done = true;
+      setIsLoading(false);
+      drawFrame(0);
+    };
+
     for (let i = 0; i < TOTAL_FRAMES; i++) {
       const img = new Image();
       img.src = `${FRAME_PREFIX}${padFrame(i)}${FRAME_EXT}`;
-      img.onload = () => {
+      img.onload = img.onerror = () => {
         loaded++;
-        if (loaded === TOTAL_FRAMES) {
-          setIsLoading(false);
-          drawFrame(0);
-        }
+        if (loaded === TOTAL_FRAMES) markReady();
       };
       images.push(img);
     }
     imagesRef.current = images;
+
+    // Fallback: dismiss loader after 4s even if frames haven't finished
+    const timeout = setTimeout(markReady, 4000);
+    return () => clearTimeout(timeout);
   }, [drawFrame]);
 
   const { scrollYProgress } = useScroll({
