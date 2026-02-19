@@ -31,7 +31,7 @@ export async function getListingById(id: string) {
       .from('listings')
       .select(`
         *,
-        products(style_name, sku, images, msrp, silhouette, train_style, category),
+        products(style_name, sku, images, msrp, silhouette, train_style, category, description, stockist_id, stockist_data),
         public_profiles(display_name)
       `)
       .eq('id', id)

@@ -529,6 +529,133 @@ export async function syncCatalogImages() {
   return { success: true, updated, skipped }
 }
 
+// ── Stockist Sync ────────────────────────────────────
+
+export async function syncFromStockist() {
+  await requireAdminRole()
+  const supabase = await adminDb()
+
+  // Step 1: Check that stockist columns exist
+  const { error: colCheck } = await supabase.from('products').select('stockist_id').limit(1)
+  if (colCheck?.message?.includes('does not exist')) {
+    return {
+      error: 'Missing database columns. Run this SQL in Supabase Dashboard > SQL Editor:\n\nALTER TABLE products ADD COLUMN IF NOT EXISTS stockist_id integer UNIQUE;\nALTER TABLE products ADD COLUMN IF NOT EXISTS stockist_data jsonb DEFAULT \'{}\';'
+    }
+  }
+
+  // Step 2: Fetch all dresses from stockist
+  const { fetchStockistDresses, groupHashtags } = await import('@/lib/stockist')
+  let dresses
+  try {
+    dresses = await fetchStockistDresses()
+  } catch (e: any) {
+    return { error: `Stockist fetch failed: ${e.message}` }
+  }
+
+  // Step 3: Get existing products for matching
+  const { data: existingProducts } = await supabase
+    .from('products')
+    .select('id, style_name, stockist_id')
+  const byStockistId = new Map<number, string>()
+  const byName = new Map<string, string>()
+  for (const p of existingProducts || []) {
+    if (p.stockist_id) byStockistId.set(p.stockist_id, p.id)
+    byName.set(p.style_name.toLowerCase(), p.id)
+  }
+
+  // Step 4: Map stockist data to DB format and upsert
+  const silhouetteMap: Record<string, string> = {
+    'Ballgown': 'ball_gown',
+    'Mermaid': 'mermaid',
+    'A-line': 'a_line',
+    'A-Line': 'a_line',
+    'Sheath': 'sheath',
+    'Fit & Flare': 'fit_and_flare',
+    'Trumpet': 'trumpet',
+    'Empire': 'empire',
+    'Column': 'column',
+    'Mini': 'sheath',
+  }
+
+  const trainMap: Record<string, string> = {
+    'Cathedral': 'cathedral',
+    'Chapel': 'chapel',
+    'Court': 'court',
+    'Sweep': 'sweep',
+    'Royal': 'royal',
+    'None': 'none',
+  }
+
+  const categoryMap = (lineName: string): 'bridal' | 'evening' | 'accessories' => {
+    if (lineName.includes('Evening') || lineName.includes('Luxury') || lineName.includes('Design')) return 'evening'
+    return 'bridal'
+  }
+
+  let created = 0
+  let updated = 0
+  let errors = 0
+
+  for (const dress of dresses) {
+    const hashtags = groupHashtags(dress.hashtags)
+    const shape = hashtags['shape']?.[0] || ''
+    const train = hashtags['train']?.[0] || ''
+
+    const stockistData = {
+      neckline: hashtags['neckline'] || [],
+      shape: hashtags['shape'] || [],
+      train: hashtags['train'] || [],
+      colors: hashtags['colors'] || [],
+      materials: hashtags['materials'] || [],
+      sleeves: hashtags['sleeves_straps'] || [],
+      waist: hashtags['waist'] || [],
+      style: hashtags['style'] || [],
+      length: hashtags['length'] || [],
+      back: hashtags['back'] || [],
+      collection: dress.collection.name,
+      collectionLine: dress.collection.collectionLineName,
+      modelNumber: dress.modelNumber,
+      retailPrice: dress.retailPrice,
+    }
+
+    const images = dress.images.map((img) => img.url)
+
+    const row = {
+      style_name: dress.name,
+      category: categoryMap(dress.collection.collectionLineName),
+      silhouette: silhouetteMap[shape] || null,
+      train_style: trainMap[train] || null,
+      msrp: dress.retailPrice?.amount || null,
+      description: dress.description || null,
+      images,
+      is_active: true,
+      stockist_id: dress.id,
+      stockist_data: stockistData,
+      updated_at: new Date().toISOString(),
+    }
+
+    // Check if product exists
+    const existingId = byStockistId.get(dress.id) || byName.get(dress.name.toLowerCase())
+
+    if (existingId) {
+      const { error } = await supabase
+        .from('products')
+        .update(row)
+        .eq('id', existingId)
+      if (error) errors++
+      else updated++
+    } else {
+      const { error } = await supabase
+        .from('products')
+        .insert(row)
+      if (error) errors++
+      else created++
+    }
+  }
+
+  revalidatePath('/admin')
+  return { success: true, total: dresses.length, created, updated, errors }
+}
+
 // ── Claims / Disputes ────────────────────────────────
 export async function getClaims() {
   await requireModRole()

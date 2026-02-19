@@ -11,6 +11,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { mockListings, type Listing, type ListingType } from "@/lib/mock-listings";
 import { getListingById } from "../actions";
+import { GOWN_CATALOG } from "@/lib/catalog";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
 
@@ -112,10 +113,31 @@ function SellerBadge({ type }: { type: ListingType }) {
   );
 }
 
+/** Stockist data stored on the product */
+interface StockistData {
+  neckline?: string[]
+  shape?: string[]
+  train?: string[]
+  colors?: string[]
+  materials?: string[]
+  sleeves?: string[]
+  waist?: string[]
+  style?: string[]
+  length?: string[]
+  back?: string[]
+  collection?: string
+  collectionLine?: string
+  modelNumber?: string
+  retailPrice?: { amount: number; currency: string }
+}
+
 export default function ProductDetailPage() {
   const params = useParams();
   const [activeImage, setActiveImage] = useState(0);
   const [listing, setListing] = useState<Listing | null>(null);
+  const [productDescription, setProductDescription] = useState<string>("");
+  const [stockistData, setStockistData] = useState<StockistData | null>(null);
+  const [allImages, setAllImages] = useState<string[]>([]);
 
   useEffect(() => {
     const id = params.id as string;
@@ -124,20 +146,50 @@ export default function ProductDetailPage() {
         const condMap: Record<string, Listing["condition"]> = { new_unworn: "New Never Worn", excellent: "Excellent", good: "Good" };
         const silMap: Record<string, Listing["silhouette"]> = { a_line: "A-Line", mermaid: "Mermaid", ball_gown: "Ball Gown", sheath: "Sheath", fit_and_flare: "Fit & Flare", trumpet: "Mermaid" };
         const mainImg = dbRow.images?.[0] || "/placeholder-gown.jpg";
+
+        // Look up catalog entry for extra details
+        const productName = dbRow.products?.style_name || dbRow.title;
+        const catalogEntry = GOWN_CATALOG.find(
+          (g) => g.name.toLowerCase() === productName.toLowerCase()
+        );
+
+        // Stockist data from the product
+        const sd: StockistData | null = dbRow.products?.stockist_data || null;
+        setStockistData(sd);
+
+        // Use product description from DB, then catalog, then fallback
+        const desc = dbRow.products?.description || catalogEntry?.description || "";
+        setProductDescription(desc);
+
+        // Use product MSRP from DB (now real from stockist), then catalog, then estimate
+        const productMsrp = dbRow.products?.msrp || dbRow.msrp;
+
+        // Build images: listing images first, then product/stockist images
+        const listingImages = (dbRow.images || []).filter((u: string) => u && u.startsWith('http'));
+        const productImages = (dbRow.products?.images || []).filter((u: string) => u && u.startsWith('http'));
+        const uniqueImages = Array.from(new Set([...listingImages, ...productImages]));
+        const imgs = uniqueImages.length > 0 ? uniqueImages : [mainImg];
+        setAllImages(imgs);
+
+        // Derive properties from stockist data or fallbacks
+        const neckline = sd?.neckline?.[0] || catalogEntry?.neckline || "—";
+        const color = sd?.colors?.join(", ") || "Ivory";
+        const materials = sd?.materials?.join(", ") || "";
+
         setListing({
           id: dbRow.id,
           title: dbRow.title,
-          collection: dbRow.products?.style_name || dbRow.category || "Couture",
+          collection: sd?.collection || dbRow.products?.style_name || dbRow.category || "Couture",
           designer: "Galia Lahav",
-          originalPrice: dbRow.msrp || dbRow.price * 1.4,
+          originalPrice: productMsrp || dbRow.price * 1.4,
           salePrice: dbRow.price,
           currency: "USD",
           size: dbRow.size_us || "—",
           condition: condMap[dbRow.condition] || "Excellent",
-          silhouette: silMap[dbRow.silhouette || ""] || "A-Line",
-          neckline: "V-Neck",
-          fabric: "Lace",
-          color: "Ivory",
+          silhouette: silMap[dbRow.silhouette || dbRow.products?.silhouette || ""] || sd?.shape?.[0] || catalogEntry?.silhouette || "—",
+          neckline: neckline as Listing["neckline"],
+          fabric: (materials.split(",")[0]?.trim() || "Lace") as Listing["fabric"],
+          color,
           imageUrl: mainImg,
           stockImageUrl: dbRow.products?.images?.[0] || mainImg,
           verified: true,
@@ -155,14 +207,21 @@ export default function ProductDetailPage() {
         });
       } else {
         const found = mockListings.find((l) => l.id === id);
-        if (found) setListing(found);
+        if (found) {
+          setListing(found);
+          setAllImages([found.imageUrl, found.stockImageUrl]);
+          const catalogEntry = GOWN_CATALOG.find(
+            (g) => g.name.toLowerCase() === found.title.toLowerCase()
+          );
+          if (catalogEntry?.description) setProductDescription(catalogEntry.description);
+        }
       }
     });
   }, [params.id]);
 
   if (!listing) return null;
 
-  const images = [listing.imageUrl, listing.stockImageUrl, listing.imageUrl, listing.stockImageUrl];
+  const images = allImages.length > 0 ? allImages : [listing.imageUrl, listing.stockImageUrl];
 
   return (
     <div className="min-h-screen bg-silk text-obsidian pb-32">
@@ -243,8 +302,7 @@ export default function ProductDetailPage() {
               </div>
 
               <p className="font-sans text-lg text-obsidian/60 leading-relaxed mb-12">
-                An authentic masterpiece of couture heritage. Professionally restored to runway condition,
-                awaiting its next chapter in your eternal story.
+                {productDescription || "An authentic masterpiece of couture heritage. Professionally restored to runway condition, awaiting its next chapter in your eternal story."}
               </p>
 
               <div className="grid grid-cols-2 gap-y-10 gap-x-12 mb-16 border-t border-black/5 pt-12">
@@ -255,7 +313,17 @@ export default function ProductDetailPage() {
                   ["Color", listing.color],
                   ["Sold by", listing.listingType === "brand_direct" ? "Galia Lahav" : listing.listingType === "sample_sale" ? "Sample Sale" : "Private Seller"],
                   ["Condition", listing.condition],
-                ].map(([label, value]) => (
+                  ...(stockistData?.materials?.length ? [["Materials", stockistData.materials.join(", ")]] : []),
+                  ...(stockistData?.train?.length ? [["Train", stockistData.train.join(", ")]] : []),
+                  ...(stockistData?.sleeves?.length ? [["Sleeves", stockistData.sleeves.join(", ")]] : []),
+                  ...(stockistData?.waist?.length ? [["Waist", stockistData.waist.join(", ")]] : []),
+                  ...(stockistData?.length?.length ? [["Length", stockistData.length.join(", ")]] : []),
+                  ...(stockistData?.back?.length ? [["Back", stockistData.back.join(", ")]] : []),
+                  ...(stockistData?.style?.length ? [["Style", stockistData.style.join(", ")]] : []),
+                  ...(stockistData?.collectionLine ? [["Collection", `${stockistData.collectionLine} — ${stockistData.collection}`]] : []),
+                  ...(stockistData?.modelNumber ? [["Model", stockistData.modelNumber]] : []),
+                  ...(stockistData?.retailPrice ? [["Retail Price", fmt(stockistData.retailPrice.amount)]] : []),
+                ].filter(([, value]) => value && value !== "—").map(([label, value]) => (
                   <div key={label}>
                     <span className="font-sans text-[10px] font-bold uppercase tracking-[0.3em] text-obsidian/20 block mb-2">{label}</span>
                     <span className="font-sans text-lg font-medium text-obsidian/80">{value}</span>
@@ -273,10 +341,10 @@ export default function ProductDetailPage() {
               </div>
 
               <div className="space-y-2">
-                <AccordionSection title="The Heritage" defaultOpen>
+                <AccordionSection title="About This Gown" defaultOpen>
                   <div className="space-y-4 font-sans text-sm text-obsidian/60 leading-relaxed">
-                    <p>Original Fabric: {listing.fabric}</p>
-                    <p>This gown represents the pinnacle of Galia Lahav craftsmanship, featuring signature 3D floral appliqués and hand-beaded lace.</p>
+                    {productDescription && <p>{productDescription}</p>}
+                    <p>Every RE:GALIA gown has been inspected and authenticated by the Galia Lahav atelier, ensuring the same standard of excellence as a new purchase.</p>
                   </div>
                 </AccordionSection>
                 <AccordionSection title="Measurements">

@@ -20,6 +20,7 @@ import {
   addProductImageUrl,
   bulkImportCatalog,
   syncCatalogImages,
+  syncFromStockist,
   getClaims,
   resolveClaim,
 } from './actions'
@@ -966,6 +967,24 @@ function ProductsTab() {
                 {isPending ? 'Syncing...' : 'Sync Images'}
               </button>
             )}
+            <button
+              onClick={() => {
+                startTransition(async () => {
+                  setImportMsg(null)
+                  const res = await syncFromStockist()
+                  if (res.success) {
+                    setImportMsg(`Stockist sync: ${res.created} created, ${res.updated} updated, ${res.errors} errors (${res.total} total dresses)`)
+                    await refresh()
+                  } else {
+                    setImportMsg(res.error || 'Stockist sync failed')
+                  }
+                })
+              }}
+              disabled={isPending}
+              className="px-6 py-3 bg-[#5e6db3] text-white font-sans text-[10px] font-bold uppercase tracking-[0.2em] rounded-full hover:bg-[#4a5a9e] transition-all shadow-lg disabled:opacity-50 whitespace-nowrap"
+            >
+              {isPending ? 'Syncing Stockist...' : 'Sync from Stockist'}
+            </button>
             <button
               onClick={() => { setShowForm(!showForm); setEditingProduct(null) }}
               className="px-6 py-3 bg-[#C5A059] text-white font-sans text-[10px] font-bold uppercase tracking-[0.2em] rounded-full hover:bg-[#B38E48] transition-all shadow-lg whitespace-nowrap"

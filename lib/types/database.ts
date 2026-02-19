@@ -100,6 +100,8 @@ export interface Database {
           description: string | null
           images: string[]
           is_active: boolean
+          stockist_id: number | null
+          stockist_data: Record<string, any> | null
           created_at: string
           updated_at: string
         }
@@ -114,6 +116,8 @@ export interface Database {
           description?: string | null
           images?: string[]
           is_active?: boolean
+          stockist_id?: number | null
+          stockist_data?: Record<string, any> | null
           created_at?: string
           updated_at?: string
         }
@@ -127,6 +131,8 @@ export interface Database {
           description?: string | null
           images?: string[]
           is_active?: boolean
+          stockist_id?: number | null
+          stockist_data?: Record<string, any> | null
           updated_at?: string
         }
       }
