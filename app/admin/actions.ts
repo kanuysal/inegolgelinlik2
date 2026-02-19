@@ -529,13 +529,32 @@ export async function syncCatalogImages() {
   return { success: true, updated, skipped }
 }
 
-// ── Stockist Sync ────────────────────────────────────
+// ── Stockist Sync (page-by-page for Vercel timeout) ──
 
-export async function syncFromStockist() {
+const STOCKIST_SILHOUETTE_MAP: Record<string, string> = {
+  'Ballgown': 'ball_gown', 'Mermaid': 'mermaid', 'A-line': 'a_line', 'A-Line': 'a_line',
+  'Sheath': 'sheath', 'Fit & Flare': 'fit_and_flare', 'Trumpet': 'trumpet',
+  'Empire': 'empire', 'Column': 'column', 'Mini': 'sheath',
+}
+
+const STOCKIST_TRAIN_MAP: Record<string, string> = {
+  'Cathedral': 'cathedral', 'Chapel': 'chapel', 'Court': 'court',
+  'Sweep': 'sweep', 'Royal': 'royal', 'None': 'none',
+}
+
+function stockistCategory(lineName: string): 'bridal' | 'evening' | 'accessories' {
+  if (lineName.includes('Evening') || lineName.includes('Luxury') || lineName.includes('Design')) return 'evening'
+  return 'bridal'
+}
+
+/**
+ * Step 1: Login to stockist, check DB columns, return session info.
+ */
+export async function syncStockistInit() {
   await requireAdminRole()
   const supabase = await adminDb()
 
-  // Step 1: Check that stockist columns exist
+  // Check columns exist
   const { error: colCheck } = await supabase.from('products').select('stockist_id').limit(1)
   if (colCheck?.message?.includes('does not exist')) {
     return {
@@ -543,16 +562,71 @@ export async function syncFromStockist() {
     }
   }
 
-  // Step 2: Fetch all dresses from stockist
-  const { fetchStockistDresses, groupHashtags } = await import('@/lib/stockist')
-  let dresses
+  // Login to stockist
+  const { loginToStockist } = await import('@/lib/stockist')
   try {
-    dresses = await fetchStockistDresses()
+    const { cookies, version } = await loginToStockist()
+    if (!cookies || cookies.length < 10) {
+      return { error: 'Login failed: no session cookies received' }
+    }
+    return { success: true, cookies, version }
   } catch (e: any) {
-    return { error: `Stockist fetch failed: ${e.message}` }
+    return { error: `Stockist login failed: ${e.message}` }
+  }
+}
+
+/**
+ * Step 2: Fetch one page of products and upsert dresses into Supabase.
+ * Returns { created, updated, errors, lastPage, dressCount }.
+ */
+export async function syncStockistPage(page: number, cookies: string, version: string) {
+  await requireAdminRole()
+  const supabase = await adminDb()
+  const { groupHashtags } = await import('@/lib/stockist')
+
+  const STOCKIST_BASE = 'https://stockist.galialahav.com'
+  const DRESS_TYPES = new Set(['wedding_dress', 'evening_dress'])
+
+  // Fetch one page
+  const url = `${STOCKIST_BASE}/our-products?price_type=retail_sale_price&page=${page}`
+  const res = await fetch(url, {
+    headers: {
+      'X-Inertia': 'true',
+      'X-Inertia-Version': version,
+      'X-Requested-With': 'XMLHttpRequest',
+      Cookie: cookies,
+    },
+  })
+
+  const text = await res.text()
+  let json: any
+  try {
+    json = JSON.parse(text)
+  } catch {
+    const m = text.match(/data-page="([^"]+)"/)
+    if (m) {
+      const raw = m[1].replace(/&quot;/g, '"').replace(/&amp;/g, '&')
+      json = JSON.parse(raw)
+    } else {
+      return { error: `Page ${page}: unexpected response` }
+    }
   }
 
-  // Step 3: Get existing products for matching
+  if (json.component === 'Auth/Login') {
+    return { error: `Session expired on page ${page}` }
+  }
+
+  const productsPage = json.props?.products
+  if (!productsPage?.data) {
+    return { error: `Page ${page}: no products data` }
+  }
+
+  const lastPage = productsPage.last_page || 1
+
+  // Filter dresses
+  const dresses = productsPage.data.filter((p: any) => DRESS_TYPES.has(p.type?.code))
+
+  // Get existing products for matching
   const { data: existingProducts } = await supabase
     .from('products')
     .select('id, style_name, stockist_id')
@@ -563,37 +637,7 @@ export async function syncFromStockist() {
     byName.set(p.style_name.toLowerCase(), p.id)
   }
 
-  // Step 4: Map stockist data to DB format and upsert
-  const silhouetteMap: Record<string, string> = {
-    'Ballgown': 'ball_gown',
-    'Mermaid': 'mermaid',
-    'A-line': 'a_line',
-    'A-Line': 'a_line',
-    'Sheath': 'sheath',
-    'Fit & Flare': 'fit_and_flare',
-    'Trumpet': 'trumpet',
-    'Empire': 'empire',
-    'Column': 'column',
-    'Mini': 'sheath',
-  }
-
-  const trainMap: Record<string, string> = {
-    'Cathedral': 'cathedral',
-    'Chapel': 'chapel',
-    'Court': 'court',
-    'Sweep': 'sweep',
-    'Royal': 'royal',
-    'None': 'none',
-  }
-
-  const categoryMap = (lineName: string): 'bridal' | 'evening' | 'accessories' => {
-    if (lineName.includes('Evening') || lineName.includes('Luxury') || lineName.includes('Design')) return 'evening'
-    return 'bridal'
-  }
-
-  let created = 0
-  let updated = 0
-  let errors = 0
+  let created = 0, updated = 0, errors = 0
 
   for (const dress of dresses) {
     const hashtags = groupHashtags(dress.hashtags)
@@ -611,19 +655,19 @@ export async function syncFromStockist() {
       style: hashtags['style'] || [],
       length: hashtags['length'] || [],
       back: hashtags['back'] || [],
-      collection: dress.collection.name,
-      collectionLine: dress.collection.collectionLineName,
-      modelNumber: dress.modelNumber,
-      retailPrice: dress.retailPrice,
+      collection: dress.collection?.name || '',
+      collectionLine: dress.collection?.collectionLineName || '',
+      modelNumber: dress.modelNumber || '',
+      retailPrice: dress.retailPrice || null,
     }
 
-    const images = dress.images.map((img) => img.url)
+    const images = (dress.images || []).map((img: any) => img.url)
 
     const row = {
       style_name: dress.name,
-      category: categoryMap(dress.collection.collectionLineName),
-      silhouette: silhouetteMap[shape] || null,
-      train_style: trainMap[train] || null,
+      category: stockistCategory(dress.collection?.collectionLineName || ''),
+      silhouette: STOCKIST_SILHOUETTE_MAP[shape] || null,
+      train_style: STOCKIST_TRAIN_MAP[train] || null,
       msrp: dress.retailPrice?.amount || null,
       description: dress.description || null,
       images,
@@ -633,27 +677,26 @@ export async function syncFromStockist() {
       updated_at: new Date().toISOString(),
     }
 
-    // Check if product exists
     const existingId = byStockistId.get(dress.id) || byName.get(dress.name.toLowerCase())
 
     if (existingId) {
-      const { error } = await supabase
-        .from('products')
-        .update(row)
-        .eq('id', existingId)
+      const { error } = await supabase.from('products').update(row).eq('id', existingId)
       if (error) errors++
       else updated++
     } else {
-      const { error } = await supabase
-        .from('products')
-        .insert(row)
+      const { error } = await supabase.from('products').insert(row)
       if (error) errors++
       else created++
     }
   }
 
-  revalidatePath('/admin')
-  return { success: true, total: dresses.length, created, updated, errors }
+  if (page === lastPage) revalidatePath('/admin')
+  return { success: true, created, updated, errors, lastPage, dressCount: dresses.length }
+}
+
+/** Legacy wrapper — kept for backward compat but now just delegates to chunked sync */
+export async function syncFromStockist() {
+  return { error: 'Use the new chunked sync (Sync from Stockist button) instead.' }
 }
 
 // ── Claims / Disputes ────────────────────────────────

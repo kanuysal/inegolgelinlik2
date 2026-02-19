@@ -20,7 +20,8 @@ import {
   addProductImageUrl,
   bulkImportCatalog,
   syncCatalogImages,
-  syncFromStockist,
+  syncStockistInit,
+  syncStockistPage,
   getClaims,
   resolveClaim,
 } from './actions'
@@ -818,6 +819,91 @@ function LightImageManager({ productId, images, onUpdate }: {
 }
 
 // ═══════════════════════════════════════════════════════
+// STOCKIST SYNC BUTTON (chunked page-by-page)
+// ═══════════════════════════════════════════════════════
+function StockistSyncButton({ onDone, disabled, onMessage }: {
+  onDone: () => Promise<any>
+  disabled: boolean
+  onMessage: (msg: string | null) => void
+}) {
+  const [syncing, setSyncing] = useState(false)
+  const [progress, setProgress] = useState('')
+
+  const handleSync = async () => {
+    setSyncing(true)
+    onMessage(null)
+    setProgress('Logging in to stockist...')
+
+    try {
+      const init = await syncStockistInit()
+      if (!init.success || !init.cookies || !init.version) {
+        onMessage(init.error || 'Failed to login to stockist')
+        setSyncing(false)
+        setProgress('')
+        return
+      }
+
+      const { cookies, version } = init
+      let totalCreated = 0, totalUpdated = 0, totalErrors = 0, totalDresses = 0
+      let lastPage = 1
+
+      // Fetch page 1 first to get lastPage
+      setProgress('Fetching page 1...')
+      const first = await syncStockistPage(1, cookies, version)
+      if (!first.success) {
+        onMessage(first.error || 'Failed on page 1')
+        setSyncing(false)
+        setProgress('')
+        return
+      }
+
+      lastPage = first.lastPage || 1
+      totalCreated += first.created || 0
+      totalUpdated += first.updated || 0
+      totalErrors += first.errors || 0
+      totalDresses += first.dressCount || 0
+
+      // Fetch remaining pages
+      for (let page = 2; page <= lastPage; page++) {
+        setProgress(`Fetching page ${page} of ${lastPage}...`)
+        const res = await syncStockistPage(page, cookies, version)
+        if (!res.success) {
+          onMessage(`Error on page ${page}: ${res.error}. Synced ${totalDresses} dresses so far.`)
+          break
+        }
+        totalCreated += res.created || 0
+        totalUpdated += res.updated || 0
+        totalErrors += res.errors || 0
+        totalDresses += res.dressCount || 0
+      }
+
+      onMessage(`Stockist sync complete: ${totalCreated} created, ${totalUpdated} updated, ${totalErrors} errors (${totalDresses} dresses across ${lastPage} pages)`)
+      await onDone()
+    } catch (e: any) {
+      onMessage(`Sync error: ${e.message}`)
+    } finally {
+      setSyncing(false)
+      setProgress('')
+    }
+  }
+
+  return (
+    <div className="flex items-center gap-3">
+      <button
+        onClick={handleSync}
+        disabled={disabled || syncing}
+        className="px-6 py-3 bg-[#5e6db3] text-white font-sans text-[10px] font-bold uppercase tracking-[0.2em] rounded-full hover:bg-[#4a5a9e] transition-all shadow-lg disabled:opacity-50 whitespace-nowrap"
+      >
+        {syncing ? 'Syncing...' : 'Sync from Stockist'}
+      </button>
+      {progress && (
+        <span className="font-sans text-[10px] text-obsidian/40 animate-pulse">{progress}</span>
+      )}
+    </div>
+  )
+}
+
+// ═══════════════════════════════════════════════════════
 // PRODUCTS CATALOG TAB (shop-style light theme)
 // ═══════════════════════════════════════════════════════
 function ProductsTab() {
@@ -967,24 +1053,7 @@ function ProductsTab() {
                 {isPending ? 'Syncing...' : 'Sync Images'}
               </button>
             )}
-            <button
-              onClick={() => {
-                startTransition(async () => {
-                  setImportMsg(null)
-                  const res = await syncFromStockist()
-                  if (res.success) {
-                    setImportMsg(`Stockist sync: ${res.created} created, ${res.updated} updated, ${res.errors} errors (${res.total} total dresses)`)
-                    await refresh()
-                  } else {
-                    setImportMsg(res.error || 'Stockist sync failed')
-                  }
-                })
-              }}
-              disabled={isPending}
-              className="px-6 py-3 bg-[#5e6db3] text-white font-sans text-[10px] font-bold uppercase tracking-[0.2em] rounded-full hover:bg-[#4a5a9e] transition-all shadow-lg disabled:opacity-50 whitespace-nowrap"
-            >
-              {isPending ? 'Syncing Stockist...' : 'Sync from Stockist'}
-            </button>
+            <StockistSyncButton onDone={refresh} disabled={isPending} onMessage={setImportMsg} />
             <button
               onClick={() => { setShowForm(!showForm); setEditingProduct(null) }}
               className="px-6 py-3 bg-[#C5A059] text-white font-sans text-[10px] font-bold uppercase tracking-[0.2em] rounded-full hover:bg-[#B38E48] transition-all shadow-lg whitespace-nowrap"
