@@ -75,7 +75,7 @@ export default function ShopPage() {
     <main className="min-h-screen flex flex-col bg-background-light text-slate-900 font-sans">
       <Navbar />
 
-      <div className="p-10 space-y-10 pt-32 max-w-[1600px] mx-auto w-full flex-1">
+      <div className="px-6 md:px-10 space-y-10 pt-28 pb-10 w-full flex-1">
         <div className="space-y-8">
           <div>
             <h2 className="text-5xl font-light tracking-tight mb-4 font-display">The Collection</h2>

@@ -84,11 +84,18 @@ export default function Navbar() {
       ? user.email.charAt(0).toUpperCase()
       : "U";
 
+  const isHome = pathname === "/";
+  const useLight = isHome && !scrolled;
+
   return (
     <>
-      {/* ── Stitch-style top nav ── */}
-      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm" : "bg-transparent border-b border-transparent"}`}>
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      {/* ── Floating nav — Lightship-style ── */}
+      <nav className={`fixed left-0 right-0 z-50 transition-all duration-500 ease-in-out ${scrolled ? "top-4 px-4" : "top-0 px-0"}`}>
+        <div className={`mx-auto flex items-center justify-between relative transition-all duration-500 ease-in-out ${
+          scrolled
+            ? "max-w-5xl h-14 bg-white/85 backdrop-blur-xl rounded-full shadow-[0_8px_30px_rgba(0,0,0,0.08)] border border-white/60 px-6"
+            : "max-w-7xl h-20 px-6"
+        }`}>
 
           {/* Left — Hamburger (mobile) + Desktop links */}
           <div className="flex items-center space-x-8">
@@ -97,7 +104,7 @@ export default function Navbar() {
               className="flex items-center space-x-2 md:hidden"
               aria-label="Toggle menu"
             >
-              <span className={`material-symbols-outlined text-xl transition-colors duration-300 ${scrolled ? "text-black" : "text-white"}`}>menu</span>
+              <span className={`material-symbols-outlined text-xl transition-colors duration-300 ${useLight ? "text-white" : "text-black"}`}>menu</span>
             </button>
 
             <div className="hidden md:flex items-center space-x-8">
@@ -105,9 +112,9 @@ export default function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`text-xs uppercase tracking-[0.15em] font-medium transition-colors duration-300 hover:text-accent ${scrolled
-                    ? (pathname === link.href ? "text-black" : "text-gray-500")
-                    : (pathname === link.href ? "text-white" : "text-white/70")
+                  className={`text-xs uppercase tracking-[0.15em] font-medium transition-colors duration-300 hover:text-accent ${useLight
+                    ? (pathname === link.href ? "text-white" : "text-white/70")
+                    : (pathname === link.href ? "text-black" : "text-gray-500")
                     }`}
                 >
                   {link.label}
@@ -118,7 +125,7 @@ export default function Navbar() {
 
           {/* Center — Brand */}
           <div className="absolute left-1/2 -translate-x-1/2 text-center">
-            <Link href="/" className={`font-serif text-2xl tracking-widest uppercase transition-colors duration-300 ${scrolled ? "text-black" : "text-white"}`}>
+            <Link href="/" className={`font-serif text-2xl tracking-widest uppercase transition-colors duration-300 ${useLight ? "text-white" : "text-black"}`}>
               RE:GALIA
             </Link>
           </div>
@@ -126,10 +133,10 @@ export default function Navbar() {
           {/* Right — Icons */}
           <div className="flex items-center space-x-6">
             <Link href="/shop" className="hidden md:block">
-              <span className={`material-symbols-outlined cursor-pointer transition-colors duration-300 ${scrolled ? "text-black hover:text-gray-600" : "text-white hover:text-white/70"}`}>search</span>
+              <span className={`material-symbols-outlined cursor-pointer transition-colors duration-300 ${useLight ? "text-white hover:text-white/70" : "text-black hover:text-gray-600"}`}>search</span>
             </Link>
             <Link href="/shop" className="hidden md:block">
-              <span className={`material-symbols-outlined cursor-pointer transition-colors duration-300 ${scrolled ? "text-black hover:text-gray-600" : "text-white hover:text-white/70"}`}>favorite</span>
+              <span className={`material-symbols-outlined cursor-pointer transition-colors duration-300 ${useLight ? "text-white hover:text-white/70" : "text-black hover:text-gray-600"}`}>favorite</span>
             </Link>
 
             {!loading && (
@@ -143,11 +150,11 @@ export default function Navbar() {
                       }}
                       className="flex items-center"
                     >
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center border transition-colors duration-300 ${scrolled ? "bg-secondary border-gray-200" : "bg-white/20 border-white/40"}`}>
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center border transition-colors duration-300 ${useLight ? "bg-white/20 border-white/40" : "bg-secondary border-gray-200"}`}>
                         {user.user_metadata?.avatar_url ? (
                           <img src={user.user_metadata.avatar_url} alt="Avatar" className="w-full h-full rounded-full object-cover" />
                         ) : (
-                          <span className={`text-[10px] font-medium transition-colors duration-300 ${scrolled ? "text-primary" : "text-white"}`}>{userInitial}</span>
+                          <span className={`text-[10px] font-medium transition-colors duration-300 ${useLight ? "text-white" : "text-primary"}`}>{userInitial}</span>
                         )}
                       </div>
                     </button>
@@ -158,7 +165,7 @@ export default function Navbar() {
                           initial={{ opacity: 0, y: 8 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: 8 }}
-                          className="absolute right-0 top-12 w-52 bg-white border border-gray-100 shadow-lg overflow-hidden py-2"
+                          className="absolute right-0 top-12 w-52 bg-white border border-gray-100 shadow-lg overflow-hidden py-2 rounded-xl"
                         >
                           <Link href="/dashboard" className="block px-5 py-3 text-xs font-medium uppercase tracking-[0.05em] text-gray-500 hover:text-primary hover:bg-gray-50 transition-colors">
                             Dashboard
@@ -181,7 +188,7 @@ export default function Navbar() {
                 ) : (
                   <Link
                     href="/auth/login"
-                    className={`text-xs font-medium uppercase tracking-[0.08em] transition-colors duration-300 ${scrolled ? "text-black hover:text-gray-600" : "text-white hover:text-white/70"}`}
+                    className={`text-xs font-medium uppercase tracking-[0.08em] transition-colors duration-300 ${useLight ? "text-white hover:text-white/70" : "text-black hover:text-gray-600"}`}
                   >
                     Sign In
                   </Link>
