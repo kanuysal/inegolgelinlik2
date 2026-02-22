@@ -8,7 +8,6 @@ export default function Home() {
   return (
     <main className="bg-background-light text-primary font-sans transition-colors duration-300 antialiased selection:bg-[#1c1c1c]/10 selection:text-[#1c1c1c] overflow-x-hidden">
 
-      {/* ── Navbar is provided globally by layout or standard component, so we omit the raw Stitch nav here, but let's keep the hero structure ── */}
       <Navbar />
 
       <header className="relative w-full h-screen overflow-hidden rounded-b-2xl mb-12 group pt-20">
@@ -19,7 +18,7 @@ export default function Home() {
             Meet the Couture
           </h1>
           <div className="flex justify-between items-end w-full max-w-7xl mx-auto px-4 text-white/90">
-            <span className="material-icons animate-bounce">arrow_downward</span>
+            <span className="material-symbols-outlined animate-bounce">arrow_downward</span>
             <span className="text-xs uppercase tracking-widest">Scroll to explore</span>
           </div>
         </div>
@@ -59,6 +58,7 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── Featured Gowns — Horizontal Scroll ── */}
       <section className="py-16 overflow-hidden">
         <div className="px-6 mb-12 flex flex-col md:flex-row justify-between items-end max-w-[1400px] mx-auto">
           <div>
@@ -69,9 +69,10 @@ export default function Home() {
             View All Collection
           </Link>
         </div>
-        <div className="flex overflow-x-auto gap-6 px-6 pb-12 no-scrollbar snap-x snap-mandatory">
-          <Link href="/shop" className="min-w-[300px] md:min-w-[400px] snap-center group relative rounded-xl overflow-hidden h-[500px]">
-            <img alt="Silk wedding dress" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Maya_side.jpg" />
+        <div className="flex overflow-x-auto gap-6 px-6 pb-12 snap-x snap-mandatory" style={{ scrollbarWidth: "none", msOverflowStyle: "none", WebkitOverflowScrolling: "touch" }}>
+          {/* Card 1 */}
+          <Link href="/shop" className="min-w-[300px] md:min-w-[380px] snap-center group relative rounded-xl overflow-hidden h-[500px] flex-shrink-0">
+            <img alt="The Maya Gown" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Maya_side.jpg" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
             <div className="absolute bottom-0 left-0 p-6 w-full text-white">
               <span className="bg-white/20 backdrop-blur-sm text-xs px-2 py-1 rounded mb-3 inline-block">New Arrival</span>
@@ -79,14 +80,15 @@ export default function Home() {
               <p className="text-sm opacity-80 mb-4">Size 4 • Excellent Condition</p>
               <div className="flex justify-between items-center">
                 <span className="font-medium">$4,200</span>
-                <button className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0 duration-300">
-                  <span className="material-icons text-sm">arrow_forward</span>
-                </button>
+                <span className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                </span>
               </div>
             </div>
           </Link>
-          <Link href="/shop" className="min-w-[300px] md:min-w-[400px] snap-center group relative rounded-xl overflow-hidden h-[500px]">
-            <img alt="Lace wedding dress back" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Nora_2.jpg" />
+          {/* Card 2 */}
+          <Link href="/shop" className="min-w-[300px] md:min-w-[380px] snap-center group relative rounded-xl overflow-hidden h-[500px] flex-shrink-0">
+            <img alt="The Gala 802 Gown" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Nora_2.jpg" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
             <div className="absolute bottom-0 left-0 p-6 w-full text-white">
               <span className="bg-white/20 backdrop-blur-sm text-xs px-2 py-1 rounded mb-3 inline-block">Rare Find</span>
@@ -94,23 +96,72 @@ export default function Home() {
               <p className="text-sm opacity-80 mb-4">Size 6 • Like New</p>
               <div className="flex justify-between items-center">
                 <span className="font-medium">$5,800</span>
-                <button className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0 duration-300">
-                  <span className="material-icons text-sm">arrow_forward</span>
-                </button>
+                <span className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                </span>
               </div>
             </div>
           </Link>
-          <Link href="/shop" className="min-w-[300px] md:min-w-[400px] snap-center group relative rounded-xl overflow-hidden h-[500px]">
-            <img alt="Mermaid style gown" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://cdn.shopify.com/s/files/1/0839/7222/7357/files/FABIANAB.jpg" />
+          {/* Card 3 */}
+          <Link href="/shop" className="min-w-[300px] md:min-w-[380px] snap-center group relative rounded-xl overflow-hidden h-[500px] flex-shrink-0">
+            <img alt="The Fabiana Gown" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://cdn.shopify.com/s/files/1/0839/7222/7357/files/FABIANAB.jpg" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
             <div className="absolute bottom-0 left-0 p-6 w-full text-white">
               <h4 className="text-2xl font-semibold mb-1">The Fabiana</h4>
               <p className="text-sm opacity-80 mb-4">Size 2 • Professionally Cleaned</p>
               <div className="flex justify-between items-center">
                 <span className="font-medium">$6,100</span>
-                <button className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0 duration-300">
-                  <span className="material-icons text-sm">arrow_forward</span>
-                </button>
+                <span className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                </span>
+              </div>
+            </div>
+          </Link>
+          {/* Card 4 */}
+          <Link href="/shop" className="min-w-[300px] md:min-w-[380px] snap-center group relative rounded-xl overflow-hidden h-[500px] flex-shrink-0">
+            <img alt="The Lorena Gown" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Lorena_-_Studio_-_Ai.jpg" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
+            <div className="absolute bottom-0 left-0 p-6 w-full text-white">
+              <span className="bg-white/20 backdrop-blur-sm text-xs px-2 py-1 rounded mb-3 inline-block">Editor&apos;s Pick</span>
+              <h4 className="text-2xl font-semibold mb-1">The Lorena</h4>
+              <p className="text-sm opacity-80 mb-4">Size 8 • Pristine Condition</p>
+              <div className="flex justify-between items-center">
+                <span className="font-medium">$7,500</span>
+                <span className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                </span>
+              </div>
+            </div>
+          </Link>
+          {/* Card 5 */}
+          <Link href="/shop" className="min-w-[300px] md:min-w-[380px] snap-center group relative rounded-xl overflow-hidden h-[500px] flex-shrink-0">
+            <img alt="The Blanche Gown" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://cdn.shopify.com/s/files/1/0839/7222/7357/files/BlancheM.jpg" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
+            <div className="absolute bottom-0 left-0 p-6 w-full text-white">
+              <span className="bg-white/20 backdrop-blur-sm text-xs px-2 py-1 rounded mb-3 inline-block">Just Listed</span>
+              <h4 className="text-2xl font-semibold mb-1">The Blanche</h4>
+              <p className="text-sm opacity-80 mb-4">Size 4 • Worn Once</p>
+              <div className="flex justify-between items-center">
+                <span className="font-medium">$5,200</span>
+                <span className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                </span>
+              </div>
+            </div>
+          </Link>
+          {/* Card 6 */}
+          <Link href="/shop" className="min-w-[300px] md:min-w-[380px] snap-center group relative rounded-xl overflow-hidden h-[500px] flex-shrink-0">
+            <img alt="The Gaia Gown" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Gaia_1.jpg" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
+            <div className="absolute bottom-0 left-0 p-6 w-full text-white">
+              <span className="bg-white/20 backdrop-blur-sm text-xs px-2 py-1 rounded mb-3 inline-block">Rare Find</span>
+              <h4 className="text-2xl font-semibold mb-1">The Gaia</h4>
+              <p className="text-sm opacity-80 mb-4">Size 6 • Like New</p>
+              <div className="flex justify-between items-center">
+                <span className="font-medium">$8,900</span>
+                <span className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                </span>
               </div>
             </div>
           </Link>
@@ -131,7 +182,7 @@ export default function Home() {
           <h2 className="text-4xl md:text-6xl font-medium leading-tight mb-8">
             The Journey Continues<br />with a Seamless Resale.
           </h2>
-          <Link href="/sell" className="inline-block px-8 py-3 text-black rounded-full border border-white/30 bg-white/10 backdrop-blur hover:bg-white hover:text-black transition duration-300 text-sm font-semibold tracking-wide text-white">
+          <Link href="/sell" className="inline-block px-8 py-3 rounded-full border border-white/30 bg-white/10 backdrop-blur hover:bg-white hover:text-black transition duration-300 text-sm font-semibold tracking-wide text-white">
             Start Selling
           </Link>
         </div>
@@ -175,7 +226,7 @@ export default function Home() {
                 <input className="bg-white border-0 rounded-full px-6 py-3 text-sm focus:ring-2 focus:ring-gray-400 w-full shadow-sm text-gray-900 placeholder-gray-400" placeholder="name@email.com" type="email" />
                 <button className="bg-primary text-white rounded-full px-8 py-3 text-sm font-medium hover:bg-gray-800 transition shadow-lg flex items-center justify-center gap-2 group whitespace-nowrap" type="submit">
                   Register
-                  <span className="material-icons text-xs group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                  <span className="material-symbols-outlined text-xs group-hover:translate-x-1 transition-transform">arrow_forward</span>
                 </button>
               </form>
             </div>
