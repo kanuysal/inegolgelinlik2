@@ -140,6 +140,14 @@ canvas {
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
 }
 
+.form-input-luxe {
+  @apply w-full bg-transparent border-0 border-b border-slate-200 dark:border-slate-800 px-0 py-3 text-sm focus:ring-0 focus:border-accent transition-colors placeholder:text-slate-300;
+}
+
+.label-luxe {
+  @apply text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-1 block;
+}
+
 /* ── Fade overlay mask for beat sections ── */
 @layer utilities {
   .fade-overlay {

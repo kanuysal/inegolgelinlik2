@@ -83,7 +83,7 @@ function ListingsTab() {
         {listings.map((listing: any) => (
           <div key={listing.id} className="listing-card group flex flex-col bg-white dark:bg-white/5 border border-slate-100 dark:border-slate-800 transition-all duration-500 hover:shadow-2xl hover:shadow-black/5">
             <div className="relative aspect-[3/4] overflow-hidden">
-              <img alt={listing.title} className="listing-image w-full h-full object-cover transition-transform duration-700" src={listing.images?.[0] || 'https://images.unsplash.com/photo-1594552072238-16629ec2e3bf?auto=format&fit=crop&q=80'}/>
+              <img alt={listing.title} className="listing-image w-full h-full object-cover transition-transform duration-700" src={listing.images?.[0] || 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Lorena_-_Studio_-_Ai.jpg'} />
               <div className="absolute top-4 left-4">
                 <span className={`border px-3 py-1 text-[9px] font-bold uppercase tracking-widest rounded-full backdrop-blur-sm ${listing.status === 'approved' ? 'bg-green-500 text-white' : 'status-badge-live'}`}>
                   {listing.status || 'Live'}
@@ -104,7 +104,7 @@ function ListingsTab() {
                 <span className="text-sm font-medium">${listing.price?.toLocaleString() || '0'}</span>
               </div>
               <p className="text-[10px] text-slate-400 uppercase tracking-widest mb-6">{listing.category} • {listing.size_us || 'Custom Size'}</p>
-              
+
               {listing.rejection_reason && (
                 <div className="mb-4 p-3 bg-red-50 border border-red-200">
                   <p className="text-red-600 text-[11px] font-sans leading-relaxed font-light">
@@ -142,7 +142,7 @@ function ListingsTab() {
             <h3 className="text-lg font-light mb-2">Sell your Gown</h3>
             <p className="text-xs text-slate-400 leading-relaxed mb-8 max-w-[200px]">Turn your beautiful memories into another bride's dream.</p>
             <span className="text-[10px] font-bold uppercase tracking-widest text-accent border border-accent/20 px-6 py-2 rounded-full hover:bg-accent hover:text-white transition-all">
-                Get Started
+              Get Started
             </span>
           </Link>
         </div>
@@ -324,7 +324,7 @@ function MessagesTab() {
           <h2 className="text-2xl font-light mb-4">Inbox</h2>
           <div className="relative">
             <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
-            <input className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-white/5 border-none rounded-full text-xs focus:ring-1 focus:ring-accent/50 transition-all" placeholder="Search conversations..." type="text"/>
+            <input className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-white/5 border-none rounded-full text-xs focus:ring-1 focus:ring-accent/50 transition-all" placeholder="Search conversations..." type="text" />
           </div>
         </div>
         <div className="flex-1 overflow-y-auto custom-scrollbar">
@@ -332,14 +332,14 @@ function MessagesTab() {
             const isActive = activeConv === conv.id;
             const lastMsg = conv.messages?.[conv.messages.length - 1];
             return (
-              <div 
+              <div
                 key={conv.id}
                 onClick={() => openConversation(conv.id)}
                 className={`p-6 cursor-pointer transition-colors border-b border-slate-50 dark:border-slate-900/50 flex gap-4 ${isActive ? 'bg-slate-50 dark:bg-white/5 border-l-4 border-l-accent' : 'hover:bg-slate-50 dark:hover:bg-white/5 border-l-4 border-l-transparent'}`}
               >
                 <div className="relative flex-shrink-0">
                   {conv.listings?.images?.[0] ? (
-                    <img alt="" className="w-14 h-14 rounded-lg object-cover" src={conv.listings.images[0]}/>
+                    <img alt="" className="w-14 h-14 rounded-lg object-cover" src={conv.listings.images[0]} />
                   ) : (
                     <div className="w-14 h-14 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xl">👗</div>
                   )}
@@ -347,7 +347,7 @@ function MessagesTab() {
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-start mb-1">
                     <h4 className={`text-sm tracking-tight truncate ${isActive ? 'font-semibold' : 'font-medium text-slate-600 dark:text-slate-400'}`}>
-                       {conv.listings?.title || "Inquiry"}
+                      {conv.listings?.title || "Inquiry"}
                     </h4>
                   </div>
                   <p className={`text-[11px] font-medium mb-1 truncate uppercase tracking-widest ${isActive ? 'text-accent' : 'text-slate-400'}`}>
@@ -399,10 +399,10 @@ function MessagesTab() {
             <footer className="p-6 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-transparent">
               <div className="max-w-4xl mx-auto flex items-end gap-4 bg-slate-50 dark:bg-white/5 p-3 rounded-[2rem] border border-slate-200 dark:border-slate-800">
                 <button className="material-symbols-outlined p-2 text-slate-400 hover:text-accent transition-colors">image</button>
-                <textarea 
+                <textarea
                   value={newMsg}
                   onChange={(e) => setNewMsg(e.target.value)}
-                   onKeyDown={(e) => {
+                  onKeyDown={(e) => {
                     if (e.key === "Enter" && !e.shiftKey) {
                       e.preventDefault();
                       handleSend();
@@ -463,7 +463,7 @@ function ProfileTab() {
           <div className="flex flex-col items-center text-center">
             <div className="relative group">
               <div className="w-40 h-40 rounded-full overflow-hidden border border-slate-100 dark:border-slate-800 p-1 mb-6">
-                <img alt="User Avatar" className="w-full h-full object-cover rounded-full" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop"/>
+                <img alt="User Avatar" className="w-full h-full object-cover rounded-full" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop" />
               </div>
             </div>
             <h2 className="text-3xl font-light mb-1 italic">{profile?.display_name || "Bridal User"}</h2>
@@ -490,23 +490,23 @@ function ProfileTab() {
                 {saving ? "Saving..." : saved ? "Saved!" : "Save Changes"}
               </button>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
               <div className="space-y-1">
                 <label className="label-luxe">Full Name</label>
-                <input name="full_name" defaultValue={profile?.full_name || ""} className="form-input-luxe" type="text" placeholder="Your Full Name"/>
+                <input name="full_name" defaultValue={profile?.full_name || ""} className="form-input-luxe" type="text" placeholder="Your Full Name" />
               </div>
               <div className="space-y-1">
                 <label className="label-luxe">Display Name</label>
-                <input name="display_name" defaultValue={profile?.display_name || ""} className="form-input-luxe" type="text" placeholder="Name shown to others"/>
+                <input name="display_name" defaultValue={profile?.display_name || ""} className="form-input-luxe" type="text" placeholder="Name shown to others" />
               </div>
               <div className="space-y-1">
                 <label className="label-luxe">Email Address</label>
-                <input name="email" value={profile?.email || ""} disabled className="form-input-luxe opacity-60" type="email"/>
+                <input name="email" value={profile?.email || ""} disabled className="form-input-luxe opacity-60" type="email" />
               </div>
               <div className="space-y-1">
                 <label className="label-luxe">Phone Number</label>
-                <input name="phone" defaultValue={profile?.phone || ""} className="form-input-luxe" type="tel" placeholder="+1 (555) 000-0000"/>
+                <input name="phone" defaultValue={profile?.phone || ""} className="form-input-luxe" type="tel" placeholder="+1 (555) 000-0000" />
               </div>
             </div>
 
@@ -549,9 +549,8 @@ function DashboardContent() {
                 <button
                   key={t.key}
                   onClick={() => setTab(t.key)}
-                  className={`pb-4 text-[11px] font-bold tracking-[0.2em] uppercase transition-colors relative ${
-                    tab === t.key ? "text-primary dark:text-white" : "text-slate-400 hover:text-accent"
-                  }`}
+                  className={`pb-4 text-[11px] font-bold tracking-[0.2em] uppercase transition-colors relative ${tab === t.key ? "text-primary dark:text-white" : "text-slate-400 hover:text-accent"
+                    }`}
                 >
                   {t.label}
                   {tab === t.key && (

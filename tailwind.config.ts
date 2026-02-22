@@ -22,6 +22,10 @@ const config: Config = {
         "resonance-blue": "#8da9c4",
         neutral: "#efefef",
         border: "#cfcfcf",
+        primary: "#111111",
+        "background-light": "#FDFDFD",
+        "background-dark": "#0A0A0A",
+        accent: "#C5A059",
       },
       keyframes: {
         "fade-up": {
