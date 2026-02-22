@@ -8,18 +8,22 @@ import { createClient } from "@/lib/supabase/client";
 import { checkIsStaff } from "@/app/auth/actions";
 import type { User } from "@supabase/supabase-js";
 
-const NAV_LINKS = [
-  { href: "/shop", label: "Shop" },
+const MENU_LINKS = [
+  { href: "/shop", label: "The Collection" },
+  { href: "/sell", label: "Sell Your Gown" },
   { href: "/how-it-works", label: "How It Works" },
-  { href: "/sell", label: "Sell" },
+];
+
+const SECONDARY_LINKS = [
+  { href: "/how-it-works", label: "Authentication" },
+  { href: "/how-it-works", label: "About Us" },
 ];
 
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isStaff, setIsStaff] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -50,8 +54,7 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    setMobileOpen(false);
-    setDropdownOpen(false);
+    setMenuOpen(false);
   }, [pathname]);
 
   useEffect(() => {
@@ -62,34 +65,30 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    if (!dropdownOpen) return;
-    const handler = () => setDropdownOpen(false);
-    window.addEventListener("click", handler);
-    return () => window.removeEventListener("click", handler);
-  }, [dropdownOpen]);
+    if (menuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [menuOpen]);
 
   const handleSignOut = async () => {
     const supabase = createClient();
     await supabase.auth.signOut();
     setUser(null);
     setIsStaff(false);
-    setDropdownOpen(false);
+    setMenuOpen(false);
     router.push("/");
     router.refresh();
   };
-
-  const userInitial = user?.user_metadata?.full_name
-    ? user.user_metadata.full_name.charAt(0).toUpperCase()
-    : user?.email
-      ? user.email.charAt(0).toUpperCase()
-      : "U";
 
   const isHome = pathname === "/";
   const useLight = isHome && !scrolled;
 
   return (
     <>
-      {/* ── Floating nav — Lightship-style ── */}
+      {/* ── Top bar ── */}
       <nav className={`fixed left-0 right-0 z-50 transition-all duration-500 ease-in-out ${scrolled ? "top-4 px-4" : "top-0 px-0"}`}>
         <div className={`mx-auto flex items-center justify-between relative transition-all duration-500 ease-in-out ${
           scrolled
@@ -97,204 +96,191 @@ export default function Navbar() {
             : "max-w-7xl h-20 px-6"
         }`}>
 
-          {/* Left — Hamburger (mobile) + Desktop links */}
-          <div className="flex items-center space-x-8">
+          {/* Left — Menu + Shop */}
+          <div className="flex items-center gap-4">
             <button
-              onClick={() => setMobileOpen(!mobileOpen)}
-              className="flex items-center space-x-2 md:hidden"
-              aria-label="Toggle menu"
+              onClick={() => setMenuOpen(true)}
+              aria-label="Open menu"
             >
-              <span className={`material-symbols-outlined text-xl transition-colors duration-300 ${useLight ? "text-white" : "text-black"}`}>menu</span>
+              <span className={`material-symbols-outlined text-xl transition-colors duration-300 ${useLight ? "text-white" : "text-primary"}`}>menu</span>
             </button>
-
-            <div className="hidden md:flex items-center space-x-8">
-              {NAV_LINKS.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`text-xs uppercase tracking-[0.15em] font-medium transition-colors duration-300 hover:text-accent ${useLight
-                    ? (pathname === link.href ? "text-white" : "text-white/70")
-                    : (pathname === link.href ? "text-black" : "text-gray-500")
-                    }`}
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </div>
+            <Link
+              href="/shop"
+              className={`text-sm font-medium tracking-widest uppercase transition-colors duration-300 hidden sm:block ${useLight ? "text-white" : "text-primary"}`}
+            >
+              Shop
+            </Link>
           </div>
 
           {/* Center — Brand */}
           <div className="absolute left-1/2 -translate-x-1/2 text-center">
-            <Link href="/" className={`font-serif text-2xl tracking-widest uppercase transition-colors duration-300 ${useLight ? "text-white" : "text-black"}`}>
+            <Link href="/" className={`text-2xl font-bold tracking-tighter transition-colors duration-300 ${useLight ? "text-white" : "text-primary"}`}>
               RE:GALIA
             </Link>
           </div>
 
-          {/* Right — Icons */}
-          <div className="flex items-center space-x-6">
-            <Link href="/shop" className="hidden md:block">
-              <span className={`material-symbols-outlined cursor-pointer transition-colors duration-300 ${useLight ? "text-white hover:text-white/70" : "text-black hover:text-gray-600"}`}>search</span>
+          {/* Right — Sell + Bag */}
+          <div className="flex items-center gap-4">
+            <Link
+              href="/sell"
+              className={`text-sm font-medium tracking-widest uppercase transition-colors duration-300 hidden sm:block ${useLight ? "text-white" : "text-primary"}`}
+            >
+              Sell
             </Link>
-            <Link href="/shop" className="hidden md:block">
-              <span className={`material-symbols-outlined cursor-pointer transition-colors duration-300 ${useLight ? "text-white hover:text-white/70" : "text-black hover:text-gray-600"}`}>favorite</span>
+            <Link href="/shop">
+              <span className={`material-symbols-outlined text-xl cursor-pointer transition-colors duration-300 ${useLight ? "text-white" : "text-primary"}`}>shopping_bag</span>
             </Link>
-
-            {!loading && (
-              <>
-                {user ? (
-                  <div className="relative">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setDropdownOpen(!dropdownOpen);
-                      }}
-                      className="flex items-center"
-                    >
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center border transition-colors duration-300 ${useLight ? "bg-white/20 border-white/40" : "bg-secondary border-gray-200"}`}>
-                        {user.user_metadata?.avatar_url ? (
-                          <img src={user.user_metadata.avatar_url} alt="Avatar" className="w-full h-full rounded-full object-cover" />
-                        ) : (
-                          <span className={`text-[10px] font-medium transition-colors duration-300 ${useLight ? "text-white" : "text-primary"}`}>{userInitial}</span>
-                        )}
-                      </div>
-                    </button>
-
-                    <AnimatePresence>
-                      {dropdownOpen && (
-                        <motion.div
-                          initial={{ opacity: 0, y: 8 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: 8 }}
-                          className="absolute right-0 top-12 w-52 bg-white border border-gray-100 shadow-lg overflow-hidden py-2 rounded-xl"
-                        >
-                          <Link href="/dashboard" className="block px-5 py-3 text-xs font-medium uppercase tracking-[0.05em] text-gray-500 hover:text-primary hover:bg-gray-50 transition-colors">
-                            Dashboard
-                          </Link>
-                          <Link href="/sell" className="block px-5 py-3 text-xs font-medium uppercase tracking-[0.05em] text-gray-500 hover:text-primary hover:bg-gray-50 transition-colors">
-                            Sell Gown
-                          </Link>
-                          {isStaff && (
-                            <Link href="/admin" className="block px-5 py-3 text-xs font-medium uppercase tracking-[0.05em] text-primary hover:bg-gray-50 transition-colors">
-                              Admin Console
-                            </Link>
-                          )}
-                          <button onClick={handleSignOut} className="w-full text-left px-5 py-3 text-xs font-medium uppercase tracking-[0.05em] text-gray-400 hover:text-red-600 hover:bg-red-50/50 transition-colors">
-                            Sign Out
-                          </button>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                ) : (
-                  <Link
-                    href="/auth/login"
-                    className={`text-xs font-medium uppercase tracking-[0.08em] transition-colors duration-300 ${useLight ? "text-white hover:text-white/70" : "text-black hover:text-gray-600"}`}
-                  >
-                    Sign In
-                  </Link>
-                )}
-              </>
-            )}
           </div>
         </div>
       </nav>
 
-      {/* ── Mobile menu — full screen overlay ── */}
+      {/* ── Full-screen menu overlay ── */}
       <AnimatePresence>
-        {mobileOpen && (
+        {menuOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-[55] bg-white flex flex-col items-center justify-center gap-10"
+            transition={{ duration: 0.4 }}
+            className="fixed inset-0 z-[100] flex h-screen w-screen overflow-hidden"
           >
-            {/* Close button */}
-            <button
-              onClick={() => setMobileOpen(false)}
-              className="absolute top-6 right-6"
-              aria-label="Close menu"
-            >
-              <span className="material-symbols-outlined text-2xl text-gray-600">close</span>
-            </button>
-
-            {NAV_LINKS.map((link, i) => (
-              <motion.div
-                key={link.href}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.4, delay: i * 0.08 }}
-              >
-                <Link
-                  href={link.href}
-                  className={`font-serif text-4xl font-light tracking-tight ${pathname === link.href ? "text-primary" : "text-gray-300"
-                    }`}
-                >
-                  {link.label}
-                </Link>
-              </motion.div>
-            ))}
+            {/* Left — Editorial image (desktop only) */}
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="mt-8 flex flex-col items-center gap-6"
+              initial={{ scale: 1.1, opacity: 0 }}
+              animate={{ scale: 1.05, opacity: 1 }}
+              exit={{ scale: 1.1, opacity: 0 }}
+              transition={{ duration: 0.6 }}
+              className="relative hidden lg:block lg:w-[60%] h-full overflow-hidden"
             >
-              {!loading && (
-                <>
-                  {user ? (
-                    <>
-                      <div className="flex items-center gap-4 mb-4">
-                        {user.user_metadata?.avatar_url ? (
-                          <img
-                            src={user.user_metadata.avatar_url}
-                            alt="Avatar"
-                            className="w-12 h-12 rounded-full border border-gray-200"
-                          />
-                        ) : (
-                          <span className="w-12 h-12 bg-secondary rounded-full flex items-center justify-center text-primary text-lg font-light">
-                            {userInitial}
-                          </span>
-                        )}
-                        <div>
-                          <p className="text-lg font-light text-primary">
-                            {user.user_metadata?.full_name || "My Account"}
-                          </p>
-                          <p className="text-sm text-gray-400">{user.email}</p>
-                        </div>
-                      </div>
-                      {isStaff && (
-                        <Link
-                          href="/admin"
-                          className="text-sm font-light text-primary border border-gray-200 px-6 py-2 uppercase tracking-[0.08em] mb-2"
-                        >
-                          Admin Console
-                        </Link>
-                      )}
-                      <Link
-                        href="/dashboard"
-                        className="text-lg font-light text-gray-500 mb-2"
-                      >
-                        Dashboard
-                      </Link>
-                      <button
-                        onClick={handleSignOut}
-                        className="text-lg font-light text-gray-300 hover:text-red-400 transition-colors"
-                      >
-                        Sign Out
-                      </button>
-                    </>
-                  ) : (
-                    <Link
-                      href="/auth/login"
-                      className="text-xl font-light text-gray-400"
+              <img
+                alt="Editorial bridal gown"
+                className="absolute inset-0 w-full h-full object-cover"
+                src="https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Maya_side.jpg"
+              />
+              <div className="absolute inset-0 bg-black/40 mix-blend-multiply" />
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/20" />
+              <div className="absolute bottom-12 left-12 text-white">
+                <p className="text-xs uppercase tracking-[0.3em] font-light mb-2">The Archive</p>
+                <h2 className="text-3xl font-light italic font-serif">Curated Couture</h2>
+              </div>
+            </motion.div>
+
+            {/* Right — Navigation panel */}
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ duration: 0.5, ease: [0.32, 0.72, 0, 1] }}
+              className="w-full lg:w-[40%] h-full bg-[#faf9f8] flex flex-col relative"
+            >
+              {/* Close button */}
+              <button
+                onClick={() => setMenuOpen(false)}
+                className="absolute top-8 right-8 z-[110] group flex items-center gap-3"
+                aria-label="Close menu"
+              >
+                <span className="text-[10px] uppercase tracking-[0.2em] font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300">Close</span>
+                <span className="material-symbols-outlined text-3xl group-hover:rotate-90 transition-transform duration-500">close</span>
+              </button>
+
+              {/* Main nav links */}
+              <div className="flex-grow flex flex-col justify-center px-8 lg:px-16 pt-20">
+                <nav className="space-y-6">
+                  {MENU_LINKS.map((link, i) => (
+                    <motion.div
+                      key={link.href}
+                      initial={{ opacity: 0, x: 40 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 20 }}
+                      transition={{ duration: 0.4, delay: 0.15 + i * 0.08 }}
                     >
-                      Sign In
+                      <Link
+                        href={link.href}
+                        onClick={() => setMenuOpen(false)}
+                        className={`block text-5xl lg:text-7xl font-bold tracking-tighter hover:pl-4 transition-all duration-500 uppercase leading-none ${
+                          pathname === link.href ? "text-primary" : "text-gray-300 hover:text-primary"
+                        }`}
+                      >
+                        {link.label}
+                      </Link>
+                    </motion.div>
+                  ))}
+
+                  {/* Account link */}
+                  <motion.div
+                    initial={{ opacity: 0, x: 40 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 20 }}
+                    transition={{ duration: 0.4, delay: 0.15 + MENU_LINKS.length * 0.08 }}
+                  >
+                    {!loading && (
+                      user ? (
+                        <Link
+                          href="/dashboard"
+                          onClick={() => setMenuOpen(false)}
+                          className={`block text-5xl lg:text-7xl font-bold tracking-tighter hover:pl-4 transition-all duration-500 uppercase leading-none ${
+                            pathname === "/dashboard" ? "text-primary" : "text-gray-300 hover:text-primary"
+                          }`}
+                        >
+                          Account
+                        </Link>
+                      ) : (
+                        <Link
+                          href="/auth/login"
+                          onClick={() => setMenuOpen(false)}
+                          className="block text-5xl lg:text-7xl font-bold tracking-tighter hover:pl-4 transition-all duration-500 uppercase leading-none text-gray-300 hover:text-primary"
+                        >
+                          Sign In
+                        </Link>
+                      )
+                    )}
+                  </motion.div>
+                </nav>
+              </div>
+
+              {/* Bottom — Secondary links + auth actions */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+                className="px-8 lg:px-16 pb-12"
+              >
+                <div className="flex flex-wrap gap-8 border-t border-gray-200 pt-8">
+                  {SECONDARY_LINKS.map((link) => (
+                    <Link
+                      key={link.label}
+                      href={link.href}
+                      onClick={() => setMenuOpen(false)}
+                      className="text-xs uppercase tracking-[0.2em] font-medium text-gray-500 hover:text-primary transition-colors"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                  {!loading && user && isStaff && (
+                    <Link
+                      href="/admin"
+                      onClick={() => setMenuOpen(false)}
+                      className="text-xs uppercase tracking-[0.2em] font-medium text-primary hover:text-accent transition-colors"
+                    >
+                      Admin Console
                     </Link>
                   )}
-                </>
-              )}
+                  {!loading && user && (
+                    <button
+                      onClick={handleSignOut}
+                      className="text-xs uppercase tracking-[0.2em] font-medium text-gray-400 hover:text-red-600 transition-colors"
+                    >
+                      Sign Out
+                    </button>
+                  )}
+                </div>
+
+                <div className="mt-12 flex justify-between items-end">
+                  <div className="text-[10px] uppercase tracking-widest text-gray-400">
+                    &copy; {new Date().getFullYear()} RE:GALIA
+                  </div>
+                </div>
+              </motion.div>
             </motion.div>
           </motion.div>
         )}
