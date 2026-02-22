@@ -8,7 +8,6 @@ import Navbar from '@/components/ui/Navbar'
 import { searchProducts, submitListing, getCatalogGowns, getSizeDimensions, getProductByName } from './actions'
 import { createClient } from '@/lib/supabase/client'
 
-/* ── Types ── */
 type Product = {
   id: string
   style_name: string
@@ -28,14 +27,13 @@ type UploadedImage = {
 }
 
 type WizardData = {
-  // Step 1: Product
   product_id: string | null
   product_name: string
-  // Step 2: Details
   title: string
   description: string
   category: 'bridal' | 'evening' | 'accessories'
   size_us: string
+  size_eu: string
   bust_cm: string
   waist_cm: string
   hips_cm: string
@@ -43,13 +41,11 @@ type WizardData = {
   silhouette: string
   train_style: string
   stock_images: string[]
-  // Step 3: Condition
   condition: '' | 'new_unworn' | 'excellent' | 'good'
-  // Step 4: Photos
   images: UploadedImage[]
-  // Step 5: Price
   price: string
   msrp: string
+  color: string
 }
 
 const INITIAL_DATA: WizardData = {
@@ -59,6 +55,7 @@ const INITIAL_DATA: WizardData = {
   description: '',
   category: 'bridal',
   size_us: '',
+  size_eu: '',
   bust_cm: '',
   waist_cm: '',
   hips_cm: '',
@@ -70,107 +67,16 @@ const INITIAL_DATA: WizardData = {
   images: [],
   price: '',
   msrp: '',
+  color: 'Ivory'
 }
 
 const STEPS = [
-  { num: 1, label: 'Find Item' },
-  { num: 2, label: 'Item Details' },
-  { num: 3, label: 'Condition' },
-  { num: 4, label: 'Photos' },
-  { num: 5, label: 'Price' },
+  { num: 1, label: '01 Find Gown' },
+  { num: 2, label: '02 Details & Size' },
+  { num: 3, label: '03 Condition' },
+  { num: 4, label: '04 Photos' },
+  { num: 5, label: '05 Price' },
 ]
-
-const CONDITIONS = [
-  {
-    value: 'new_unworn' as const,
-    label: 'New & Unworn',
-    desc: 'Never worn, tags may or may not be attached. In original condition.',
-  },
-  {
-    value: 'excellent' as const,
-    label: 'Excellent',
-    desc: 'Worn once. No visible signs of wear, stains, or damage. Minor alterations OK.',
-  },
-  {
-    value: 'good' as const,
-    label: 'Good',
-    desc: 'Worn, with minor signs of wear. May have alterations. Still in beautiful condition.',
-  },
-]
-
-const SILHOUETTES = [
-  { value: 'a_line', label: 'A-Line' },
-  { value: 'ball_gown', label: 'Ball Gown' },
-  { value: 'mermaid', label: 'Mermaid' },
-  { value: 'trumpet', label: 'Trumpet' },
-  { value: 'sheath', label: 'Sheath' },
-  { value: 'fit_and_flare', label: 'Fit & Flare' },
-  { value: 'empire', label: 'Empire' },
-  { value: 'column', label: 'Column' },
-]
-
-const TRAIN_STYLES = [
-  { value: 'none', label: 'None' },
-  { value: 'sweep', label: 'Sweep' },
-  { value: 'court', label: 'Court' },
-  { value: 'chapel', label: 'Chapel' },
-  { value: 'cathedral', label: 'Cathedral' },
-  { value: 'royal', label: 'Royal' },
-]
-
-const SIZES = [
-  'US 0 (EU 32)',
-  'US 2 (EU 34)',
-  'US 4 (EU 36)',
-  'US 6 (EU 38)',
-  'US 8 (EU 40)',
-  'US 10 (EU 42)',
-  'US 12 (EU 44)',
-  'US 14 (EU 46)',
-  'Custom'
-]
-
-/* ── Icons ── */
-function CheckIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="20 6 9 17 4 12" />
-    </svg>
-  )
-}
-
-function UploadIcon() {
-  return (
-    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-      <polyline points="17 8 12 3 7 8" />
-      <line x1="12" y1="3" x2="12" y2="15" />
-    </svg>
-  )
-}
-
-function XIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-    </svg>
-  )
-}
-
-function SearchIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
-    </svg>
-  )
-}
-
-/* ── Shared Input Style (Light Mode) ── */
-const inputClass =
-  'w-full px-4 py-3 border border-[#1c1c1c]/10 bg-white text-[#1c1c1c] placeholder:text-[#1c1c1c]/20 font-sans text-sm font-light focus:outline-none focus:border-[#1c1c1c]/30 transition-colors'
-const labelClass = 'block font-sans text-[11px] font-light uppercase text-[#1c1c1c]/40 mb-2 tracking-[0.1em]'
-const selectClass =
-  'w-full px-4 py-3 border border-[#1c1c1c]/10 bg-white text-[#1c1c1c] font-sans text-sm font-light focus:outline-none focus:border-[#1c1c1c]/30 transition-colors'
 
 export default function SellWizardPage() {
   const router = useRouter()
@@ -185,14 +91,12 @@ export default function SellWizardPage() {
   const [error, setError] = useState<string | null>(null)
   const [submitted, setSubmitted] = useState(false)
 
-  /* ── Load catalog ── */
   useEffect(() => {
     getCatalogGowns().then(res => {
       if (res.gowns) setCatalogGowns(res.gowns)
     })
   }, [])
 
-  /* ── Search products ── */
   const handleSearch = useCallback(async () => {
     if (searchQuery.length < 2) return
     setSearching(true)
@@ -201,24 +105,26 @@ export default function SellWizardPage() {
     setSearching(false)
   }, [searchQuery])
 
-  /* ── Intelligent Sizing ── */
   async function handleSizeChange(sizeLabel: string) {
-    setData(prev => ({ ...prev, size_us: sizeLabel }))
-    if (sizeLabel === 'Custom' || !sizeLabel) return
-
+    if (sizeLabel === 'Custom' || !sizeLabel) {
+      setData(prev => ({ ...prev, size_us: sizeLabel, bust_cm: '', waist_cm: '', hips_cm: '', height_cm: '' }))
+      return
+    }
     const res = await getSizeDimensions(sizeLabel)
     if (res.dimensions) {
       setData(prev => ({
         ...prev,
+        size_us: sizeLabel,
         bust_cm: res.dimensions.bust.toString(),
         waist_cm: res.dimensions.waist.toString(),
         hips_cm: res.dimensions.hips.toString(),
         height_cm: res.dimensions.height_with_shoes.toString()
       }))
+    } else {
+      setData(prev => ({ ...prev, size_us: sizeLabel }))
     }
   }
 
-  /* ── Select a product from search or catalog ── */
   function selectProduct(product: Product) {
     const retailPrice = product.stockist_data?.retailPrice?.amount
     const msrp = product.msrp || retailPrice || null
@@ -228,7 +134,7 @@ export default function SellWizardPage() {
       product_id: product.id,
       product_name: product.style_name,
       title: product.style_name,
-      category: product.category as 'bridal' | 'evening' | 'accessories',
+      category: (product.category as any) || 'bridal',
       silhouette: product.silhouette || '',
       train_style: product.train_style || '',
       description: product.description || '',
@@ -238,13 +144,11 @@ export default function SellWizardPage() {
     setStep(2)
   }
 
-  /* ── Skip product search (manual entry) ── */
   function skipToManual() {
     setData((prev) => ({ ...prev, product_id: null, product_name: '' }))
     setStep(2)
   }
 
-  /* ── Photo upload (client-side direct to Supabase storage) ── */
   async function handlePhotoUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const files = e.target.files
     if (!files || files.length === 0) return
@@ -265,17 +169,6 @@ export default function SellWizardPage() {
         setError('Maximum 8 photos allowed')
         break
       }
-
-      const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']
-      if (!allowedTypes.includes(file.type)) {
-        setError('Only JPEG, PNG, and WebP images are allowed')
-        break
-      }
-      if (file.size > 5 * 1024 * 1024) {
-        setError('Image must be under 5MB')
-        break
-      }
-
       const ext = file.name.split('.').pop() || 'jpg'
       const fileName = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
 
@@ -312,8 +205,8 @@ export default function SellWizardPage() {
     }))
   }
 
-  /* ── Submit ── */
-  async function handleSubmit() {
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
     setSubmitting(true)
     setError(null)
 
@@ -345,716 +238,355 @@ export default function SellWizardPage() {
     setSubmitting(false)
   }
 
-  /* ── Step validation ── */
   function canProceed(): boolean {
     switch (step) {
-      case 1:
-        return true // can always proceed (skip or select)
-      case 2:
-        return data.title.length > 0 && data.category.length > 0
-      case 3:
-        return data.condition !== ''
-      case 4:
-        return data.images.length >= 1
-      case 5:
-        return parseFloat(data.price) > 0
-      default:
-        return false
+      case 1: return true 
+      case 2: return data.title.length > 0 && data.size_us.length > 0
+      case 3: return data.condition !== ''
+      case 4: return data.images.length >= 1
+      case 5: return parseFloat(data.price) > 0
+      default: return false
     }
   }
 
-  /* ── Commission calc ── */
-  const price = parseFloat(data.price) || 0
-  const commissionRate = price >= 10000 ? 15 : price >= 6000 ? 18 : price >= 3000 ? 20 : 25
-  const commission = price * (commissionRate / 100)
-  const payout = price - commission
+  const commissionRate = parseFloat(data.price) >= 10000 ? 15 : parseFloat(data.price) >= 6000 ? 18 : parseFloat(data.price) >= 3000 ? 20 : 25
+  const commission = parseFloat(data.price) * (commissionRate / 100)
+  const payout = parseFloat(data.price) - commission
 
-  /* ── Success State ── */
   if (submitted) {
     return (
-      <main className="min-h-screen bg-white">
-        <Navbar />
-        <section className="pt-32 pb-20 px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="max-w-2xl mx-auto text-center"
-          >
-            <div className="w-20 h-20 border border-emerald-500/30 flex items-center justify-center mx-auto mb-8">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-emerald-400">
-                <polyline points="20 6 9 17 4 12" />
-              </svg>
-            </div>
-            <h1 className="font-serif text-4xl md:text-5xl font-light text-[#1c1c1c]/90 mb-4 tracking-[-0.02em]">
-              Listing Submitted
-            </h1>
-            <p className="font-sans text-sm text-[#1c1c1c]/40 mb-4 leading-relaxed font-light">
-              Your <span className="text-[#1c1c1c] font-medium">{data.title}</span> has been submitted for review.
-            </p>
-            <p className="font-sans text-xs text-[#1c1c1c]/25 mb-10 font-light">
-              Our authentication team will review your listing within 24–72 hours.
-            </p>
-            <div className="flex gap-4 justify-center">
-              <Link
-                href="/shop"
-                className="px-8 py-3 border border-[#1c1c1c]/10 font-sans text-[11px] font-light uppercase tracking-[0.15em] text-[#1c1c1c]/50 hover:text-[#1c1c1c] hover:border-[#1c1c1c]/30 transition-all"
-              >
-                Browse Gowns
-              </Link>
-              <Link
-                href="/sell/submit"
-                onClick={() => {
-                  setData(INITIAL_DATA)
-                  setStep(1)
-                  setSubmitted(false)
-                }}
-                className="px-8 py-3 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-[#333] transition-all"
-              >
-                Submit Another
-              </Link>
-            </div>
-          </motion.div>
-        </section>
+      <main className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="bg-white p-12 shadow-xl border border-gray-100 max-w-lg text-center">
+          <div className="w-16 h-16 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl material-symbols-outlined">check_circle</div>
+          <h1 className="font-display text-4xl mb-4">Listing Submitted</h1>
+          <p className="text-gray-500 mb-8">Your piece <span className="font-semibold text-gray-800">{data.title}</span> is now pending authentication by our editorial team.</p>
+          <div className="flex justify-center gap-4">
+            <button onClick={() => {setData(INITIAL_DATA); setStep(1); setSubmitted(false)}} className="px-6 py-3 border border-gray-200 text-xs font-semibold uppercase tracking-widest text-gray-600 hover:bg-gray-50">Submit Another</button>
+            <Link href="/dashboard" className="px-6 py-3 bg-primary text-white text-xs font-semibold uppercase tracking-widest hover:bg-zinc-800 shadow-lg shadow-black/10">View Dashboard</Link>
+          </div>
+        </div>
       </main>
     )
   }
 
   return (
-    <main className="min-h-screen bg-white">
-      <Navbar />
-
-      <div className="pt-28 pb-20 px-6">
-        <div className="max-w-3xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-10">
-            <p className="font-sans text-[11px] uppercase tracking-[0.4em] text-[#1c1c1c]/40 mb-3 font-light">
-              List Your Gown
-            </p>
-            <h1 className="font-serif text-3xl md:text-5xl font-light text-[#1c1c1c] tracking-[-0.02em]">
-              Couture Submission
-            </h1>
+    <div className="min-h-screen bg-[#fafafa] dark:bg-black font-sans text-gray-900 dark:text-gray-100">
+      <header className="border-b border-gray-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <span className="font-display italic text-2xl tracking-tight">Galia Lahav</span>
+            <span className="text-[10px] uppercase tracking-widest text-accent font-semibold ml-2 border-l border-gray-200 pl-3">Resale Archive</span>
           </div>
-
-          {/* Step Indicator */}
-          <div className="flex items-center justify-between mb-20 relative">
-            <div className="absolute top-1/2 left-0 w-full h-[1px] bg-[#1c1c1c]/5 -translate-y-1/2" />
-            <div
-              className="absolute top-1/2 left-0 h-[1px] bg-[#1c1c1c]/30 -translate-y-1/2 transition-all duration-700 ease-in-out"
-              style={{ width: `${((step - 1) / (STEPS.length - 1)) * 100}%` }}
-            />
-            {STEPS.map((s) => (
-              <div key={s.num} className="relative z-10 flex flex-col items-center">
-                <div
-                  className={`w-2.5 h-2.5 transition-all duration-500 ${step >= s.num ? 'bg-[#1c1c1c]' : 'bg-[#1c1c1c]/10'
-                    }`}
-                />
-                <span
-                  className={`absolute top-8 whitespace-nowrap font-sans text-[10px] font-light tracking-[0.1em] uppercase transition-colors duration-500 ${step === s.num ? 'text-[#1c1c1c]' : 'text-[#1c1c1c]/20'
-                    }`}
-                >
-                  {s.label}
-                </span>
-              </div>
+          <Link href="/" className="text-sm font-medium hover:opacity-70 transition-opacity flex items-center gap-2">
+            Save & Exit <span className="material-symbols-outlined text-sm">close</span>
+          </Link>
+        </div>
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex justify-between text-[11px] uppercase tracking-[0.2em] font-medium text-gray-400 py-3 overflow-x-auto no-scrollbar">
+            {STEPS.map((s, idx) => (
+              <span key={s.num} className={`flex items-center gap-2 shrink-0 ${step === s.num ? 'text-primary dark:text-white border-b-2 border-primary pb-1' : step > s.num ? 'text-primary dark:text-white' : ''}`}>
+                {step > s.num && <span className="material-symbols-outlined text-[14px]">check_circle</span>}
+                {s.label}
+              </span>
             ))}
           </div>
+          <div className="w-full bg-gray-100 dark:bg-zinc-800 h-[2px]">
+            <div className="bg-primary dark:bg-white h-[2px] transition-all duration-500" style={{width: `${(step/5)*100}%`}}></div>
+          </div>
+        </div>
+      </header>
 
-          {/* Error */}
-          {error && (
-            <div className="mb-6 p-4 border border-red-500/30 bg-red-500/5 text-red-400 text-sm text-center">
-              {error}
-            </div>
-          )}
-
-          {/* Steps */}
-          <AnimatePresence mode="wait">
-            {/* ── STEP 1: Find Item ── */}
-            {step === 1 && (
-              <motion.div
-                key="step1"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="bg-white p-10 shadow-[0_4px_40px_rgba(0,0,0,0.03)] border border-[#1c1c1c]/5"
-              >
-                <h2 className="font-serif text-2xl text-[#1c1c1c]/90 mb-2">Identify Your Masterpiece</h2>
-                <p className="font-sans text-xs text-[#1c1c1c]/40 mb-8 lowercase tracking-wide">
-                  Select your Galia Lahav style from our archive or enter custom details.
-                </p>
-
-                {/* Catalog dropdown */}
-                <div className="mb-10">
-                  <label className={labelClass}>Collection Archive</label>
-                  <p className="font-sans text-[10px] text-[#1c1c1c]/20 mb-4 uppercase tracking-[0.1em]">Select your gown style for instant authentication sync</p>
-                  <select
-                    onChange={async (e) => {
-                      const gown = catalogGowns.find(g => g.id === e.target.value)
-                      if (gown) {
-                        // Try to get enriched DB product (with stockist pricing & details)
-                        const { product: dbProduct } = await getProductByName(gown.name)
-                        if (dbProduct) {
-                          selectProduct(dbProduct as Product)
-                        } else {
-                          // Fallback to catalog data only
-                          setData(prev => ({
-                            ...prev,
-                            product_id: gown.id,
-                            product_name: gown.name,
-                            title: gown.name,
-                            stock_images: gown.images || [],
-                            description: gown.description || '',
-                            silhouette: gown.silhouette || '',
-                            category: gown.collection === 'Evening' ? 'evening' : 'bridal'
-                          }))
-                          setStep(2)
-                        }
-                      }
-                    }}
-                    className={`${selectClass} h-14 border-[#1c1c1c]/5 focus:border-[#1c1c1c]/30`}
-                  >
-                    <option value="">Search the Galia Lahav Archive...</option>
-                    {catalogGowns.map(gown => (
-                      <option key={gown.id} value={gown.id}>{gown.name.toUpperCase()} — {gown.collection}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="flex items-center gap-4 mb-10">
-                  <div className="flex-1 h-[1px] bg-[#1c1c1c]/5" />
-                  <span className="font-sans text-[10px] text-[#1c1c1c]/20 uppercase tracking-widest font-bold">or find by search</span>
-                  <div className="flex-1 h-[1px] bg-[#1c1c1c]/5" />
-                </div>
-
-                {/* Search */}
-                <div className="flex gap-3 mb-12">
-                  <div className="relative flex-1">
-                    <input
-                      type="text"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                      placeholder="Type style name (e.g. Artemis)..."
-                      className={`${inputClass} h-14 border-[#1c1c1c]/5 focus:border-[#1c1c1c]/30`}
-                    />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[#1c1c1c]/20">
-                      <SearchIcon />
-                    </span>
+      <main className="max-w-7xl mx-auto px-6 py-12 lg:py-16">
+        {error && <div className="p-4 mb-8 bg-red-50 text-red-600 border border-red-200 rounded text-center text-sm">{error}</div>}
+        
+        <AnimatePresence mode="wait">
+          {step === 1 && (
+            <motion.div key="1" initial={{opacity:0,y:20}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-20}} className="max-w-4xl mx-auto">
+              <div className="text-center mb-12">
+                <h1 className="font-display text-4xl lg:text-5xl mb-6 leading-tight">Identify Your Piece</h1>
+                <p className="text-gray-500 dark:text-gray-400 font-light text-lg">Search our master archive to automatically import your gown's specifications, original retail price, and professional imagery.</p>
+              </div>
+              <div className="max-w-3xl mx-auto">
+                <div className="relative group mb-12">
+                  <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none">
+                    <span className="material-symbols-outlined text-gray-400 group-focus-within:text-primary transition-colors">search</span>
                   </div>
-                  <button
-                    onClick={handleSearch}
-                    disabled={searchQuery.length < 2 || searching}
-                    className="px-10 py-3 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] disabled:opacity-30 hover:bg-[#333] transition-all"
-                  >
-                    {searching ? '...' : 'Search'}
-                  </button>
+                  <input 
+                    className="w-full pl-16 pr-32 py-5 bg-white dark:bg-zinc-900 border-gray-200 dark:border-zinc-800 focus:ring-accent focus:border-accent text-lg shadow-sm rounded-xl"
+                    placeholder="Search by gown name (e.g. 'Fabiana')" 
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                  />
+                  <div className="absolute inset-y-0 right-2 flex items-center">
+                    <button onClick={handleSearch} className="px-6 py-2 bg-primary text-white text-xs font-bold uppercase tracking-widest rounded-lg">Search</button>
+                  </div>
                 </div>
 
-                {/* Results */}
                 {searchResults.length > 0 && (
-                  <div className="mb-12">
-                    <p className="font-sans text-[10px] text-[#1c1c1c]/30 tracking-[0.2em] uppercase mb-8 font-bold">
-                      ARCHIVAL MATCHES FOUND
-                    </p>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
-                      {searchResults.map((product) => (
-                        <button
-                          key={product.id}
-                          onClick={() => selectProduct(product)}
-                          className="group text-left"
-                        >
-                          <div className="relative aspect-[3/4] overflow-hidden bg-white rounded-2xl border border-[#1c1c1c]/5 group-hover:border-[#1c1c1c]/20 transition-all duration-500">
-                            {product.images && product.images[0] ? (
-                              <img
-                                src={product.images[0]}
-                                alt={product.style_name}
-                                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-                              />
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center opacity-10">
-                                <UploadIcon />
-                              </div>
-                            )}
-                            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-obsidian via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
-                              <span className="font-sans text-[10px] font-bold tracking-[0.3em] text-[#1c1c1c] uppercase">
-                                Select Style →
-                              </span>
-                            </div>
-                          </div>
-                          <div className="mt-4">
-                            <h3 className="font-serif text-xl text-[#1c1c1c]/80 group-hover:text-[#1c1c1c] transition-colors italic">
-                              {product.style_name}
-                            </h3>
-                            <p className="font-sans text-[9px] text-[#1c1c1c]/30 uppercase tracking-[0.2em] mt-2 font-bold">
-                              {product.category}
-                            </p>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
+                  <div className="bg-white dark:bg-zinc-900 shadow-xl rounded-xl border border-gray-100 overflow-hidden mb-12">
+                    {searchResults.map((product) => (
+                      <div key={product.id} onClick={() => selectProduct(product)} className="p-4 border-b border-gray-50 hover:bg-gray-50 cursor-pointer flex items-center gap-6 transition-colors group">
+                        <div className="w-16 h-20 bg-gray-100 rounded overflow-hidden flex-shrink-0">
+                          {product.images?.[0] ? 
+                            <img src={product.images[0]} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform" /> : 
+                            <div className="w-full h-full flex items-center justify-center text-gray-300">No Img</div>
+                          }
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-serif text-xl">{product.style_name}</p>
+                          <p className="text-xs text-gray-400 uppercase tracking-widest mt-1">{product.category}</p>
+                        </div>
+                        <div className="pr-4"><span className="material-symbols-outlined text-gray-300 group-hover:text-primary">arrow_forward_ios</span></div>
+                      </div>
+                    ))}
                   </div>
                 )}
 
-                {/* Skip to manual */}
-                <div className="border-t border-[#1c1c1c]/5 pt-10 text-center">
-                  <p className="font-sans text-[11px] text-[#1c1c1c]/30 mb-5 tracking-wide uppercase font-bold">
-                    Can&apos;t find your gown?
-                  </p>
-                  <button
-                    onClick={skipToManual}
-                    className="px-10 py-4 border border-[#1c1c1c]/10 font-sans text-[11px] font-light text-[#1c1c1c] hover:text-white hover:bg-[#333] transition-all tracking-[0.15em] uppercase"
-                  >
-                    Enter Manually →
-                  </button>
+                <div className="text-center pt-8 border-t border-gray-200 border-dashed">
+                   <p className="text-sm text-gray-500 mb-4">Can't find your gown?</p>
+                   <button onClick={skipToManual} className="text-accent hover:text-primary underline text-sm font-medium tracking-wide">Enter Details Manually</button>
                 </div>
-              </motion.div>
-            )}
+              </div>
+            </motion.div>
+          )}
 
-            {/* ── STEP 2: Details ── */}
-            {step === 2 && (
-              <motion.div
-                key="step2"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="bg-white p-10 shadow-[0_4px_40px_rgba(0,0,0,0.03)] border border-[#1c1c1c]/5"
-              >
-                <h2 className="font-serif text-2xl text-[#1c1c1c]/90 mb-2">Heritage Details</h2>
-                <p className="font-sans text-xs text-[#1c1c1c]/40 mb-8 lowercase tracking-wide">
-                  {data.product_name
-                    ? `Archival data for "${data.product_name}" synchronized. Verify details below.`
-                    : 'Specify the characteristics of your Galia Lahav gown.'}
-                </p>
-
-                <div className="space-y-6">
-                  {/* Title */}
-                  <div>
-                    <label className={labelClass}>Style Name / Title *</label>
-                    <input
-                      type="text"
-                      value={data.title}
-                      onChange={(e) => setData((prev) => ({ ...prev, title: e.target.value }))}
-                      placeholder="e.g. Almeria, Brianna, Avena"
-                      className={inputClass}
-                    />
-                  </div>
-
-                  {/* Category + Size */}
-                  <div className="grid md:grid-cols-2 gap-5">
-                    <div>
-                      <label className={labelClass}>Category *</label>
-                      <select
-                        value={data.category}
-                        onChange={(e) =>
-                          setData((prev) => ({
-                            ...prev,
-                            category: e.target.value as 'bridal' | 'evening' | 'accessories',
-                          }))
-                        }
-                        className={selectClass}
-                      >
-                        <option value="bridal">Bridal Gown</option>
-                        <option value="evening">Evening Wear</option>
-                        <option value="accessories">Accessories</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className={labelClass}>Size (US)</label>
-                      <select
-                        value={data.size_us}
-                        onChange={(e) => handleSizeChange(e.target.value)}
-                        className={selectClass}
-                      >
-                        <option value="">Select size</option>
-                        {SIZES.map((s) => (
-                          <option key={s} value={s}>{s}</option>
-                        ))}
-                      </select>
-                      <p className="font-sans text-[9px] text-[#1c1c1c]/20 mt-2 uppercase tracking-widest italic">Dimensions auto-populated based on Galia Lahav size chart</p>
-                    </div>
-                  </div>
-
-                  {/* Silhouette + Train */}
-                  <div className="grid md:grid-cols-2 gap-5">
-                    <div>
-                      <label className={labelClass}>Silhouette</label>
-                      <select
-                        value={data.silhouette}
-                        onChange={(e) => setData((prev) => ({ ...prev, silhouette: e.target.value }))}
-                        className={selectClass}
-                      >
-                        <option value="">Select silhouette</option>
-                        {SILHOUETTES.map((s) => (
-                          <option key={s.value} value={s.value}>{s.label}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div>
-                      <label className={labelClass}>Train Style</label>
-                      <select
-                        value={data.train_style}
-                        onChange={(e) => setData((prev) => ({ ...prev, train_style: e.target.value }))}
-                        className={selectClass}
-                      >
-                        <option value="">Select train</option>
-                        {TRAIN_STYLES.map((t) => (
-                          <option key={t.value} value={t.value}>{t.label}</option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-
-                  {/* Measurements */}
-                  <div>
-                    <label className={labelClass}>Measurements (cm) — optional</label>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                      {(['bust_cm', 'waist_cm', 'hips_cm', 'height_cm'] as const).map((field) => (
-                        <input
-                          key={field}
-                          type="number"
-                          value={data[field]}
-                          onChange={(e) => setData((prev) => ({ ...prev, [field]: e.target.value }))}
-                          placeholder={field.replace('_cm', '')}
-                          className={inputClass}
-                        />
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Stock Photos Section */}
-                  {data.stock_images.length > 0 && (
-                    <div className="pt-6 border-t border-[#1c1c1c]/5">
-                      <label className={labelClass}>Archival Editorial Imagery</label>
-                      <p className="font-sans text-[10px] text-[#1c1c1c]/20 mb-4 uppercase tracking-[0.2em]">
-                        Syncing stock photos for certification
-                      </p>
-                      <div className="grid grid-cols-4 gap-4">
-                        {data.stock_images.map((img, i) => (
-                          <div key={i} className="aspect-[3/4] bg-white border border-[#1c1c1c]/5 overflow-hidden">
-                            <img src={img} alt={`Stock ${i}`} className="w-full h-full object-cover opacity-60 transition-opacity hover:opacity-100" />
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Description / Atelier Notice */}
-                  <div className="pt-6 border-t border-[#1c1c1c]/5">
-                    {data.product_id ? (
-                      <div className="p-8 bg-[#1c1c1c]/[0.03] border border-[#1c1c1c]/20/10 resonance-panel rounded-none">
-                        <p className="font-serif text-lg text-[#1c1c1c] italic mb-2 tracking-wide">Editorial Curation</p>
-                        <p className="font-sans text-[12px] text-[#1c1c1c]/50 leading-relaxed tracking-wide">
-                          The official Galia Lahav descriptive assets for your <span className="text-[#1c1c1c] font-bold">"{data.product_name}"</span> gown will be meticulously curated by the RE:GALIA editorial team. Your submission focus remains on condition verification and unique seller imagery.
-                        </p>
-                      </div>
-                    ) : (
-                      <div>
-                        <label className={labelClass}>Gown Description *</label>
-                        <textarea
-                          value={data.description}
-                          onChange={(e) => setData((prev) => ({ ...prev, description: e.target.value }))}
-                          placeholder="Please provide details about the style, silhouette, and history of this piece..."
-                          rows={4}
-                          className={`${inputClass} resize-none`}
-                        />
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </motion.div>
-            )}
-
-            {/* ── STEP 3: Condition ── */}
-            {step === 3 && (
-              <motion.div
-                key="step3"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="bg-white p-10 shadow-[0_4px_40px_rgba(0,0,0,0.03)] border border-[#1c1c1c]/5"
-              >
-                <h2 className="font-serif text-2xl text-[#1c1c1c]/90 mb-2">Preservation Condition</h2>
-                <p className="font-sans text-xs text-[#1c1c1c]/40 mb-8 lowercase tracking-wide">
-                  Select the condition tier that accurately reflects your gown's history.
-                </p>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {CONDITIONS.map((cond, idx) => {
-                    const resalePct = idx === 0 ? '85%' : idx === 1 ? '75%' : '60%';
-                    return (
-                      <button
-                        key={cond.value}
-                        onClick={() => setData((prev) => ({ ...prev, condition: cond.value }))}
-                        className={`text-left p-8 border transition-all duration-500 flex flex-col h-full rounded-sm ${data.condition === cond.value
-                          ? 'border-[#1c1c1c]/20 bg-[#1c1c1c]/[0.04] shadow-[0_10px_30px_rgba(212,175,55,0.08)]'
-                          : 'border-[#1c1c1c]/5 bg-white hover:border-[#1c1c1c]/10'
-                          }`}
-                      >
-                        <div className="flex-1">
-                          <div className="font-serif text-xl text-[#1c1c1c]/90 mb-4">{cond.label}</div>
-                          <div className="font-sans text-[12px] text-[#1c1c1c]/40 leading-relaxed min-h-[60px]">
-                            {cond.desc}
-                          </div>
+          {step === 2 && (
+            <motion.div key="2" initial={{opacity:0,y:20}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-20}}>
+               <div className="grid lg:grid-cols-12 gap-16 items-start">
+                 <div className="lg:col-span-4 space-y-8">
+                   <h1 className="font-display text-4xl leading-tight">Gown Details & Size</h1>
+                   <p className="text-gray-500 font-light leading-relaxed">Tell us about your masterpiece. Providing accurate details and sizing ensures the right bride finds her dream dress.</p>
+                   {data.product_id && (
+                     <div className="p-6 bg-accent/5 border border-accent/20 rounded-lg">
+                       <h3 className="text-xs uppercase tracking-widest font-semibold text-accent mb-2">Archive Match</h3>
+                       <p className="text-sm italic text-gray-600">Archival specs for <b>{data.product_name}</b> have been loaded. Please fill in your specific sizing.</p>
+                     </div>
+                   )}
+                 </div>
+                 
+                 <div className="lg:col-span-8 bg-white border border-gray-100 shadow-xl rounded-xl">
+                    <div className="p-8 lg:p-12 space-y-10">
+                      
+                      {!data.product_id && (
+                        <div className="space-y-6">
+                           <h2 className="text-xl font-medium border-b border-gray-100 pb-2">Basic Info</h2>
+                           <div className="space-y-2">
+                             <label className="text-[11px] uppercase tracking-widest font-semibold text-gray-500">Style Name / Title *</label>
+                             <input value={data.title} onChange={e => setData({...data, title: e.target.value})} className="w-full bg-transparent border-0 border-b border-gray-200 py-3 px-0 focus:ring-0 focus:border-accent text-sm" placeholder="e.g. Fabiana"/>
+                           </div>
+                           <div className="grid grid-cols-2 gap-8">
+                             <div className="space-y-2">
+                               <label className="text-[11px] uppercase tracking-widest font-semibold text-gray-500">Category *</label>
+                               <select value={data.category} onChange={e => setData({...data, category: e.target.value as any})} className="w-full bg-transparent border-0 border-b border-gray-200 py-3 px-0 focus:ring-0 focus:border-accent appearance-none text-sm">
+                                 <option value="bridal">Bridal Gown</option>
+                                 <option value="evening">Evening Wear</option>
+                                 <option value="accessories">Accessories</option>
+                               </select>
+                             </div>
+                             <div className="space-y-2">
+                               <label className="text-[11px] uppercase tracking-widest font-semibold text-gray-500">Silhouette</label>
+                               <select value={data.silhouette} onChange={e => setData({...data, silhouette: e.target.value})} className="w-full bg-transparent border-0 border-b border-gray-200 py-3 px-0 focus:ring-0 focus:border-accent appearance-none text-sm">
+                                 <option value="">Select</option>
+                                 <option value="a_line">A-Line</option>
+                                 <option value="mermaid">Mermaid</option>
+                                 <option value="ball_gown">Ball Gown</option>
+                                 <option value="sheath">Sheath</option>
+                               </select>
+                             </div>
+                           </div>
                         </div>
+                      )}
 
-                        <div className="mt-8 pt-6 border-t border-[#1c1c1c]/5">
-                          <p className="font-sans text-[9px] text-[#1c1c1c]/20 uppercase tracking-widest mb-1 font-bold">Resale Potential</p>
-                          <p className="font-serif text-2xl text-[#1c1c1c]">{resalePct} <span className="text-[10px] font-sans text-[#1c1c1c]/20 italic font-normal">of MSRP</span></p>
-                        </div>
-
-                        {data.condition === cond.value && (
-                          <div className="mt-4 flex justify-end">
-                            <div className="text-[#1c1c1c] scale-125">
-                              <CheckIcon />
-                            </div>
-                          </div>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-              </motion.div>
-            )}
-
-            {/* ── STEP 4: Photos ── */}
-            {step === 4 && (
-              <motion.div
-                key="step4"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="bg-white p-10 shadow-[0_4px_40px_rgba(0,0,0,0.03)] border border-[#1c1c1c]/5"
-              >
-                <div className="grid md:grid-cols-2 gap-12">
-                  <div>
-                    <h2 className="font-serif text-2xl text-[#1c1c1c]/90 mb-2">Couture Perspective</h2>
-                    <p className="font-sans text-[11px] text-[#1c1c1c]/30 mb-8 leading-relaxed uppercase tracking-widest font-bold">
-                      required frames for certification
-                    </p>
-
-                    <ul className="space-y-6 mb-10">
-                      {[
-                        { label: 'Architectural Frontier', desc: 'Full frontal gown silhouette in natural lighting' },
-                        { label: 'The Heritage Label', desc: 'Clear macro-shot of the internal atelier tags' },
-                        { label: 'Details & Accents', desc: 'Focus on beading, lace, or unique modifications' },
-                        { label: 'The Grand Train', desc: 'Composition of the train and rear detailing' },
-                      ].map((item, i) => (
-                        <li key={i} className="flex gap-5 group">
-                          <div className="w-10 h-10 border border-[#1c1c1c]/5 bg-white flex items-center justify-center text-[10px] font-bold group-hover:border-[#1c1c1c]/20/30 transition-colors shrink-0">
-                            {i + 1}
-                          </div>
-                          <div>
-                            <span className="block font-serif text-[14px] text-[#1c1c1c]/70 group-hover:text-[#1c1c1c] transition-colors uppercase tracking-wider">{item.label}</span>
-                            {item.desc && <span className="block font-sans text-[9px] text-[#1c1c1c]/40 mt-1 uppercase tracking-widest leading-relaxed">{item.desc}</span>}
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-
-                    {/* Mobile Hint */}
-                    <div className="p-6 border border-[#1c1c1c]/20/10 bg-[#1c1c1c]/[0.01] flex items-center justify-between">
-                      <div className="flex items-center gap-4">
-                        <div className="w-7 h-11 border border-[#1c1c1c]/10 rounded-[4px] relative bg-[#1c1c1c]/[0.02] overflow-hidden">
-                          <div className="absolute top-1 left-1/2 -translate-x-1/2 w-3 h-[0.5px] bg-[#1c1c1c]/20" />
-                          <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full border border-[#1c1c1c]/10" />
-                          <div className="absolute inset-0 bg-[#1c1c1c]/5 opacity-40 animate-pulse" />
-                        </div>
-                        <p className="font-sans text-[9px] text-[#1c1c1c]/30 uppercase tracking-[0.2em] leading-relaxed">
-                          MOBILE FRIENDLY<br /><span className="text-[#1c1c1c]/15 italic normal-case tracking-normal">Upload directly from your phone camera</span>
-                        </p>
-                      </div>
-                      <div className="h-6 w-[1px] bg-[#1c1c1c]/5 mx-2" />
-                      <span className="text-[10px] text-[#1c1c1c]/50 font-serif italic">Ready</span>
-                    </div>
-                  </div>
-
-                  <div className="space-y-6">
-                    {/* Upload zone */}
-                    <label
-                      className={`block aspect-[3/4] border-2 border-dashed border-[#1c1c1c]/5 hover:border-[#1c1c1c]/20/30 bg-white flex flex-col items-center justify-center cursor-pointer transition-all duration-700 relative group rounded-sm overflow-hidden ${uploading ? 'opacity-50 pointer-events-none' : ''
-                        }`}
-                    >
-                      <input
-                        type="file"
-                        accept="image/jpeg,image/png,image/webp"
-                        multiple
-                        onChange={handlePhotoUpload}
-                        className="hidden"
-                        disabled={uploading || data.images.length >= 8}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                      <div className="relative z-10 text-[#1c1c1c]/20 group-hover:text-[#1c1c1c]/50 transition-colors duration-500 scale-125 group-hover:scale-150 transform transition-transform duration-700">
-                        <UploadIcon />
-                      </div>
-                      <div className="relative z-10 mt-6 text-center">
-                        <p className="font-sans text-[10px] text-[#1c1c1c]/30 uppercase tracking-[0.3em] group-hover:text-[#1c1c1c] transition-colors font-bold">
-                          {uploading ? 'UPLOADING...' : 'ARCHIVE PHOTOS'}
-                        </p>
-                        <p className="font-sans text-[8px] text-[#1c1c1c]/10 uppercase tracking-widest mt-2 block">
-                          Up to 8 high-resolution frames
-                        </p>
-                      </div>
-                    </label>
-
-                    {/* Image Previews */}
-                    {data.images.length > 0 && (
-                      <div className="grid grid-cols-3 gap-3">
-                        {data.images.map((img, i) => (
-                          <div key={i} className="relative aspect-[3/4] group border border-white/5 overflow-hidden">
-                            <img src={img.url} alt={`Upload ${i}`} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                            <div className="absolute inset-0 bg-[#1c1c1c]/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                            <button
-                              onClick={() => handleRemovePhoto(i)}
-                              className="absolute top-2 right-2 w-7 h-7 bg-[#1c1c1c]/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-[#333] hover:text-[#1c1c1c]"
-                            >
-                              <XIcon />
-                            </button>
-                            {i === 0 && (
-                              <div className="absolute bottom-0 left-0 right-0 bg-[#1c1c1c]/90 py-1 text-center">
-                                <span className="font-sans text-[8px] tracking-[0.2em] text-[#1c1c1c] font-bold uppercase">Cover</span>
+                      <div className="space-y-6 pt-6 border-t border-gray-100">
+                         <h2 className="text-xl font-medium border-b border-gray-100 pb-2">Sizing</h2>
+                         <div className="space-y-2">
+                           <label className="block text-xs uppercase tracking-widest font-semibold text-gray-500">Label Size (US)</label>
+                           <select value={data.size_us} onChange={e => handleSizeChange(e.target.value)} className="w-full bg-gray-50 border-gray-200 rounded-lg py-3 text-sm focus:ring-accent">
+                             <option value="">Select Size</option>
+                             {['US 0 (EU 32)', 'US 2 (EU 34)', 'US 4 (EU 36)', 'US 6 (EU 38)', 'US 8 (EU 40)', 'US 10 (EU 42)', 'Custom'].map(s => <option key={s} value={s}>{s}</option>)}
+                           </select>
+                         </div>
+                         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                            {[{lbl: 'Bust', fld: 'bust_cm'}, {lbl: 'Waist', fld: 'waist_cm'}, {lbl: 'Hips', fld: 'hips_cm'}, {lbl: 'Height', fld: 'height_cm'}].map(m => (
+                              <div key={m.fld} className="space-y-2">
+                                <label className="text-xs uppercase tracking-widest font-semibold text-gray-500">{m.lbl}</label>
+                                <div className="relative">
+                                  <input type="number" value={(data as any)[m.fld]} onChange={e => setData({...data, [m.fld]: e.target.value})} className="w-full bg-transparent border-0 border-b border-gray-200 py-2 px-0 text-lg font-light focus:ring-0 focus:border-accent" placeholder="00.0"/>
+                                  <span className="absolute right-0 bottom-2 text-[10px] text-gray-400 uppercase">CM</span>
+                                </div>
                               </div>
-                            )}
-                          </div>
-                        ))}
+                            ))}
+                         </div>
                       </div>
-                    )}
-                  </div>
-                </div>
-              </motion.div>
-            )}
 
-            {/* ── STEP 5: Price & Submit ── */}
-            {step === 5 && (
-              <motion.div
-                key="step5"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="bg-white p-10 shadow-[0_4px_40px_rgba(0,0,0,0.03)] border border-[#1c1c1c]/5"
-              >
-                <h2 className="font-serif text-2xl text-[#1c1c1c]/90 mb-2">Investment & Value</h2>
-                <p className="font-sans text-[11px] text-[#1c1c1c]/30 mb-10 leading-relaxed uppercase tracking-widest font-bold">
-                  Define your market position
-                </p>
-
-                <div className="grid md:grid-cols-2 gap-12">
-                  <div className="space-y-8">
-                    <div>
-                      <label className={labelClass}>Original Retail Price (USD)</label>
-                      <input
-                        type="number"
-                        value={data.msrp}
-                        onChange={(e) => setData((prev) => ({ ...prev, msrp: e.target.value }))}
-                        placeholder="e.g. 8500"
-                        className={inputClass}
-                      />
-                    </div>
-                    <div>
-                      <label className={labelClass}>Your Asking Price (USD) *</label>
-                      <input
-                        type="number"
-                        value={data.price}
-                        onChange={(e) => setData((prev) => ({ ...prev, price: e.target.value }))}
-                        placeholder="e.g. 4500"
-                        className={inputClass}
-                      />
-                    </div>
-
-                    {/* Commission Advisor */}
-                    {price > 0 && (
-                      <div className="p-8 border border-[#1c1c1c]/20/10 bg-[#1c1c1c]/[0.02] resonance-panel rounded-none">
-                        <div className="flex justify-between items-end mb-8">
-                          <div>
-                            <p className="font-sans text-[10px] text-[#1c1c1c]/20 uppercase tracking-[0.2em] mb-2 font-bold">Your Earnings</p>
-                            <p className="font-serif text-4xl text-[#1c1c1c] font-light">${payout.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
-                          </div>
-                          <div className="text-right">
-                            <p className="font-sans text-[10px] text-[#1c1c1c]/20 uppercase tracking-[0.2em] mb-2 font-bold">Service Fee</p>
-                            <p className="font-sans text-xs text-[#1c1c1c]/40 tracking-wider font-light">{commissionRate}% Tier</p>
-                          </div>
-                        </div>
-
-                        <div className="space-y-4 pt-6 border-t border-[#1c1c1c]/5">
-                          <div className="flex justify-between text-[11px] font-sans tracking-wide">
-                            <span className="text-[#1c1c1c]/30 lowercase italic">Listing amount</span>
-                            <span className="text-[#1c1c1c]/60 font-bold">${price.toLocaleString()}</span>
-                          </div>
-                          <div className="flex justify-between text-[11px] font-sans tracking-wide">
-                            <span className="text-[#1c1c1c]/30 lowercase italic">RE:GALIA curation fee</span>
-                            <span className="text-[#1c1c1c]/30">-${commission.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
-                          </div>
-                        </div>
+                      <div className="space-y-6 pt-6 border-t border-gray-100">
+                        <label className="text-[11px] uppercase tracking-widest font-semibold text-gray-500">The Story / Description</label>
+                        <textarea value={data.description} onChange={e => setData({...data, description: e.target.value})} className="w-full bg-gray-50 border-gray-200 focus:ring-accent rounded text-sm p-4 placeholder:text-gray-400" placeholder="Describe the gown, its fit, how it felt to wear, and any special memories..." rows={5}></textarea>
                       </div>
-                    )}
-                  </div>
 
-                  {/* Final Review */}
-                  <div className="border border-[#1c1c1c]/5 bg-white p-10 h-full flex flex-col justify-between">
-                    <div>
-                      <h3 className="font-serif text-xl text-[#1c1c1c]/80 mb-8 italic">Heritage Review</h3>
-                      <div className="space-y-8">
-                        <div className="flex justify-between border-b border-[#1c1c1c]/5 pb-4">
-                          <span className="font-sans text-[10px] text-[#1c1c1c]/20 uppercase tracking-widest font-bold">Style Identification</span>
-                          <span className="font-serif text-[15px] text-[#1c1c1c]/70 tracking-wide">{data.title || '—'}</span>
-                        </div>
-                        <div className="flex justify-between border-b border-[#1c1c1c]/5 pb-4">
-                          <span className="font-sans text-[10px] text-[#1c1c1c]/20 uppercase tracking-widest font-bold">State of Preservation</span>
-                          <span className="font-sans text-[11px] text-[#1c1c1c]/70 uppercase tracking-wider font-bold">{CONDITIONS.find(c => c.value === data.condition)?.label || '—'}</span>
-                        </div>
-                        <div className="flex justify-between border-b border-[#1c1c1c]/5 pb-4">
-                          <span className="font-sans text-[10px] text-[#1c1c1c]/20 uppercase tracking-widest font-bold">Measurement Sync</span>
-                          <span className="font-sans text-[11px] text-[#1c1c1c]/70 font-bold">{data.size_us || '—'}</span>
-                        </div>
-                        <div className="flex justify-between border-b border-[#1c1c1c]/5 pb-4">
-                          <span className="font-sans text-[10px] text-[#1c1c1c]/20 uppercase tracking-widest font-bold">Seller Imagery</span>
-                          <span className="font-sans text-[11px] text-[#1c1c1c]/70 font-bold">{data.images.length} Archival Frames</span>
-                        </div>
-                      </div>
                     </div>
-
-                    <div className="mt-12 p-6 border border-[#1c1c1c]/20/10 bg-[#1c1c1c]/[0.02]">
-                      <p className="font-sans text-[10px] text-[#1c1c1c]/30 leading-relaxed italic text-center">
-                        Our internal curation atelier will review your submission for heritage certification within 24 hours.
-                      </p>
+                    <div className="p-8 bg-gray-50 border-t border-gray-100 flex justify-between">
+                       <button onClick={() => setStep(1)} className="text-sm text-gray-500 hover:text-primary font-medium">Back</button>
+                       <button onClick={() => setStep(3)} disabled={!canProceed()} className="px-8 py-3 bg-primary text-white text-xs uppercase tracking-widest font-semibold hover:bg-zinc-800 transition-all rounded shadow-md disabled:opacity-50">Save & Continue</button>
                     </div>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                 </div>
+               </div>
+            </motion.div>
+          )}
 
-          {/* ── Navigation ── */}
-          <div className="flex justify-between items-center mt-12">
-            <button
-              onClick={() => setStep((s) => Math.max(1, s - 1))}
-              className={`px-8 py-4 border border-[#1c1c1c]/10 font-sans text-[11px] font-light uppercase tracking-[0.15em] text-[#1c1c1c]/40 hover:text-[#1c1c1c] hover:border-[#1c1c1c]/20 transition-all ${step === 1 ? 'invisible' : ''
-                }`}
-            >
-              ← Back
-            </button>
+          {step === 3 && (
+            <motion.div key="3" initial={{opacity:0,y:20}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-20}}>
+               <div className="grid lg:grid-cols-12 gap-16 items-start">
+                 <div className="lg:col-span-4 space-y-8">
+                   <h1 className="font-display text-4xl leading-tight">Gown Condition</h1>
+                   <p className="text-gray-500 font-light leading-relaxed">Please select the tier that most accurately reflects the current state of your gown.</p>
+                 </div>
+                 <div className="lg:col-span-8 bg-white border border-gray-100 shadow-xl rounded-xl">
+                   <div className="p-8 lg:p-12 space-y-6">
+                      {[
+                        {v: 'new_unworn', title: 'Pristine & Unworn', sub: 'Collector Quality', desc: 'Never worn, no alterations. Original tags attached. Stored in a climate-controlled environment.'},
+                        {v: 'excellent', title: 'Excellent', sub: 'Worn Once', desc: 'Worn for a wedding or event. Professionally dry-cleaned immediately after use. No visible stains.'},
+                        {v: 'good', title: 'Good', sub: 'Minor Wear', desc: 'Previously worn with minor wear. Includes deep dry cleaning. Any remaining minor imperfections must be disclosed.'}
+                      ].map(c => (
+                        <label key={c.v} className="relative block cursor-pointer group">
+                          <input type="radio" name="condition" checked={data.condition === c.v} onChange={() => setData({...data, condition: c.v as any})} className="sr-only peer"/>
+                          <div className="p-6 border-2 border-gray-100 rounded-lg transition-all hover:border-accent peer-checked:border-primary">
+                            <div className="flex justify-between items-start mb-2">
+                              <div>
+                                <h3 className="text-lg font-semibold tracking-tight">{c.title}</h3>
+                                <p className="text-xs uppercase tracking-widest text-accent font-medium mt-1">{c.sub}</p>
+                              </div>
+                              <div className="w-5 h-5 rounded-full border border-gray-300 flex items-center justify-center peer-checked:bg-primary">
+                                <div className="w-2.5 h-2.5 rounded-full bg-primary opacity-0 peer-checked:opacity-100 transition-opacity"></div>
+                              </div>
+                            </div>
+                            <p className="text-sm text-gray-500 mt-2">{c.desc}</p>
+                          </div>
+                        </label>
+                      ))}
+                   </div>
+                   <div className="p-8 bg-gray-50 border-t border-gray-100 flex justify-between">
+                       <button onClick={() => setStep(2)} className="text-sm text-gray-500 hover:text-primary font-medium">Back</button>
+                       <button onClick={() => setStep(4)} disabled={!canProceed()} className="px-8 py-3 bg-primary text-white text-xs uppercase tracking-widest font-semibold hover:bg-zinc-800 transition-all rounded shadow-md disabled:opacity-50">Save & Continue</button>
+                   </div>
+                 </div>
+               </div>
+            </motion.div>
+          )}
 
-            {step < 5 ? (
-              <button
-                onClick={() => setStep((s) => Math.min(5, s + 1))}
-                disabled={!canProceed()}
-                className="px-10 py-4 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-[#333] transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-              >
-                Continue →
-              </button>
-            ) : (
-              <button
-                onClick={handleSubmit}
-                disabled={!canProceed() || submitting}
-                className="px-12 py-4 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-[#333] transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-              >
-                {submitting ? 'Authenticating...' : 'Submit to Atelier'}
-              </button>
-            )}
-          </div>
+          {step === 4 && (
+            <motion.div key="4" initial={{opacity:0,y:20}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-20}}>
+               <div className="grid lg:grid-cols-12 gap-16 items-start">
+                 <div className="lg:col-span-4 space-y-8">
+                   <h1 className="font-display text-4xl leading-tight">Couture Imagery</h1>
+                   <p className="text-gray-500 font-light leading-relaxed">High-quality imagery is crucial for authentication and attracting buyers. Follow our perspective guide for the best results.</p>
+                   <ul className="space-y-4">
+                     <li><b className="block text-sm">1. Architectural Frontier</b><span className="text-xs text-gray-500">Full frontal gown silhouette</span></li>
+                     <li><b className="block text-sm">2. The Heritage Label</b><span className="text-xs text-gray-500">Clear macro-shot of internal tags</span></li>
+                     <li><b className="block text-sm">3. The Grand Train</b><span className="text-xs text-gray-500">Composition of rear detailing</span></li>
+                   </ul>
+                 </div>
+                 <div className="lg:col-span-8 bg-white border border-gray-100 shadow-xl rounded-xl">
+                   <div className="p-8 lg:p-12 space-y-6">
+                     <label className={`block aspect-video lg:aspect-[2.5/1] border-2 border-dashed border-gray-200 bg-gray-50 hover:border-accent hover:bg-accent/5 flex flex-col items-center justify-center cursor-pointer transition-all rounded-xl ${uploading ? 'opacity-50' : ''}`}>
+                       <input type="file" accept="image/*" multiple onChange={handlePhotoUpload} className="hidden" disabled={uploading || data.images.length >= 8} />
+                       <span className="material-symbols-outlined text-4xl text-gray-400 mb-2">cloud_upload</span>
+                       <span className="text-sm font-semibold">{uploading ? 'Uploading...' : 'Click or drag photos to upload'}</span>
+                       <span className="text-xs text-gray-500 mt-1">Up to 8 high-res images (JPEG, PNG, WEBP)</span>
+                     </label>
 
-          <p className="font-sans text-[10px] text-[#1c1c1c]/20 text-center mt-6 tracking-wider">
-            Your listing will be reviewed within 24–72 hours before going live.
-          </p>
-        </div>
-      </div>
-    </main>
+                     {data.images.length > 0 && (
+                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+                         {data.images.map((img, i) => (
+                           <div key={i} className="relative aspect-[3/4] border border-gray-200 rounded overflow-hidden group">
+                             <img src={img.url} alt="" className="w-full h-full object-cover"/>
+                             <button onClick={() => handleRemovePhoto(i)} className="absolute top-2 right-2 bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                               <span className="material-symbols-outlined text-sm">close</span>
+                             </button>
+                             {i===0 && <div className="absolute bottom-0 left-0 right-0 bg-primary/90 text-white text-[10px] py-1 text-center uppercase tracking-widest font-bold">Cover</div>}
+                           </div>
+                         ))}
+                       </div>
+                     )}
+                   </div>
+                   <div className="p-8 bg-gray-50 border-t border-gray-100 flex justify-between">
+                       <button onClick={() => setStep(3)} className="text-sm text-gray-500 hover:text-primary font-medium">Back</button>
+                       <button onClick={() => setStep(5)} disabled={!canProceed()} className="px-8 py-3 bg-primary text-white text-xs uppercase tracking-widest font-semibold hover:bg-zinc-800 transition-all rounded shadow-md disabled:opacity-50">Save & Continue</button>
+                   </div>
+                 </div>
+               </div>
+            </motion.div>
+          )}
+
+          {step === 5 && (
+            <motion.div key="5" initial={{opacity:0,y:20}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-20}}>
+               <div className="grid lg:grid-cols-12 gap-16 items-start">
+                 <div className="lg:col-span-4 space-y-8">
+                   <h1 className="font-display text-4xl leading-tight">Pricing & Post</h1>
+                   <p className="text-gray-500 font-light leading-relaxed">Set your asking price based on condition and original retail value. Our tiered commission structure rewards higher-value pieces.</p>
+                 </div>
+                 <div className="lg:col-span-8 bg-white border border-gray-100 shadow-xl rounded-xl">
+                   <div className="p-8 lg:p-12 space-y-10">
+                     <div className="grid md:grid-cols-2 gap-8">
+                        <div className="space-y-2">
+                           <label className="text-[11px] uppercase tracking-widest font-semibold text-gray-500">Retail Price (MSRP)</label>
+                           <div className="relative">
+                             <span className="absolute left-0 top-3 text-gray-400">$</span>
+                             <input type="number" value={data.msrp} onChange={e => setData({...data, msrp: e.target.value})} className="w-full bg-transparent border-0 border-b border-gray-200 py-3 pl-5 focus:ring-0 focus:border-accent text-xl" placeholder="8500"/>
+                           </div>
+                        </div>
+                        <div className="space-y-2">
+                           <label className="text-[11px] uppercase tracking-widest font-semibold text-gray-500">Your Asking Price *</label>
+                           <div className="relative">
+                             <span className="absolute left-0 top-3 text-gray-400">$</span>
+                             <input type="number" value={data.price} onChange={e => setData({...data, price: e.target.value})} className="w-full bg-transparent border-0 border-b border-gray-200 py-3 pl-5 focus:ring-0 focus:border-accent text-xl font-medium" placeholder="4500"/>
+                           </div>
+                        </div>
+                     </div>
+
+                     {parseFloat(data.price) > 0 && (
+                       <div className="p-6 bg-gray-50 border border-gray-100 rounded-lg space-y-4">
+                         <div className="flex justify-between items-end border-b border-gray-200 pb-4">
+                           <div>
+                             <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-1">Your Earnings</p>
+                             <p className="font-serif text-3xl">${payout.toLocaleString(undefined, {maximumFractionDigits:0})}</p>
+                           </div>
+                           <div className="text-right">
+                             <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-1">Service Fee</p>
+                             <p className="text-sm text-gray-600">{commissionRate}%</p>
+                           </div>
+                         </div>
+                         <div className="flex justify-between text-sm">
+                           <span className="text-gray-500">Listing amount</span>
+                           <span className="font-semibold">${parseFloat(data.price).toLocaleString()}</span>
+                         </div>
+                         <div className="flex justify-between text-sm">
+                           <span className="text-gray-500">RE:GALIA curation fee</span>
+                           <span className="text-gray-500">-${commission.toLocaleString(undefined, {maximumFractionDigits:0})}</span>
+                         </div>
+                       </div>
+                     )}
+
+                     <div className="bg-accent/5 p-6 rounded-lg text-sm text-accent leading-relaxed italic border border-accent/20">
+                       Our internal curation atelier will review your submission for heritage certification within 24 hours before it's published to the marketplace.
+                     </div>
+                   </div>
+                   <div className="p-8 bg-gray-50 border-t border-gray-100 flex justify-between items-center">
+                       <button onClick={() => setStep(4)} className="text-sm text-gray-500 hover:text-primary font-medium">Back</button>
+                       <form onSubmit={handleSubmit}>
+                         <button type="submit" disabled={!canProceed() || submitting} className="px-10 py-4 bg-primary text-white text-xs uppercase tracking-widest font-semibold hover:bg-zinc-800 transition-all shadow-lg rounded disabled:opacity-50">
+                            {submitting ? 'Authenticating...' : 'Submit to Atelier'}
+                         </button>
+                       </form>
+                   </div>
+                 </div>
+               </div>
+            </motion.div>
+          )}
+
+        </AnimatePresence>
+      </main>
+    </div>
   )
 }

@@ -1,18 +1,14 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
 import Navbar from "@/components/ui/Navbar";
-import FilterBar, { ActiveFilters, DEFAULT_FILTERS } from "@/components/ui/FilterBar";
-import ProductCard from "@/components/ui/ProductCard";
+import Footer from "@/components/ui/Footer";
 import { mockListings, type Listing } from "@/lib/mock-listings";
 import { getApprovedListings } from "./actions";
-import Footer from "@/components/ui/Footer";
 
-/**
- * Convert a Supabase listing row into the Listing shape
- * used by ProductCard / FilterBar (backward compat with mocks)
- */
+// Re-using the mapping function
 function mapDbListing(row: any): Listing {
   const conditionMap: Record<string, Listing["condition"]> = {
     new_unworn: "New Never Worn",
@@ -64,177 +60,140 @@ function mapDbListing(row: any): Listing {
   };
 }
 
-function applyFilters(listings: Listing[], filters: ActiveFilters): Listing[] {
-  let result = [...listings];
-
-  if (filters.collection.length > 0) {
-    result = result.filter((l) => filters.collection.includes(l.collection));
-  }
-  if (filters.size.length > 0) {
-    result = result.filter((l) => filters.size.includes(l.size));
-  }
-  if (filters.condition.length > 0) {
-    result = result.filter((l) => filters.condition.includes(l.condition));
-  }
-  if (filters.silhouette.length > 0) {
-    result = result.filter((l) => filters.silhouette.includes(l.silhouette));
-  }
-  if (filters.neckline.length > 0) {
-    result = result.filter((l) => filters.neckline.includes(l.neckline));
-  }
-  if (filters.fabric.length > 0) {
-    result = result.filter((l) => filters.fabric.includes(l.fabric));
-  }
-  if (filters.priceRange) {
-    result = result.filter(
-      (l) => l.salePrice >= filters.priceRange!.min && l.salePrice <= filters.priceRange!.max
-    );
-  }
-
-  switch (filters.sortBy) {
-    case "price-low":
-      result.sort((a, b) => a.salePrice - b.salePrice);
-      break;
-    case "price-high":
-      result.sort((a, b) => b.salePrice - a.salePrice);
-      break;
-    case "newest":
-      result.sort((a, b) => a.daysListed - b.daysListed);
-      break;
-    case "biggest-save":
-      result.sort(
-        (a, b) =>
-          (b.originalPrice - b.salePrice) / b.originalPrice -
-          (a.originalPrice - a.salePrice) / a.originalPrice
-      );
-      break;
-    default:
-      result.sort((a, b) => {
-        if (a.featured && !b.featured) return -1;
-        if (!a.featured && b.featured) return 1;
-        return a.daysListed - b.daysListed;
-      });
-  }
-
-  return result;
-}
-
 export default function ShopPage() {
-  const [filters, setFilters] = useState<ActiveFilters>(DEFAULT_FILTERS);
   const [listings, setListings] = useState<Listing[]>(mockListings);
-  const [visibleItems, setVisibleItems] = useState(8);
-
-  // Try to load real listings from Supabase on mount
+  
   useEffect(() => {
     getApprovedListings().then((data) => {
       if (data && data.length > 0) {
         setListings(data.map(mapDbListing));
       }
-      // else keep mock data as fallback
     });
   }, []);
 
-  const filtered = useMemo(() => applyFilters(listings, filters), [listings, filters]);
-
-  // Reset pagination when filters change
-  useEffect(() => {
-    setVisibleItems(8);
-  }, [filters]);
-
-  const displayedListings = useMemo(() => filtered.slice(0, visibleItems), [filtered, visibleItems]);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && visibleItems < filtered.length) {
-          setVisibleItems((prev) => prev + 4);
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    const trigger = document.getElementById("scroll-trigger");
-    if (trigger) observer.observe(trigger);
-
-    return () => {
-      if (trigger) observer.unobserve(trigger);
-    };
-  }, [filtered.length, visibleItems]);
-
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen flex flex-col bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-sans">
       <Navbar />
 
-      {/* Hero banner */}
-      <section className="pt-48 pb-12 px-6 md:px-10">
-        <div className="max-w-7xl mx-auto">
-          <nav className="flex items-center gap-3 mb-10">
-            <a href="/" className="font-sans text-[9px] font-bold uppercase tracking-[0.4em] text-obsidian/20 hover:text-obsidian/50 transition-colors">
-              Home
-            </a>
-            <span className="text-obsidian/10 text-[8px]">•</span>
-            <span className="font-sans text-[9px] font-bold uppercase tracking-[0.4em] text-obsidian/40">
-              Shop
-            </span>
-          </nav>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <h1 className="font-serif text-6xl md:text-8xl font-light tracking-tight text-obsidian leading-none">
-              The Collection
-            </h1>
-            <p className="font-sans text-sm text-obsidian/40 mt-8 tracking-wide max-w-lg leading-relaxed">
-              Authenticated Galia Lahav couture, curated for its next chapter.
-              Every gown verified by the House of Galia Lahav.
+      <div className="p-10 space-y-10 pt-32 max-w-[1600px] mx-auto w-full flex-1">
+        <div className="space-y-8">
+          <div>
+            <h2 className="text-5xl font-light tracking-tight mb-4 font-display">The Collection</h2>
+            <p className="text-[11px] text-slate-400 uppercase tracking-[0.4em] font-sans">
+              Visual Curation & Asset Management
             </p>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Filters + Grid */}
-      <section className="px-6 md:px-10 pb-32">
-        <div className="max-w-7xl mx-auto">
-          <FilterBar
-            filters={filters}
-            onFiltersChange={setFilters}
-            totalResults={filtered.length}
-          />
-
-          {filtered.length > 0 ? (
-            <>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-16 mt-16">
-                {displayedListings.map((listing, i) => (
-                  <ProductCard key={listing.id} listing={listing} index={i} />
-                ))}
+          </div>
+          <div className="flex flex-wrap items-center gap-6 border-y border-slate-200 dark:border-slate-800 py-6">
+            <div className="relative flex-grow max-w-md">
+              <span className="material-symbols-outlined absolute left-0 top-1/2 -translate-y-1/2 text-slate-400 text-lg">
+                search
+              </span>
+              <input
+                className="w-full pl-8 pr-4 py-2 text-xs bg-transparent border-none focus:ring-0 placeholder:text-slate-400 uppercase tracking-widest font-medium outline-none"
+                placeholder="Search Listings..."
+                type="text"
+              />
+            </div>
+            <div className="h-8 w-px bg-slate-200 dark:border-slate-800"></div>
+            <div className="flex items-center gap-8">
+              <div className="flex flex-col gap-1">
+                <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">
+                  Collection
+                </label>
+                <select className="p-0 bg-transparent border-none text-[10px] font-bold uppercase tracking-widest focus:ring-0 cursor-pointer hover:text-accent transition-colors outline-none">
+                  <option>All Collections</option>
+                  <option>Le Secret Royal</option>
+                  <option>Allegria</option>
+                  <option>Couture</option>
+                  <option>GALA</option>
+                </select>
               </div>
-              <div id="scroll-trigger" className="h-20 w-full" />
-            </>
-          ) : (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex flex-col items-center justify-center py-40"
-            >
-              <p className="font-serif text-3xl text-obsidian/40 tracking-tight mb-4">
-                No gowns found
-              </p>
-              <p className="font-sans text-sm text-obsidian/20 mb-10 max-w-xs text-center leading-relaxed">
-                Try adjusting your search criteria to discover more available pieces.
-              </p>
-              <button
-                onClick={() => setFilters(DEFAULT_FILTERS)}
-                className="px-14 py-5 border border-[#1c1c1c]/10 font-sans text-[11px] font-light uppercase tracking-[0.15em] text-[#1c1c1c]/40 hover:text-[#1c1c1c] hover:border-[#1c1c1c]/30 transition-all"
-              >
-                Clear All Filters
-              </button>
-            </motion.div>
-          )}
+              <div className="flex flex-col gap-1">
+                <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">
+                  Condition
+                </label>
+                <select className="p-0 bg-transparent border-none text-[10px] font-bold uppercase tracking-widest focus:ring-0 cursor-pointer hover:text-accent transition-colors outline-none">
+                  <option>All Conditions</option>
+                  <option>New with Tags</option>
+                  <option>Pristine</option>
+                  <option>Excellent</option>
+                  <option>Good</option>
+                </select>
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">
+                  Status
+                </label>
+                <select className="p-0 bg-transparent border-none text-[10px] font-bold uppercase tracking-widest focus:ring-0 cursor-pointer hover:text-accent transition-colors outline-none">
+                  <option>All Statuses</option>
+                  <option>Live</option>
+                  <option>Sold</option>
+                  <option>Pending</option>
+                </select>
+              </div>
+            </div>
+            <button className="ml-auto flex items-center gap-2 px-6 py-2.5 bg-primary text-white text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-slate-800 dark:hover:bg-slate-700 transition-colors">
+              <span className="material-symbols-outlined text-sm">filter_list</span>
+              Filters
+            </button>
+          </div>
         </div>
-      </section>
 
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10 pb-20">
+          {listings.map((listing) => (
+            <Link href={`/shop/${listing.id}`} key={listing.id}>
+              <div className="group relative flex flex-col bg-white dark:bg-[#111] border border-slate-200 dark:border-slate-800 overflow-hidden transition-all hover:border-slate-400 dark:hover:border-slate-600 h-full">
+                <div className="aspect-[3/4] overflow-hidden relative bg-slate-100 dark:bg-slate-800">
+                  <img
+                    alt={listing.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    src={listing.imageUrl}
+                  />
+                  {listing.verified && (
+                    <div className="absolute top-4 left-4">
+                      <span className="inline-flex items-center px-3 py-1 text-[9px] font-bold uppercase tracking-widest bg-green-50/90 dark:bg-green-900/40 text-green-600 dark:text-green-400 backdrop-blur-sm border border-green-200/50 dark:border-green-800/50">
+                        Verified Authentic
+                      </span>
+                    </div>
+                  )}
+                  <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button className="w-8 h-8 bg-white/90 dark:bg-black/90 flex items-center justify-center border border-slate-200 dark:border-slate-800">
+                      <span className="material-symbols-outlined text-lg">more_horiz</span>
+                    </button>
+                  </div>
+                </div>
+                <div className="p-6 flex flex-col flex-grow">
+                  <div className="mb-4">
+                    <div className="flex justify-between items-start mb-1">
+                      <h3 className="text-xl font-medium tracking-tight font-display">{listing.title}</h3>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
+                        SIZE {listing.size}
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-slate-400 uppercase tracking-widest font-sans">
+                      {listing.collection} • {listing.sellerLocation}
+                    </p>
+                  </div>
+                  <div className="mt-auto pt-6 border-t border-slate-100 dark:border-slate-800 flex justify-between items-end">
+                    <div>
+                      <p className="text-[9px] text-slate-400 uppercase tracking-widest mb-1 font-sans">
+                        {listing.condition}
+                      </p>
+                      <p className="text-lg font-bold tracking-tight">
+                        ${listing.salePrice.toLocaleString()}
+                      </p>
+                    </div>
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-accent hover:text-primary dark:hover:text-white transition-colors">
+                      View Details
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+      
       <Footer />
     </main>
   );

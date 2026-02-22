@@ -22,86 +22,21 @@ import {
 
 type Tab = "listings" | "purchases" | "messages" | "profile";
 
-const STATUS_STYLES: Record<string, string> = {
-  draft: "bg-[#1c1c1c]/[0.04] text-[#1c1c1c]/40 border border-[#1c1c1c]/10",
-  pending_review: "bg-yellow-50 text-yellow-700 border border-yellow-200",
-  approved: "bg-emerald-50 text-emerald-700 border border-emerald-200",
-  rejected: "bg-red-50 text-red-600 border border-red-200",
-  sold: "bg-blue-50 text-blue-700 border border-blue-200",
-  archived: "bg-[#1c1c1c]/[0.04] text-[#1c1c1c]/30 border border-[#1c1c1c]/10",
-  pending: "bg-yellow-50 text-yellow-700 border border-yellow-200",
-  confirmed: "bg-blue-50 text-blue-700 border border-blue-200",
-  shipped: "bg-purple-50 text-purple-700 border border-purple-200",
-  delivered: "bg-emerald-50 text-emerald-700 border border-emerald-200",
-  completed: "bg-emerald-50 text-emerald-700 border border-emerald-200",
-  cancelled: "bg-red-50 text-red-600 border border-red-200",
-  refunded: "bg-orange-50 text-orange-600 border border-orange-200",
-};
-
-function StatusBadge({ status }: { status: string }) {
-  const styles = STATUS_STYLES[status] || "bg-[#1c1c1c]/[0.04] text-[#1c1c1c]/40 border border-[#1c1c1c]/10";
-  return (
-    <span
-      className={`${styles} font-sans text-[9px] font-light uppercase tracking-[0.15em] px-3 py-1.5`}
-    >
-      {status.replace(/_/g, " ")}
-    </span>
-  );
-}
-
 /* ── Loading Skeleton ── */
 function LoadingSkeleton() {
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 p-8">
       {[1, 2, 3].map((i) => (
-        <div
-          key={i}
-          className="border border-[#1c1c1c]/5 p-6 animate-pulse"
-        >
+        <div key={i} className="border border-slate-100 dark:border-slate-800 p-6 animate-pulse">
           <div className="flex gap-5">
-            <div className="w-20 h-24 bg-[#1c1c1c]/[0.03]" />
+            <div className="w-20 h-24 bg-slate-100 dark:bg-slate-800" />
             <div className="flex-1 space-y-3">
-              <div className="h-4 bg-[#1c1c1c]/[0.03] w-1/3" />
-              <div className="h-3 bg-[#1c1c1c]/[0.03] w-1/2" />
+              <div className="h-4 bg-slate-100 dark:bg-slate-800 w-1/3" />
+              <div className="h-3 bg-slate-100 dark:bg-slate-800 w-1/2" />
             </div>
           </div>
         </div>
       ))}
-    </div>
-  );
-}
-
-/* ── Empty State ── */
-function EmptyState({
-  icon,
-  title,
-  subtitle,
-  cta,
-  href,
-}: {
-  icon: string;
-  title: string;
-  subtitle: string;
-  cta?: string;
-  href?: string;
-}) {
-  return (
-    <div className="text-center py-24">
-      <div className="text-4xl mb-6 opacity-20">{icon}</div>
-      <h3 className="font-serif text-2xl text-[#1c1c1c]/60 mb-2 tracking-wide">
-        {title}
-      </h3>
-      <p className="font-sans text-xs text-[#1c1c1c]/30 mb-8 max-w-xs mx-auto font-light">
-        {subtitle}
-      </p>
-      {cta && href && (
-        <Link
-          href={href}
-          className="inline-block px-14 py-5 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-[#333] transition-all duration-300"
-        >
-          {cta}
-        </Link>
-      )}
     </div>
   );
 }
@@ -131,65 +66,45 @@ function ListingsTab() {
 
   if (loading) return <LoadingSkeleton />;
 
-  if (listings.length === 0) {
-    return (
-      <EmptyState
-        icon="&#x1F457;"
-        title="No listings yet"
-        subtitle="Start selling your Galia Lahav gown today"
-        cta="Create Listing"
-        href="/sell/submit"
-      />
-    );
-  }
-
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between mb-10">
-        <p className="font-sans text-[11px] font-light text-[#1c1c1c]/30 uppercase tracking-[0.15em]">
-          {listings.length} item{listings.length !== 1 ? "s" : ""} listed
-        </p>
-        <Link
-          href="/sell/submit"
-          className="px-8 py-3.5 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-[#333] transition-all duration-300"
-        >
-          + New Listing
+    <div className="max-w-[1600px] mx-auto pt-8">
+      <div className="flex justify-between items-end mb-12">
+        <div>
+          <h2 className="text-4xl font-light mb-2">My Listings</h2>
+          <p className="text-xs text-slate-400 uppercase tracking-[0.2em]">Manage your bridal collection</p>
+        </div>
+        <Link href="/sell/submit" className="bg-primary text-white px-8 py-3 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-accent transition-all flex items-center gap-2 shadow-xl shadow-black/5">
+          <span className="material-symbols-outlined text-sm">add</span>
+          Create New Listing
         </Link>
       </div>
 
-      <div className="grid gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
         {listings.map((listing: any) => (
-          <div
-            key={listing.id}
-            className="p-6 flex gap-8 items-center group transition-all duration-300 border border-[#1c1c1c]/5 hover:border-[#1c1c1c]/10"
-          >
-            <div className="w-24 h-32 bg-[#1c1c1c]/[0.02] flex-shrink-0 overflow-hidden border border-[#1c1c1c]/5">
-              {listing.images?.[0] ? (
-                <img
-                  src={listing.images[0]}
-                  alt=""
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-[#1c1c1c]/10 text-3xl">&#x1F457;</div>
-              )}
-            </div>
-
-            <div className="flex-1 min-w-0">
-              <div className="flex items-start justify-between gap-4 mb-4">
-                <div>
-                  <h3 className="font-serif text-2xl text-[#1c1c1c] tracking-tight mb-2 font-light">
-                    {listing.title}
-                  </h3>
-                  <div className="flex flex-wrap gap-x-4 gap-y-2">
-                    <span className="font-sans text-[11px] font-light text-[#1c1c1c]/30 uppercase tracking-[0.1em]">{listing.category}</span>
-                    <span className="font-sans text-[11px] font-light text-[#1c1c1c]/30 uppercase tracking-[0.1em]">Size {listing.size_us || "\u2014"}</span>
-                    <span className="font-sans text-[11px] font-light text-[#1c1c1c] uppercase tracking-[0.1em]">${listing.price?.toLocaleString()}</span>
-                  </div>
-                </div>
-                <StatusBadge status={listing.status} />
+          <div key={listing.id} className="listing-card group flex flex-col bg-white dark:bg-white/5 border border-slate-100 dark:border-slate-800 transition-all duration-500 hover:shadow-2xl hover:shadow-black/5">
+            <div className="relative aspect-[3/4] overflow-hidden">
+              <img alt={listing.title} className="listing-image w-full h-full object-cover transition-transform duration-700" src={listing.images?.[0] || 'https://images.unsplash.com/photo-1594552072238-16629ec2e3bf?auto=format&fit=crop&q=80'}/>
+              <div className="absolute top-4 left-4">
+                <span className={`border px-3 py-1 text-[9px] font-bold uppercase tracking-widest rounded-full backdrop-blur-sm ${listing.status === 'approved' ? 'bg-green-500 text-white' : 'status-badge-live'}`}>
+                  {listing.status || 'Live'}
+                </span>
               </div>
-
+              <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4">
+                <Link href={`/sell/submit?edit=${listing.id}`} className="w-10 h-10 rounded-full bg-white text-primary flex items-center justify-center hover:bg-accent hover:text-white transition-colors">
+                  <span className="material-symbols-outlined text-lg">edit</span>
+                </Link>
+                <Link href={`/shop/${listing.id}`} className="w-10 h-10 rounded-full bg-white text-primary flex items-center justify-center hover:bg-accent hover:text-white transition-colors">
+                  <span className="material-symbols-outlined text-lg">visibility</span>
+                </Link>
+              </div>
+            </div>
+            <div className="p-6 flex flex-col flex-1">
+              <div className="flex justify-between items-start mb-2">
+                <h3 className="text-xl font-light">{listing.title}</h3>
+                <span className="text-sm font-medium">${listing.price?.toLocaleString() || '0'}</span>
+              </div>
+              <p className="text-[10px] text-slate-400 uppercase tracking-widest mb-6">{listing.category} • {listing.size_us || 'Custom Size'}</p>
+              
               {listing.rejection_reason && (
                 <div className="mb-4 p-3 bg-red-50 border border-red-200">
                   <p className="text-red-600 text-[11px] font-sans leading-relaxed font-light">
@@ -198,23 +113,39 @@ function ListingsTab() {
                 </div>
               )}
 
-              <div className="flex items-center gap-6">
-                <p className="text-[#1c1c1c]/20 text-[9px] font-sans font-light uppercase tracking-[0.15em]">
-                  Added {new Date(listing.created_at).toLocaleDateString()}
-                </p>
-                {(listing.status === "draft" || listing.status === "rejected") && (
-                  <button
-                    onClick={() => handleDelete(listing.id)}
-                    disabled={isPending}
-                    className="text-red-400 text-[9px] font-light font-sans uppercase tracking-[0.15em] hover:text-red-600 transition-colors"
-                  >
-                    Delete
-                  </button>
-                )}
+              <div className="mt-auto pt-6 border-t border-slate-50 dark:border-slate-800/50 flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  {(listing.status === "draft" || listing.status === "rejected") && (
+                    <button
+                      onClick={() => handleDelete(listing.id)}
+                      disabled={isPending}
+                      className="text-red-400 text-[9px] font-bold uppercase tracking-widest hover:text-red-600 transition-colors"
+                    >
+                      Delete
+                    </button>
+                  )}
+                </div>
+                <Link href={`/shop/${listing.id}`} className="text-[10px] font-bold uppercase tracking-widest text-primary dark:text-white hover:text-accent transition-colors flex items-center gap-1">
+                  View Details
+                  <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                </Link>
               </div>
             </div>
           </div>
         ))}
+
+        <div className="listing-card group flex flex-col bg-slate-50 dark:bg-white/5 border border-dashed border-slate-200 dark:border-slate-800 transition-all duration-500 hover:border-accent">
+          <Link href="/sell/submit" className="flex-1 flex flex-col items-center justify-center p-12 text-center">
+            <div className="w-16 h-16 rounded-full border border-slate-200 dark:border-slate-800 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <span className="material-symbols-outlined text-slate-300 group-hover:text-accent">add</span>
+            </div>
+            <h3 className="text-lg font-light mb-2">Sell your Gown</h3>
+            <p className="text-xs text-slate-400 leading-relaxed mb-8 max-w-[200px]">Turn your beautiful memories into another bride's dream.</p>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-accent border border-accent/20 px-6 py-2 rounded-full hover:bg-accent hover:text-white transition-all">
+                Get Started
+            </span>
+          </Link>
+        </div>
       </div>
     </div>
   );
@@ -226,7 +157,6 @@ function ListingsTab() {
 function PurchasesTab() {
   const [purchases, setPurchases] = useState<any[]>([]);
   const [sales, setSales] = useState<any[]>([]);
-  const [view, setView] = useState<"purchases" | "sales">("purchases");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -239,93 +169,110 @@ function PurchasesTab() {
 
   if (loading) return <LoadingSkeleton />;
 
-  const orders = view === "purchases" ? purchases : sales;
-
   return (
-    <div>
-      <div className="flex justify-center gap-12 mb-12 border-b border-[#1c1c1c]/5">
-        {(["purchases", "sales"] as const).map((v) => (
-          <button
-            key={v}
-            onClick={() => setView(v)}
-            className={`pb-4 font-sans text-[11px] font-light uppercase tracking-[0.15em] transition-all relative ${view === v
-                ? "text-[#1c1c1c]"
-                : "text-[#1c1c1c]/20 hover:text-[#1c1c1c]/50"
-              }`}
-          >
-            {v === "purchases" ? `Purchases (${purchases.length})` : `Sales (${sales.length})`}
-            {view === v && (
-              <motion.div
-                layoutId="orders-tab"
-                className="absolute bottom-0 left-0 right-0 h-[1px] bg-[#1c1c1c]"
-              />
-            )}
-          </button>
-        ))}
-      </div>
+    <div className="max-w-[1400px] mx-auto pt-8">
+      <header className="mb-12">
+        <h2 className="text-4xl font-light mb-2">My Orders</h2>
+        <p className="text-slate-400 text-sm">Manage your purchases and track your sales activity.</p>
+      </header>
 
-      {orders.length === 0 ? (
-        <EmptyState
-          icon={view === "purchases" ? "\uD83D\uDECD\uFE0F" : "\uD83D\uDCB0"}
-          title={`No ${view} yet`}
-          subtitle={
-            view === "purchases"
-              ? "Browse the shop to find your dream gown"
-              : "Create a listing to start selling"
-          }
-          cta={view === "purchases" ? "Browse Shop" : "Create Listing"}
-          href={view === "purchases" ? "/shop" : "/sell/submit"}
-        />
-      ) : (
-        <div className="grid gap-4">
-          {orders.map((order: any) => (
-            <div
-              key={order.id}
-              className="p-8 border border-[#1c1c1c]/5 hover:border-[#1c1c1c]/10 transition-all duration-300 group"
-            >
-              <div className="flex items-start justify-between mb-8">
-                <div>
-                  <h3 className="font-serif text-2xl text-[#1c1c1c] tracking-tight font-light">
-                    {order.listings?.title || "Signature Couture"}
-                  </h3>
-                  <p className="font-sans text-[10px] font-light text-[#1c1c1c]/20 mt-2 uppercase tracking-[0.15em]">
-                    Reference #{order.id.slice(0, 8)} ·{" "}
-                    {new Date(order.created_at).toLocaleDateString()}
-                  </p>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+        <section>
+          <div className="flex items-center justify-between mb-8 pb-4 border-b border-slate-100 dark:border-slate-800">
+            <h3 className="text-xl font-medium tracking-tight">Purchases</h3>
+            <span className="text-xs font-medium text-slate-400 bg-slate-100 dark:bg-white/5 px-3 py-1 rounded-full">{purchases.length}</span>
+          </div>
+          <div className="space-y-6">
+            {purchases.map((order: any) => (
+              <div key={order.id} className="bg-white dark:bg-white/5 border border-slate-200 dark:border-slate-800 p-6 relative overflow-hidden group">
+                <div className="absolute top-0 right-0 p-4">
+                  <span className="text-[10px] font-bold tracking-widest uppercase text-slate-400">Order #{order.id.slice(0, 8)}</span>
                 </div>
-                <StatusBadge status={order.status} />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-8 border-t border-[#1c1c1c]/5">
-                <div className="space-y-1">
-                  <p className="text-[#1c1c1c]/25 text-[9px] font-light font-sans uppercase tracking-[0.15em]">Transaction Total</p>
-                  <p className="text-[#1c1c1c] font-serif text-2xl font-light">${order.total?.toLocaleString()}</p>
-                </div>
-
-                {view === "sales" && (
-                  <>
-                    <div className="space-y-1">
-                      <p className="text-[#1c1c1c]/25 text-[9px] font-light font-sans uppercase tracking-[0.15em]">House Commission</p>
-                      <p className="text-[#1c1c1c]/40 font-sans text-sm font-light">${order.commission_amount?.toLocaleString()}</p>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-[#1c1c1c]/25 text-[9px] font-light font-sans uppercase tracking-[0.15em]">Final Payout</p>
-                      <p className="text-[#1c1c1c] font-serif text-2xl font-light">${order.seller_payout?.toLocaleString()}</p>
-                    </div>
-                  </>
-                )}
-
-                {order.tracking_number && (
-                  <div className="space-y-1">
-                    <p className="text-[#1c1c1c]/25 text-[9px] font-light font-sans uppercase tracking-[0.15em]">Consignment Tracking</p>
-                    <p className="text-[#1c1c1c] font-sans text-sm tracking-widest font-light">{order.tracking_number}</p>
+                <div className="flex items-start gap-6">
+                  <div className="w-20 h-24 bg-slate-100 dark:bg-white/10 flex-shrink-0">
+                    {order.listings?.images?.[0] ? (
+                      <img src={order.listings.images[0]} alt="" className="w-full h-full object-cover opacity-80" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-slate-300">👗</div>
+                    )}
                   </div>
-                )}
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <h4 className="font-semibold text-lg">{order.listings?.title || "Signature Couture"}</h4>
+                      <span className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest rounded-full">{order.status}</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 mb-4">
+                      <div>
+                        <p className="text-[10px] text-slate-400 uppercase tracking-widest mb-1">Total Paid</p>
+                        <p className="text-sm font-medium">${order.total?.toLocaleString()}</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-slate-400 uppercase tracking-widest mb-1">Date</p>
+                        <p className="text-xs text-slate-600 dark:text-slate-400">{new Date(order.created_at).toLocaleDateString()}</p>
+                      </div>
+                    </div>
+                    {order.tracking_number && (
+                      <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center">
+                        <div>
+                          <p className="text-[10px] text-slate-400 uppercase tracking-widest mb-1">Tracking Number (FedEx)</p>
+                          <p className="text-xs font-mono">{order.tracking_number}</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
+            ))}
+            {purchases.length === 0 && (
+              <p className="text-sm text-slate-400">You haven't purchased anything yet.</p>
+            )}
+          </div>
+        </section>
+
+        <section>
+          <div className="flex items-center justify-between mb-8 pb-4 border-b border-slate-100 dark:border-slate-800">
+            <h3 className="text-xl font-medium tracking-tight">Sales</h3>
+            <span className="text-xs font-medium text-slate-400 bg-slate-100 dark:bg-white/5 px-3 py-1 rounded-full">{sales.length}</span>
+          </div>
+          <div className="space-y-6">
+            {sales.map((order: any) => (
+              <div key={order.id} className="bg-white dark:bg-white/5 border border-slate-200 dark:border-slate-800 p-6 relative overflow-hidden group">
+                <div className="absolute top-0 right-0 p-4">
+                  <span className="text-[10px] font-bold tracking-widest uppercase text-slate-400">Order #{order.id.slice(0, 8)}</span>
+                </div>
+                <div className="flex items-start gap-6">
+                  <div className="w-20 h-24 bg-slate-100 dark:bg-white/10 flex-shrink-0">
+                    {order.listings?.images?.[0] ? (
+                      <img src={order.listings.images[0]} alt="" className="w-full h-full object-cover opacity-80" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-slate-300">👗</div>
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <h4 className="font-semibold text-lg">{order.listings?.title || "Signature Couture"}</h4>
+                      <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest rounded-full">{order.status}</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 mb-4">
+                      <div>
+                        <p className="text-[10px] text-slate-400 uppercase tracking-widest mb-1">Net Payout</p>
+                        <p className="text-sm font-medium">${order.seller_payout?.toLocaleString()}</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-slate-400 uppercase tracking-widest mb-1">Date</p>
+                        <p className="text-xs text-slate-600 dark:text-slate-400">{new Date(order.created_at).toLocaleDateString()}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+            {sales.length === 0 && (
+              <p className="text-sm text-slate-400">You haven't sold anything yet.</p>
+            )}
+          </div>
+        </section>
+      </div>
     </div>
   );
 }
@@ -344,6 +291,7 @@ function MessagesTab() {
   useEffect(() => {
     getMyConversations().then((d) => {
       setConversations(d);
+      if (d.length > 0) openConversation(d[0].id);
       setLoading(false);
     });
   }, []);
@@ -367,107 +315,113 @@ function MessagesTab() {
 
   if (loading) return <LoadingSkeleton />;
 
-  if (conversations.length === 0) {
-    return (
-      <EmptyState
-        icon="\uD83D\uDCAC"
-        title="No messages yet"
-        subtitle="Conversations will appear here when buyers contact you"
-      />
-    );
-  }
+  const activeConvObj = conversations.find(c => c.id === activeConv);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 overflow-hidden min-h-[600px] border border-[#1c1c1c]/5">
-      {/* Conversation list */}
-      <div className="md:col-span-1 border-r border-[#1c1c1c]/5">
-        <div className="px-8 py-6 border-b border-[#1c1c1c]/5 bg-[#1c1c1c]/[0.02]">
-          <h3 className="font-sans text-[10px] font-light uppercase tracking-[0.15em] text-[#1c1c1c]/30">
-            Inbox
-          </h3>
+    <div className="max-w-[1600px] mx-auto h-[min(calc(100vh-200px),800px)] min-h-[600px] flex border border-slate-100 dark:border-slate-800 mt-8 mb-16">
+      <aside className="w-full md:w-[350px] lg:w-[400px] border-r border-slate-100 dark:border-slate-800 flex flex-col bg-white dark:bg-black/20">
+        <div className="p-6 border-b border-slate-100 dark:border-slate-800">
+          <h2 className="text-2xl font-light mb-4">Inbox</h2>
+          <div className="relative">
+            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+            <input className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-white/5 border-none rounded-full text-xs focus:ring-1 focus:ring-accent/50 transition-all" placeholder="Search conversations..." type="text"/>
+          </div>
         </div>
-        <div className="divide-y divide-[#1c1c1c]/5 overflow-y-auto max-h-[520px]">
+        <div className="flex-1 overflow-y-auto custom-scrollbar">
           {conversations.map((conv: any) => {
-            const lastMsg = conv.messages?.[conv.messages.length - 1];
-            const unread = conv.messages?.filter((m: any) => !m.is_read).length || 0;
             const isActive = activeConv === conv.id;
-
+            const lastMsg = conv.messages?.[conv.messages.length - 1];
             return (
-              <button
+              <div 
                 key={conv.id}
                 onClick={() => openConversation(conv.id)}
-                className={`w-full text-left px-8 py-6 transition-all duration-300 ${isActive ? "bg-[#1c1c1c]/[0.04] border-l-2 border-[#1c1c1c]" : "hover:bg-[#1c1c1c]/[0.02]"
-                  }`}
+                className={`p-6 cursor-pointer transition-colors border-b border-slate-50 dark:border-slate-900/50 flex gap-4 ${isActive ? 'bg-slate-50 dark:bg-white/5 border-l-4 border-l-accent' : 'hover:bg-slate-50 dark:hover:bg-white/5 border-l-4 border-l-transparent'}`}
               >
-                <p className={`font-serif text-lg tracking-tight transition-colors font-light ${isActive ? "text-[#1c1c1c]" : "text-[#1c1c1c]/50"}`}>
-                  {conv.listings?.title || "Couture Inquiry"}
-                </p>
-                <p className="font-sans text-[11px] text-[#1c1c1c]/25 truncate mt-2 tracking-wide font-light">
-                  {lastMsg?.content || "Archive thread"}
-                </p>
-                {unread > 0 && (
-                  <span className="inline-block mt-3 bg-[#1c1c1c] text-white text-[8px] px-2 py-0.5 font-light font-sans uppercase tracking-[0.15em]">
-                    {unread} New
-                  </span>
-                )}
-              </button>
+                <div className="relative flex-shrink-0">
+                  {conv.listings?.images?.[0] ? (
+                    <img alt="" className="w-14 h-14 rounded-lg object-cover" src={conv.listings.images[0]}/>
+                  ) : (
+                    <div className="w-14 h-14 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xl">👗</div>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex justify-between items-start mb-1">
+                    <h4 className={`text-sm tracking-tight truncate ${isActive ? 'font-semibold' : 'font-medium text-slate-600 dark:text-slate-400'}`}>
+                       {conv.listings?.title || "Inquiry"}
+                    </h4>
+                  </div>
+                  <p className={`text-[11px] font-medium mb-1 truncate uppercase tracking-widest ${isActive ? 'text-accent' : 'text-slate-400'}`}>
+                    ${conv.listings?.price?.toLocaleString() || '0'}
+                  </p>
+                  <p className="text-xs text-slate-500 truncate">{lastMsg?.content || "No messages yet."}</p>
+                </div>
+              </div>
             );
           })}
+          {conversations.length === 0 && (
+            <div className="p-8 text-center text-slate-400 text-sm">No conversations yet.</div>
+          )}
         </div>
-      </div>
-
-      {/* Message thread */}
-      <div className="md:col-span-2 flex flex-col bg-[#1c1c1c]/[0.01]">
-        {activeConv ? (
+      </aside>
+      <section className="flex-1 flex flex-col bg-background-light dark:bg-background-dark">
+        {activeConvObj ? (
           <>
-            <div className="flex-1 p-8 space-y-6 overflow-y-auto max-h-[500px]">
+            <header className="h-20 px-8 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-white dark:bg-transparent">
+              <div className="flex items-center gap-4">
+                <div>
+                  <h3 className="text-sm font-semibold">{activeConvObj.listings?.title || "Listing"}</h3>
+                  <p className="text-[10px] uppercase tracking-widest text-accent font-medium">Inquiry details</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                <Link href={`/shop/${activeConvObj.listing_id}`} className="px-4 py-2 border border-slate-200 dark:border-slate-800 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">View Listing</Link>
+                <button className="material-symbols-outlined text-slate-400 hover:text-slate-900 transition-colors">more_vert</button>
+              </div>
+            </header>
+            <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar bg-[url('https://www.transparenttextures.com/patterns/pinstriped-suit.png')] opacity-80">
               {messages.map((msg: any) => {
-                const isBuyer = msg.sender_id === conversations.find((c: any) => c.id === activeConv)?.buyer_id;
+                const isBuyer = msg.sender_id === activeConvObj.buyer_id;
+                // Since this uses the same styles for "received" and "sent", we approximate based on user context
+                // But without current user id, let's treat buyer messages as left (received), seller messages as right (sent)
+                // Assuming the logged-in user is usually the one receiving inquiries in this view.
                 return (
-                  <div key={msg.id} className={`flex ${isBuyer ? "justify-start" : "justify-end"}`}>
-                    <div className={`max-w-[80%] px-6 py-4 transition-all duration-300 ${isBuyer
-                        ? "bg-[#1c1c1c]/[0.03] border border-[#1c1c1c]/5 text-[#1c1c1c]/70"
-                        : "bg-[#1c1c1c] text-white"
-                      }`}
-                    >
-                      <p className="font-sans text-[13px] leading-relaxed font-light">{msg.content}</p>
-                      <p className="font-sans text-[9px] font-light text-[#1c1c1c]/20 mt-3 uppercase tracking-[0.1em]">
-                        {new Date(msg.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                      </p>
+                  <div key={msg.id} className={`flex flex-col gap-2 ${isBuyer ? 'items-start' : 'items-end'}`}>
+                    <div className={isBuyer ? 'chat-bubble-received' : 'chat-bubble-sent'}>
+                      {msg.content}
                     </div>
+                    <span className={`text-[9px] text-slate-400 ${isBuyer ? 'ml-1' : 'mr-1'}`}>
+                      {new Date(msg.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                    </span>
                   </div>
                 );
               })}
             </div>
-
-            <div className="p-6 border-t border-[#1c1c1c]/5">
-              <div className="flex gap-4">
-                <input
-                  type="text"
+            <footer className="p-6 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-transparent">
+              <div className="max-w-4xl mx-auto flex items-end gap-4 bg-slate-50 dark:bg-white/5 p-3 rounded-[2rem] border border-slate-200 dark:border-slate-800">
+                <button className="material-symbols-outlined p-2 text-slate-400 hover:text-accent transition-colors">image</button>
+                <textarea 
                   value={newMsg}
                   onChange={(e) => setNewMsg(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handleSend()}
-                  placeholder="Draft your reply..."
-                  className="flex-1 px-6 py-4 border border-[#1c1c1c]/10 bg-white text-[#1c1c1c] placeholder:text-[#1c1c1c]/20 font-sans text-sm font-light focus:outline-none focus:border-[#1c1c1c]/30 transition-colors"
+                   onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSend();
+                    }
+                  }}
+                  className="flex-1 bg-transparent border-none focus:ring-0 text-sm py-2 px-0 resize-none custom-scrollbar max-h-32 focus:outline-none" placeholder="Type your message..." rows={1}
                 />
-                <button
-                  onClick={handleSend}
-                  disabled={isPending || !newMsg.trim()}
-                  className="px-8 py-4 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-[#333] transition-all duration-300 disabled:opacity-30"
-                >
-                  Send
+                <button onClick={handleSend} disabled={isPending || !newMsg.trim()} className="bg-primary text-white h-10 w-10 shrink-0 rounded-full flex items-center justify-center hover:bg-accent transition-all disabled:opacity-50">
+                  <span className="material-symbols-outlined text-sm">send</span>
                 </button>
               </div>
-            </div>
+            </footer>
           </>
         ) : (
-          <div className="flex-1 flex flex-col items-center justify-center">
-            <p className="font-sans text-[11px] font-light text-[#1c1c1c]/15 uppercase tracking-[0.15em]">
-              Select a conversation
-            </p>
+          <div className="flex-1 flex items-center justify-center text-slate-400 text-sm">
+            Select a conversation to view messages
           </div>
         )}
-      </div>
+      </section>
     </div>
   );
 }
@@ -503,62 +457,67 @@ function ProfileTab() {
   if (loading) return <LoadingSkeleton />;
 
   return (
-    <div className="max-w-xl mx-auto">
-      <form onSubmit={handleSubmit} className="p-10 md:p-12 space-y-8 border border-[#1c1c1c]/5">
-        {[
-          {
-            label: "Email",
-            name: "email",
-            type: "email",
-            value: profile?.email || "",
-            disabled: true,
-          },
-          {
-            label: "Display Name",
-            name: "display_name",
-            defaultValue: profile?.display_name || "",
-            placeholder: "Your display name",
-          },
-          {
-            label: "Full Name",
-            name: "full_name",
-            defaultValue: profile?.full_name || "",
-            placeholder: "Your full name",
-          },
-          {
-            label: "Phone",
-            name: "phone",
-            defaultValue: profile?.phone || "",
-            placeholder: "Contact number",
-          },
-        ].map((field) => (
-          <div key={field.name} className="space-y-2">
-            <label className="block font-sans text-[11px] font-light uppercase tracking-[0.15em] text-[#1c1c1c]/40">
-              {field.label}
-            </label>
-            <input
-              type={field.type || "text"}
-              name={field.name}
-              defaultValue={field.defaultValue}
-              value={field.disabled ? field.value : undefined}
-              disabled={field.disabled}
-              placeholder={field.placeholder}
-              className={`w-full border border-[#1c1c1c]/10 bg-white px-5 py-4 font-sans text-sm text-[#1c1c1c] placeholder:text-[#1c1c1c]/20 font-light focus:outline-none focus:border-[#1c1c1c]/30 transition-all ${field.disabled ? "opacity-40 cursor-not-allowed border-dashed" : "hover:border-[#1c1c1c]/20"
-                }`}
-            />
+    <div className="max-w-5xl mx-auto py-16">
+      <div className="flex flex-col md:flex-row gap-16">
+        <aside className="w-full md:w-64 flex-shrink-0">
+          <div className="flex flex-col items-center text-center">
+            <div className="relative group">
+              <div className="w-40 h-40 rounded-full overflow-hidden border border-slate-100 dark:border-slate-800 p-1 mb-6">
+                <img alt="User Avatar" className="w-full h-full object-cover rounded-full" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop"/>
+              </div>
+            </div>
+            <h2 className="text-3xl font-light mb-1 italic">{profile?.display_name || "Bridal User"}</h2>
+            <p className="text-[10px] tracking-[0.3em] uppercase text-slate-400 mb-8">Member since 2024</p>
+            <div className="w-full bg-slate-50 dark:bg-white/5 rounded-2xl p-6 border border-slate-100 dark:border-slate-800">
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-[10px] font-bold tracking-widest uppercase text-slate-900 dark:text-white">Seller Status</span>
+                <span className="material-symbols-outlined text-accent text-lg">verified</span>
+              </div>
+              <div className="h-1 w-full bg-slate-200 dark:bg-slate-800 rounded-full mb-3 overflow-hidden">
+                <div className="h-full bg-accent w-3/4 rounded-full"></div>
+              </div>
+              <p className="text-[11px] text-slate-500 mb-4 leading-relaxed">75% of verification completed. Link your social profile to reach Pro status.</p>
+              <button className="text-[10px] font-bold tracking-widest uppercase text-accent border-b border-accent/30 hover:border-accent transition-all pb-0.5">Complete Profile</button>
+            </div>
           </div>
-        ))}
+        </aside>
 
-        <div className="pt-4">
-          <button
-            type="submit"
-            disabled={saving}
-            className="w-full py-5 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-[#333] transition-all duration-300 disabled:opacity-50"
-          >
-            {saving ? "Updating..." : saved ? "Updated" : "Update Profile"}
-          </button>
-        </div>
-      </form>
+        <section className="flex-1">
+          <form onSubmit={handleSubmit} className="space-y-10">
+            <div className="flex justify-between items-end mb-12 pb-4 border-b border-slate-100 dark:border-slate-800">
+              <h3 className="text-3xl font-light">Personal Details</h3>
+              <button type="submit" disabled={saving} className="text-[11px] font-bold uppercase tracking-[0.2em] text-accent hover:text-primary transition-colors disabled:opacity-50">
+                {saving ? "Saving..." : saved ? "Saved!" : "Save Changes"}
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
+              <div className="space-y-1">
+                <label className="label-luxe">Full Name</label>
+                <input name="full_name" defaultValue={profile?.full_name || ""} className="form-input-luxe" type="text" placeholder="Your Full Name"/>
+              </div>
+              <div className="space-y-1">
+                <label className="label-luxe">Display Name</label>
+                <input name="display_name" defaultValue={profile?.display_name || ""} className="form-input-luxe" type="text" placeholder="Name shown to others"/>
+              </div>
+              <div className="space-y-1">
+                <label className="label-luxe">Email Address</label>
+                <input name="email" value={profile?.email || ""} disabled className="form-input-luxe opacity-60" type="email"/>
+              </div>
+              <div className="space-y-1">
+                <label className="label-luxe">Phone Number</label>
+                <input name="phone" defaultValue={profile?.phone || ""} className="form-input-luxe" type="tel" placeholder="+1 (555) 000-0000"/>
+              </div>
+            </div>
+
+            <div className="pt-12 flex justify-end gap-6">
+              <button type="submit" disabled={saving} className="px-10 py-3 bg-primary dark:bg-white text-white dark:text-black text-[10px] font-bold uppercase tracking-widest hover:bg-accent dark:hover:bg-accent dark:hover:text-white transition-all shadow-lg shadow-primary/5 disabled:opacity-50">
+                {saving ? "Updating..." : "Update Profile"}
+              </button>
+            </div>
+          </form>
+        </section>
+      </div>
     </div>
   );
 }
@@ -570,64 +529,49 @@ function DashboardContent() {
   const searchParams = useSearchParams();
   const initialTab = (searchParams.get("tab") as Tab) || "listings";
   const [tab, setTab] = useState<Tab>(initialTab);
-  const [notifications, setNotifications] = useState<any[]>([]);
-
-  useEffect(() => {
-    getMyNotifications().then(setNotifications);
-  }, []);
 
   const tabs: { key: Tab; label: string }[] = [
-    { key: "listings", label: "My Listings" },
+    { key: "listings", label: "Listings" },
     { key: "purchases", label: "Orders" },
     { key: "messages", label: "Messages" },
     { key: "profile", label: "Profile" },
   ];
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-sans">
       <Navbar />
 
-      <div className="max-w-7xl mx-auto px-6 md:px-10 pt-48 pb-32">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="mb-20 text-center"
-        >
-          <p className="font-sans text-[11px] font-light uppercase tracking-[0.4em] text-[#1c1c1c]/30 mb-6">
-            Private Account
-          </p>
-          <h1 className="font-serif text-6xl md:text-8xl font-light tracking-[-0.02em] text-[#1c1c1c] leading-none">
-            Dashboard
-          </h1>
-        </motion.div>
+      <div className="pt-28 pb-10">
+        <div className="max-w-[1600px] mx-auto px-8">
+          <div className="flex justify-center border-b border-slate-100 dark:border-slate-800">
+            <nav className="flex gap-12">
+              {tabs.map((t) => (
+                <button
+                  key={t.key}
+                  onClick={() => setTab(t.key)}
+                  className={`pb-4 text-[11px] font-bold tracking-[0.2em] uppercase transition-colors relative ${
+                    tab === t.key ? "text-primary dark:text-white" : "text-slate-400 hover:text-accent"
+                  }`}
+                >
+                  {t.label}
+                  {tab === t.key && (
+                    <motion.div
+                      layoutId="dashboard-tab-indicator"
+                      className="absolute bottom-0 left-0 right-0 h-[2px] bg-accent"
+                    />
+                  )}
+                </button>
+              ))}
+            </nav>
+          </div>
 
-        {/* Tab navigation */}
-        <div className="flex justify-center gap-12 mb-20 border-b border-[#1c1c1c]/5">
-          {tabs.map((t) => (
-            <button
-              key={t.key}
-              onClick={() => setTab(t.key)}
-              className={`pb-6 font-sans text-[12px] font-light uppercase tracking-[0.2em] transition-all relative ${tab === t.key ? "text-[#1c1c1c]" : "text-[#1c1c1c]/20 hover:text-[#1c1c1c]/50"
-                }`}
-            >
-              {t.label}
-              {tab === t.key && (
-                <motion.div
-                  layoutId="dashboard-tab-underline"
-                  className="absolute bottom-0 left-0 right-0 h-[1px] bg-[#1c1c1c]"
-                />
-              )}
-            </button>
-          ))}
+          <div className="mt-8">
+            {tab === "listings" && <ListingsTab />}
+            {tab === "purchases" && <PurchasesTab />}
+            {tab === "messages" && <MessagesTab />}
+            {tab === "profile" && <ProfileTab />}
+          </div>
         </div>
-
-        {/* Tab content */}
-        {tab === "listings" && <ListingsTab />}
-        {tab === "purchases" && <PurchasesTab />}
-        {tab === "messages" && <MessagesTab />}
-        {tab === "profile" && <ProfileTab />}
       </div>
 
       <Footer />

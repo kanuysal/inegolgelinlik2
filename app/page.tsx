@@ -1,563 +1,191 @@
 "use client";
 
-import { useRef, useEffect, useState, useCallback } from "react";
-import {
-  motion,
-  AnimatePresence,
-  useScroll,
-  useTransform,
-  useMotionValueEvent,
-} from "framer-motion";
 import Link from "next/link";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
 
-/* ═══════════════════════════════════════════
-   FRAME CONFIG — Bleecker collection video
-   ═══════════════════════════════════════════ */
-const TOTAL_FRAMES = 300;
-const FRAME_PREFIX = "/frames/frame_";
-const FRAME_EXT = ".jpg";
-
-function padFrame(n: number): string {
-  return String(n).padStart(3, "0");
-}
-
-/* ── Verified badge ── */
-function VerifiedBadge({ className = "" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className={className}>
-      <path
-        d="M12 2L14.09 4.26L17 3.64L17.18 6.57L19.82 8.07L18.56 10.74L20 13.14L17.72 14.72L17.5 17.66L14.58 17.95L12.73 20.39L10.27 18.76L7.27 19.5L6.27 16.73L3.53 15.32L4.63 12.56L3.27 10L5.57 8.45L5.82 5.51L8.74 5.27L10.64 2.87L12 2Z"
-        fill="currentColor"
-      />
-      <path
-        d="M9 12L11 14L15 10"
-        stroke="white"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-const FEATURED_GOWNS = [
-  {
-    id: 1,
-    name: "Alegria",
-    collection: "Bridal Couture",
-    originalPrice: 12800,
-    price: 6400,
-    size: "US 6",
-    image: "/frames/frame_080.jpg",
-  },
-  {
-    id: 2,
-    name: "Bella",
-    collection: "GALA by GL",
-    originalPrice: 8900,
-    price: 4450,
-    size: "US 4",
-    image: "/frames/frame_120.jpg",
-  },
-  {
-    id: 3,
-    name: "Estelle",
-    collection: "Bleecker",
-    originalPrice: 15200,
-    price: 7600,
-    size: "US 8",
-    image: "/frames/frame_180.jpg",
-  },
-  {
-    id: 4,
-    name: "Florence",
-    collection: "Victorian Affinity",
-    originalPrice: 11500,
-    price: 5750,
-    size: "US 2",
-    image: "/frames/frame_220.jpg",
-  },
-  {
-    id: 5,
-    name: "Giselle",
-    collection: "Queen of Hearts",
-    originalPrice: 13400,
-    price: 6700,
-    size: "US 6",
-    image: "/frames/frame_050.jpg",
-  },
-  {
-    id: 6,
-    name: "Hazel",
-    collection: "Do Not Disturb",
-    originalPrice: 9800,
-    price: 4900,
-    size: "US 10",
-    image: "/frames/frame_260.jpg",
-  },
-];
-
-const MARQUEE_IMAGES = [
-  "/frames/frame_020.jpg",
-  "/frames/frame_060.jpg",
-  "/frames/frame_100.jpg",
-  "/frames/frame_140.jpg",
-  "/frames/frame_200.jpg",
-  "/frames/frame_240.jpg",
-  "/frames/frame_280.jpg",
-  "/frames/frame_030.jpg",
-  "/frames/frame_090.jpg",
-  "/frames/frame_170.jpg",
-];
-
 export default function Home() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const imagesRef = useRef<HTMLImageElement[]>([]);
-  const currentFrameRef = useRef(0);
-  const rafRef = useRef<number | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const drawFrame = useCallback((index: number) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    const img = imagesRef.current[index];
-    if (!ctx || !img || !img.complete) return;
-
-    const dpr = window.devicePixelRatio || 1;
-    const cw = canvas.clientWidth;
-    const ch = canvas.clientHeight;
-
-    if (canvas.width !== cw * dpr || canvas.height !== ch * dpr) {
-      canvas.width = cw * dpr;
-      canvas.height = ch * dpr;
-      ctx.scale(dpr, dpr);
-    }
-
-    const iw = img.naturalWidth;
-    const ih = img.naturalHeight;
-    const scale = Math.max(cw / iw, ch / ih);
-    const sw = iw * scale;
-    const sh = ih * scale;
-    const sx = (cw - sw) / 2;
-    const sy = (ch - sh) / 2;
-
-    ctx.clearRect(0, 0, cw, ch);
-    ctx.drawImage(img, sx, sy, sw, sh);
-  }, []);
-
-  useEffect(() => {
-    let loaded = 0;
-    let done = false;
-    const images: HTMLImageElement[] = [];
-
-    const markReady = () => {
-      if (done) return;
-      done = true;
-      setIsLoading(false);
-      drawFrame(0);
-    };
-
-    for (let i = 0; i < TOTAL_FRAMES; i++) {
-      const img = new Image();
-      img.src = `${FRAME_PREFIX}${padFrame(i)}${FRAME_EXT}`;
-      img.onload = img.onerror = () => {
-        loaded++;
-        if (loaded === TOTAL_FRAMES) markReady();
-      };
-      images.push(img);
-    }
-    imagesRef.current = images;
-
-    // Fallback: dismiss loader after 4s even if frames haven't finished
-    const timeout = setTimeout(markReady, 4000);
-    return () => clearTimeout(timeout);
-  }, [drawFrame]);
-
-  const { scrollYProgress } = useScroll({
-    target: scrollContainerRef,
-    offset: ["start start", "end end"],
-  });
-
-  useMotionValueEvent(scrollYProgress, "change", (v) => {
-    const idx = Math.min(TOTAL_FRAMES - 1, Math.floor(v * TOTAL_FRAMES));
-    if (idx !== currentFrameRef.current) {
-      currentFrameRef.current = idx;
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = requestAnimationFrame(() => drawFrame(idx));
-    }
-  });
-
   return (
-    <main className="relative bg-white selection:bg-[#1c1c1c]/10 selection:text-[#1c1c1c] overflow-x-hidden">
+    <main className="bg-background-light dark:bg-background-dark text-primary dark:text-gray-100 font-sans transition-colors duration-300 antialiased selection:bg-[#1c1c1c]/10 selection:text-[#1c1c1c] overflow-x-hidden">
+      
+      {/* ── Navbar is provided globally by layout or standard component, so we omit the raw Stitch nav here, but let's keep the hero structure ── */}
       <Navbar />
 
-      {/* ── HERO ── */}
-      <section className="relative h-[100vh] flex flex-col items-center justify-end px-6 overflow-hidden bg-[#1c1c1c] text-white pb-20">
-        {/* Inline loading state with GL logo */}
-        <AnimatePresence>
-          {isLoading && (
-            <motion.div
-              key="hero-loader"
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-              className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-[#1c1c1c]"
-            >
-              <motion.img
-                src="/images/SYMBOL_BLACK.png"
-                alt="GL"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, ease: "easeOut" }}
-                className="w-16 h-16 md:w-20 md:h-20 invert mb-8"
-              />
-              <motion.div
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                className="w-24 h-[1px] bg-white/20 origin-center mb-6"
-              />
-              <motion.p
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.5 }}
-                className="font-serif text-xl tracking-[0.35em] text-white/60 font-light uppercase"
-              >
-                RE:GALIA
-              </motion.p>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.8 }}
-                className="mt-10"
-              >
-                <motion.div
-                  className="w-8 h-[1px] bg-white/20"
-                  animate={{ scaleX: [0.3, 1, 0.3], opacity: [0.2, 0.5, 0.2] }}
-                  transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-                />
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isLoading ? {} : { opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-          className="text-center z-10 max-w-5xl"
-        >
-          <p className="font-sans text-[11px] font-light uppercase tracking-[0.4em] text-white/40 mb-6">
-            Certified Pre-Owned by Galia Lahav
-          </p>
-          <h1 className="font-serif text-[clamp(3rem,8vw,8rem)] leading-[0.9] tracking-[-0.03em] mb-10 font-light">
-            The Eternal Life <br />
-            <span className="italic">of Couture</span>
+      <header className="relative w-full h-screen overflow-hidden rounded-b-2xl mb-12 group pt-20">
+        <img alt="Bride in a luxury gown walking in a landscape" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuApOL6IabwRqinf4WUDEjX5XSfT-fwYCryqEFEwGEAPPFHul3jmtjdsATi0V4pn0v7qoS-fiS69OypjwRpdxKrTPiSsEGw85zt-hw7A_Y0audsValikskgao4-qhZckQmvwtvThvZClbU_hIjli730_PsyaB1kQkGkqNaIKurx9lKq66DdAF6kZ24KFRi5PMlJfy6S7Er9L2QkG0zu6PWzWZzREo6SmChZZbGsZuWQ3RHqnq7T739KOkhgZbGTz8AIKQNPFfes2nC79"/>
+        <div className="absolute inset-0 bg-black/20 dark:bg-black/40"></div>
+        <div className="absolute bottom-10 left-0 w-full text-center px-4 fade-in-up">
+          <h1 className="text-white text-6xl md:text-8xl lg:text-9xl font-bold tracking-tight mb-4 drop-shadow-lg">
+            Meet the Couture
           </h1>
-          <Link
-            href="/shop"
-            className="inline-block px-14 py-5 bg-white text-[#1c1c1c] font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-white/90 transition-all duration-300"
-          >
-            Shop Now
-          </Link>
-        </motion.div>
-
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-t from-[#1c1c1c] via-[#1c1c1c]/40 to-transparent z-10" />
-          <img
-            src="/frames/frame_150.jpg"
-            alt="Bridal Couture"
-            className="w-full h-full object-cover opacity-60 scale-110"
-          />
-        </div>
-      </section>
-
-      {/* ── AUTO-SCROLL MARQUEE ── */}
-      <section className="py-3 bg-white overflow-hidden border-y border-[#1c1c1c]/5">
-        <div className="flex animate-marquee whitespace-nowrap">
-          {[...MARQUEE_IMAGES, ...MARQUEE_IMAGES].map((img, i) => (
-            <div key={i} className="flex-shrink-0 w-[180px] md:w-[260px] aspect-[3/4] mx-1.5 overflow-hidden">
-              <img
-                src={img}
-                alt="Couture"
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
-              />
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── FEATURED EDITORIAL GRID ── */}
-      <section className="bg-white py-20 md:py-28">
-        <div className="max-w-[92rem] mx-auto px-4 md:px-8">
-          <div className="flex items-end justify-between mb-12 md:mb-16 px-2">
-            <div>
-              <p className="font-sans text-[11px] font-light uppercase tracking-[0.4em] text-[#1c1c1c]/30 mb-3">
-                Featured
-              </p>
-              <h2 className="font-serif text-3xl md:text-5xl font-light text-[#1c1c1c] tracking-[-0.02em]">
-                Shop the Collection
-              </h2>
-            </div>
-            <Link
-              href="/shop"
-              className="hidden md:inline-block font-sans text-[11px] font-light uppercase tracking-[0.15em] text-[#1c1c1c] border-b border-[#1c1c1c] pb-1 hover:opacity-60 transition-opacity"
-            >
-              View All
-            </Link>
-          </div>
-
-          {/* 2 big + 4 smaller */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-            {FEATURED_GOWNS.slice(0, 2).map((gown, i) => (
-              <motion.a
-                key={gown.id}
-                href="/shop"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.7, delay: i * 0.1 }}
-                className="group col-span-1 md:col-span-2 relative"
-              >
-                <div className="aspect-[3/4] overflow-hidden bg-[#efefef] relative">
-                  <img
-                    src={gown.image}
-                    alt={gown.name}
-                    className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-1000"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#1c1c1c]/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <div className="absolute bottom-0 inset-x-0 p-6 md:p-10 translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500">
-                    <p className="font-sans text-[10px] font-light uppercase tracking-[0.2em] text-white/60 mb-2">
-                      {gown.collection}
-                    </p>
-                    <h3 className="font-serif text-2xl md:text-4xl text-white font-light mb-3">
-                      {gown.name}
-                    </h3>
-                    <div className="flex items-center gap-3">
-                      <span className="font-sans text-sm text-white">
-                        ${gown.price.toLocaleString()}
-                      </span>
-                      <span className="font-sans text-sm text-white/40 line-through">
-                        ${gown.originalPrice.toLocaleString()}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="absolute top-4 left-4 md:top-6 md:left-6 px-3 py-1.5 bg-white/90 backdrop-blur-sm flex items-center gap-1.5">
-                    <VerifiedBadge className="w-3 h-3 text-[#1c1c1c]" />
-                    <span className="font-sans text-[9px] font-light uppercase tracking-[0.08em] text-[#1c1c1c]/70">
-                      Verified
-                    </span>
-                  </div>
-                  <div className="absolute bottom-4 right-4 md:bottom-6 md:right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                    <span className="px-6 py-3 bg-white text-[#1c1c1c] font-sans text-[11px] font-light uppercase tracking-[0.15em]">
-                      Shop Now
-                    </span>
-                  </div>
-                </div>
-              </motion.a>
-            ))}
-
-            {FEATURED_GOWNS.slice(2).map((gown, i) => (
-              <motion.a
-                key={gown.id}
-                href="/shop"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.7, delay: i * 0.08 }}
-                className="group col-span-1"
-              >
-                <div className="aspect-[3/4] overflow-hidden bg-[#efefef] relative">
-                  <img
-                    src={gown.image}
-                    alt={gown.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#1c1c1c]/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <div className="absolute bottom-0 inset-x-0 p-4 md:p-6 translate-y-2 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500">
-                    <h3 className="font-serif text-lg md:text-xl text-white font-light mb-1">
-                      {gown.name}
-                    </h3>
-                    <span className="font-sans text-xs text-white/80">
-                      ${gown.price.toLocaleString()}
-                    </span>
-                  </div>
-                  <div className="absolute top-3 left-3 px-2 py-1 bg-white/90 flex items-center gap-1">
-                    <VerifiedBadge className="w-2.5 h-2.5 text-[#1c1c1c]" />
-                    <span className="font-sans text-[8px] font-light uppercase tracking-[0.06em] text-[#1c1c1c]/60">
-                      Verified
-                    </span>
-                  </div>
-                </div>
-                <div className="pt-4">
-                  <p className="font-sans text-[9px] font-light text-[#1c1c1c]/30 uppercase tracking-[0.12em] mb-1">
-                    {gown.collection}
-                  </p>
-                  <h3 className="font-serif text-lg text-[#1c1c1c] font-light">
-                    {gown.name}
-                  </h3>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="font-sans text-sm text-[#1c1c1c]">
-                      ${gown.price.toLocaleString()}
-                    </span>
-                    <span className="font-sans text-xs text-[#1c1c1c]/25 line-through">
-                      ${gown.originalPrice.toLocaleString()}
-                    </span>
-                  </div>
-                </div>
-              </motion.a>
-            ))}
-          </div>
-
-          <div className="flex justify-center mt-16 md:mt-20">
-            <Link
-              href="/shop"
-              className="px-16 py-5 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-[#333] transition-all duration-300"
-            >
-              Shop All Gowns
-            </Link>
+          <div className="flex justify-between items-end w-full max-w-7xl mx-auto px-4 text-white/90">
+            <span className="material-icons animate-bounce">arrow_downward</span>
+            <span className="text-xs uppercase tracking-widest">Scroll to explore</span>
           </div>
         </div>
+      </header>
+
+      <section className="py-20 px-6 max-w-4xl mx-auto text-center">
+        <h2 className="text-3xl md:text-5xl font-medium leading-tight mb-6 text-gray-900 dark:text-white">
+          Pre-loved elegance, curated perfection<br/>and ceremony-ready.
+        </h2>
+        <p className="text-gray-600 dark:text-gray-400 text-lg">
+          Discover the premier marketplace for authenticated Galia Lahav masterpieces.
+        </p>
       </section>
 
-      {/* ── BRAND STATEMENT ── */}
-      <section className="relative py-32 md:py-44 bg-[#1c1c1c] text-white overflow-hidden">
-        <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1 }}
-          >
-            <p className="font-sans text-[11px] font-light uppercase tracking-[0.4em] text-white/30 mb-8">
-              Our Promise
-            </p>
-            <h2 className="font-serif text-3xl md:text-6xl font-light tracking-[-0.02em] leading-[1.15] mb-10">
-              Every gown on RE:GALIA has been <span className="italic">authenticated</span> by the House of Galia Lahav
-            </h2>
-            <p className="font-sans text-base text-white/40 leading-relaxed max-w-2xl mx-auto mb-14 font-light">
-              We extend the life of couture masterpieces through circular luxury. Each piece is verified, restored, and presented with the same care as the day it left the atelier.
-            </p>
-            <Link
-              href="/how-it-works"
-              className="inline-block px-14 py-5 bg-white text-[#1c1c1c] font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-white/90 transition-all duration-300"
-            >
-              How It Works
-            </Link>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ── HERITAGE ── */}
-      <section className="bg-white py-28 md:py-40 border-t border-[#1c1c1c]/5">
-        <div className="max-w-[85rem] mx-auto px-6 md:px-16 grid md:grid-cols-2 gap-10 md:gap-20 items-center">
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="order-2 md:order-1"
-          >
-            <div className="aspect-[3/4] overflow-hidden">
-              <img
-                src="https://www.galialahav.com/cdn/shop/files/GL_Couture_Atelier_1.jpg?width=1000"
-                alt="The Atelier"
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="order-1 md:order-2"
-          >
-            <p className="font-sans text-[11px] font-light uppercase tracking-[0.4em] text-[#1c1c1c]/30 mb-8">
-              Heritage & Craft
-            </p>
-            <h2 className="font-serif text-3xl md:text-5xl font-light text-[#1c1c1c] leading-tight mb-8 tracking-[-0.02em]">
-              The Art of <br />
-              <span className="italic">Galia Lahav</span>
-            </h2>
-            <p className="font-sans text-base text-[#1c1c1c]/45 leading-relaxed mb-10 font-light">
-              For over three decades, the House of Galia Lahav has redefined bridal luxury. Each gown is a testament to meticulous craftsmanship, hand-sewn in our Tel Aviv atelier.
-            </p>
-            <div className="grid grid-cols-2 gap-10">
-              <div>
-                <p className="font-serif text-3xl text-[#1c1c1c] mb-2 italic font-light">100%</p>
-                <p className="font-sans text-[10px] uppercase tracking-[0.12em] text-[#1c1c1c]/25 font-light">Atelier Authenticated</p>
-              </div>
-              <div>
-                <p className="font-serif text-3xl text-[#1c1c1c] mb-2 italic font-light">Handmade</p>
-                <p className="font-sans text-[10px] uppercase tracking-[0.12em] text-[#1c1c1c]/25 font-light">In Tel Aviv</p>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ── SCROLL VIDEO ── */}
-      <section className="relative bg-white py-20 md:py-32 px-6 border-t border-[#1c1c1c]/5">
-        <div className="max-w-[85rem] mx-auto md:px-10">
-          <div className="flex flex-col md:flex-row gap-12 md:gap-20 items-center">
-            <div className="w-full md:w-1/2">
-              <p className="font-sans text-[11px] font-light uppercase tracking-[0.4em] text-[#1c1c1c]/30 mb-8">
-                The Experience
-              </p>
-              <h2 className="font-serif text-3xl md:text-5xl font-light text-[#1c1c1c] leading-[1.1] mb-8 tracking-[-0.02em]">
-                Crafted to <br />
-                <span className="italic">Experience Again</span>
-              </h2>
-              <p className="font-sans text-base text-[#1c1c1c]/45 leading-relaxed font-light max-w-md mb-10">
-                Every Galia Lahav gown is a masterpiece born from thousands of hours of heritage.
-                We ensure its story lives on through circular luxury.
-              </p>
-              <Link
-                href="/how-it-works"
-                className="inline-block font-sans text-[11px] font-light uppercase tracking-[0.15em] text-[#1c1c1c] border-b border-[#1c1c1c] pb-1 hover:opacity-60 transition-opacity"
-              >
-                Our Verification Process
-              </Link>
-            </div>
-
-            <div className="w-full md:w-1/2 aspect-[3/4] relative overflow-hidden bg-[#efefef]">
-              <div ref={scrollContainerRef} className="absolute inset-0 h-[300vh] -top-[100vh] pointer-events-none" />
-              <canvas ref={canvasRef} className="w-full h-full object-cover" />
-              <div className="absolute inset-x-0 bottom-0 p-8 bg-gradient-to-t from-[#1c1c1c]/50 to-transparent flex items-end justify-between">
-                <span className="font-sans text-[10px] font-light uppercase tracking-[0.12em] text-white/80">
-                  Collection: Bleecker
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── CONSIGN CTA ── */}
-      <section className="bg-[#1c1c1c] text-white py-24 md:py-32">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <p className="font-sans text-[11px] font-light uppercase tracking-[0.4em] text-white/30 mb-6">
-            For Sellers
-          </p>
-          <h2 className="font-serif text-3xl md:text-5xl font-light tracking-[-0.02em] mb-8">
-            Your Gown Deserves <span className="italic">a Second Chapter</span>
+      <section className="py-12 px-4 md:px-8 max-w-[1400px] mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="text-6xl md:text-8xl lg:text-[10rem] font-bold tracking-tighter leading-none text-gray-900 dark:text-white">
+            Verified
           </h2>
-          <p className="font-sans text-base text-white/40 leading-relaxed max-w-xl mx-auto mb-12 font-light">
-            List your Galia Lahav gown on the official marketplace. House-verified, globally visible, and handled with the care couture deserves.
-          </p>
-          <Link
-            href="/sell"
-            className="inline-block px-14 py-5 bg-white text-[#1c1c1c] font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-white/90 transition-all duration-300"
-          >
-            Consign Your Gown
+          <h2 className="text-6xl md:text-8xl lg:text-[10rem] font-bold tracking-tighter leading-none text-gray-900 dark:text-white -mt-4 md:-mt-10 lg:-mt-16 relative z-10 mix-blend-overlay dark:mix-blend-normal">
+            Authenticity
+          </h2>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-24">
+          <div className="relative group cursor-pointer">
+            <div className="aspect-[4/3] rounded-xl overflow-hidden mb-4">
+              <img alt="Close up of lace detail" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD26ERf7qdIwvqZsAGj3CgoSiRHdrhvyt0UM4U-XPsDdtGLzEETP1xuXzKGGORvUWAjKYvZbfI89znoKyb_jeClPVAVeo0xdY5fGjOJHAs7LDbo0J31hBVZ7f57IpEW6GEQyQ0mDCEeHKQk92dZ4dphYrYzpe45tTv-EmomWlBbjdrXyKh7GN07s8QJK1rau1DMFI6tUbUxr7lVPTjS2_lKa3O22mOmV4b_HhNNS2iEX5GKtJvKMB0HxuPND5poFLIM8CFH7CYd03IP"/>
+            </div>
+            <h3 className="text-3xl font-medium text-center text-white absolute bottom-10 left-0 right-0 drop-shadow-md">Inspected Detail</h3>
+          </div>
+          <div className="relative group cursor-pointer mt-0 md:mt-24">
+            <div className="aspect-[4/3] rounded-xl overflow-hidden mb-4">
+              <img alt="Gown silhouette in desert" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXeTEcNmV8Mf5CYFHbd06II_JjZ59jGzoFcd3H4i1L5zDmRPslL5M8bAYKPXL3MpF1nt0zhmqQB2wycK7GQEXwR1eBR3A9gB8f_8qiZ2thMyewC208LhZwqbTox1LMCJEj0DzwS4gI8sfUr0tzpl6TyO8s3c5roy2DKo5KbVtYf0vWHr4vp1W0jmQsjD_t3wrZ4PjCvhNeHNSRRJ9iBN4tQl2I-1_aeA6Rzbgi2BfIPHPRsp2wMsOluFRXQfOnJVjSNdDCN7rf_0fr"/>
+            </div>
+            <h3 className="text-3xl font-medium text-center text-white absolute bottom-10 left-0 right-0 drop-shadow-md">Curated Quality</h3>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-16 overflow-hidden">
+        <div className="px-6 mb-12 flex flex-col md:flex-row justify-between items-end max-w-[1400px] mx-auto">
+          <div>
+            <h3 className="text-4xl md:text-5xl font-medium tracking-tight mb-2">Featured Gowns</h3>
+            <p className="text-gray-500 dark:text-gray-400">Timeless silhouettes, available now.</p>
+          </div>
+          <Link href="/shop" className="hidden md:block px-6 py-2 rounded-full border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition text-sm uppercase tracking-wider text-black">
+            View All Collection
+          </Link>
+        </div>
+        <div className="flex overflow-x-auto gap-6 px-6 pb-12 no-scrollbar snap-x snap-mandatory">
+          <Link href="/shop" className="min-w-[300px] md:min-w-[400px] snap-center group relative rounded-xl overflow-hidden h-[500px]">
+            <img alt="Silk wedding dress" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrSRGMoy4dMxNj1PQzw3nffo5wBOsvnze21R76OJXfIoPim-dBSVlMAH0xBwes67v0QawrvElOOcO-D-7zG7aBSKznr9JCdrj-vMiyoEIe4dFdUPOG_H-DVNFzD5TxDg_uP4bm79FzFkmnJgDqPUjKR__Tc1Ir1qFLJ2GQNhvFCv5_k2U9k0Tb4j_b69t0N5-CKRFPNoI6feMHRyJ0rxhDM2yPBSVxGskjGVF4z0Z9TYO7numZhzPBrlcoJxdtLfnoT1XrGO0IcTuj"/>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
+            <div className="absolute bottom-0 left-0 p-6 w-full text-white">
+              <span className="bg-white/20 backdrop-blur-sm text-xs px-2 py-1 rounded mb-3 inline-block">New Arrival</span>
+              <h4 className="text-2xl font-semibold mb-1">The Maya</h4>
+              <p className="text-sm opacity-80 mb-4">Size 4 • Excellent Condition</p>
+              <div className="flex justify-between items-center">
+                <span className="font-medium">$4,200</span>
+                <button className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0 duration-300">
+                  <span className="material-icons text-sm">arrow_forward</span>
+                </button>
+              </div>
+            </div>
+          </Link>
+          <Link href="/shop" className="min-w-[300px] md:min-w-[400px] snap-center group relative rounded-xl overflow-hidden h-[500px]">
+            <img alt="Lace wedding dress back" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJwCik15AN2javDp9pWFeRp4q5gkaj3x9kSLjaF9Qp9F_P78YJxHGmOU3Mittjhxwfacp90SFNsZCEuz_G25GWdg3goBfXhcNqeWp4T6S_NmGmEquwFZqT6xj5O8aUhiU9XxIjFU7K1Qutn1P_szkZ8xAQUSdwR-Di8OfPzkIjFPXlmCjp3l4P4K6DbQTEDP-OKBTr-VSEid3cTcIDWyQlztyIeDp8yhU_gUIgxgGXl8d-63WecgslirU3nPbR5m-w0ODeOP91ZqnN"/>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
+            <div className="absolute bottom-0 left-0 p-6 w-full text-white">
+              <span className="bg-white/20 backdrop-blur-sm text-xs px-2 py-1 rounded mb-3 inline-block">Rare Find</span>
+              <h4 className="text-2xl font-semibold mb-1">The Gala 802</h4>
+              <p className="text-sm opacity-80 mb-4">Size 6 • Like New</p>
+              <div className="flex justify-between items-center">
+                <span className="font-medium">$5,800</span>
+                <button className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0 duration-300">
+                  <span className="material-icons text-sm">arrow_forward</span>
+                </button>
+              </div>
+            </div>
+          </Link>
+          <Link href="/shop" className="min-w-[300px] md:min-w-[400px] snap-center group relative rounded-xl overflow-hidden h-[500px]">
+            <img alt="Mermaid style gown" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8Rnxxs4I0PPHJ0nx1CVmRQ8DR2XDjAgSPOR47y6-EPPAZukqthaJDFbqjnxEYKa1a7fkUjluih_Ampsbsct2IL1WRRDbiCdWjhcbRJmKGsFFECDbXuzw-dewnMB6td_7br2UnQ015t4GB7tODu2waTc2Efp-2C-P1nmvx0K_nBhYTBaIb3O0ylO-qthteB37H0xIG2dOdPqqFwFTqiAZIdA7m-zTnJEBMrnN4nXZlC9PMU2KS1II7HNyx3KHLzO7LefRB0OeYOlCd"/>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
+            <div className="absolute bottom-0 left-0 p-6 w-full text-white">
+              <h4 className="text-2xl font-semibold mb-1">The Fabiana</h4>
+              <p className="text-sm opacity-80 mb-4">Size 2 • Professionally Cleaned</p>
+              <div className="flex justify-between items-center">
+                <span className="font-medium">$6,100</span>
+                <button className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0 duration-300">
+                  <span className="material-icons text-sm">arrow_forward</span>
+                </button>
+              </div>
+            </div>
           </Link>
         </div>
       </section>
 
+      <section className="relative py-32 px-6 overflow-hidden">
+        <div className="absolute inset-0">
+          <img alt="Road landscape background" className="w-full h-full object-cover grayscale brightness-50 dark:brightness-40" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7OOpQgP4ddYWDRzDcYV4pCom6NX3PjAOvfinaFf8CrFjG4xsqlunwCTjvspVkMetY85KW6XYuCdV4hvHKWtwSPY3SKwoh76O3GdYmOOdOgKpaxgnU1vHc09XgcrjfTXoPV8uzk9seszkmAg06gpA_WqK1G-vJ9MTu9fF6gJyZf09mYuzqZhwmC8Q7uoFHxQRgbrHkgeabWiSPcCe8TEKoMh7YCUFSJgEgHF4oi9J-s39rHf-copwPfxJ871r17SIXdl7Y_OqwM2-9"/>
+        </div>
+        <div className="relative z-10 max-w-4xl mx-auto text-center text-white">
+          <div className="flex justify-center mb-6">
+            <span className="flex gap-2">
+              <span className="w-2 h-2 bg-white rounded-full"></span>
+              <span className="w-2 h-2 bg-white/50 rounded-full"></span>
+            </span>
+          </div>
+          <h2 className="text-4xl md:text-6xl font-medium leading-tight mb-8">
+            The Journey Continues<br/>with a Seamless Resale.
+          </h2>
+          <Link href="/sell" className="inline-block px-8 py-3 text-black rounded-full border border-white/30 bg-white/10 backdrop-blur hover:bg-white hover:text-black transition duration-300 text-sm font-semibold tracking-wide text-white">
+            Start Selling
+          </Link>
+        </div>
+      </section>
+
+      <section className="py-24 px-6 md:px-12 max-w-[1400px] mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          <div className="lg:col-span-5 order-2 lg:order-1">
+            <h3 className="text-3xl md:text-5xl font-medium leading-tight mb-8 text-gray-900 dark:text-white">
+              Discover a better way to love luxury, where heritage meets circularity.
+            </h3>
+            <p className="text-lg text-gray-600 dark:text-gray-400 mb-8 leading-relaxed">
+              Extending the life of couture gowns isn't just about value—it's about the story. Our verified marketplace ensures that every bead, stitch, and layer of tulle is preserved for its next grand entrance. With secure payments and white-glove shipping, your dream dress is closer than you think.
+            </p>
+            <Link href="/how-it-works" className="inline-block px-6 py-2 rounded-full border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition text-sm uppercase tracking-wider text-black">
+              Our Philosophy
+            </Link>
+          </div>
+          <div className="lg:col-span-7 order-1 lg:order-2">
+            <div className="relative rounded-2xl overflow-hidden aspect-video">
+              <img alt="Bridal atelier team working" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhcLCbNt46OFJp1unwdLAP5CBX_XNbzji-Dzv1asj3WSXe34Qtm-K_q4sdhfhHqmX01_yRiyby2GjtxKVOYupegwUYf4wFUJf2g1TQpyHB4vXinHnPhrelJdWxHCEj2uOFJAaNQIDSypiiz8EnJg6juhFnsThEew-d2Esam6AzlciGrnlEMSphYdJ_lhM-JCA5vNUcRO-bmL3e0DM4MCNkr4SEM3T30g-vRT2Wyj54qCEXSye5AJGSqeIZEebtYk1pfAKnnlUIkuxi"/>
+              <div className="absolute bottom-6 left-6 max-w-sm text-white drop-shadow-lg">
+                <p className="text-xs uppercase tracking-widest mb-2">The Atelier Standard</p>
+                <p className="text-sm opacity-90">Every gown is inspected by our team of expert seamstresses before listing.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20 px-6">
+        <div className="max-w-[1400px] mx-auto bg-surface-light dark:bg-surface-dark rounded-2xl overflow-hidden relative">
+          <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: "radial-gradient(#999 1px, transparent 1px)", backgroundSize: "20px 20px" }}></div>
+          <div className="flex flex-col lg:flex-row">
+            <div className="lg:w-1/2 p-10 md:p-16 flex flex-col justify-center relative z-10">
+              <p className="text-xs uppercase tracking-widest text-gray-500 mb-4">Stay in the loop</p>
+              <h3 className="text-3xl md:text-4xl font-medium mb-6 leading-tight text-gray-900 dark:text-white">
+                New arrivals, authentication tips, and bridal inspiration — find it in our newsletter.
+              </h3>
+              <form className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
+                <input className="bg-white dark:bg-black border-0 rounded-full px-6 py-3 text-sm focus:ring-2 focus:ring-gray-400 w-full shadow-sm text-gray-900 dark:text-white placeholder-gray-400" placeholder="name@email.com" type="email"/>
+                <button className="bg-primary text-white rounded-full px-8 py-3 text-sm font-medium hover:bg-gray-800 transition shadow-lg flex items-center justify-center gap-2 group whitespace-nowrap" type="submit">
+                  Register
+                  <span className="material-icons text-xs group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                </button>
+              </form>
+            </div>
+            <div className="lg:w-1/2 h-64 lg:h-auto relative">
+              <img alt="Bridal landscape" className="absolute inset-0 w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcNNxmRqZIEzT15YsKadOe1MVPv5tsVWcqyp_Im3atFKEUQKTCEzNsqx23VZRwKr2-_BbNWVPDTa66DC8BDgeyzLYuEcgzWRacs9E210HsXZtNbc-KYyEcIDI_NkOqqRC8AYLM7TYlO6IPqg-iLSulzvQGvLMSIMSjL1MvqwNIMbaRSToXWgF83ojYddAAp9t7mM5A4KtW1_iNd6O5QVeQrE9McAlS9dHZHZDMUm8K_nQTLXk-sWne_msQQEi6rutblG2zD97qbklG"/>
+            </div>
+          </div>
+        </div>
+      </section>
+      
       <Footer />
     </main>
   );
