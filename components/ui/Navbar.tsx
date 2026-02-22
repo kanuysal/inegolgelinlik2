@@ -22,6 +22,7 @@ export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isStaff, setIsStaff] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
@@ -54,6 +55,13 @@ export default function Navbar() {
   }, [pathname]);
 
   useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 50);
+    handleScroll();
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
     if (!dropdownOpen) return;
     const handler = () => setDropdownOpen(false);
     window.addEventListener("click", handler);
@@ -79,7 +87,7 @@ export default function Navbar() {
   return (
     <>
       {/* ── Stitch-style top nav ── */}
-      <nav className="border-b border-gray-100 sticky top-0 bg-white/80 backdrop-blur-md z-50">
+      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm" : "bg-transparent border-b border-transparent"}`}>
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
 
           {/* Left — Hamburger (mobile) + Desktop links */}
@@ -89,7 +97,7 @@ export default function Navbar() {
               className="flex items-center space-x-2 md:hidden"
               aria-label="Toggle menu"
             >
-              <span className="material-symbols-outlined text-xl">menu</span>
+              <span className={`material-symbols-outlined text-xl transition-colors duration-300 ${scrolled ? "text-black" : "text-white"}`}>menu</span>
             </button>
 
             <div className="hidden md:flex items-center space-x-8">
@@ -97,7 +105,9 @@ export default function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`text-xs uppercase tracking-[0.15em] font-medium transition-colors hover:text-accent ${pathname === link.href ? "text-primary" : "text-gray-400"
+                  className={`text-xs uppercase tracking-[0.15em] font-medium transition-colors duration-300 hover:text-accent ${scrolled
+                    ? (pathname === link.href ? "text-black" : "text-gray-500")
+                    : (pathname === link.href ? "text-white" : "text-white/70")
                     }`}
                 >
                   {link.label}
@@ -108,7 +118,7 @@ export default function Navbar() {
 
           {/* Center — Brand */}
           <div className="absolute left-1/2 -translate-x-1/2 text-center">
-            <Link href="/" className="font-serif text-2xl tracking-widest uppercase">
+            <Link href="/" className={`font-serif text-2xl tracking-widest uppercase transition-colors duration-300 ${scrolled ? "text-black" : "text-white"}`}>
               RE:GALIA
             </Link>
           </div>
@@ -116,10 +126,10 @@ export default function Navbar() {
           {/* Right — Icons */}
           <div className="flex items-center space-x-6">
             <Link href="/shop" className="hidden md:block">
-              <span className="material-symbols-outlined cursor-pointer text-gray-600 hover:text-primary transition-colors">search</span>
+              <span className={`material-symbols-outlined cursor-pointer transition-colors duration-300 ${scrolled ? "text-black hover:text-gray-600" : "text-white hover:text-white/70"}`}>search</span>
             </Link>
             <Link href="/shop" className="hidden md:block">
-              <span className="material-symbols-outlined cursor-pointer text-gray-600 hover:text-primary transition-colors">favorite</span>
+              <span className={`material-symbols-outlined cursor-pointer transition-colors duration-300 ${scrolled ? "text-black hover:text-gray-600" : "text-white hover:text-white/70"}`}>favorite</span>
             </Link>
 
             {!loading && (
@@ -133,11 +143,11 @@ export default function Navbar() {
                       }}
                       className="flex items-center"
                     >
-                      <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center border border-gray-200">
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center border transition-colors duration-300 ${scrolled ? "bg-secondary border-gray-200" : "bg-white/20 border-white/40"}`}>
                         {user.user_metadata?.avatar_url ? (
                           <img src={user.user_metadata.avatar_url} alt="Avatar" className="w-full h-full rounded-full object-cover" />
                         ) : (
-                          <span className="text-[10px] font-medium text-primary">{userInitial}</span>
+                          <span className={`text-[10px] font-medium transition-colors duration-300 ${scrolled ? "text-primary" : "text-white"}`}>{userInitial}</span>
                         )}
                       </div>
                     </button>
@@ -171,7 +181,7 @@ export default function Navbar() {
                 ) : (
                   <Link
                     href="/auth/login"
-                    className="text-xs font-medium uppercase tracking-[0.08em] text-gray-500 hover:text-primary transition-colors"
+                    className={`text-xs font-medium uppercase tracking-[0.08em] transition-colors duration-300 ${scrolled ? "text-black hover:text-gray-600" : "text-white hover:text-white/70"}`}
                   >
                     Sign In
                   </Link>

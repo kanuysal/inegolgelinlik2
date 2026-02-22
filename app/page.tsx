@@ -10,8 +10,10 @@ export default function Home() {
 
       <Navbar />
 
-      <header className="relative w-full h-screen overflow-hidden rounded-b-2xl mb-12 group pt-20">
-        <img alt="Bride in a luxury gown walking in a landscape" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="/frames/frame_150.jpg" />
+      <header className="relative w-full h-screen overflow-hidden rounded-b-2xl mb-12 group">
+        <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover">
+          <source src="/videos/hero.mp4" type="video/mp4" />
+        </video>
         <div className="absolute inset-0 bg-black/20"></div>
         <div className="absolute bottom-10 left-0 w-full text-center px-4 fade-in-up">
           <h1 className="text-white text-6xl md:text-8xl lg:text-9xl font-bold tracking-tight mb-6 drop-shadow-lg">
