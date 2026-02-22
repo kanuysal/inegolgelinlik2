@@ -14,9 +14,15 @@ export default function Home() {
         <img alt="Bride in a luxury gown walking in a landscape" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="/frames/frame_150.jpg" />
         <div className="absolute inset-0 bg-black/20"></div>
         <div className="absolute bottom-10 left-0 w-full text-center px-4 fade-in-up">
-          <h1 className="text-white text-6xl md:text-8xl lg:text-9xl font-bold tracking-tight mb-4 drop-shadow-lg">
+          <h1 className="text-white text-6xl md:text-8xl lg:text-9xl font-bold tracking-tight mb-6 drop-shadow-lg">
             Meet the Couture
           </h1>
+          <div className="mb-12 md:mb-16 flex justify-center">
+            <Link href="/shop" className="bg-white text-gray-900 px-8 py-3 md:px-10 md:py-4 rounded-full font-medium text-sm md:text-base uppercase tracking-widest hover:bg-gray-100 hover:scale-105 transition-all duration-300 shadow-xl flex items-center gap-3 group">
+              Shop the Collection
+              <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+            </Link>
+          </div>
           <div className="flex justify-between items-end w-full max-w-7xl mx-auto px-4 text-white/90">
             <span className="material-symbols-outlined animate-bounce">arrow_downward</span>
             <span className="text-xs uppercase tracking-widest">Scroll to explore</span>
