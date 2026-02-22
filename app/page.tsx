@@ -6,14 +6,14 @@ import Footer from "@/components/ui/Footer";
 
 export default function Home() {
   return (
-    <main className="bg-background-light dark:bg-background-dark text-primary dark:text-gray-100 font-sans transition-colors duration-300 antialiased selection:bg-[#1c1c1c]/10 selection:text-[#1c1c1c] overflow-x-hidden">
+    <main className="bg-background-light text-primary font-sans transition-colors duration-300 antialiased selection:bg-[#1c1c1c]/10 selection:text-[#1c1c1c] overflow-x-hidden">
 
       {/* ── Navbar is provided globally by layout or standard component, so we omit the raw Stitch nav here, but let's keep the hero structure ── */}
       <Navbar />
 
       <header className="relative w-full h-screen overflow-hidden rounded-b-2xl mb-12 group pt-20">
         <img alt="Bride in a luxury gown walking in a landscape" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="/frames/frame_150.jpg" />
-        <div className="absolute inset-0 bg-black/20 dark:bg-black/40"></div>
+        <div className="absolute inset-0 bg-black/20"></div>
         <div className="absolute bottom-10 left-0 w-full text-center px-4 fade-in-up">
           <h1 className="text-white text-6xl md:text-8xl lg:text-9xl font-bold tracking-tight mb-4 drop-shadow-lg">
             Meet the Couture
@@ -26,20 +26,20 @@ export default function Home() {
       </header>
 
       <section className="py-20 px-6 max-w-4xl mx-auto text-center">
-        <h2 className="text-3xl md:text-5xl font-medium leading-tight mb-6 text-gray-900 dark:text-white">
+        <h2 className="text-3xl md:text-5xl font-medium leading-tight mb-6 text-gray-900">
           Pre-loved elegance, curated perfection<br />and ceremony-ready.
         </h2>
-        <p className="text-gray-600 dark:text-gray-400 text-lg">
+        <p className="text-gray-600 text-lg">
           Discover the premier marketplace for authenticated Galia Lahav masterpieces.
         </p>
       </section>
 
       <section className="py-12 px-4 md:px-8 max-w-[1400px] mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-6xl md:text-8xl lg:text-[10rem] font-bold tracking-tighter leading-none text-gray-900 dark:text-white">
+          <h2 className="text-6xl md:text-8xl lg:text-[10rem] font-bold tracking-tighter leading-none text-gray-900">
             Verified
           </h2>
-          <h2 className="text-6xl md:text-8xl lg:text-[10rem] font-bold tracking-tighter leading-none text-gray-900 dark:text-white -mt-4 md:-mt-10 lg:-mt-16 relative z-10 mix-blend-overlay dark:mix-blend-normal">
+          <h2 className="text-6xl md:text-8xl lg:text-[10rem] font-bold tracking-tighter leading-none text-gray-900 -mt-4 md:-mt-10 lg:-mt-16 relative z-10 mix-blend-overlay">
             Authenticity
           </h2>
         </div>
@@ -63,9 +63,9 @@ export default function Home() {
         <div className="px-6 mb-12 flex flex-col md:flex-row justify-between items-end max-w-[1400px] mx-auto">
           <div>
             <h3 className="text-4xl md:text-5xl font-medium tracking-tight mb-2">Featured Gowns</h3>
-            <p className="text-gray-500 dark:text-gray-400">Timeless silhouettes, available now.</p>
+            <p className="text-gray-500">Timeless silhouettes, available now.</p>
           </div>
-          <Link href="/shop" className="hidden md:block px-6 py-2 rounded-full border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition text-sm uppercase tracking-wider text-black">
+          <Link href="/shop" className="hidden md:block px-6 py-2 rounded-full border border-gray-300 hover:bg-gray-100 transition text-sm uppercase tracking-wider text-black">
             View All Collection
           </Link>
         </div>
@@ -119,7 +119,7 @@ export default function Home() {
 
       <section className="relative py-32 px-6 overflow-hidden">
         <div className="absolute inset-0">
-          <img alt="Road landscape background" className="w-full h-full object-cover grayscale brightness-50 dark:brightness-40" src="/images/hiw/staircase.jpg" />
+          <img alt="Road landscape background" className="w-full h-full object-cover grayscale brightness-50" src="/images/hiw/staircase.jpg" />
         </div>
         <div className="relative z-10 max-w-4xl mx-auto text-center text-white">
           <div className="flex justify-center mb-6">
@@ -140,13 +140,13 @@ export default function Home() {
       <section className="py-24 px-6 md:px-12 max-w-[1400px] mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-5 order-2 lg:order-1">
-            <h3 className="text-3xl md:text-5xl font-medium leading-tight mb-8 text-gray-900 dark:text-white">
+            <h3 className="text-3xl md:text-5xl font-medium leading-tight mb-8 text-gray-900">
               Discover a better way to love luxury, where heritage meets circularity.
             </h3>
-            <p className="text-lg text-gray-600 dark:text-gray-400 mb-8 leading-relaxed">
+            <p className="text-lg text-gray-600 mb-8 leading-relaxed">
               Extending the life of couture gowns isn't just about value—it's about the story. Our verified marketplace ensures that every bead, stitch, and layer of tulle is preserved for its next grand entrance. With secure payments and white-glove shipping, your dream dress is closer than you think.
             </p>
-            <Link href="/how-it-works" className="inline-block px-6 py-2 rounded-full border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition text-sm uppercase tracking-wider text-black">
+            <Link href="/how-it-works" className="inline-block px-6 py-2 rounded-full border border-gray-300 hover:bg-gray-100 transition text-sm uppercase tracking-wider text-black">
               Our Philosophy
             </Link>
           </div>
@@ -163,16 +163,16 @@ export default function Home() {
       </section>
 
       <section className="py-20 px-6">
-        <div className="max-w-[1400px] mx-auto bg-surface-light dark:bg-surface-dark rounded-2xl overflow-hidden relative">
+        <div className="max-w-[1400px] mx-auto bg-surface-light rounded-2xl overflow-hidden relative">
           <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: "radial-gradient(#999 1px, transparent 1px)", backgroundSize: "20px 20px" }}></div>
           <div className="flex flex-col lg:flex-row">
             <div className="lg:w-1/2 p-10 md:p-16 flex flex-col justify-center relative z-10">
               <p className="text-xs uppercase tracking-widest text-gray-500 mb-4">Stay in the loop</p>
-              <h3 className="text-3xl md:text-4xl font-medium mb-6 leading-tight text-gray-900 dark:text-white">
+              <h3 className="text-3xl md:text-4xl font-medium mb-6 leading-tight text-gray-900">
                 New arrivals, authentication tips, and bridal inspiration — find it in our newsletter.
               </h3>
               <form className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
-                <input className="bg-white dark:bg-black border-0 rounded-full px-6 py-3 text-sm focus:ring-2 focus:ring-gray-400 w-full shadow-sm text-gray-900 dark:text-white placeholder-gray-400" placeholder="name@email.com" type="email" />
+                <input className="bg-white border-0 rounded-full px-6 py-3 text-sm focus:ring-2 focus:ring-gray-400 w-full shadow-sm text-gray-900 placeholder-gray-400" placeholder="name@email.com" type="email" />
                 <button className="bg-primary text-white rounded-full px-8 py-3 text-sm font-medium hover:bg-gray-800 transition shadow-lg flex items-center justify-center gap-2 group whitespace-nowrap" type="submit">
                   Register
                   <span className="material-icons text-xs group-hover:translate-x-1 transition-transform">arrow_forward</span>

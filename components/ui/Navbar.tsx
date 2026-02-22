@@ -17,14 +17,11 @@ const NAV_LINKS = [
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
-  const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isStaff, setIsStaff] = useState(false);
-
-  const isHome = pathname === "/";
 
   useEffect(() => {
     const supabase = createClient();
@@ -49,12 +46,6 @@ export default function Navbar() {
     });
 
     return () => subscription.unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    const handler = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", handler, { passive: true });
-    return () => window.removeEventListener("scroll", handler);
   }, []);
 
   useEffect(() => {
@@ -85,129 +76,113 @@ export default function Navbar() {
       ? user.email.charAt(0).toUpperCase()
       : "U";
 
-  const navBg = scrolled
-    ? "bg-white/95 backdrop-blur-xl border-b border-black/5"
-    : "bg-transparent";
-
-  const textColor = scrolled || !isHome ? "text-[#1c1c1c]" : "text-white";
-  const mutedColor = scrolled || !isHome ? "text-[#1c1c1c]/50" : "text-white/60";
-
   return (
     <>
-      {/* Top nav bar - full width, Galia Lahav style */}
-      <motion.header
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-        className={`fixed top-0 left-0 right-0 z-[60] transition-all duration-500 ${navBg}`}
-      >
-        <div className="max-w-[85rem] mx-auto px-6 md:px-16">
-          <div className="h-[65px] flex items-center justify-between">
-            {/* Left - Menu Toggle & Desktop Links */}
-            <div className="flex-1 flex items-center gap-10">
-              <button
-                onClick={() => setMobileOpen(!mobileOpen)}
-                className="flex flex-col gap-[5px] p-2 -ml-2 group md:hidden"
-                aria-label="Toggle menu"
-              >
-                <motion.span
-                  animate={mobileOpen ? { rotate: 45, y: 6 } : { rotate: 0, y: 0 }}
-                  className={`block w-5 h-[1px] bg-current ${textColor} transition-colors duration-500`}
-                />
-                <motion.span
-                  animate={mobileOpen ? { rotate: -45, y: -1 } : { rotate: 0, y: 0 }}
-                  className={`block w-5 h-[1px] bg-current ${textColor} transition-colors duration-500`}
-                />
-              </button>
+      {/* ── Stitch-style top nav ── */}
+      <nav className="border-b border-gray-100 sticky top-0 bg-white/80 backdrop-blur-md z-50">
+        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
 
-              <div className="hidden md:flex items-center gap-10">
-                {NAV_LINKS.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className={`font-sans text-[13px] font-light uppercase tracking-[0.08em] transition-all duration-300 ${pathname === link.href
-                      ? `${textColor}`
-                      : `${mutedColor} hover:${textColor}`
-                      }`}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </div>
-            </div>
+          {/* Left — Hamburger (mobile) + Desktop links */}
+          <div className="flex items-center space-x-8">
+            <button
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="flex items-center space-x-2 md:hidden"
+              aria-label="Toggle menu"
+            >
+              <span className="material-symbols-outlined text-xl">menu</span>
+            </button>
 
-            {/* Center - Logo */}
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-              <Link href="/" className="flex items-center">
-                <span className={`font-serif text-2xl tracking-[0.25em] uppercase transition-colors duration-500 font-light ${textColor}`}>
-                  RE:GALIA
-                </span>
-              </Link>
-            </div>
-
-            {/* Right - Actions */}
-            <div className="flex-1 flex items-center justify-end gap-6">
-              {!loading && (
-                <div className="flex items-center gap-6">
-                  {user ? (
-                    <div className="relative">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setDropdownOpen(!dropdownOpen);
-                        }}
-                        className="flex items-center gap-2"
-                      >
-                        <div className={`w-8 h-8 border flex items-center justify-center transition-all duration-500 ${scrolled || !isHome ? 'border-[#1c1c1c]/15 text-[#1c1c1c]' : 'border-white/30 text-white'}`}>
-                          {user.user_metadata?.avatar_url ? (
-                            <img src={user.user_metadata.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
-                          ) : (
-                            <span className="text-[10px] font-light">{userInitial}</span>
-                          )}
-                        </div>
-                      </button>
-
-                      <AnimatePresence>
-                        {dropdownOpen && (
-                          <motion.div
-                            initial={{ opacity: 0, y: 8 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: 8 }}
-                            className="absolute right-0 top-12 w-52 bg-white border border-black/5 shadow-lg overflow-hidden py-2"
-                          >
-                            <Link href="/dashboard" className="block px-5 py-3 font-sans text-[12px] font-light uppercase tracking-[0.05em] text-[#1c1c1c]/60 hover:text-[#1c1c1c] hover:bg-neutral/50 transition-colors">Dashboard</Link>
-                            <Link href="/sell" className="block px-5 py-3 font-sans text-[12px] font-light uppercase tracking-[0.05em] text-[#1c1c1c]/60 hover:text-[#1c1c1c] hover:bg-neutral/50 transition-colors">Sell Gown</Link>
-                            {isStaff && (
-                              <Link href="/admin" className="block px-5 py-3 font-sans text-[12px] font-light uppercase tracking-[0.05em] text-[#1c1c1c] hover:bg-neutral/50 transition-colors">Admin Console</Link>
-                            )}
-                            <button onClick={handleSignOut} className="w-full text-left px-5 py-3 font-sans text-[12px] font-light uppercase tracking-[0.05em] text-[#1c1c1c]/40 hover:text-red-600 hover:bg-red-50/50 transition-colors">Sign Out</button>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  ) : (
-                    <Link
-                      href="/auth/login"
-                      className={`font-sans text-[13px] font-light uppercase tracking-[0.08em] transition-colors duration-300 ${mutedColor} hover:opacity-100`}
-                    >
-                      Sign In
-                    </Link>
-                  )}
-
-                  <Link
-                    href="/shop"
-                    className="font-sans text-[11px] font-light uppercase tracking-[0.15em] px-7 py-3 bg-[#1c1c1c] text-white hover:bg-[#333] transition-all duration-300"
-                  >
-                    Browse
-                  </Link>
-                </div>
-              )}
+            <div className="hidden md:flex items-center space-x-8">
+              {NAV_LINKS.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`text-xs uppercase tracking-[0.15em] font-medium transition-colors hover:text-accent ${pathname === link.href ? "text-primary" : "text-gray-400"
+                    }`}
+                >
+                  {link.label}
+                </Link>
+              ))}
             </div>
           </div>
-        </div>
-      </motion.header>
 
-      {/* Mobile menu - full screen overlay */}
+          {/* Center — Brand */}
+          <div className="absolute left-1/2 -translate-x-1/2 text-center">
+            <Link href="/" className="font-serif text-2xl tracking-widest uppercase">
+              RE:GALIA
+            </Link>
+          </div>
+
+          {/* Right — Icons */}
+          <div className="flex items-center space-x-6">
+            <Link href="/shop" className="hidden md:block">
+              <span className="material-symbols-outlined cursor-pointer text-gray-600 hover:text-primary transition-colors">search</span>
+            </Link>
+            <Link href="/shop" className="hidden md:block">
+              <span className="material-symbols-outlined cursor-pointer text-gray-600 hover:text-primary transition-colors">favorite</span>
+            </Link>
+
+            {!loading && (
+              <>
+                {user ? (
+                  <div className="relative">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setDropdownOpen(!dropdownOpen);
+                      }}
+                      className="flex items-center"
+                    >
+                      <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center border border-gray-200">
+                        {user.user_metadata?.avatar_url ? (
+                          <img src={user.user_metadata.avatar_url} alt="Avatar" className="w-full h-full rounded-full object-cover" />
+                        ) : (
+                          <span className="text-[10px] font-medium text-primary">{userInitial}</span>
+                        )}
+                      </div>
+                    </button>
+
+                    <AnimatePresence>
+                      {dropdownOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 8 }}
+                          className="absolute right-0 top-12 w-52 bg-white border border-gray-100 shadow-lg overflow-hidden py-2"
+                        >
+                          <Link href="/dashboard" className="block px-5 py-3 text-xs font-medium uppercase tracking-[0.05em] text-gray-500 hover:text-primary hover:bg-gray-50 transition-colors">
+                            Dashboard
+                          </Link>
+                          <Link href="/sell" className="block px-5 py-3 text-xs font-medium uppercase tracking-[0.05em] text-gray-500 hover:text-primary hover:bg-gray-50 transition-colors">
+                            Sell Gown
+                          </Link>
+                          {isStaff && (
+                            <Link href="/admin" className="block px-5 py-3 text-xs font-medium uppercase tracking-[0.05em] text-primary hover:bg-gray-50 transition-colors">
+                              Admin Console
+                            </Link>
+                          )}
+                          <button onClick={handleSignOut} className="w-full text-left px-5 py-3 text-xs font-medium uppercase tracking-[0.05em] text-gray-400 hover:text-red-600 hover:bg-red-50/50 transition-colors">
+                            Sign Out
+                          </button>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                ) : (
+                  <Link
+                    href="/auth/login"
+                    className="text-xs font-medium uppercase tracking-[0.08em] text-gray-500 hover:text-primary transition-colors"
+                  >
+                    Sign In
+                  </Link>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      </nav>
+
+      {/* ── Mobile menu — full screen overlay ── */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
@@ -217,6 +192,15 @@ export default function Navbar() {
             transition={{ duration: 0.3 }}
             className="fixed inset-0 z-[55] bg-white flex flex-col items-center justify-center gap-10"
           >
+            {/* Close button */}
+            <button
+              onClick={() => setMobileOpen(false)}
+              className="absolute top-6 right-6"
+              aria-label="Close menu"
+            >
+              <span className="material-symbols-outlined text-2xl text-gray-600">close</span>
+            </button>
+
             {NAV_LINKS.map((link, i) => (
               <motion.div
                 key={link.href}
@@ -227,7 +211,7 @@ export default function Navbar() {
               >
                 <Link
                   href={link.href}
-                  className={`font-serif text-4xl font-light tracking-tight ${pathname === link.href ? "text-[#1c1c1c]" : "text-[#1c1c1c]/40"
+                  className={`font-serif text-4xl font-light tracking-tight ${pathname === link.href ? "text-primary" : "text-gray-300"
                     }`}
                 >
                   {link.label}
@@ -249,37 +233,37 @@ export default function Navbar() {
                           <img
                             src={user.user_metadata.avatar_url}
                             alt="Avatar"
-                            className="w-12 h-12 border border-[#1c1c1c]/10"
+                            className="w-12 h-12 rounded-full border border-gray-200"
                           />
                         ) : (
-                          <span className="w-12 h-12 bg-neutral flex items-center justify-center text-[#1c1c1c] text-lg font-light">
+                          <span className="w-12 h-12 bg-secondary rounded-full flex items-center justify-center text-primary text-lg font-light">
                             {userInitial}
                           </span>
                         )}
                         <div>
-                          <p className="font-sans text-lg font-light text-[#1c1c1c]">
+                          <p className="text-lg font-light text-primary">
                             {user.user_metadata?.full_name || "My Account"}
                           </p>
-                          <p className="font-sans text-sm text-[#1c1c1c]/40">{user.email}</p>
+                          <p className="text-sm text-gray-400">{user.email}</p>
                         </div>
                       </div>
                       {isStaff && (
                         <Link
                           href="/admin"
-                          className="font-sans text-sm font-light text-[#1c1c1c] border border-[#1c1c1c]/20 px-6 py-2 uppercase tracking-[0.08em] mb-2"
+                          className="text-sm font-light text-primary border border-gray-200 px-6 py-2 uppercase tracking-[0.08em] mb-2"
                         >
                           Admin Console
                         </Link>
                       )}
                       <Link
                         href="/dashboard"
-                        className="font-sans text-lg font-light text-[#1c1c1c]/60 mb-2"
+                        className="text-lg font-light text-gray-500 mb-2"
                       >
                         Dashboard
                       </Link>
                       <button
                         onClick={handleSignOut}
-                        className="font-sans text-lg font-light text-[#1c1c1c]/30 hover:text-red-400 transition-colors"
+                        className="text-lg font-light text-gray-300 hover:text-red-400 transition-colors"
                       >
                         Sign Out
                       </button>
@@ -287,7 +271,7 @@ export default function Navbar() {
                   ) : (
                     <Link
                       href="/auth/login"
-                      className="font-sans text-xl font-light text-[#1c1c1c]/50"
+                      className="text-xl font-light text-gray-400"
                     >
                       Sign In
                     </Link>

@@ -67,6 +67,22 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "PP Monument Extended";
+  src: url("/fonts/PPMonumentExtended-Light.otf") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "PP Monument Extended";
+  src: url("/fonts/PPMonumentExtended-LightItalic.otf") format("opentype");
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
 /* ── Base resets ── */
 * {
   margin: 0;
@@ -141,7 +157,7 @@ canvas {
 }
 
 .form-input-luxe {
-  @apply w-full bg-transparent border-0 border-b border-slate-200 dark:border-slate-800 px-0 py-3 text-sm focus:ring-0 focus:border-accent transition-colors placeholder:text-slate-300;
+  @apply w-full bg-transparent border-0 border-b border-slate-200 px-0 py-3 text-sm focus:ring-0 focus:border-accent transition-colors placeholder:text-slate-300;
 }
 
 .label-luxe {

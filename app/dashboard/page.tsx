@@ -27,12 +27,12 @@ function LoadingSkeleton() {
   return (
     <div className="space-y-4 p-8">
       {[1, 2, 3].map((i) => (
-        <div key={i} className="border border-slate-100 dark:border-slate-800 p-6 animate-pulse">
+        <div key={i} className="border border-slate-100 p-6 animate-pulse">
           <div className="flex gap-5">
-            <div className="w-20 h-24 bg-slate-100 dark:bg-slate-800" />
+            <div className="w-20 h-24 bg-slate-100" />
             <div className="flex-1 space-y-3">
-              <div className="h-4 bg-slate-100 dark:bg-slate-800 w-1/3" />
-              <div className="h-3 bg-slate-100 dark:bg-slate-800 w-1/2" />
+              <div className="h-4 bg-slate-100 w-1/3" />
+              <div className="h-3 bg-slate-100 w-1/2" />
             </div>
           </div>
         </div>
@@ -81,7 +81,7 @@ function ListingsTab() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
         {listings.map((listing: any) => (
-          <div key={listing.id} className="listing-card group flex flex-col bg-white dark:bg-white/5 border border-slate-100 dark:border-slate-800 transition-all duration-500 hover:shadow-2xl hover:shadow-black/5">
+          <div key={listing.id} className="listing-card group flex flex-col bg-white border border-slate-100 transition-all duration-500 hover:shadow-2xl hover:shadow-black/5">
             <div className="relative aspect-[3/4] overflow-hidden">
               <img alt={listing.title} className="listing-image w-full h-full object-cover transition-transform duration-700" src={listing.images?.[0] || 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Lorena_-_Studio_-_Ai.jpg'} />
               <div className="absolute top-4 left-4">
@@ -113,7 +113,7 @@ function ListingsTab() {
                 </div>
               )}
 
-              <div className="mt-auto pt-6 border-t border-slate-50 dark:border-slate-800/50 flex items-center justify-between">
+              <div className="mt-auto pt-6 border-t border-slate-50 flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   {(listing.status === "draft" || listing.status === "rejected") && (
                     <button
@@ -125,7 +125,7 @@ function ListingsTab() {
                     </button>
                   )}
                 </div>
-                <Link href={`/shop/${listing.id}`} className="text-[10px] font-bold uppercase tracking-widest text-primary dark:text-white hover:text-accent transition-colors flex items-center gap-1">
+                <Link href={`/shop/${listing.id}`} className="text-[10px] font-bold uppercase tracking-widest text-primary hover:text-accent transition-colors flex items-center gap-1">
                   View Details
                   <span className="material-symbols-outlined text-sm">arrow_forward</span>
                 </Link>
@@ -134,9 +134,9 @@ function ListingsTab() {
           </div>
         ))}
 
-        <div className="listing-card group flex flex-col bg-slate-50 dark:bg-white/5 border border-dashed border-slate-200 dark:border-slate-800 transition-all duration-500 hover:border-accent">
+        <div className="listing-card group flex flex-col bg-slate-50 border border-dashed border-slate-200 transition-all duration-500 hover:border-accent">
           <Link href="/sell/submit" className="flex-1 flex flex-col items-center justify-center p-12 text-center">
-            <div className="w-16 h-16 rounded-full border border-slate-200 dark:border-slate-800 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+            <div className="w-16 h-16 rounded-full border border-slate-200 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
               <span className="material-symbols-outlined text-slate-300 group-hover:text-accent">add</span>
             </div>
             <h3 className="text-lg font-light mb-2">Sell your Gown</h3>
@@ -178,18 +178,18 @@ function PurchasesTab() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
         <section>
-          <div className="flex items-center justify-between mb-8 pb-4 border-b border-slate-100 dark:border-slate-800">
+          <div className="flex items-center justify-between mb-8 pb-4 border-b border-slate-100">
             <h3 className="text-xl font-medium tracking-tight">Purchases</h3>
-            <span className="text-xs font-medium text-slate-400 bg-slate-100 dark:bg-white/5 px-3 py-1 rounded-full">{purchases.length}</span>
+            <span className="text-xs font-medium text-slate-400 bg-slate-100 px-3 py-1 rounded-full">{purchases.length}</span>
           </div>
           <div className="space-y-6">
             {purchases.map((order: any) => (
-              <div key={order.id} className="bg-white dark:bg-white/5 border border-slate-200 dark:border-slate-800 p-6 relative overflow-hidden group">
+              <div key={order.id} className="bg-white border border-slate-200 p-6 relative overflow-hidden group">
                 <div className="absolute top-0 right-0 p-4">
                   <span className="text-[10px] font-bold tracking-widest uppercase text-slate-400">Order #{order.id.slice(0, 8)}</span>
                 </div>
                 <div className="flex items-start gap-6">
-                  <div className="w-20 h-24 bg-slate-100 dark:bg-white/10 flex-shrink-0">
+                  <div className="w-20 h-24 bg-slate-100 flex-shrink-0">
                     {order.listings?.images?.[0] ? (
                       <img src={order.listings.images[0]} alt="" className="w-full h-full object-cover opacity-80" />
                     ) : (
@@ -199,7 +199,7 @@ function PurchasesTab() {
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <h4 className="font-semibold text-lg">{order.listings?.title || "Signature Couture"}</h4>
-                      <span className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest rounded-full">{order.status}</span>
+                      <span className="bg-green-100 text-green-700 px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest rounded-full">{order.status}</span>
                     </div>
                     <div className="grid grid-cols-2 gap-4 mb-4">
                       <div>
@@ -208,11 +208,11 @@ function PurchasesTab() {
                       </div>
                       <div>
                         <p className="text-[10px] text-slate-400 uppercase tracking-widest mb-1">Date</p>
-                        <p className="text-xs text-slate-600 dark:text-slate-400">{new Date(order.created_at).toLocaleDateString()}</p>
+                        <p className="text-xs text-slate-600">{new Date(order.created_at).toLocaleDateString()}</p>
                       </div>
                     </div>
                     {order.tracking_number && (
-                      <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center">
+                      <div className="pt-4 border-t border-slate-100 flex justify-between items-center">
                         <div>
                           <p className="text-[10px] text-slate-400 uppercase tracking-widest mb-1">Tracking Number (FedEx)</p>
                           <p className="text-xs font-mono">{order.tracking_number}</p>
@@ -230,18 +230,18 @@ function PurchasesTab() {
         </section>
 
         <section>
-          <div className="flex items-center justify-between mb-8 pb-4 border-b border-slate-100 dark:border-slate-800">
+          <div className="flex items-center justify-between mb-8 pb-4 border-b border-slate-100">
             <h3 className="text-xl font-medium tracking-tight">Sales</h3>
-            <span className="text-xs font-medium text-slate-400 bg-slate-100 dark:bg-white/5 px-3 py-1 rounded-full">{sales.length}</span>
+            <span className="text-xs font-medium text-slate-400 bg-slate-100 px-3 py-1 rounded-full">{sales.length}</span>
           </div>
           <div className="space-y-6">
             {sales.map((order: any) => (
-              <div key={order.id} className="bg-white dark:bg-white/5 border border-slate-200 dark:border-slate-800 p-6 relative overflow-hidden group">
+              <div key={order.id} className="bg-white border border-slate-200 p-6 relative overflow-hidden group">
                 <div className="absolute top-0 right-0 p-4">
                   <span className="text-[10px] font-bold tracking-widest uppercase text-slate-400">Order #{order.id.slice(0, 8)}</span>
                 </div>
                 <div className="flex items-start gap-6">
-                  <div className="w-20 h-24 bg-slate-100 dark:bg-white/10 flex-shrink-0">
+                  <div className="w-20 h-24 bg-slate-100 flex-shrink-0">
                     {order.listings?.images?.[0] ? (
                       <img src={order.listings.images[0]} alt="" className="w-full h-full object-cover opacity-80" />
                     ) : (
@@ -251,7 +251,7 @@ function PurchasesTab() {
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <h4 className="font-semibold text-lg">{order.listings?.title || "Signature Couture"}</h4>
-                      <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest rounded-full">{order.status}</span>
+                      <span className="bg-blue-100 text-blue-700 px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest rounded-full">{order.status}</span>
                     </div>
                     <div className="grid grid-cols-2 gap-4 mb-4">
                       <div>
@@ -260,7 +260,7 @@ function PurchasesTab() {
                       </div>
                       <div>
                         <p className="text-[10px] text-slate-400 uppercase tracking-widest mb-1">Date</p>
-                        <p className="text-xs text-slate-600 dark:text-slate-400">{new Date(order.created_at).toLocaleDateString()}</p>
+                        <p className="text-xs text-slate-600">{new Date(order.created_at).toLocaleDateString()}</p>
                       </div>
                     </div>
                   </div>
@@ -318,13 +318,13 @@ function MessagesTab() {
   const activeConvObj = conversations.find(c => c.id === activeConv);
 
   return (
-    <div className="max-w-[1600px] mx-auto h-[min(calc(100vh-200px),800px)] min-h-[600px] flex border border-slate-100 dark:border-slate-800 mt-8 mb-16">
-      <aside className="w-full md:w-[350px] lg:w-[400px] border-r border-slate-100 dark:border-slate-800 flex flex-col bg-white dark:bg-black/20">
-        <div className="p-6 border-b border-slate-100 dark:border-slate-800">
+    <div className="max-w-[1600px] mx-auto h-[min(calc(100vh-200px),800px)] min-h-[600px] flex border border-slate-100 mt-8 mb-16">
+      <aside className="w-full md:w-[350px] lg:w-[400px] border-r border-slate-100 flex flex-col bg-white">
+        <div className="p-6 border-b border-slate-100">
           <h2 className="text-2xl font-light mb-4">Inbox</h2>
           <div className="relative">
             <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
-            <input className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-white/5 border-none rounded-full text-xs focus:ring-1 focus:ring-accent/50 transition-all" placeholder="Search conversations..." type="text" />
+            <input className="w-full pl-10 pr-4 py-2 bg-slate-50 border-none rounded-full text-xs focus:ring-1 focus:ring-accent/50 transition-all" placeholder="Search conversations..." type="text" />
           </div>
         </div>
         <div className="flex-1 overflow-y-auto custom-scrollbar">
@@ -335,18 +335,18 @@ function MessagesTab() {
               <div
                 key={conv.id}
                 onClick={() => openConversation(conv.id)}
-                className={`p-6 cursor-pointer transition-colors border-b border-slate-50 dark:border-slate-900/50 flex gap-4 ${isActive ? 'bg-slate-50 dark:bg-white/5 border-l-4 border-l-accent' : 'hover:bg-slate-50 dark:hover:bg-white/5 border-l-4 border-l-transparent'}`}
+                className={`p-6 cursor-pointer transition-colors border-b border-slate-50 flex gap-4 ${isActive ? 'bg-slate-50 border-l-4 border-l-accent' : 'hover:bg-slate-50 border-l-4 border-l-transparent'}`}
               >
                 <div className="relative flex-shrink-0">
                   {conv.listings?.images?.[0] ? (
                     <img alt="" className="w-14 h-14 rounded-lg object-cover" src={conv.listings.images[0]} />
                   ) : (
-                    <div className="w-14 h-14 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xl">👗</div>
+                    <div className="w-14 h-14 rounded-lg bg-slate-100 flex items-center justify-center text-xl">👗</div>
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-start mb-1">
-                    <h4 className={`text-sm tracking-tight truncate ${isActive ? 'font-semibold' : 'font-medium text-slate-600 dark:text-slate-400'}`}>
+                    <h4 className={`text-sm tracking-tight truncate ${isActive ? 'font-semibold' : 'font-medium text-slate-600'}`}>
                       {conv.listings?.title || "Inquiry"}
                     </h4>
                   </div>
@@ -363,10 +363,10 @@ function MessagesTab() {
           )}
         </div>
       </aside>
-      <section className="flex-1 flex flex-col bg-background-light dark:bg-background-dark">
+      <section className="flex-1 flex flex-col bg-background-light">
         {activeConvObj ? (
           <>
-            <header className="h-20 px-8 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-white dark:bg-transparent">
+            <header className="h-20 px-8 border-b border-slate-100 flex items-center justify-between bg-white">
               <div className="flex items-center gap-4">
                 <div>
                   <h3 className="text-sm font-semibold">{activeConvObj.listings?.title || "Listing"}</h3>
@@ -374,7 +374,7 @@ function MessagesTab() {
                 </div>
               </div>
               <div className="flex items-center gap-4">
-                <Link href={`/shop/${activeConvObj.listing_id}`} className="px-4 py-2 border border-slate-200 dark:border-slate-800 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">View Listing</Link>
+                <Link href={`/shop/${activeConvObj.listing_id}`} className="px-4 py-2 border border-slate-200 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-slate-50 transition-colors">View Listing</Link>
                 <button className="material-symbols-outlined text-slate-400 hover:text-slate-900 transition-colors">more_vert</button>
               </div>
             </header>
@@ -396,8 +396,8 @@ function MessagesTab() {
                 );
               })}
             </div>
-            <footer className="p-6 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-transparent">
-              <div className="max-w-4xl mx-auto flex items-end gap-4 bg-slate-50 dark:bg-white/5 p-3 rounded-[2rem] border border-slate-200 dark:border-slate-800">
+            <footer className="p-6 border-t border-slate-100 bg-white">
+              <div className="max-w-4xl mx-auto flex items-end gap-4 bg-slate-50 p-3 rounded-[2rem] border border-slate-200">
                 <button className="material-symbols-outlined p-2 text-slate-400 hover:text-accent transition-colors">image</button>
                 <textarea
                   value={newMsg}
@@ -462,18 +462,18 @@ function ProfileTab() {
         <aside className="w-full md:w-64 flex-shrink-0">
           <div className="flex flex-col items-center text-center">
             <div className="relative group">
-              <div className="w-40 h-40 rounded-full overflow-hidden border border-slate-100 dark:border-slate-800 p-1 mb-6">
+              <div className="w-40 h-40 rounded-full overflow-hidden border border-slate-100 p-1 mb-6">
                 <img alt="User Avatar" className="w-full h-full object-cover rounded-full" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop" />
               </div>
             </div>
             <h2 className="text-3xl font-light mb-1 italic">{profile?.display_name || "Bridal User"}</h2>
             <p className="text-[10px] tracking-[0.3em] uppercase text-slate-400 mb-8">Member since 2024</p>
-            <div className="w-full bg-slate-50 dark:bg-white/5 rounded-2xl p-6 border border-slate-100 dark:border-slate-800">
+            <div className="w-full bg-slate-50 rounded-2xl p-6 border border-slate-100">
               <div className="flex items-center justify-between mb-4">
-                <span className="text-[10px] font-bold tracking-widest uppercase text-slate-900 dark:text-white">Seller Status</span>
+                <span className="text-[10px] font-bold tracking-widest uppercase text-slate-900">Seller Status</span>
                 <span className="material-symbols-outlined text-accent text-lg">verified</span>
               </div>
-              <div className="h-1 w-full bg-slate-200 dark:bg-slate-800 rounded-full mb-3 overflow-hidden">
+              <div className="h-1 w-full bg-slate-200 rounded-full mb-3 overflow-hidden">
                 <div className="h-full bg-accent w-3/4 rounded-full"></div>
               </div>
               <p className="text-[11px] text-slate-500 mb-4 leading-relaxed">75% of verification completed. Link your social profile to reach Pro status.</p>
@@ -484,7 +484,7 @@ function ProfileTab() {
 
         <section className="flex-1">
           <form onSubmit={handleSubmit} className="space-y-10">
-            <div className="flex justify-between items-end mb-12 pb-4 border-b border-slate-100 dark:border-slate-800">
+            <div className="flex justify-between items-end mb-12 pb-4 border-b border-slate-100">
               <h3 className="text-3xl font-light">Personal Details</h3>
               <button type="submit" disabled={saving} className="text-[11px] font-bold uppercase tracking-[0.2em] text-accent hover:text-primary transition-colors disabled:opacity-50">
                 {saving ? "Saving..." : saved ? "Saved!" : "Save Changes"}
@@ -511,7 +511,7 @@ function ProfileTab() {
             </div>
 
             <div className="pt-12 flex justify-end gap-6">
-              <button type="submit" disabled={saving} className="px-10 py-3 bg-primary dark:bg-white text-white dark:text-black text-[10px] font-bold uppercase tracking-widest hover:bg-accent dark:hover:bg-accent dark:hover:text-white transition-all shadow-lg shadow-primary/5 disabled:opacity-50">
+              <button type="submit" disabled={saving} className="px-10 py-3 bg-primary text-white text-[10px] font-bold uppercase tracking-widest hover:bg-accent transition-all shadow-lg shadow-primary/5 disabled:opacity-50">
                 {saving ? "Updating..." : "Update Profile"}
               </button>
             </div>
@@ -538,19 +538,18 @@ function DashboardContent() {
   ];
 
   return (
-    <main className="min-h-screen bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-sans">
+    <main className="min-h-screen bg-background-light text-slate-900 font-sans">
       <Navbar />
 
       <div className="pt-28 pb-10">
         <div className="max-w-[1600px] mx-auto px-8">
-          <div className="flex justify-center border-b border-slate-100 dark:border-slate-800">
+          <div className="flex justify-center border-b border-slate-100">
             <nav className="flex gap-12">
               {tabs.map((t) => (
                 <button
                   key={t.key}
                   onClick={() => setTab(t.key)}
-                  className={`pb-4 text-[11px] font-bold tracking-[0.2em] uppercase transition-colors relative ${tab === t.key ? "text-primary dark:text-white" : "text-slate-400 hover:text-accent"
-                    }`}
+                  className={`pb-4 text-[11px] font-bold tracking-[0.2em] uppercase transition-colors relative ${tab === t.key ? "text-primary" : "text-slate-400 hover:text-accent"}`}
                 >
                   {t.label}
                   {tab === t.key && (

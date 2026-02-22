@@ -9,8 +9,8 @@ const config: Config = {
     extend: {
       fontFamily: {
         serif: ["Cormorant Garamond", "Georgia", "Times New Roman", "serif"],
-        sans: ["Outfit", "system-ui", "Segoe UI", "sans-serif"],
-        display: ["PP Monument Extended", "Outfit", "system-ui", "sans-serif"],
+        sans: ["PP Monument Extended", "system-ui", "Segoe UI", "sans-serif"],
+        display: ["PP Monument Extended", "system-ui", "sans-serif"],
       },
       colors: {
         obsidian: "#1c1c1c",
@@ -24,8 +24,8 @@ const config: Config = {
         border: "#cfcfcf",
         primary: "#111111",
         "background-light": "#FDFDFD",
-        "background-dark": "#0A0A0A",
         accent: "#C5A059",
+        secondary: "#f9f8f6",
       },
       keyframes: {
         "fade-up": {
