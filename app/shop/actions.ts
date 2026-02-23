@@ -1,6 +1,6 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { notifyNewMessage } from '@/lib/notify'
 import * as kustomer from '@/lib/kustomer'
 
@@ -8,15 +8,20 @@ async function db() {
   return (await createClient()) as any
 }
 
+async function publicDb() {
+  return (await createAdminClient()) as any
+}
+
 export async function getApprovedListings() {
   try {
-    const supabase = await db()
+    const supabase = await publicDb()
 
     const { data, error } = await supabase
       .from('listings')
       .select('*, products(style_name, sku, images, msrp)')
       .eq('status', 'approved')
       .order('created_at', { ascending: false })
+      .limit(500)
 
     if (error || !data || data.length === 0) return null
     return data
@@ -27,7 +32,7 @@ export async function getApprovedListings() {
 
 export async function getListingById(id: string) {
   try {
-    const supabase = await db()
+    const supabase = await publicDb()
 
     const { data, error } = await supabase
       .from('listings')
@@ -49,7 +54,7 @@ export async function getListingById(id: string) {
 
 export async function getRelatedListings(listingId: string, category: string, limit = 4) {
   try {
-    const supabase = await db()
+    const supabase = await publicDb()
 
     const { data } = await supabase
       .from('listings')
