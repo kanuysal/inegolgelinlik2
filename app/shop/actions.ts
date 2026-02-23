@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { notifyNewMessage } from '@/lib/notify'
+import * as kustomer from '@/lib/kustomer'
 
 async function db() {
   return (await createClient()) as any
@@ -142,6 +143,28 @@ export async function startConversation(listingId: string, sellerId: string, mes
       messagePreview: message.trim(),
       conversationLink: '/dashboard?tab=messages',
     }).catch(() => {})
+
+    // Forward to Kustomer CRM (non-blocking)
+    ;(async () => {
+      const buyerName = buyerProfile?.display_name || 'Buyer'
+      const title = listing?.title || 'Gown inquiry'
+      const customerId = await kustomer.findOrCreateCustomer(user.email!, buyerName)
+      if (!customerId) return
+      const kConvId = await kustomer.createConversation({
+        customerId,
+        subject: `Inquiry: ${title}`,
+        message: message.trim(),
+        senderName: buyerName,
+        listingUrl: `/shop/${listingId}`,
+      })
+      // Store Kustomer conversation ID for follow-up messages
+      if (kConvId) {
+        await supabase
+          .from('conversations')
+          .update({ kustomer_conversation_id: kConvId })
+          .eq('id', conversationId)
+      }
+    })().catch(() => {})
 
     return { success: true, conversationId }
   } catch (err) {

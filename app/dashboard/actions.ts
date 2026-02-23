@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { requireAuth } from '@/lib/auth'
 import { revalidatePath } from 'next/cache'
 import { notifyNewMessage } from '@/lib/notify'
+import * as kustomer from '@/lib/kustomer'
 
 async function db() {
   return (await createClient()) as any
@@ -178,6 +179,22 @@ export async function sendMessage(conversationId: string, content: string) {
     messagePreview: trimmed,
     conversationLink: '/dashboard?tab=messages',
   }).catch(() => {}) // Best-effort
+
+  // Forward to Kustomer CRM (non-blocking)
+  ;(async () => {
+    const { data: convData } = await supabase
+      .from('conversations')
+      .select('kustomer_conversation_id')
+      .eq('id', conversationId)
+      .single()
+    const kConvId = convData?.kustomer_conversation_id
+    if (kConvId) {
+      await kustomer.sendMessage({
+        conversationId: kConvId,
+        message: trimmed,
+      })
+    }
+  })().catch(() => {})
 
   revalidatePath('/dashboard')
   return { success: true }
