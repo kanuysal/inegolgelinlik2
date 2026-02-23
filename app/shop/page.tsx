@@ -108,8 +108,8 @@ export default function ShopPage() {
       </div>
 
       {/* ── Filters bar — sticks under navbar on scroll, matches navbar width ── */}
-      <div className="sticky top-[76px] z-30 bg-background-light/95 backdrop-blur-sm border-b border-slate-100">
-        <div className="max-w-5xl mx-auto px-6 flex flex-wrap items-center gap-4 py-3">
+      <div className="sticky top-[76px] z-30 flex justify-center px-4">
+        <div className="max-w-5xl w-full px-6 flex flex-wrap items-center gap-4 py-3 bg-white/85 backdrop-blur-xl shadow-[0_8px_30px_rgba(0,0,0,0.08)] border border-white/60">
           {/* Search */}
           <div className="relative">
             <span className="material-symbols-outlined absolute left-0 top-1/2 -translate-y-1/2 text-slate-400 text-lg">
