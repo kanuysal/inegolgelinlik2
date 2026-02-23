@@ -20,7 +20,7 @@ export default function Home() {
             Give Your Gown<br />a Second Story
           </h1>
           <div className="mb-12 md:mb-16 flex justify-center">
-            <Link href="/shop" className="bg-white text-gray-900 px-8 py-3 md:px-10 md:py-4 rounded-full font-medium text-sm md:text-base uppercase tracking-widest hover:bg-gray-100 hover:scale-105 transition-all duration-300 shadow-xl flex items-center gap-3 group font-sans">
+            <Link href="/shop" className="bg-white text-gray-900 px-8 py-3 md:px-10 md:py-4 font-medium text-sm md:text-base uppercase tracking-widest hover:bg-gray-100 hover:scale-105 transition-all duration-300 shadow-xl flex items-center gap-3 group font-sans">
               Shop the Collection
               <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
             </Link>
@@ -69,7 +69,7 @@ export default function Home() {
             <h3 className="text-4xl md:text-5xl font-medium tracking-tight mb-2">Featured Gowns</h3>
             <p className="text-gray-500">Timeless silhouettes, available now.</p>
           </div>
-          <Link href="/shop" className="hidden md:block px-6 py-2 rounded-full border border-gray-300 hover:bg-gray-100 transition text-sm uppercase tracking-wider text-black">
+          <Link href="/shop" className="hidden md:block px-6 py-2 border border-gray-300 hover:bg-gray-100 transition text-sm uppercase tracking-wider text-black">
             View All
           </Link>
         </div>
@@ -84,7 +84,7 @@ export default function Home() {
               <p className="text-sm opacity-80 mb-4">Size 4 • Excellent Condition</p>
               <div className="flex justify-between items-center">
                 <span className="font-medium">$4,200</span>
-                <span className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <span className="w-8 h-8 bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <span className="material-symbols-outlined text-sm">arrow_forward</span>
                 </span>
               </div>
@@ -100,7 +100,7 @@ export default function Home() {
               <p className="text-sm opacity-80 mb-4">Size 6 • Like New</p>
               <div className="flex justify-between items-center">
                 <span className="font-medium">$5,800</span>
-                <span className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <span className="w-8 h-8 bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <span className="material-symbols-outlined text-sm">arrow_forward</span>
                 </span>
               </div>
@@ -115,7 +115,7 @@ export default function Home() {
               <p className="text-sm opacity-80 mb-4">Size 2 • Professionally Cleaned</p>
               <div className="flex justify-between items-center">
                 <span className="font-medium">$6,100</span>
-                <span className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <span className="w-8 h-8 bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <span className="material-symbols-outlined text-sm">arrow_forward</span>
                 </span>
               </div>
@@ -131,7 +131,7 @@ export default function Home() {
               <p className="text-sm opacity-80 mb-4">Size 8 • Pristine Condition</p>
               <div className="flex justify-between items-center">
                 <span className="font-medium">$7,500</span>
-                <span className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <span className="w-8 h-8 bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <span className="material-symbols-outlined text-sm">arrow_forward</span>
                 </span>
               </div>
@@ -147,7 +147,7 @@ export default function Home() {
               <p className="text-sm opacity-80 mb-4">Size 4 • Worn Once</p>
               <div className="flex justify-between items-center">
                 <span className="font-medium">$5,200</span>
-                <span className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <span className="w-8 h-8 bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <span className="material-symbols-outlined text-sm">arrow_forward</span>
                 </span>
               </div>
@@ -163,7 +163,7 @@ export default function Home() {
               <p className="text-sm opacity-80 mb-4">Size 6 • Like New</p>
               <div className="flex justify-between items-center">
                 <span className="font-medium">$8,900</span>
-                <span className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <span className="w-8 h-8 bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <span className="material-symbols-outlined text-sm">arrow_forward</span>
                 </span>
               </div>
@@ -186,7 +186,7 @@ export default function Home() {
           <h2 className="text-4xl md:text-6xl font-serif font-light leading-tight mb-8">
             Give Your Gown<br />a Second Story
           </h2>
-          <Link href="/sell" className="inline-block px-8 py-3 rounded-full border border-white/30 bg-white/10 backdrop-blur hover:bg-white hover:text-black transition duration-300 text-sm font-semibold tracking-wide text-white">
+          <Link href="/sell" className="inline-block px-8 py-3 border border-white/30 bg-white/10 backdrop-blur hover:bg-white hover:text-black transition duration-300 text-sm font-semibold tracking-wide text-white">
             Start Selling
           </Link>
         </div>
@@ -201,7 +201,7 @@ export default function Home() {
             <p className="text-lg text-gray-600 mb-8 leading-relaxed">
               Extending the life of couture gowns isn't just about value—it's about the story. Our verified marketplace ensures that every bead, stitch, and layer of tulle is preserved for its next grand entrance. With secure payments and white-glove shipping, your dream dress is closer than you think.
             </p>
-            <Link href="/how-it-works" className="inline-block px-6 py-2 rounded-full border border-gray-300 hover:bg-gray-100 transition text-sm uppercase tracking-wider text-black">
+            <Link href="/how-it-works" className="inline-block px-6 py-2 border border-gray-300 hover:bg-gray-100 transition text-sm uppercase tracking-wider text-black">
               Our Philosophy
             </Link>
           </div>
@@ -227,8 +227,8 @@ export default function Home() {
                 New arrivals, authentication tips, and bridal inspiration — find it in our newsletter.
               </h3>
               <form className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
-                <input className="bg-white border-0 rounded-full px-6 py-3 text-sm focus:ring-2 focus:ring-gray-400 w-full shadow-sm text-gray-900 placeholder-gray-400" placeholder="name@email.com" type="email" />
-                <button className="bg-primary text-white rounded-full px-8 py-3 text-sm font-medium hover:bg-gray-800 transition shadow-lg flex items-center justify-center gap-2 group whitespace-nowrap" type="submit">
+                <input className="bg-white border-0 px-6 py-3 text-sm focus:ring-2 focus:ring-gray-400 w-full shadow-sm text-gray-900 placeholder-gray-400" placeholder="name@email.com" type="email" />
+                <button className="bg-primary text-white px-8 py-3 text-sm font-medium hover:bg-gray-800 transition shadow-lg flex items-center justify-center gap-2 group whitespace-nowrap" type="submit">
                   Register
                   <span className="material-symbols-outlined text-xs group-hover:translate-x-1 transition-transform">arrow_forward</span>
                 </button>

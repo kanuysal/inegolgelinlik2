@@ -88,7 +88,7 @@ export default function Navbar() {
       <nav className={`fixed left-0 right-0 z-50 transition-all duration-500 ease-in-out ${scrolled ? "top-4 px-4" : "top-0 px-0"}`}>
         <div className={`mx-auto flex items-center justify-between relative transition-all duration-500 ease-in-out ${
           scrolled
-            ? "max-w-5xl h-14 bg-white/85 backdrop-blur-xl rounded-full shadow-[0_8px_30px_rgba(0,0,0,0.08)] border border-white/60 px-6"
+            ? "max-w-5xl h-14 bg-white/85 backdrop-blur-xl shadow-[0_8px_30px_rgba(0,0,0,0.08)] border border-white/60 px-6"
             : "max-w-7xl h-20 px-6"
         }`}>
 
