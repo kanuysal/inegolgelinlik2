@@ -100,6 +100,7 @@
   font-display: swap;
 }
 
+
 /* ── Lelo (Body) ── */
 @font-face {
   font-family: "Lelo";
@@ -143,6 +144,7 @@ h2,
 h3,
 h4,
 .font-serif {
+  font-family: "Portrait", "Cormorant Garamond", Georgia, "Times New Roman", serif;
   letter-spacing: -0.02em;
 }
 

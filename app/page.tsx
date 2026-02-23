@@ -12,6 +12,7 @@ export default function Home() {
 
       <header className="relative w-full h-screen overflow-hidden mb-12 group">
         <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover">
+          <source src="/videos/hero.mov" type="video/quicktime" />
           <source src="/videos/hero.mp4" type="video/mp4" />
         </video>
         <div className="absolute inset-0 bg-black/20"></div>
@@ -26,7 +27,7 @@ export default function Home() {
       </header>
 
       <section className="py-20 px-6 max-w-4xl mx-auto text-center">
-        <h2 className="text-3xl md:text-5xl font-medium leading-tight mb-6 text-gray-900">
+        <h2 className="text-3xl md:text-5xl font-medium leading-tight mb-6 text-gray-900 font-serif">
           Pre-loved elegance, curated perfection<br />and ceremony-ready.
         </h2>
         <p className="text-gray-600 text-lg">
@@ -36,10 +37,10 @@ export default function Home() {
 
       <section className="py-12 px-4 md:px-8 max-w-[1400px] mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-6xl md:text-8xl lg:text-[10rem] font-bold tracking-tighter leading-none text-gray-900">
+          <h2 className="text-6xl md:text-8xl lg:text-[10rem] font-bold tracking-tighter leading-none text-gray-900 font-serif">
             Verified
           </h2>
-          <h2 className="text-6xl md:text-8xl lg:text-[10rem] font-bold tracking-tighter leading-none text-gray-900 -mt-4 md:-mt-10 lg:-mt-16 relative z-10 mix-blend-overlay">
+          <h2 className="text-6xl md:text-8xl lg:text-[10rem] font-bold tracking-tighter leading-none text-gray-900 -mt-4 md:-mt-10 lg:-mt-16 relative z-10 mix-blend-overlay font-serif">
             Authenticity
           </h2>
         </div>
@@ -63,7 +64,7 @@ export default function Home() {
       <section className="py-16 overflow-hidden">
         <div className="px-6 mb-12 flex flex-col md:flex-row justify-between items-end max-w-[1400px] mx-auto">
           <div>
-            <h3 className="text-4xl md:text-5xl font-medium tracking-tight mb-2">Featured Gowns</h3>
+            <h3 className="text-4xl md:text-5xl font-medium tracking-tight mb-2 font-serif">Featured Gowns</h3>
             <p className="text-gray-500">Timeless silhouettes, available now.</p>
           </div>
           <Link href="/shop" className="hidden md:block px-6 py-2 border border-gray-300 hover:bg-gray-100 transition text-sm uppercase tracking-wider text-black">
@@ -192,7 +193,7 @@ export default function Home() {
       <section className="py-24 px-6 md:px-12 max-w-[1400px] mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-5 order-2 lg:order-1">
-            <h3 className="text-3xl md:text-5xl font-medium leading-tight mb-8 text-gray-900">
+            <h3 className="text-3xl md:text-5xl font-medium leading-tight mb-8 text-gray-900 font-serif">
               Discover a better way to love luxury, where heritage meets circularity.
             </h3>
             <p className="text-lg text-gray-600 mb-8 leading-relaxed">
@@ -220,7 +221,7 @@ export default function Home() {
           <div className="flex flex-col lg:flex-row">
             <div className="lg:w-1/2 p-10 md:p-16 flex flex-col justify-center relative z-10">
               <p className="text-xs uppercase tracking-widest text-gray-500 mb-4">Stay in the loop</p>
-              <h3 className="text-3xl md:text-4xl font-medium mb-6 leading-tight text-gray-900">
+              <h3 className="text-3xl md:text-4xl font-medium mb-6 leading-tight text-gray-900 font-serif">
                 New arrivals, authentication tips, and bridal inspiration — find it in our newsletter.
               </h3>
               <form className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
