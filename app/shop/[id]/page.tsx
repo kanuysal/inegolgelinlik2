@@ -464,32 +464,36 @@ export default function ProductDetailPage() {
                 <AccordionSection title="Size Guide">
                   <div className="space-y-6 font-sans text-sm text-[#1c1c1c]/50 leading-relaxed font-light">
                     <div>
-                      <h4 className="font-sans text-[11px] uppercase tracking-[0.1em] text-[#1c1c1c]/70 font-medium mb-3">Gala & Couture</h4>
+                      <h4 className="font-sans text-[11px] uppercase tracking-[0.1em] text-[#1c1c1c]/70 font-medium mb-3">Couture & Gala</h4>
                       <div className="overflow-x-auto">
                         <table className="w-full text-xs">
                           <thead>
                             <tr className="border-b border-[#1c1c1c]/5">
-                              <th className="text-left py-2 pr-4 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">US</th>
-                              <th className="text-left py-2 pr-4 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">Bust</th>
-                              <th className="text-left py-2 pr-4 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">Waist</th>
+                              <th className="text-left py-2 pr-3 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">Size</th>
+                              <th className="text-left py-2 pr-3 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">Cup</th>
+                              <th className="text-left py-2 pr-3 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">Bust</th>
+                              <th className="text-left py-2 pr-3 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">Waist</th>
                               <th className="text-left py-2 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">Hips</th>
                             </tr>
                           </thead>
                           <tbody>
                             {[
-                              ["0", "31\"", "24\"", "34\""],
-                              ["2", "32\"", "25\"", "35\""],
-                              ["4", "33.5\"", "26.5\"", "36.5\""],
-                              ["6", "35\"", "28\"", "38\""],
-                              ["8", "36.5\"", "29.5\"", "39.5\""],
-                              ["10", "38\"", "31\"", "41\""],
-                              ["12", "39.5\"", "32.5\"", "42.5\""],
-                              ["14", "41.5\"", "34.5\"", "44.5\""],
-                            ].map(([size, bust, waist, hips]) => (
+                              ["34", "A", "80 / 31\"", "58 / 23\"", "86 / 34\""],
+                              ["36", "B", "84 / 33\"", "60 / 24\"", "90 / 35\""],
+                              ["38", "C", "88 / 35\"", "62 / 24\"", "94 / 37\""],
+                              ["40", "D", "92 / 36\"", "66 / 26\"", "98 / 39\""],
+                              ["42", "DD", "96 / 38\"", "70 / 28\"", "102 / 40\""],
+                              ["44", "DDD", "100 / 39\"", "74 / 29\"", "106 / 42\""],
+                              ["46", "E", "105 / 41\"", "80 / 31\"", "112 / 44\""],
+                              ["48", "F", "110 / 43\"", "86 / 34\"", "118 / 46\""],
+                              ["50", "G", "115 / 45\"", "92 / 36\"", "124 / 49\""],
+                              ["52", "H", "120 / 47\"", "98 / 39\"", "130 / 51\""],
+                            ].map(([size, cup, bust, waist, hips]) => (
                               <tr key={size} className="border-b border-[#1c1c1c]/[0.03]">
-                                <td className="py-2 pr-4 font-medium text-[#1c1c1c]/60">{size}</td>
-                                <td className="py-2 pr-4 text-[#1c1c1c]/40">{bust}</td>
-                                <td className="py-2 pr-4 text-[#1c1c1c]/40">{waist}</td>
+                                <td className="py-2 pr-3 font-medium text-[#1c1c1c]/60">{size}</td>
+                                <td className="py-2 pr-3 text-[#1c1c1c]/40">{cup}</td>
+                                <td className="py-2 pr-3 text-[#1c1c1c]/40">{bust}</td>
+                                <td className="py-2 pr-3 text-[#1c1c1c]/40">{waist}</td>
                                 <td className="py-2 text-[#1c1c1c]/40">{hips}</td>
                               </tr>
                             ))}
@@ -498,29 +502,35 @@ export default function ProductDetailPage() {
                       </div>
                     </div>
                     <div>
-                      <h4 className="font-sans text-[11px] uppercase tracking-[0.1em] text-[#1c1c1c]/70 font-medium mb-3">Ready-to-Wear</h4>
+                      <h4 className="font-sans text-[11px] uppercase tracking-[0.1em] text-[#1c1c1c]/70 font-medium mb-3">Ready-to-Wear & Evening</h4>
                       <div className="overflow-x-auto">
                         <table className="w-full text-xs">
                           <thead>
                             <tr className="border-b border-[#1c1c1c]/5">
-                              <th className="text-left py-2 pr-4 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">US</th>
-                              <th className="text-left py-2 pr-4 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">Bust</th>
-                              <th className="text-left py-2 pr-4 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">Waist</th>
+                              <th className="text-left py-2 pr-3 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">FR</th>
+                              <th className="text-left py-2 pr-3 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">UK</th>
+                              <th className="text-left py-2 pr-3 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">US</th>
+                              <th className="text-left py-2 pr-3 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">Bust</th>
+                              <th className="text-left py-2 pr-3 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">Waist</th>
                               <th className="text-left py-2 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">Hips</th>
                             </tr>
                           </thead>
                           <tbody>
                             {[
-                              ["XS (0-2)", "32\"", "25\"", "35\""],
-                              ["S (4-6)", "34\"", "27\"", "37\""],
-                              ["M (8-10)", "37\"", "30\"", "40\""],
-                              ["L (12-14)", "40\"", "33\"", "43\""],
-                              ["XL (16)", "43\"", "36\"", "46\""],
-                            ].map(([size, bust, waist, hips]) => (
-                              <tr key={size} className="border-b border-[#1c1c1c]/[0.03]">
-                                <td className="py-2 pr-4 font-medium text-[#1c1c1c]/60">{size}</td>
-                                <td className="py-2 pr-4 text-[#1c1c1c]/40">{bust}</td>
-                                <td className="py-2 pr-4 text-[#1c1c1c]/40">{waist}</td>
+                              ["32", "4", "0", "82 / 32.3\"", "61 / 24\"", "89 / 35\""],
+                              ["34", "6", "2", "85 / 33.5\"", "64 / 25.2\"", "92 / 36.2\""],
+                              ["36", "8", "4", "88 / 34.6\"", "67 / 26.4\"", "95 / 37.4\""],
+                              ["38", "10", "6", "91 / 35.8\"", "70 / 27.6\"", "98 / 38.6\""],
+                              ["40", "12", "8", "95 / 37.4\"", "74 / 29.1\"", "102 / 40.2\""],
+                              ["42", "14", "10", "99 / 39\"", "78 / 30.7\"", "106 / 41.7\""],
+                              ["44", "16", "12", "103 / 40.6\"", "82 / 32.3\"", "110 / 43.3\""],
+                            ].map(([fr, uk, us, bust, waist, hips]) => (
+                              <tr key={fr} className="border-b border-[#1c1c1c]/[0.03]">
+                                <td className="py-2 pr-3 font-medium text-[#1c1c1c]/60">{fr}</td>
+                                <td className="py-2 pr-3 text-[#1c1c1c]/40">{uk}</td>
+                                <td className="py-2 pr-3 text-[#1c1c1c]/40">{us}</td>
+                                <td className="py-2 pr-3 text-[#1c1c1c]/40">{bust}</td>
+                                <td className="py-2 pr-3 text-[#1c1c1c]/40">{waist}</td>
                                 <td className="py-2 text-[#1c1c1c]/40">{hips}</td>
                               </tr>
                             ))}
