@@ -699,6 +699,115 @@ export async function syncFromStockist() {
   return { error: 'Use the new chunked sync (Sync from Stockist button) instead.' }
 }
 
+// ── Featured Gowns ──────────────────────────────────
+export async function getFeaturedGowns() {
+  await requireModRole()
+  const supabase = await db()
+  const { data, error } = await supabase
+    .from('featured_gowns')
+    .select('*')
+    .order('display_order', { ascending: true })
+
+  if (error?.message?.includes('does not exist')) return { needsMigration: true, data: [] }
+  return { data: data || [] }
+}
+
+export async function getPublicFeaturedGowns() {
+  const supabase = await db()
+  const { data, error } = await supabase
+    .from('featured_gowns')
+    .select('*')
+    .eq('is_active', true)
+    .order('display_order', { ascending: true })
+
+  if (error) return []
+  return data || []
+}
+
+export async function addFeaturedGown(gown: {
+  title: string
+  subtitle: string
+  price: string
+  image_url: string
+  link: string
+}) {
+  await requireAdminRole()
+  const supabase = await adminDb()
+
+  const { data: existing } = await supabase
+    .from('featured_gowns')
+    .select('display_order')
+    .order('display_order', { ascending: false })
+    .limit(1)
+
+  const maxOrder = existing?.[0]?.display_order || 0
+
+  const { error } = await supabase.from('featured_gowns').insert({
+    ...gown,
+    display_order: maxOrder + 1,
+    is_active: true,
+  })
+
+  if (error) return { error: error.message }
+  revalidatePath('/admin')
+  revalidatePath('/')
+  return { success: true }
+}
+
+export async function updateFeaturedGown(id: string, updates: Record<string, any>) {
+  await requireAdminRole()
+  const supabase = await adminDb()
+
+  const { error } = await supabase
+    .from('featured_gowns')
+    .update({ ...updates, updated_at: new Date().toISOString() })
+    .eq('id', id)
+
+  if (error) return { error: error.message }
+  revalidatePath('/admin')
+  revalidatePath('/')
+  return { success: true }
+}
+
+export async function removeFeaturedGown(id: string) {
+  await requireAdminRole()
+  const supabase = await adminDb()
+
+  const { error } = await supabase.from('featured_gowns').delete().eq('id', id)
+  if (error) return { error: error.message }
+  revalidatePath('/admin')
+  revalidatePath('/')
+  return { success: true }
+}
+
+export async function reorderFeaturedGown(id: string, direction: 'up' | 'down') {
+  await requireAdminRole()
+  const supabase = await adminDb()
+
+  const { data: all } = await supabase
+    .from('featured_gowns')
+    .select('id, display_order')
+    .order('display_order', { ascending: true })
+
+  if (!all || all.length < 2) return { success: true }
+
+  const idx = all.findIndex((g: any) => g.id === id)
+  if (idx === -1) return { error: 'Not found' }
+
+  const swapIdx = direction === 'up' ? idx - 1 : idx + 1
+  if (swapIdx < 0 || swapIdx >= all.length) return { success: true }
+
+  const orderA = all[idx].display_order
+  const orderB = all[swapIdx].display_order
+
+  await supabase.from('featured_gowns').update({ display_order: orderB }).eq('id', all[idx].id)
+  await supabase.from('featured_gowns').update({ display_order: orderA }).eq('id', all[swapIdx].id)
+
+  revalidatePath('/admin')
+  revalidatePath('/')
+  return { success: true }
+}
+
 // ── Claims / Disputes ────────────────────────────────
 export async function getClaims() {
   await requireModRole()

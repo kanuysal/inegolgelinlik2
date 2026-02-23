@@ -24,9 +24,14 @@ import {
   syncStockistPage,
   getClaims,
   resolveClaim,
+  getFeaturedGowns,
+  addFeaturedGown,
+  updateFeaturedGown,
+  removeFeaturedGown,
+  reorderFeaturedGown,
 } from './actions';
 
-type Tab = 'dashboard' | 'moderation' | 'inventory' | 'sellers' | 'transactions' | 'claims';
+type Tab = 'dashboard' | 'moderation' | 'inventory' | 'sellers' | 'transactions' | 'claims' | 'featured';
 
 // ═══════════════════════════════════════════════════════
 // OVERVIEW TAB (Dashboard)
@@ -699,6 +704,301 @@ function ClaimsTab() {
 
 
 // ═══════════════════════════════════════════════════════
+// FEATURED GOWNS TAB
+// ═══════════════════════════════════════════════════════
+function FeaturedGownsTab() {
+  const [gowns, setGowns] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [needsMigration, setNeedsMigration] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+  const [editId, setEditId] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+  const [form, setForm] = useState({ title: '', subtitle: '', price: '', image_url: '', link: '/shop' });
+
+  const refresh = () =>
+    getFeaturedGowns().then((res: any) => {
+      if (res.needsMigration) {
+        setNeedsMigration(true);
+      } else {
+        setGowns(res.data || []);
+      }
+      setLoading(false);
+    });
+
+  useEffect(() => { refresh(); }, []);
+
+  const resetForm = () => {
+    setForm({ title: '', subtitle: '', price: '', image_url: '', link: '/shop' });
+    setShowForm(false);
+    setEditId(null);
+  };
+
+  const handleSave = () => {
+    startTransition(async () => {
+      if (editId) {
+        await updateFeaturedGown(editId, form);
+      } else {
+        await addFeaturedGown(form);
+      }
+      resetForm();
+      await refresh();
+    });
+  };
+
+  const handleDelete = (id: string) => {
+    startTransition(async () => {
+      await removeFeaturedGown(id);
+      await refresh();
+    });
+  };
+
+  const handleReorder = (id: string, direction: 'up' | 'down') => {
+    startTransition(async () => {
+      await reorderFeaturedGown(id, direction);
+      await refresh();
+    });
+  };
+
+  const handleEdit = (gown: any) => {
+    setForm({
+      title: gown.title,
+      subtitle: gown.subtitle || '',
+      price: gown.price || '',
+      image_url: gown.image_url || '',
+      link: gown.link || '/shop',
+    });
+    setEditId(gown.id);
+    setShowForm(true);
+  };
+
+  const handleToggle = (gown: any) => {
+    startTransition(async () => {
+      await updateFeaturedGown(gown.id, { is_active: !gown.is_active });
+      await refresh();
+    });
+  };
+
+  if (loading) return <div className="p-8"><LoadingSkeleton /></div>;
+
+  if (needsMigration) {
+    return (
+      <div className="p-8 space-y-6">
+        <div className="bg-amber-50 border border-amber-200 p-8">
+          <h3 className="text-xl font-medium mb-4">Database Setup Required</h3>
+          <p className="text-sm text-slate-600 mb-6">
+            Run this SQL in your Supabase Dashboard &gt; SQL Editor to create the featured_gowns table:
+          </p>
+          <pre className="bg-white border border-slate-200 p-4 text-xs font-mono overflow-x-auto whitespace-pre">
+{`CREATE TABLE featured_gowns (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  title text NOT NULL,
+  subtitle text,
+  price text,
+  image_url text,
+  link text DEFAULT '/shop',
+  display_order int DEFAULT 0,
+  is_active boolean DEFAULT true,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+
+ALTER TABLE featured_gowns ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Public read" ON featured_gowns
+  FOR SELECT USING (true);
+
+CREATE POLICY "Admin write" ON featured_gowns
+  FOR ALL USING (
+    EXISTS (SELECT 1 FROM user_roles WHERE user_id = auth.uid() AND role IN ('admin','moderator'))
+  );`}
+          </pre>
+          <button onClick={() => { setNeedsMigration(false); setLoading(true); refresh(); }} className="mt-6 px-6 py-3 bg-primary text-white text-[10px] font-bold uppercase tracking-widest hover:bg-slate-800 transition-colors">
+            Retry Connection
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-8 space-y-8">
+      {/* Header */}
+      <div className="flex items-center justify-between bg-white p-4 border border-slate-200">
+        <div>
+          <h2 className="text-lg font-medium tracking-tight">Featured Gowns</h2>
+          <p className="text-[10px] text-slate-400 uppercase tracking-widest mt-1">
+            These appear on the homepage carousel • {gowns.length} gowns configured
+          </p>
+        </div>
+        <button
+          onClick={() => { resetForm(); setShowForm(true); }}
+          className="px-6 py-3 bg-primary text-white text-[10px] font-bold uppercase tracking-widest hover:bg-slate-800 transition-colors flex items-center gap-2"
+        >
+          <span className="material-symbols-outlined text-sm">add</span>
+          Add Gown
+        </button>
+      </div>
+
+      {/* Add/Edit Form */}
+      {showForm && (
+        <div className="bg-white border border-slate-200 p-6 space-y-4">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-sm font-medium tracking-tight">{editId ? 'Edit Gown' : 'Add New Featured Gown'}</h3>
+            <button onClick={resetForm} className="text-slate-400 hover:text-slate-600">
+              <span className="material-symbols-outlined text-sm">close</span>
+            </button>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block">Title</label>
+              <input
+                value={form.title}
+                onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
+                className="w-full bg-slate-50 border border-slate-200 text-sm py-2 px-3 focus:ring-accent focus:border-accent outline-none"
+                placeholder="The Maya"
+              />
+            </div>
+            <div>
+              <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block">Subtitle</label>
+              <input
+                value={form.subtitle}
+                onChange={e => setForm(f => ({ ...f, subtitle: e.target.value }))}
+                className="w-full bg-slate-50 border border-slate-200 text-sm py-2 px-3 focus:ring-accent focus:border-accent outline-none"
+                placeholder="Size 4 • Excellent Condition"
+              />
+            </div>
+            <div>
+              <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block">Price</label>
+              <input
+                value={form.price}
+                onChange={e => setForm(f => ({ ...f, price: e.target.value }))}
+                className="w-full bg-slate-50 border border-slate-200 text-sm py-2 px-3 focus:ring-accent focus:border-accent outline-none"
+                placeholder="$4,200"
+              />
+            </div>
+            <div>
+              <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block">Link</label>
+              <input
+                value={form.link}
+                onChange={e => setForm(f => ({ ...f, link: e.target.value }))}
+                className="w-full bg-slate-50 border border-slate-200 text-sm py-2 px-3 focus:ring-accent focus:border-accent outline-none"
+                placeholder="/shop or /shop/uuid"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block">Image URL</label>
+            <input
+              value={form.image_url}
+              onChange={e => setForm(f => ({ ...f, image_url: e.target.value }))}
+              className="w-full bg-slate-50 border border-slate-200 text-sm py-2 px-3 focus:ring-accent focus:border-accent outline-none"
+              placeholder="https://cdn.shopify.com/..."
+            />
+          </div>
+          {form.image_url && (
+            <div className="w-24 h-32 bg-slate-100 overflow-hidden">
+              <img src={form.image_url} alt="Preview" className="w-full h-full object-cover" />
+            </div>
+          )}
+          <div className="flex gap-3 pt-2">
+            <button
+              disabled={isPending || !form.title || !form.image_url}
+              onClick={handleSave}
+              className="px-6 py-3 bg-primary text-white text-[10px] font-bold uppercase tracking-widest hover:bg-slate-800 transition-colors disabled:opacity-50"
+            >
+              {editId ? 'Update' : 'Add to Carousel'}
+            </button>
+            <button onClick={resetForm} className="px-6 py-3 border border-slate-200 text-[10px] font-bold uppercase tracking-widest hover:bg-slate-50">
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Gowns list */}
+      {gowns.length === 0 && !showForm ? (
+        <div className="text-center py-20 bg-white border border-slate-200">
+          <span className="material-symbols-outlined text-4xl text-slate-300 mb-2">collections</span>
+          <p className="text-sm text-slate-500 font-medium tracking-wide">No Featured Gowns Yet</p>
+          <p className="text-xs text-slate-400 mt-2">Add gowns to display on the homepage carousel</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {gowns.map((gown, idx) => (
+            <div key={gown.id} className={`bg-white border border-slate-200 p-4 flex items-center gap-6 transition-all ${!gown.is_active ? 'opacity-50' : ''}`}>
+              {/* Order controls */}
+              <div className="flex flex-col gap-1">
+                <button
+                  disabled={isPending || idx === 0}
+                  onClick={() => handleReorder(gown.id, 'up')}
+                  className="w-7 h-7 flex items-center justify-center border border-slate-200 hover:bg-slate-50 disabled:opacity-30 transition-colors"
+                >
+                  <span className="material-symbols-outlined text-xs">expand_less</span>
+                </button>
+                <button
+                  disabled={isPending || idx === gowns.length - 1}
+                  onClick={() => handleReorder(gown.id, 'down')}
+                  className="w-7 h-7 flex items-center justify-center border border-slate-200 hover:bg-slate-50 disabled:opacity-30 transition-colors"
+                >
+                  <span className="material-symbols-outlined text-xs">expand_more</span>
+                </button>
+              </div>
+
+              {/* Image */}
+              <div className="w-16 h-20 bg-slate-100 flex-shrink-0 overflow-hidden">
+                {gown.image_url ? (
+                  <img src={gown.image_url} alt={gown.title} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-slate-300">
+                    <span className="material-symbols-outlined">image</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Info */}
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium">{gown.title}</p>
+                <p className="text-xs text-slate-400 mt-0.5">{gown.subtitle}</p>
+                <div className="flex items-center gap-3 mt-1">
+                  <span className="text-xs font-medium font-mono">{gown.price}</span>
+                  <span className="text-[10px] text-slate-400">{gown.link}</span>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <button
+                  disabled={isPending}
+                  onClick={() => handleToggle(gown)}
+                  className={`text-[10px] uppercase tracking-widest font-bold px-3 py-1.5 transition-colors ${gown.is_active ? 'text-emerald-500 hover:text-emerald-700' : 'text-red-500 hover:text-red-700'}`}
+                >
+                  {gown.is_active ? 'Active' : 'Hidden'}
+                </button>
+                <button
+                  disabled={isPending}
+                  onClick={() => handleEdit(gown)}
+                  className="w-8 h-8 flex items-center justify-center border border-slate-200 hover:bg-slate-50 transition-colors"
+                >
+                  <span className="material-symbols-outlined text-sm text-slate-500">edit</span>
+                </button>
+                <button
+                  disabled={isPending}
+                  onClick={() => handleDelete(gown.id)}
+                  className="w-8 h-8 flex items-center justify-center border border-red-200 hover:bg-red-50 transition-colors"
+                >
+                  <span className="material-symbols-outlined text-sm text-red-500">delete</span>
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+
+// ═══════════════════════════════════════════════════════
 // SHARED UI
 // ═══════════════════════════════════════════════════════
 function StatusBadge({ status }: { status: string }) {
@@ -774,7 +1074,8 @@ export default function AdminPage() {
     inventory: 'Inventory Catalog',
     sellers: 'Sellers & Users',
     transactions: 'All Transactions',
-    claims: 'Dispute Claims'
+    claims: 'Dispute Claims',
+    featured: 'Featured Gowns'
   };
 
   return (
@@ -811,6 +1112,11 @@ export default function AdminPage() {
               <span className="material-symbols-outlined text-sm">shield</span>
               <span className="text-xs font-medium tracking-wider uppercase">Claims</span>
             </button>
+            <div className="h-px bg-slate-100 my-2"></div>
+            <button onClick={() => handleTab('featured')} className={`w-full flex items-center gap-3 px-4 py-3 transition-all ${tab === 'featured' ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:bg-slate-50'}`}>
+              <span className="material-symbols-outlined text-sm">star</span>
+              <span className="text-xs font-medium tracking-wider uppercase">Featured</span>
+            </button>
           </nav>
         </div>
 
@@ -844,6 +1150,7 @@ export default function AdminPage() {
           {tab === 'sellers' && <UsersTab />}
           {tab === 'transactions' && <TransactionsTab mode="all" />}
           {tab === 'claims' && <ClaimsTab />}
+          {tab === 'featured' && <FeaturedGownsTab />}
         </div>
       </main>
     </div>

@@ -1,10 +1,30 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
+import { getPublicFeaturedGowns } from "@/app/admin/actions";
+
+const DEFAULT_FEATURED = [
+  { id: '1', title: 'The Maya', subtitle: 'Size 4 • Excellent Condition', price: '$4,200', image_url: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Maya_side.jpg', link: '/shop' },
+  { id: '2', title: 'The Gala 802', subtitle: 'Size 6 • Like New', price: '$5,800', image_url: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Nora_2.jpg', link: '/shop' },
+  { id: '3', title: 'The Fabiana', subtitle: 'Size 2 • Professionally Cleaned', price: '$6,100', image_url: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/FABIANAB.jpg', link: '/shop' },
+  { id: '4', title: 'The Lorena', subtitle: 'Size 8 • Pristine Condition', price: '$7,500', image_url: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Lorena_-_Studio_-_Ai.jpg', link: '/shop' },
+  { id: '5', title: 'The Blanche', subtitle: 'Size 4 • Worn Once', price: '$5,200', image_url: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/BlancheM.jpg', link: '/shop' },
+  { id: '6', title: 'The Gaia', subtitle: 'Size 6 • Like New', price: '$8,900', image_url: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Gaia_1.jpg', link: '/shop' },
+];
 
 export default function Home() {
+  const [featuredGowns, setFeaturedGowns] = useState(DEFAULT_FEATURED);
+
+  useEffect(() => {
+    getPublicFeaturedGowns().then((data) => {
+      if (data && data.length > 0) {
+        setFeaturedGowns(data);
+      }
+    });
+  }, []);
   return (
     <main className="bg-background-light text-primary font-sans transition-colors duration-300 antialiased selection:bg-[#1c1c1c]/10 selection:text-[#1c1c1c] overflow-x-hidden">
 
@@ -75,101 +95,17 @@ export default function Home() {
           </Link>
         </div>
         <div className="flex overflow-x-auto gap-6 px-6 pb-12 snap-x snap-mandatory" style={{ scrollbarWidth: "none", msOverflowStyle: "none", WebkitOverflowScrolling: "touch" }}>
-          {/* Card 1 */}
-          <Link href="/shop" className="min-w-[300px] md:min-w-[380px] snap-center group relative overflow-hidden h-[500px] flex-shrink-0">
-            <img alt="The Maya Gown" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Maya_side.jpg" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
-            <div className="absolute bottom-0 left-0 p-6 w-full text-white">
-
-              <h4 className="text-2xl font-semibold mb-1">The Maya</h4>
-              <p className="text-sm opacity-80 mb-4">Size 4 • Excellent Condition</p>
-              <div className="flex justify-between items-center">
-                <span className="font-medium">$4,200</span>
-                <span className="w-8 h-8 bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <span className="material-symbols-outlined text-sm">arrow_forward</span>
-                </span>
+          {featuredGowns.map((gown) => (
+            <Link key={gown.id} href={gown.link || "/shop"} className="min-w-[300px] md:min-w-[380px] snap-center group relative overflow-hidden h-[500px] flex-shrink-0">
+              <img alt={`${gown.title} Gown`} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src={gown.image_url} />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
+              <div className="absolute bottom-0 left-0 p-6 w-full text-white">
+                <h4 className="text-2xl font-semibold mb-1">{gown.title}</h4>
+                {gown.subtitle && <p className="text-sm opacity-80 mb-4">{gown.subtitle}</p>}
+                {gown.price && <span className="font-medium">{gown.price}</span>}
               </div>
-            </div>
-          </Link>
-          {/* Card 2 */}
-          <Link href="/shop" className="min-w-[300px] md:min-w-[380px] snap-center group relative overflow-hidden h-[500px] flex-shrink-0">
-            <img alt="The Gala 802 Gown" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Nora_2.jpg" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
-            <div className="absolute bottom-0 left-0 p-6 w-full text-white">
-
-              <h4 className="text-2xl font-semibold mb-1">The Gala 802</h4>
-              <p className="text-sm opacity-80 mb-4">Size 6 • Like New</p>
-              <div className="flex justify-between items-center">
-                <span className="font-medium">$5,800</span>
-                <span className="w-8 h-8 bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <span className="material-symbols-outlined text-sm">arrow_forward</span>
-                </span>
-              </div>
-            </div>
-          </Link>
-          {/* Card 3 */}
-          <Link href="/shop" className="min-w-[300px] md:min-w-[380px] snap-center group relative overflow-hidden h-[500px] flex-shrink-0">
-            <img alt="The Fabiana Gown" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://cdn.shopify.com/s/files/1/0839/7222/7357/files/FABIANAB.jpg" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
-            <div className="absolute bottom-0 left-0 p-6 w-full text-white">
-              <h4 className="text-2xl font-semibold mb-1">The Fabiana</h4>
-              <p className="text-sm opacity-80 mb-4">Size 2 • Professionally Cleaned</p>
-              <div className="flex justify-between items-center">
-                <span className="font-medium">$6,100</span>
-                <span className="w-8 h-8 bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <span className="material-symbols-outlined text-sm">arrow_forward</span>
-                </span>
-              </div>
-            </div>
-          </Link>
-          {/* Card 4 */}
-          <Link href="/shop" className="min-w-[300px] md:min-w-[380px] snap-center group relative overflow-hidden h-[500px] flex-shrink-0">
-            <img alt="The Lorena Gown" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Lorena_-_Studio_-_Ai.jpg" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
-            <div className="absolute bottom-0 left-0 p-6 w-full text-white">
-
-              <h4 className="text-2xl font-semibold mb-1">The Lorena</h4>
-              <p className="text-sm opacity-80 mb-4">Size 8 • Pristine Condition</p>
-              <div className="flex justify-between items-center">
-                <span className="font-medium">$7,500</span>
-                <span className="w-8 h-8 bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <span className="material-symbols-outlined text-sm">arrow_forward</span>
-                </span>
-              </div>
-            </div>
-          </Link>
-          {/* Card 5 */}
-          <Link href="/shop" className="min-w-[300px] md:min-w-[380px] snap-center group relative overflow-hidden h-[500px] flex-shrink-0">
-            <img alt="The Blanche Gown" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://cdn.shopify.com/s/files/1/0839/7222/7357/files/BlancheM.jpg" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
-            <div className="absolute bottom-0 left-0 p-6 w-full text-white">
-
-              <h4 className="text-2xl font-semibold mb-1">The Blanche</h4>
-              <p className="text-sm opacity-80 mb-4">Size 4 • Worn Once</p>
-              <div className="flex justify-between items-center">
-                <span className="font-medium">$5,200</span>
-                <span className="w-8 h-8 bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <span className="material-symbols-outlined text-sm">arrow_forward</span>
-                </span>
-              </div>
-            </div>
-          </Link>
-          {/* Card 6 */}
-          <Link href="/shop" className="min-w-[300px] md:min-w-[380px] snap-center group relative overflow-hidden h-[500px] flex-shrink-0">
-            <img alt="The Gaia Gown" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Gaia_1.jpg" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
-            <div className="absolute bottom-0 left-0 p-6 w-full text-white">
-
-              <h4 className="text-2xl font-semibold mb-1">The Gaia</h4>
-              <p className="text-sm opacity-80 mb-4">Size 6 • Like New</p>
-              <div className="flex justify-between items-center">
-                <span className="font-medium">$8,900</span>
-                <span className="w-8 h-8 bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <span className="material-symbols-outlined text-sm">arrow_forward</span>
-                </span>
-              </div>
-            </div>
-          </Link>
+            </Link>
+          ))}
         </div>
       </section>
 
