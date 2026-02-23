@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
@@ -17,6 +17,15 @@ const DEFAULT_FEATURED = [
 
 export default function Home() {
   const [featuredGowns, setFeaturedGowns] = useState(DEFAULT_FEATURED);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isMuted, setIsMuted] = useState(true);
+
+  const toggleMute = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = !videoRef.current.muted;
+      setIsMuted(videoRef.current.muted);
+    }
+  };
 
   useEffect(() => {
     getPublicFeaturedGowns().then((data) => {
@@ -25,16 +34,24 @@ export default function Home() {
       }
     });
   }, []);
+
   return (
     <main className="bg-background-light text-primary font-sans transition-colors duration-300 antialiased selection:bg-[#1c1c1c]/10 selection:text-[#1c1c1c] overflow-x-hidden">
 
       <Navbar />
 
       <header className="relative w-full h-screen overflow-hidden mb-12 group">
-        <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover">
-          <source src="/videos/hero.mp4" type="video/mp4" />
+        <video ref={videoRef} autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover">
+          <source src="/videos/Hero.mp4" type="video/mp4" />
         </video>
         <div className="absolute inset-0 bg-black/20"></div>
+        <button
+          onClick={toggleMute}
+          className="absolute bottom-10 right-6 md:right-10 z-10 w-10 h-10 flex items-center justify-center bg-white/15 backdrop-blur-sm border border-white/20 text-white hover:bg-white/25 transition-all duration-300"
+          aria-label={isMuted ? "Unmute" : "Mute"}
+        >
+          <span className="material-symbols-outlined text-lg">{isMuted ? "volume_off" : "volume_up"}</span>
+        </button>
         <div className="absolute bottom-10 left-0 w-full text-center px-4 fade-in-up">
           <div className="mb-12 md:mb-16 flex justify-center">
             <Link href="/shop" className="bg-white text-gray-900 px-8 py-3 md:px-10 md:py-4 font-medium text-sm md:text-base uppercase tracking-widest hover:bg-gray-100 hover:scale-105 transition-all duration-300 shadow-xl flex items-center gap-3 group font-sans">
