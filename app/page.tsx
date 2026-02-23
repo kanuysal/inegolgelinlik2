@@ -39,7 +39,7 @@ export default function Home() {
     getApprovedListings()
       .then((data) => {
         if (data && data.length > 0) {
-          setListings(data.slice(0, 30));
+          setListings(data);
         }
       })
       .catch(() => {})
