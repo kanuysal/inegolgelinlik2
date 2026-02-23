@@ -55,27 +55,31 @@ export default function Home() {
         </p>
       </section>
 
-      <section className="py-12 px-4 md:px-8 max-w-[1400px] mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-6xl md:text-8xl lg:text-[10rem] font-bold tracking-tighter leading-none text-gray-900 font-serif">
-            Verified
-          </h2>
-          <h2 className="text-6xl md:text-8xl lg:text-[10rem] font-bold tracking-tighter leading-none text-gray-900 -mt-4 md:-mt-10 lg:-mt-16 relative z-10 mix-blend-overlay font-serif">
-            Authenticity
+      <section className="py-24 px-6 md:px-12 max-w-[1400px] mx-auto">
+        <div className="text-center mb-20">
+          <p className="text-[11px] uppercase tracking-[0.4em] text-gray-400 mb-4">The RE:GALIA Promise</p>
+          <h2 className="text-4xl md:text-6xl font-normal leading-tight text-gray-900 font-serif">
+            Verified Authenticity
           </h2>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-24">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="relative group cursor-pointer">
-            <div className="aspect-[4/3] overflow-hidden mb-4">
-              <img alt="Close up of lace detail" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src="https://cdn.shopify.com/s/files/1/0839/7222/7357/files/BlancheM.jpg" />
+            <div className="aspect-[3/4] overflow-hidden">
+              <img alt="Close up of lace detail" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://cdn.shopify.com/s/files/1/0839/7222/7357/files/BlancheM.jpg" />
             </div>
-            <h3 className="text-3xl font-medium text-center text-white absolute bottom-10 left-0 right-0 drop-shadow-md">Inspected Detail</h3>
+            <div className="mt-6">
+              <h3 className="text-xl font-normal font-serif mb-2">Inspected Detail</h3>
+              <p className="text-sm text-gray-400 leading-relaxed">Every bead, stitch, and layer of fabric is examined by our atelier team before listing.</p>
+            </div>
           </div>
-          <div className="relative group cursor-pointer mt-0 md:mt-24">
-            <div className="aspect-[4/3] overflow-hidden mb-4">
-              <img alt="Gown silhouette in desert" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src="https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Gaia_1.jpg" />
+          <div className="relative group cursor-pointer mt-0 md:mt-16">
+            <div className="aspect-[3/4] overflow-hidden">
+              <img alt="Gown embellishment close-up" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Gaia_1.jpg" />
             </div>
-            <h3 className="text-3xl font-medium text-center text-white absolute bottom-10 left-0 right-0 drop-shadow-md">Curated Quality</h3>
+            <div className="mt-6">
+              <h3 className="text-xl font-normal font-serif mb-2">Curated Quality</h3>
+              <p className="text-sm text-gray-400 leading-relaxed">Only gowns that meet our condition standards are accepted into the collection.</p>
+            </div>
           </div>
         </div>
       </section>
