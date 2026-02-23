@@ -9,14 +9,10 @@ import { checkIsStaff } from "@/app/auth/actions";
 import type { User } from "@supabase/supabase-js";
 
 const MENU_LINKS = [
-  { href: "/shop", label: "The Collection" },
-  { href: "/sell", label: "Sell Your Gown" },
+  { href: "/shop", label: "Bridal Gowns" },
+  { href: "/sell", label: "List a Gown" },
   { href: "/how-it-works", label: "How It Works" },
-];
-
-const SECONDARY_LINKS = [
-  { href: "/how-it-works", label: "Authentication" },
-  { href: "/how-it-works", label: "About Us" },
+  { href: "/dashboard", label: "My Account" },
 ];
 
 export default function Navbar() {
@@ -206,39 +202,10 @@ export default function Navbar() {
                     </motion.div>
                   ))}
 
-                  {/* Account link */}
-                  <motion.div
-                    initial={{ opacity: 0, x: 40 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 20 }}
-                    transition={{ duration: 0.4, delay: 0.15 + MENU_LINKS.length * 0.08 }}
-                  >
-                    {!loading && (
-                      user ? (
-                        <Link
-                          href="/dashboard"
-                          onClick={() => setMenuOpen(false)}
-                          className={`block text-5xl lg:text-7xl font-bold tracking-tighter hover:pl-4 transition-all duration-500 uppercase leading-none ${
-                            pathname === "/dashboard" ? "text-primary" : "text-gray-300 hover:text-primary"
-                          }`}
-                        >
-                          Account
-                        </Link>
-                      ) : (
-                        <Link
-                          href="/auth/login"
-                          onClick={() => setMenuOpen(false)}
-                          className="block text-5xl lg:text-7xl font-bold tracking-tighter hover:pl-4 transition-all duration-500 uppercase leading-none text-gray-300 hover:text-primary"
-                        >
-                          Sign In
-                        </Link>
-                      )
-                    )}
-                  </motion.div>
                 </nav>
               </div>
 
-              {/* Bottom — Secondary links + auth actions */}
+              {/* Bottom */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -246,16 +213,6 @@ export default function Navbar() {
                 className="px-8 lg:px-16 pb-12"
               >
                 <div className="flex flex-wrap gap-8 border-t border-gray-200 pt-8">
-                  {SECONDARY_LINKS.map((link) => (
-                    <Link
-                      key={link.label}
-                      href={link.href}
-                      onClick={() => setMenuOpen(false)}
-                      className="text-xs uppercase tracking-[0.2em] font-medium text-gray-500 hover:text-primary transition-colors"
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
                   {!loading && user && isStaff && (
                     <Link
                       href="/admin"

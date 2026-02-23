@@ -271,7 +271,7 @@ export default function ProductDetailPage() {
           {/* ──── LEFT: STICKY MEDIA COLUMN ──── */}
           <div className="w-full lg:w-[55%]">
             <div className="lg:sticky lg:top-32 space-y-6">
-              <div className="relative aspect-[3/4] overflow-hidden bg-[#efefef]">
+              <div className="relative aspect-[3/4] overflow-hidden bg-[#efefef] border border-[#1c1c1c]/10">
                 <motion.div
                   key={activeImage}
                   initial={{ opacity: 0 }}
@@ -287,13 +287,22 @@ export default function ProductDetailPage() {
                     priority
                   />
                 </motion.div>
-                {listing.verified && (
-                  <div className="absolute top-8 left-8 px-4 py-2 bg-white/90 backdrop-blur-md flex items-center gap-2 border border-[#1c1c1c]/5">
-                    <VerifiedBadge size={14} />
-                    <span className="font-sans text-[10px] font-light uppercase tracking-[0.1em] text-[#1c1c1c]/60">
-                      House Authenticated
-                    </span>
-                  </div>
+                {/* Navigation arrows */}
+                {images.length > 1 && (
+                  <>
+                    <button
+                      onClick={() => setActiveImage((prev) => (prev === 0 ? images.length - 1 : prev - 1))}
+                      className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 backdrop-blur-sm flex items-center justify-center border border-[#1c1c1c]/10 hover:bg-white transition-colors"
+                    >
+                      <span className="material-symbols-outlined text-lg">chevron_left</span>
+                    </button>
+                    <button
+                      onClick={() => setActiveImage((prev) => (prev === images.length - 1 ? 0 : prev + 1))}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 backdrop-blur-sm flex items-center justify-center border border-[#1c1c1c]/10 hover:bg-white transition-colors"
+                    >
+                      <span className="material-symbols-outlined text-lg">chevron_right</span>
+                    </button>
+                  </>
                 )}
               </div>
 
@@ -318,10 +327,8 @@ export default function ProductDetailPage() {
             <div className="max-w-xl">
               <div className="flex items-center gap-4 mb-4">
                 <p className="font-sans text-[11px] font-light uppercase tracking-[0.15em] text-[#1c1c1c]/40">
-                  {listing.collection} Collection
+                  {listing.collection}
                 </p>
-                <span className="text-[#1c1c1c]/10">|</span>
-                <SellerBadge type={listing.listingType} />
               </div>
               <h1 className="font-serif text-5xl md:text-7xl leading-none tracking-[-0.02em] mb-8 italic font-light">
                 {listing.title}
@@ -331,25 +338,18 @@ export default function ProductDetailPage() {
                 <span className="font-sans text-3xl tracking-tight">
                   {fmt(listing.salePrice)}
                 </span>
-                <span className="font-sans text-xl text-[#1c1c1c]/20 line-through">
-                  {fmt(listing.originalPrice)}
-                </span>
-                <div className="px-3 py-1 bg-[#1c1c1c] text-white font-sans text-[10px] font-light uppercase tracking-[0.08em]">
-                  Save {Math.round(((listing.originalPrice - listing.salePrice) / listing.originalPrice) * 100)}%
-                </div>
+                {listing.originalPrice > listing.salePrice && (
+                  <span className="font-sans text-xl text-[#1c1c1c]/20 line-through">
+                    {fmt(listing.originalPrice)}
+                  </span>
+                )}
               </div>
-
-              <p className="font-sans text-base text-[#1c1c1c]/50 leading-relaxed mb-12 font-light">
-                {productDescription || "An authentic masterpiece of couture heritage. Professionally restored to runway condition, awaiting its next chapter in your eternal story."}
-              </p>
 
               <div className="grid grid-cols-2 gap-y-8 gap-x-12 mb-16 border-t border-[#1c1c1c]/5 pt-10">
                 {[
                   ["Size", listing.size],
                   ["Silhouette", listing.silhouette],
                   ["Neckline", listing.neckline],
-                  ["Color", listing.color],
-                  ["Sold by", listing.listingType === "brand_direct" ? "Galia Lahav" : listing.listingType === "sample_sale" ? "Sample Sale" : "Private Seller"],
                   ["Condition", listing.condition],
                   ...(stockistData?.materials?.length ? [["Materials", stockistData.materials.join(", ")]] : []),
                   ...(stockistData?.train?.length ? [["Train", stockistData.train.join(", ")]] : []),
@@ -438,10 +438,11 @@ export default function ProductDetailPage() {
               </AnimatePresence>
 
               <div className="space-y-2">
-                <AccordionSection title="About This Gown" defaultOpen>
+                <AccordionSection title="Seller Notes" defaultOpen>
                   <div className="space-y-4 font-sans text-sm text-[#1c1c1c]/50 leading-relaxed font-light">
-                    {productDescription && <p>{productDescription}</p>}
-                    <p>Every RE:GALIA gown has been inspected and authenticated by the Galia Lahav atelier, ensuring the same standard of excellence as a new purchase.</p>
+                    {productDescription ? <p>{productDescription}</p> : (
+                      <p>This gown has been inspected and authenticated by the Galia Lahav atelier.</p>
+                    )}
                   </div>
                 </AccordionSection>
                 <AccordionSection title="Measurements">
@@ -452,6 +453,75 @@ export default function ProductDetailPage() {
                         <span className="font-sans text-base font-light">{val}</span>
                       </div>
                     ))}
+                  </div>
+                </AccordionSection>
+                <AccordionSection title="Size Guide">
+                  <div className="space-y-6 font-sans text-sm text-[#1c1c1c]/50 leading-relaxed font-light">
+                    <div>
+                      <h4 className="font-sans text-[11px] uppercase tracking-[0.1em] text-[#1c1c1c]/70 font-medium mb-3">Gala & Couture</h4>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-xs">
+                          <thead>
+                            <tr className="border-b border-[#1c1c1c]/5">
+                              <th className="text-left py-2 pr-4 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">US</th>
+                              <th className="text-left py-2 pr-4 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">Bust</th>
+                              <th className="text-left py-2 pr-4 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">Waist</th>
+                              <th className="text-left py-2 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">Hips</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {[
+                              ["0", "31\"", "24\"", "34\""],
+                              ["2", "32\"", "25\"", "35\""],
+                              ["4", "33.5\"", "26.5\"", "36.5\""],
+                              ["6", "35\"", "28\"", "38\""],
+                              ["8", "36.5\"", "29.5\"", "39.5\""],
+                              ["10", "38\"", "31\"", "41\""],
+                              ["12", "39.5\"", "32.5\"", "42.5\""],
+                              ["14", "41.5\"", "34.5\"", "44.5\""],
+                            ].map(([size, bust, waist, hips]) => (
+                              <tr key={size} className="border-b border-[#1c1c1c]/[0.03]">
+                                <td className="py-2 pr-4 font-medium text-[#1c1c1c]/60">{size}</td>
+                                <td className="py-2 pr-4 text-[#1c1c1c]/40">{bust}</td>
+                                <td className="py-2 pr-4 text-[#1c1c1c]/40">{waist}</td>
+                                <td className="py-2 text-[#1c1c1c]/40">{hips}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                    <div>
+                      <h4 className="font-sans text-[11px] uppercase tracking-[0.1em] text-[#1c1c1c]/70 font-medium mb-3">Ready-to-Wear</h4>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-xs">
+                          <thead>
+                            <tr className="border-b border-[#1c1c1c]/5">
+                              <th className="text-left py-2 pr-4 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">US</th>
+                              <th className="text-left py-2 pr-4 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">Bust</th>
+                              <th className="text-left py-2 pr-4 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">Waist</th>
+                              <th className="text-left py-2 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">Hips</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {[
+                              ["XS (0-2)", "32\"", "25\"", "35\""],
+                              ["S (4-6)", "34\"", "27\"", "37\""],
+                              ["M (8-10)", "37\"", "30\"", "40\""],
+                              ["L (12-14)", "40\"", "33\"", "43\""],
+                              ["XL (16)", "43\"", "36\"", "46\""],
+                            ].map(([size, bust, waist, hips]) => (
+                              <tr key={size} className="border-b border-[#1c1c1c]/[0.03]">
+                                <td className="py-2 pr-4 font-medium text-[#1c1c1c]/60">{size}</td>
+                                <td className="py-2 pr-4 text-[#1c1c1c]/40">{bust}</td>
+                                <td className="py-2 pr-4 text-[#1c1c1c]/40">{waist}</td>
+                                <td className="py-2 text-[#1c1c1c]/40">{hips}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
                   </div>
                 </AccordionSection>
                 <AccordionSection title="Shipping & Returns">

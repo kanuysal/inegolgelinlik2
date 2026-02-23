@@ -8,9 +8,10 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        serif: ["Cormorant Garamond", "Georgia", "Times New Roman", "serif"],
-        sans: ["PP Monument Extended", "system-ui", "Segoe UI", "sans-serif"],
-        display: ["PP Monument Extended", "system-ui", "sans-serif"],
+        serif: ["Portrait", "Cormorant Garamond", "Georgia", "Times New Roman", "serif"],
+        sans: ["Lelo", "system-ui", "Segoe UI", "sans-serif"],
+        display: ["Portrait", "PP Monument Extended", "system-ui", "sans-serif"],
+        monument: ["PP Monument Extended", "system-ui", "sans-serif"],
       },
       colors: {
         obsidian: "#1c1c1c",

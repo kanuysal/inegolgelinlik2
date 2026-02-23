@@ -1,14 +1,12 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
 import { mockListings, type Listing } from "@/lib/mock-listings";
 import { getApprovedListings } from "./actions";
 
-// Re-using the mapping function
 function mapDbListing(row: any): Listing {
   const conditionMap: Record<string, Listing["condition"]> = {
     new_unworn: "New Never Worn",
@@ -62,7 +60,12 @@ function mapDbListing(row: any): Listing {
 
 export default function ShopPage() {
   const [listings, setListings] = useState<Listing[]>(mockListings);
-  
+  const [search, setSearch] = useState("");
+  const [seller, setSeller] = useState("all");
+  const [collection, setCollection] = useState("all");
+  const [condition, setCondition] = useState("all");
+  const [size, setSize] = useState("all");
+
   useEffect(() => {
     getApprovedListings().then((data) => {
       if (data && data.length > 0) {
@@ -71,129 +74,201 @@ export default function ShopPage() {
     });
   }, []);
 
+  const filtered = useMemo(() => {
+    return listings.filter((l) => {
+      if (search) {
+        const q = search.toLowerCase();
+        const match =
+          l.title.toLowerCase().includes(q) ||
+          l.collection.toLowerCase().includes(q) ||
+          l.condition.toLowerCase().includes(q);
+        if (!match) return false;
+      }
+      if (seller !== "all") {
+        if (seller === "samples" && l.listingType !== "brand_direct" && l.listingType !== "sample_sale") return false;
+        if (seller === "brides" && l.listingType !== "peer_to_peer") return false;
+      }
+      if (collection !== "all" && !l.collection.toLowerCase().includes(collection.toLowerCase())) return false;
+      if (condition !== "all" && l.condition.toLowerCase() !== condition.toLowerCase()) return false;
+      if (size !== "all" && String(l.size) !== size) return false;
+      return true;
+    });
+  }, [listings, search, seller, collection, condition, size]);
+
   return (
     <main className="min-h-screen flex flex-col bg-background-light text-slate-900 font-sans">
       <Navbar />
 
-      <div className="px-6 md:px-10 space-y-10 pt-28 pb-10 w-full flex-1">
-        <div className="space-y-8">
-          <div>
-            <h2 className="text-5xl font-light tracking-tight mb-4 font-display">The Collection</h2>
-            <p className="text-[11px] text-slate-400 uppercase tracking-[0.4em] font-sans">
-              Visual Curation & Asset Management
-            </p>
-          </div>
-          <div className="flex flex-wrap items-center gap-6 border-y border-slate-200 py-6">
-            <div className="relative flex-grow max-w-md">
-              <span className="material-symbols-outlined absolute left-0 top-1/2 -translate-y-1/2 text-slate-400 text-lg">
-                search
-              </span>
-              <input
-                className="w-full pl-8 pr-4 py-2 text-xs bg-transparent border-none focus:ring-0 placeholder:text-slate-400 uppercase tracking-widest font-medium outline-none"
-                placeholder="Search Listings..."
-                type="text"
-              />
+      <div className="px-6 md:px-10 pt-28 pb-10 w-full flex-1">
+        <div className="flex flex-col lg:flex-row gap-10">
+
+          {/* ── Main content ── */}
+          <div className="flex-1 min-w-0">
+            <div className="mb-8">
+              <h2 className="text-5xl font-light tracking-tight mb-4 font-serif">Bridal Gowns</h2>
+              <p className="text-[11px] text-slate-400 uppercase tracking-[0.4em]">
+                {filtered.length} {filtered.length === 1 ? "gown" : "gowns"} available
+              </p>
             </div>
-            <div className="h-8 w-px bg-slate-200"></div>
-            <div className="flex items-center gap-8">
-              <div className="flex flex-col gap-1">
-                <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-8 pb-20">
+              {filtered.map((listing) => (
+                <Link href={`/shop/${listing.id}`} key={listing.id}>
+                  <div className="group relative flex flex-col bg-white border border-slate-200 overflow-hidden transition-all hover:border-slate-400 h-full">
+                    <div className="aspect-[3/4] overflow-hidden relative bg-slate-100">
+                      <img
+                        alt={listing.title}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        src={listing.imageUrl}
+                      />
+                    </div>
+                    <div className="p-5 flex flex-col flex-grow">
+                      <div className="mb-3">
+                        <div className="flex justify-between items-start mb-1">
+                          <h3 className="text-lg font-medium tracking-tight font-serif">{listing.title}</h3>
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
+                            SIZE {listing.size}
+                          </span>
+                        </div>
+                        <p className="text-[10px] text-slate-400 uppercase tracking-widest">
+                          {listing.collection}
+                        </p>
+                      </div>
+                      <div className="mt-auto pt-4 border-t border-slate-100 flex justify-between items-end">
+                        <div>
+                          <p className="text-[9px] text-slate-400 uppercase tracking-widest mb-1">
+                            {listing.condition}
+                          </p>
+                          <div className="flex items-baseline gap-3">
+                            <p className="text-lg font-bold tracking-tight">
+                              ${listing.salePrice.toLocaleString()}
+                            </p>
+                            {listing.originalPrice > listing.salePrice && (
+                              <p className="text-sm text-slate-300 line-through">
+                                ${listing.originalPrice.toLocaleString()}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:text-primary transition-colors">
+                          View
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* ── Right sidebar filters ── */}
+          <div className="w-full lg:w-64 shrink-0 order-first lg:order-last">
+            <div className="lg:sticky lg:top-28 space-y-8">
+              {/* Search */}
+              <div>
+                <div className="relative">
+                  <span className="material-symbols-outlined absolute left-0 top-1/2 -translate-y-1/2 text-slate-400 text-lg">
+                    search
+                  </span>
+                  <input
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="w-full pl-8 pr-4 py-2 text-xs bg-transparent border-b border-slate-200 focus:border-slate-400 focus:ring-0 placeholder:text-slate-400 uppercase tracking-widest font-medium outline-none transition-colors"
+                    placeholder="Search..."
+                    type="text"
+                  />
+                </div>
+              </div>
+
+              {/* Seller */}
+              <div className="space-y-2">
+                <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400 block">
+                  Seller
+                </label>
+                <select
+                  value={seller}
+                  onChange={(e) => setSeller(e.target.value)}
+                  className="w-full p-0 bg-transparent border-none text-[11px] font-bold uppercase tracking-widest focus:ring-0 cursor-pointer hover:text-accent transition-colors outline-none"
+                >
+                  <option value="all">All Sellers</option>
+                  <option value="samples">Galia Lahav Samples</option>
+                  <option value="brides">Galia Lahav Brides</option>
+                </select>
+              </div>
+
+              {/* Collection */}
+              <div className="space-y-2">
+                <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400 block">
                   Collection
                 </label>
-                <select className="p-0 bg-transparent border-none text-[10px] font-bold uppercase tracking-widest focus:ring-0 cursor-pointer hover:text-accent transition-colors outline-none">
-                  <option>All Collections</option>
-                  <option>Le Secret Royal</option>
-                  <option>Allegria</option>
-                  <option>Couture</option>
-                  <option>GALA</option>
+                <select
+                  value={collection}
+                  onChange={(e) => setCollection(e.target.value)}
+                  className="w-full p-0 bg-transparent border-none text-[11px] font-bold uppercase tracking-widest focus:ring-0 cursor-pointer hover:text-accent transition-colors outline-none"
+                >
+                  <option value="all">All Collections</option>
+                  <option value="Le Secret Royal">Le Secret Royal</option>
+                  <option value="Allegria">Allegria</option>
+                  <option value="Couture">Couture</option>
+                  <option value="GALA">GALA</option>
                 </select>
               </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">
+
+              {/* Condition */}
+              <div className="space-y-2">
+                <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400 block">
                   Condition
                 </label>
-                <select className="p-0 bg-transparent border-none text-[10px] font-bold uppercase tracking-widest focus:ring-0 cursor-pointer hover:text-accent transition-colors outline-none">
-                  <option>All Conditions</option>
-                  <option>New with Tags</option>
-                  <option>Pristine</option>
-                  <option>Excellent</option>
-                  <option>Good</option>
+                <select
+                  value={condition}
+                  onChange={(e) => setCondition(e.target.value)}
+                  className="w-full p-0 bg-transparent border-none text-[11px] font-bold uppercase tracking-widest focus:ring-0 cursor-pointer hover:text-accent transition-colors outline-none"
+                >
+                  <option value="all">All Conditions</option>
+                  <option value="New Never Worn">New with Tags</option>
+                  <option value="Excellent">Excellent</option>
+                  <option value="Good">Good</option>
                 </select>
               </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">
-                  Status
-                </label>
-                <select className="p-0 bg-transparent border-none text-[10px] font-bold uppercase tracking-widest focus:ring-0 cursor-pointer hover:text-accent transition-colors outline-none">
-                  <option>All Statuses</option>
-                  <option>Live</option>
-                  <option>Sold</option>
-                  <option>Pending</option>
-                </select>
-              </div>
-            </div>
-            <button className="ml-auto flex items-center gap-2 px-6 py-2.5 bg-primary text-white text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-slate-800 transition-colors">
-              <span className="material-symbols-outlined text-sm">filter_list</span>
-              Filters
-            </button>
-          </div>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10 pb-20">
-          {listings.map((listing) => (
-            <Link href={`/shop/${listing.id}`} key={listing.id}>
-              <div className="group relative flex flex-col bg-white border border-slate-200 overflow-hidden transition-all hover:border-slate-400 h-full">
-                <div className="aspect-[3/4] overflow-hidden relative bg-slate-100">
-                  <img
-                    alt={listing.title}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    src={listing.imageUrl}
-                  />
-                  {listing.verified && (
-                    <div className="absolute top-4 left-4">
-                      <span className="inline-flex items-center px-3 py-1 text-[9px] font-bold uppercase tracking-widest bg-green-50/90 text-green-600 backdrop-blur-sm border border-green-200/50">
-                        Verified Authentic
-                      </span>
-                    </div>
-                  )}
-                  <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button className="w-8 h-8 bg-white/90 flex items-center justify-center border border-slate-200">
-                      <span className="material-symbols-outlined text-lg">more_horiz</span>
-                    </button>
-                  </div>
-                </div>
-                <div className="p-6 flex flex-col flex-grow">
-                  <div className="mb-4">
-                    <div className="flex justify-between items-start mb-1">
-                      <h3 className="text-xl font-medium tracking-tight font-display">{listing.title}</h3>
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
-                        SIZE {listing.size}
-                      </span>
-                    </div>
-                    <p className="text-[10px] text-slate-400 uppercase tracking-widest font-sans">
-                      {listing.collection} • {listing.sellerLocation}
-                    </p>
-                  </div>
-                  <div className="mt-auto pt-6 border-t border-slate-100 flex justify-between items-end">
-                    <div>
-                      <p className="text-[9px] text-slate-400 uppercase tracking-widest mb-1 font-sans">
-                        {listing.condition}
-                      </p>
-                      <p className="text-lg font-bold tracking-tight">
-                        ${listing.salePrice.toLocaleString()}
-                      </p>
-                    </div>
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-accent hover:text-primary transition-colors">
-                      View Details
-                    </span>
-                  </div>
-                </div>
+              {/* Size */}
+              <div className="space-y-2">
+                <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400 block">
+                  Size
+                </label>
+                <select
+                  value={size}
+                  onChange={(e) => setSize(e.target.value)}
+                  className="w-full p-0 bg-transparent border-none text-[11px] font-bold uppercase tracking-widest focus:ring-0 cursor-pointer hover:text-accent transition-colors outline-none"
+                >
+                  <option value="all">All Sizes</option>
+                  <option value="0">0</option>
+                  <option value="2">2</option>
+                  <option value="4">4</option>
+                  <option value="6">6</option>
+                  <option value="8">8</option>
+                  <option value="10">10</option>
+                  <option value="12">12</option>
+                  <option value="14">14</option>
+                  <option value="16">16</option>
+                </select>
               </div>
-            </Link>
-          ))}
+
+              {/* Reset */}
+              {(search || seller !== "all" || collection !== "all" || condition !== "all" || size !== "all") && (
+                <button
+                  onClick={() => { setSearch(""); setSeller("all"); setCollection("all"); setCondition("all"); setSize("all"); }}
+                  className="text-[10px] uppercase tracking-widest text-slate-400 hover:text-primary transition-colors"
+                >
+                  Clear All Filters
+                </button>
+              )}
+            </div>
+          </div>
+
         </div>
       </div>
-      
+
       <Footer />
     </main>
   );
