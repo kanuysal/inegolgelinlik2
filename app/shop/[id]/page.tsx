@@ -271,7 +271,7 @@ export default function ProductDetailPage() {
           {/* ──── LEFT: STICKY MEDIA COLUMN ──── */}
           <div className="w-full lg:w-[55%]">
             <div className="lg:sticky lg:top-32 space-y-6">
-              <div className="relative aspect-[3/4] overflow-hidden bg-[#efefef] border border-[#1c1c1c]/10">
+              <div className="group relative aspect-[3/4] overflow-hidden bg-[#efefef] border border-[#1c1c1c]/10">
                 <motion.div
                   key={activeImage}
                   initial={{ opacity: 0 }}
@@ -292,15 +292,21 @@ export default function ProductDetailPage() {
                   <>
                     <button
                       onClick={() => setActiveImage((prev) => (prev === 0 ? images.length - 1 : prev - 1))}
-                      className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 backdrop-blur-sm flex items-center justify-center border border-[#1c1c1c]/10 hover:bg-white transition-colors"
+                      className="absolute left-5 top-1/2 -translate-y-1/2 w-11 h-11 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 hover:scale-110"
                     >
-                      <span className="material-symbols-outlined text-lg">chevron_left</span>
+                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.4)]">
+                        <line x1="17" y1="12" x2="7" y2="12" stroke="currentColor" strokeWidth="1" />
+                        <polyline points="11,8 7,12 11,16" stroke="currentColor" strokeWidth="1" fill="none" strokeLinejoin="round" />
+                      </svg>
                     </button>
                     <button
                       onClick={() => setActiveImage((prev) => (prev === images.length - 1 ? 0 : prev + 1))}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 backdrop-blur-sm flex items-center justify-center border border-[#1c1c1c]/10 hover:bg-white transition-colors"
+                      className="absolute right-5 top-1/2 -translate-y-1/2 w-11 h-11 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 hover:scale-110"
                     >
-                      <span className="material-symbols-outlined text-lg">chevron_right</span>
+                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.4)]">
+                        <line x1="7" y1="12" x2="17" y2="12" stroke="currentColor" strokeWidth="1" />
+                        <polyline points="13,8 17,12 13,16" stroke="currentColor" strokeWidth="1" fill="none" strokeLinejoin="round" />
+                      </svg>
                     </button>
                   </>
                 )}
