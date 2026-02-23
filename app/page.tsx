@@ -16,9 +16,6 @@ export default function Home() {
         </video>
         <div className="absolute inset-0 bg-black/20"></div>
         <div className="absolute bottom-10 left-0 w-full text-center px-4 fade-in-up">
-          <h1 className="text-white text-5xl md:text-7xl lg:text-8xl font-serif font-light tracking-tight mb-6 drop-shadow-lg">
-            Give Your Gown<br />a Second Story
-          </h1>
           <div className="mb-12 md:mb-16 flex justify-center">
             <Link href="/shop" className="bg-white text-gray-900 px-8 py-3 md:px-10 md:py-4 font-medium text-sm md:text-base uppercase tracking-widest hover:bg-gray-100 hover:scale-105 transition-all duration-300 shadow-xl flex items-center gap-3 group font-sans">
               Shop the Collection
