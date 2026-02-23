@@ -133,7 +133,6 @@ export default function Home() {
             ))}
           </div>
         ) : listings.length > 0 ? (
-          <div className="overflow-y-auto max-h-[80vh] pr-2" style={{ scrollbarWidth: "thin", scrollbarColor: "#d1d5db transparent" }}>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-5">
               {listings.map((listing: any) => {
                 const image = listing.images?.[0] || listing.products?.images?.[0] || '/placeholder-gown.jpg';
@@ -194,7 +193,6 @@ export default function Home() {
                 );
               })}
             </div>
-          </div>
         ) : (
           <p className="text-center text-gray-400 py-12">No gowns available right now. Check back soon.</p>
         )}
