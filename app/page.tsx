@@ -37,7 +37,7 @@ export default function Home() {
     });
     getApprovedListings().then((data) => {
       if (data && data.length > 0) {
-        setListings(data.slice(0, 6));
+        setListings(data.slice(0, 12));
       }
     });
   }, []);
@@ -76,8 +76,8 @@ export default function Home() {
       </header>
 
       {/* ── Featured Gowns — Horizontal Scroll ── */}
-      <section className="py-16 overflow-hidden">
-        <div className="px-6 mb-12 flex flex-col md:flex-row justify-between items-end max-w-[1400px] mx-auto">
+      <section className="py-10 overflow-hidden">
+        <div className="px-6 mb-8 flex flex-col md:flex-row justify-between items-end max-w-[1400px] mx-auto">
           <div>
             <h3 className="text-4xl md:text-5xl font-medium tracking-tight mb-2 font-serif">Featured Gowns</h3>
             <p className="text-gray-500">Timeless silhouettes, available now.</p>
@@ -86,7 +86,7 @@ export default function Home() {
             View All
           </Link>
         </div>
-        <div className="flex overflow-x-auto gap-6 px-6 pb-12 snap-x snap-mandatory" style={{ scrollbarWidth: "none", msOverflowStyle: "none", WebkitOverflowScrolling: "touch" }}>
+        <div className="flex overflow-x-auto gap-6 px-6 pb-6 snap-x snap-mandatory" style={{ scrollbarWidth: "none", msOverflowStyle: "none", WebkitOverflowScrolling: "touch" }}>
           {featuredGowns.map((gown) => (
             <Link key={gown.id} href={gown.link || "/shop"} className="min-w-[300px] md:min-w-[380px] snap-center group relative overflow-hidden h-[500px] flex-shrink-0">
               <img alt={`${gown.title} Gown`} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src={gown.image_url} />
@@ -103,17 +103,17 @@ export default function Home() {
 
       {/* ── New Arrivals Grid ── */}
       {listings.length > 0 && (
-        <section className="py-16 px-6 md:px-10 max-w-[1400px] mx-auto">
-          <div className="flex justify-between items-end mb-10">
+        <section className="py-10 px-6 md:px-10 max-w-[1400px] mx-auto">
+          <div className="flex justify-between items-end mb-8">
             <div>
               <p className="text-[11px] uppercase tracking-[0.4em] text-gray-400 mb-3">Just Listed</p>
-              <h3 className="text-4xl md:text-5xl font-medium tracking-tight font-serif">New Arrivals</h3>
+              <h3 className="text-3xl md:text-5xl font-medium tracking-tight font-serif">New Arrivals</h3>
             </div>
             <Link href="/shop" className="hidden md:block px-6 py-2 border border-gray-300 hover:bg-gray-100 transition text-sm uppercase tracking-wider text-black">
               Browse All
             </Link>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             {listings.map((listing: any) => {
               const image = listing.images?.[0] || listing.products?.images?.[0] || '/placeholder-gown.jpg';
               const price = listing.price;
@@ -133,37 +133,37 @@ export default function Home() {
                         src={image}
                       />
                     </div>
-                    <div className="p-5 flex flex-col flex-grow">
-                      <div className="mb-3">
+                    <div className="p-3 md:p-5 flex flex-col flex-grow">
+                      <div className="mb-2 md:mb-3">
                         <div className="flex justify-between items-start mb-1">
-                          <h3 className="text-lg font-normal tracking-tight font-serif">{listing.title}</h3>
+                          <h3 className="text-sm md:text-lg font-normal tracking-tight font-serif">{listing.title}</h3>
                           {listing.size_us && (
-                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
+                            <span className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
                               SIZE {listing.size_us}
                             </span>
                           )}
                         </div>
-                        <p className="text-[10px] text-slate-400 uppercase tracking-widest">
+                        <p className="text-[9px] md:text-[10px] text-slate-400 uppercase tracking-widest">
                           {listing.products?.style_name || listing.category || "Couture"}
                         </p>
                       </div>
-                      <div className="mt-auto pt-4 border-t border-slate-100 flex justify-between items-end">
+                      <div className="mt-auto pt-3 md:pt-4 border-t border-slate-100 flex justify-between items-end">
                         <div>
-                          <p className="text-[9px] text-slate-400 uppercase tracking-widest mb-1">
+                          <p className="text-[8px] md:text-[9px] text-slate-400 uppercase tracking-widest mb-1">
                             {conditionMap[listing.condition] || "Excellent"}
                           </p>
-                          <div className="flex items-baseline gap-3">
-                            <p className="text-lg font-bold tracking-tight">
+                          <div className="flex items-baseline gap-2 md:gap-3">
+                            <p className="text-sm md:text-lg font-bold tracking-tight">
                               ${price?.toLocaleString()}
                             </p>
                             {msrp && msrp > price && (
-                              <p className="text-sm text-slate-300 line-through">
+                              <p className="text-xs md:text-sm text-slate-300 line-through">
                                 ${msrp.toLocaleString()}
                               </p>
                             )}
                           </div>
                         </div>
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:text-primary transition-colors">
+                        <span className="hidden md:block text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:text-primary transition-colors">
                           View
                         </span>
                       </div>
