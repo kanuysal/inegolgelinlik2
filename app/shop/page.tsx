@@ -99,98 +99,98 @@ export default function ShopPage() {
     <main className="min-h-screen flex flex-col bg-background-light text-slate-900 font-sans">
       <Navbar />
 
-      <div className="px-4 md:px-8 pt-28 pb-10 w-full flex-1 max-w-[1600px] mx-auto">
-        {/* ── Header ── */}
-        <div className="mb-8">
-          <h2 className="text-5xl font-normal tracking-tight mb-4 font-serif">Bridal Gowns</h2>
-          <p className="text-[11px] text-slate-400 uppercase tracking-[0.4em]">
-            {filtered.length} {filtered.length === 1 ? "gown" : "gowns"} available
-          </p>
-        </div>
+      {/* ── Header ── */}
+      <div className="px-4 md:px-8 pt-28 max-w-[1600px] mx-auto mb-8">
+        <h2 className="text-5xl font-normal tracking-tight mb-4 font-serif">Bridal Gowns</h2>
+        <p className="text-[11px] text-slate-400 uppercase tracking-[0.4em]">
+          {filtered.length} {filtered.length === 1 ? "gown" : "gowns"} available
+        </p>
+      </div>
 
-        {/* ── Filters bar — sticks under navbar on scroll ── */}
-        <div className="sticky top-[76px] z-30 bg-background-light/95 backdrop-blur-sm border-b border-slate-100 pb-4 pt-4 -mx-4 md:-mx-8 px-4 md:px-8 mb-8">
-          <div className="flex flex-wrap items-center gap-4">
-            {/* Search */}
-            <div className="relative">
-              <span className="material-symbols-outlined absolute left-0 top-1/2 -translate-y-1/2 text-slate-400 text-lg">
-                search
-              </span>
-              <input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="pl-7 pr-4 py-1.5 text-xs bg-transparent border-b border-slate-200 focus:border-slate-400 focus:ring-0 placeholder:text-slate-400 uppercase tracking-widest font-medium outline-none transition-colors w-40"
-                placeholder="Search..."
-                type="text"
-              />
-            </div>
-
-            {/* Seller */}
-            <select
-              value={seller}
-              onChange={(e) => setSeller(e.target.value)}
-              className="p-0 bg-transparent border-none text-[11px] font-bold uppercase tracking-widest focus:ring-0 cursor-pointer hover:text-accent transition-colors outline-none"
-            >
-              <option value="all">All Sellers</option>
-              <option value="samples">Galia Lahav Samples</option>
-              <option value="brides">Galia Lahav Brides</option>
-            </select>
-
-            {/* Collection */}
-            <select
-              value={collection}
-              onChange={(e) => setCollection(e.target.value)}
-              className="p-0 bg-transparent border-none text-[11px] font-bold uppercase tracking-widest focus:ring-0 cursor-pointer hover:text-accent transition-colors outline-none"
-            >
-              <option value="all">All Collections</option>
-              <option value="Le Secret Royal">Le Secret Royal</option>
-              <option value="Allegria">Allegria</option>
-              <option value="Couture">Couture</option>
-              <option value="GALA">GALA</option>
-            </select>
-
-            {/* Condition */}
-            <select
-              value={condition}
-              onChange={(e) => setCondition(e.target.value)}
-              className="p-0 bg-transparent border-none text-[11px] font-bold uppercase tracking-widest focus:ring-0 cursor-pointer hover:text-accent transition-colors outline-none"
-            >
-              <option value="all">All Conditions</option>
-              <option value="New Never Worn">New with Tags</option>
-              <option value="Excellent">Excellent</option>
-              <option value="Good">Good</option>
-            </select>
-
-            {/* Size */}
-            <select
-              value={size}
-              onChange={(e) => setSize(e.target.value)}
-              className="p-0 bg-transparent border-none text-[11px] font-bold uppercase tracking-widest focus:ring-0 cursor-pointer hover:text-accent transition-colors outline-none"
-            >
-              <option value="all">All Sizes</option>
-              <option value="0">0</option>
-              <option value="2">2</option>
-              <option value="4">4</option>
-              <option value="6">6</option>
-              <option value="8">8</option>
-              <option value="10">10</option>
-              <option value="12">12</option>
-              <option value="14">14</option>
-              <option value="16">16</option>
-            </select>
-
-            {/* Reset */}
-            {(search || seller !== "all" || collection !== "all" || condition !== "all" || size !== "all") && (
-              <button
-                onClick={() => { setSearch(""); setSeller("all"); setCollection("all"); setCondition("all"); setSize("all"); }}
-                className="text-[10px] uppercase tracking-widest text-slate-400 hover:text-primary transition-colors ml-auto"
-              >
-                Clear All
-              </button>
-            )}
+      {/* ── Filters bar — sticks under navbar on scroll, matches navbar width ── */}
+      <div className="sticky top-[76px] z-30 bg-background-light/95 backdrop-blur-sm border-b border-slate-100">
+        <div className="max-w-5xl mx-auto px-6 flex flex-wrap items-center gap-4 py-3">
+          {/* Search */}
+          <div className="relative">
+            <span className="material-symbols-outlined absolute left-0 top-1/2 -translate-y-1/2 text-slate-400 text-lg">
+              search
+            </span>
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-7 pr-4 py-1.5 text-xs bg-transparent border-b border-slate-200 focus:border-slate-400 focus:ring-0 placeholder:text-slate-400 uppercase tracking-widest font-medium outline-none transition-colors w-40"
+              placeholder="Search..."
+              type="text"
+            />
           </div>
-        </div>
 
+          {/* Seller */}
+          <select
+            value={seller}
+            onChange={(e) => setSeller(e.target.value)}
+            className="p-0 bg-transparent border-none text-[11px] font-bold uppercase tracking-widest focus:ring-0 cursor-pointer hover:text-accent transition-colors outline-none"
+          >
+            <option value="all">Sellers</option>
+            <option value="samples">Galia Lahav Samples</option>
+            <option value="brides">Galia Lahav Brides</option>
+          </select>
+
+          {/* Collection */}
+          <select
+            value={collection}
+            onChange={(e) => setCollection(e.target.value)}
+            className="p-0 bg-transparent border-none text-[11px] font-bold uppercase tracking-widest focus:ring-0 cursor-pointer hover:text-accent transition-colors outline-none"
+          >
+            <option value="all">Collections</option>
+            <option value="Le Secret Royal">Le Secret Royal</option>
+            <option value="Allegria">Allegria</option>
+            <option value="Couture">Couture</option>
+            <option value="GALA">GALA</option>
+          </select>
+
+          {/* Condition */}
+          <select
+            value={condition}
+            onChange={(e) => setCondition(e.target.value)}
+            className="p-0 bg-transparent border-none text-[11px] font-bold uppercase tracking-widest focus:ring-0 cursor-pointer hover:text-accent transition-colors outline-none"
+          >
+            <option value="all">Conditions</option>
+            <option value="New Never Worn">New with Tags</option>
+            <option value="Excellent">Excellent</option>
+            <option value="Good">Good</option>
+          </select>
+
+          {/* Size */}
+          <select
+            value={size}
+            onChange={(e) => setSize(e.target.value)}
+            className="p-0 bg-transparent border-none text-[11px] font-bold uppercase tracking-widest focus:ring-0 cursor-pointer hover:text-accent transition-colors outline-none"
+          >
+            <option value="all">Sizes</option>
+            <option value="0">0</option>
+            <option value="2">2</option>
+            <option value="4">4</option>
+            <option value="6">6</option>
+            <option value="8">8</option>
+            <option value="10">10</option>
+            <option value="12">12</option>
+            <option value="14">14</option>
+            <option value="16">16</option>
+          </select>
+
+          {/* Reset */}
+          {(search || seller !== "all" || collection !== "all" || condition !== "all" || size !== "all") && (
+            <button
+              onClick={() => { setSearch(""); setSeller("all"); setCollection("all"); setCondition("all"); setSize("all"); }}
+              className="text-[10px] uppercase tracking-widest text-slate-400 hover:text-primary transition-colors ml-auto"
+            >
+              Clear
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div className="px-4 md:px-8 pt-6 pb-10 w-full flex-1 max-w-[1600px] mx-auto">
         {/* ── Product grid — 5 per row ── */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-5 pb-20">
           {filtered.map((listing) => (
