@@ -19,6 +19,7 @@ const DEFAULT_FEATURED = [
 export default function Home() {
   const [featuredGowns, setFeaturedGowns] = useState(DEFAULT_FEATURED);
   const [listings, setListings] = useState<any[]>([]);
+  const [listingsLoading, setListingsLoading] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isMuted, setIsMuted] = useState(true);
 
@@ -35,11 +36,14 @@ export default function Home() {
         setFeaturedGowns(data);
       }
     });
-    getApprovedListings().then((data) => {
-      if (data && data.length > 0) {
-        setListings(data.slice(0, 30));
-      }
-    });
+    getApprovedListings()
+      .then((data) => {
+        if (data && data.length > 0) {
+          setListings(data.slice(0, 30));
+        }
+      })
+      .catch(() => {})
+      .finally(() => setListingsLoading(false));
   }, []);
 
   return (
@@ -102,17 +106,33 @@ export default function Home() {
       </section>
 
       {/* ── Marketplace — Scrollable Grid ── */}
-      {listings.length > 0 && (
-        <section className="pt-6 pb-2 px-4 md:px-8 max-w-[1600px] mx-auto">
-          <div className="flex justify-between items-end mb-6">
-            <div>
-              <p className="text-[11px] uppercase tracking-[0.4em] text-gray-400 mb-2">Just Listed</p>
-              <h3 className="text-3xl md:text-5xl font-medium tracking-tight font-serif">New Arrivals</h3>
-            </div>
+      <section className="pt-6 pb-2 px-4 md:px-8 max-w-[1600px] mx-auto">
+        <div className="flex justify-between items-end mb-6">
+          <div>
+            <p className="text-[11px] uppercase tracking-[0.4em] text-gray-400 mb-2">Just Listed</p>
+            <h3 className="text-3xl md:text-5xl font-medium tracking-tight font-serif">New Arrivals</h3>
+          </div>
+          {listings.length > 0 && (
             <p className="text-[11px] text-gray-400 uppercase tracking-[0.3em]">
               {listings.length} gowns
             </p>
+          )}
+        </div>
+
+        {listingsLoading ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-5">
+            {Array.from({ length: 10 }).map((_, i) => (
+              <div key={i} className="animate-pulse">
+                <div className="aspect-[3/4] bg-slate-200"></div>
+                <div className="p-3 space-y-2">
+                  <div className="h-4 bg-slate-200 rounded w-3/4"></div>
+                  <div className="h-3 bg-slate-100 rounded w-1/2"></div>
+                  <div className="h-4 bg-slate-200 rounded w-1/3 mt-3"></div>
+                </div>
+              </div>
+            ))}
           </div>
+        ) : listings.length > 0 ? (
           <div className="overflow-y-auto max-h-[80vh] pr-2" style={{ scrollbarWidth: "thin", scrollbarColor: "#d1d5db transparent" }}>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-5">
               {listings.map((listing: any) => {
@@ -175,14 +195,17 @@ export default function Home() {
               })}
             </div>
           </div>
-          <div className="text-center py-10">
-            <Link href="/shop" className="inline-flex items-center gap-3 px-12 py-4 bg-primary text-white text-sm font-semibold uppercase tracking-widest hover:bg-gray-800 transition-all duration-300 shadow-lg">
-              View Full Collection
-              <span className="material-symbols-outlined text-sm">arrow_forward</span>
-            </Link>
-          </div>
-        </section>
-      )}
+        ) : (
+          <p className="text-center text-gray-400 py-12">No gowns available right now. Check back soon.</p>
+        )}
+
+        <div className="text-center py-10">
+          <Link href="/shop" className="inline-flex items-center gap-3 px-12 py-4 bg-primary text-white text-sm font-semibold uppercase tracking-widest hover:bg-gray-800 transition-all duration-300 shadow-lg">
+            View Full Collection
+            <span className="material-symbols-outlined text-sm">arrow_forward</span>
+          </Link>
+        </div>
+      </section>
 
       {/* ── Sell CTA ── */}
       <section className="relative py-32 px-6 overflow-hidden">
