@@ -52,16 +52,16 @@ export default function Home() {
         <video ref={videoRef} autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover">
           <source src="/videos/hero.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-black/30"></div>
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-6">
-          <p className="text-[11px] md:text-xs uppercase tracking-[0.4em] text-white/70 mb-4">Galia Lahav</p>
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif font-light leading-tight mb-6">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
+        <div className="absolute bottom-12 left-6 md:left-10 z-10 text-white max-w-lg">
+          <p className="text-[10px] md:text-[11px] uppercase tracking-[0.4em] text-white/60 mb-3">Galia Lahav</p>
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-serif font-light leading-tight mb-4">
             Our Official<br />Resale Marketplace
           </h1>
-          <p className="text-sm md:text-base text-white/70 max-w-md mb-10">
+          <p className="text-sm text-white/60 mb-6 max-w-sm">
             Authenticated pre-loved gowns, curated for their next grand entrance.
           </p>
-          <Link href="/shop" className="bg-white text-gray-900 px-8 py-3 md:px-10 md:py-4 font-medium text-sm md:text-base uppercase tracking-widest hover:bg-gray-100 hover:scale-105 transition-all duration-300 shadow-xl flex items-center gap-3 group font-sans">
+          <Link href="/shop" className="inline-flex items-center gap-3 bg-white text-gray-900 px-8 py-3 md:px-10 md:py-4 font-medium text-sm uppercase tracking-widest hover:bg-gray-100 hover:scale-105 transition-all duration-300 shadow-xl group font-sans">
             Shop the Collection
             <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
           </Link>
