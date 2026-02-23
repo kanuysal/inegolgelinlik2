@@ -99,17 +99,9 @@ export default function ShopPage() {
     <main className="min-h-screen flex flex-col bg-background-light text-slate-900 font-sans">
       <Navbar />
 
-      <div className="px-6 md:px-10 pt-28 pb-10 w-full flex-1">
-        {/* ── Header ── */}
-        <div className="mb-8">
-          <h2 className="text-5xl font-normal tracking-tight mb-4 font-serif">Bridal Gowns</h2>
-          <p className="text-[11px] text-slate-400 uppercase tracking-[0.4em]">
-            {filtered.length} {filtered.length === 1 ? "gown" : "gowns"} available
-          </p>
-        </div>
-
-        {/* ── Filters bar ── */}
-        <div className="flex flex-wrap items-center gap-4 mb-10 border-b border-slate-100 pb-6 sticky top-20 z-30 bg-background-light pt-4 -mt-4">
+      {/* ── Sticky filter bar — full width, navbar-aligned ── */}
+      <div className="sticky top-0 z-40 bg-background-light/95 backdrop-blur-sm border-b border-slate-100">
+        <div className="max-w-5xl mx-auto px-6 flex flex-wrap items-center gap-4 h-14">
           {/* Search */}
           <div className="relative">
             <span className="material-symbols-outlined absolute left-0 top-1/2 -translate-y-1/2 text-slate-400 text-lg">
@@ -118,7 +110,7 @@ export default function ShopPage() {
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-7 pr-4 py-1.5 text-xs bg-transparent border-b border-slate-200 focus:border-slate-400 focus:ring-0 placeholder:text-slate-400 uppercase tracking-widest font-medium outline-none transition-colors w-40"
+              className="pl-7 pr-4 py-1.5 text-xs bg-transparent border-b border-slate-200 focus:border-slate-400 focus:ring-0 placeholder:text-slate-400 uppercase tracking-widest font-medium outline-none transition-colors w-36"
               placeholder="Search..."
               type="text"
             />
@@ -178,19 +170,26 @@ export default function ShopPage() {
             <option value="16">16</option>
           </select>
 
-          {/* Reset */}
-          {(search || seller !== "all" || collection !== "all" || condition !== "all" || size !== "all") && (
-            <button
-              onClick={() => { setSearch(""); setSeller("all"); setCollection("all"); setCondition("all"); setSize("all"); }}
-              className="text-[10px] uppercase tracking-widest text-slate-400 hover:text-primary transition-colors ml-auto"
-            >
-              Clear All
-            </button>
-          )}
+          {/* Count + Reset */}
+          <div className="ml-auto flex items-center gap-4">
+            <p className="text-[10px] text-slate-400 uppercase tracking-[0.3em]">
+              {filtered.length} {filtered.length === 1 ? "gown" : "gowns"}
+            </p>
+            {(search || seller !== "all" || collection !== "all" || condition !== "all" || size !== "all") && (
+              <button
+                onClick={() => { setSearch(""); setSeller("all"); setCollection("all"); setCondition("all"); setSize("all"); }}
+                className="text-[10px] uppercase tracking-widest text-slate-400 hover:text-primary transition-colors"
+              >
+                Clear All
+              </button>
+            )}
+          </div>
         </div>
+      </div>
 
-        {/* ── Product grid ── */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-8 pb-20">
+      <div className="px-4 md:px-8 pt-6 pb-10 w-full flex-1 max-w-[1600px] mx-auto">
+        {/* ── Product grid — 5 per row ── */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-5 pb-20">
           {filtered.map((listing) => (
             <Link href={`/shop/${listing.id}`} key={listing.id}>
               <div className="group relative flex flex-col bg-white border border-slate-200 overflow-hidden transition-all hover:border-slate-400 h-full">
@@ -201,35 +200,35 @@ export default function ShopPage() {
                     src={listing.imageUrl}
                   />
                 </div>
-                <div className="p-5 flex flex-col flex-grow">
-                  <div className="mb-3">
+                <div className="p-3 md:p-4 flex flex-col flex-grow">
+                  <div className="mb-2">
                     <div className="flex justify-between items-start mb-1">
-                      <h3 className="text-lg font-normal tracking-tight font-serif">{listing.title}</h3>
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
+                      <h3 className="text-sm md:text-base font-normal tracking-tight font-serif">{listing.title}</h3>
+                      <span className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
                         SIZE {listing.size}
                       </span>
                     </div>
-                    <p className="text-[10px] text-slate-400 uppercase tracking-widest">
+                    <p className="text-[9px] md:text-[10px] text-slate-400 uppercase tracking-widest">
                       {listing.collection}
                     </p>
                   </div>
-                  <div className="mt-auto pt-4 border-t border-slate-100 flex justify-between items-end">
+                  <div className="mt-auto pt-3 border-t border-slate-100 flex justify-between items-end">
                     <div>
-                      <p className="text-[9px] text-slate-400 uppercase tracking-widest mb-1">
+                      <p className="text-[8px] md:text-[9px] text-slate-400 uppercase tracking-widest mb-1">
                         {listing.condition}
                       </p>
-                      <div className="flex items-baseline gap-3">
-                        <p className="text-lg font-bold tracking-tight">
+                      <div className="flex items-baseline gap-2">
+                        <p className="text-sm md:text-base font-bold tracking-tight">
                           ${listing.salePrice.toLocaleString()}
                         </p>
                         {listing.originalPrice > listing.salePrice && (
-                          <p className="text-sm text-slate-300 line-through">
+                          <p className="text-xs text-slate-300 line-through">
                             ${listing.originalPrice.toLocaleString()}
                           </p>
                         )}
                       </div>
                     </div>
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:text-primary transition-colors">
+                    <span className="hidden md:block text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:text-primary transition-colors">
                       View
                     </span>
                   </div>

@@ -37,7 +37,7 @@ export default function Home() {
     });
     getApprovedListings().then((data) => {
       if (data && data.length > 0) {
-        setListings(data.slice(0, 12));
+        setListings(data.slice(0, 30));
       }
     });
   }, []);
@@ -103,7 +103,7 @@ export default function Home() {
 
       {/* ── New Arrivals Grid ── */}
       {listings.length > 0 && (
-        <section className="py-10 px-6 md:px-10 max-w-[1400px] mx-auto">
+        <section className="py-10 px-4 md:px-8 max-w-[1600px] mx-auto">
           <div className="flex justify-between items-end mb-8">
             <div>
               <p className="text-[11px] uppercase tracking-[0.4em] text-gray-400 mb-3">Just Listed</p>
@@ -113,7 +113,7 @@ export default function Home() {
               Browse All
             </Link>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-5">
             {listings.map((listing: any) => {
               const image = listing.images?.[0] || listing.products?.images?.[0] || '/placeholder-gown.jpg';
               const price = listing.price;
@@ -173,9 +173,9 @@ export default function Home() {
               );
             })}
           </div>
-          <div className="text-center mt-10 md:hidden">
-            <Link href="/shop" className="inline-block px-8 py-3 border border-gray-300 hover:bg-gray-100 transition text-sm uppercase tracking-wider text-black">
-              Browse All Gowns
+          <div className="text-center mt-10">
+            <Link href="/shop" className="inline-block px-10 py-3 border border-gray-300 hover:bg-gray-100 transition text-sm uppercase tracking-wider text-black">
+              View All Gowns
             </Link>
           </div>
         </section>
