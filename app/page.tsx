@@ -101,81 +101,84 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── New Arrivals Grid ── */}
+      {/* ── Marketplace — Scrollable Grid ── */}
       {listings.length > 0 && (
-        <section className="py-10 px-4 md:px-8 max-w-[1600px] mx-auto">
-          <div className="flex justify-between items-end mb-8">
+        <section className="pt-6 pb-2 px-4 md:px-8 max-w-[1600px] mx-auto">
+          <div className="flex justify-between items-end mb-6">
             <div>
-              <p className="text-[11px] uppercase tracking-[0.4em] text-gray-400 mb-3">Just Listed</p>
+              <p className="text-[11px] uppercase tracking-[0.4em] text-gray-400 mb-2">Just Listed</p>
               <h3 className="text-3xl md:text-5xl font-medium tracking-tight font-serif">New Arrivals</h3>
             </div>
-            <Link href="/shop" className="hidden md:block px-6 py-2 border border-gray-300 hover:bg-gray-100 transition text-sm uppercase tracking-wider text-black">
-              Browse All
-            </Link>
+            <p className="text-[11px] text-gray-400 uppercase tracking-[0.3em]">
+              {listings.length} gowns
+            </p>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-5">
-            {listings.map((listing: any) => {
-              const image = listing.images?.[0] || listing.products?.images?.[0] || '/placeholder-gown.jpg';
-              const price = listing.price;
-              const msrp = listing.msrp || listing.products?.msrp;
-              const conditionMap: Record<string, string> = {
-                new_unworn: "New Never Worn",
-                excellent: "Excellent",
-                good: "Good",
-              };
-              return (
-                <Link href={`/shop/${listing.id}`} key={listing.id}>
-                  <div className="group relative flex flex-col bg-white border border-slate-200 overflow-hidden transition-all hover:border-slate-400 h-full">
-                    <div className="aspect-[3/4] overflow-hidden relative bg-slate-100">
-                      <img
-                        alt={listing.title}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                        src={image}
-                      />
-                    </div>
-                    <div className="p-3 md:p-5 flex flex-col flex-grow">
-                      <div className="mb-2 md:mb-3">
-                        <div className="flex justify-between items-start mb-1">
-                          <h3 className="text-sm md:text-lg font-normal tracking-tight font-serif">{listing.title}</h3>
-                          {listing.size_us && (
-                            <span className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
-                              SIZE {listing.size_us}
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-[9px] md:text-[10px] text-slate-400 uppercase tracking-widest">
-                          {listing.products?.style_name || listing.category || "Couture"}
-                        </p>
+          <div className="overflow-y-auto max-h-[80vh] pr-2" style={{ scrollbarWidth: "thin", scrollbarColor: "#d1d5db transparent" }}>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-5">
+              {listings.map((listing: any) => {
+                const image = listing.images?.[0] || listing.products?.images?.[0] || '/placeholder-gown.jpg';
+                const price = listing.price;
+                const msrp = listing.msrp || listing.products?.msrp;
+                const conditionMap: Record<string, string> = {
+                  new_unworn: "New Never Worn",
+                  excellent: "Excellent",
+                  good: "Good",
+                };
+                return (
+                  <Link href={`/shop/${listing.id}`} key={listing.id}>
+                    <div className="group relative flex flex-col bg-white border border-slate-200 overflow-hidden transition-all hover:border-slate-400 h-full">
+                      <div className="aspect-[3/4] overflow-hidden relative bg-slate-100">
+                        <img
+                          alt={listing.title}
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                          src={image}
+                        />
                       </div>
-                      <div className="mt-auto pt-3 md:pt-4 border-t border-slate-100 flex justify-between items-end">
-                        <div>
-                          <p className="text-[8px] md:text-[9px] text-slate-400 uppercase tracking-widest mb-1">
-                            {conditionMap[listing.condition] || "Excellent"}
-                          </p>
-                          <div className="flex items-baseline gap-2 md:gap-3">
-                            <p className="text-sm md:text-lg font-bold tracking-tight">
-                              ${price?.toLocaleString()}
-                            </p>
-                            {msrp && msrp > price && (
-                              <p className="text-xs md:text-sm text-slate-300 line-through">
-                                ${msrp.toLocaleString()}
-                              </p>
+                      <div className="p-3 md:p-4 flex flex-col flex-grow">
+                        <div className="mb-2">
+                          <div className="flex justify-between items-start mb-1">
+                            <h3 className="text-sm md:text-base font-normal tracking-tight font-serif">{listing.title}</h3>
+                            {listing.size_us && (
+                              <span className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
+                                SIZE {listing.size_us}
+                              </span>
                             )}
                           </div>
+                          <p className="text-[9px] md:text-[10px] text-slate-400 uppercase tracking-widest">
+                            {listing.products?.style_name || listing.category || "Couture"}
+                          </p>
                         </div>
-                        <span className="hidden md:block text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:text-primary transition-colors">
-                          View
-                        </span>
+                        <div className="mt-auto pt-3 border-t border-slate-100 flex justify-between items-end">
+                          <div>
+                            <p className="text-[8px] md:text-[9px] text-slate-400 uppercase tracking-widest mb-1">
+                              {conditionMap[listing.condition] || "Excellent"}
+                            </p>
+                            <div className="flex items-baseline gap-2 md:gap-3">
+                              <p className="text-sm md:text-base font-bold tracking-tight">
+                                ${price?.toLocaleString()}
+                              </p>
+                              {msrp && msrp > price && (
+                                <p className="text-xs md:text-sm text-slate-300 line-through">
+                                  ${msrp.toLocaleString()}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                          <span className="hidden md:block text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:text-primary transition-colors">
+                            View
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </Link>
-              );
-            })}
+                  </Link>
+                );
+              })}
+            </div>
           </div>
-          <div className="text-center mt-10">
-            <Link href="/shop" className="inline-block px-10 py-3 border border-gray-300 hover:bg-gray-100 transition text-sm uppercase tracking-wider text-black">
-              View All Gowns
+          <div className="text-center py-10">
+            <Link href="/shop" className="inline-flex items-center gap-3 px-12 py-4 bg-primary text-white text-sm font-semibold uppercase tracking-widest hover:bg-gray-800 transition-all duration-300 shadow-lg">
+              View Full Collection
+              <span className="material-symbols-outlined text-sm">arrow_forward</span>
             </Link>
           </div>
         </section>
