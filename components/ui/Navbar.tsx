@@ -130,44 +130,27 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* ── Full-screen menu overlay ── */}
+      {/* ── Half-screen menu overlay ── */}
       <AnimatePresence>
         {menuOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4 }}
-            className="fixed inset-0 z-[100] flex h-screen w-screen overflow-hidden"
-          >
-            {/* Left — Editorial image (desktop only) */}
+          <>
+            {/* Backdrop */}
             <motion.div
-              initial={{ scale: 1.1, opacity: 0 }}
-              animate={{ scale: 1.05, opacity: 1 }}
-              exit={{ scale: 1.1, opacity: 0 }}
-              transition={{ duration: 0.6 }}
-              className="relative hidden lg:block lg:w-[60%] h-full overflow-hidden"
-            >
-              <img
-                alt="Editorial bridal gown"
-                className="absolute inset-0 w-full h-full object-cover"
-                src="https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Maya_side.jpg"
-              />
-              <div className="absolute inset-0 bg-black/40 mix-blend-multiply" />
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/20" />
-              <div className="absolute bottom-12 left-12 text-white">
-                <p className="text-xs uppercase tracking-[0.3em] font-light mb-2">The Archive</p>
-                <h2 className="text-3xl font-light italic font-serif">Curated Couture</h2>
-              </div>
-            </motion.div>
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="fixed inset-0 z-[100] bg-black/30"
+              onClick={() => setMenuOpen(false)}
+            />
 
-            {/* Right — Navigation panel */}
+            {/* Navigation panel — right half */}
             <motion.div
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ duration: 0.5, ease: [0.32, 0.72, 0, 1] }}
-              className="w-full lg:w-[40%] h-full bg-[#faf9f8] flex flex-col relative"
+              className="fixed top-0 right-0 z-[101] w-full sm:w-[50%] h-screen bg-[#faf9f8] flex flex-col"
             >
               {/* Close button */}
               <button
@@ -193,7 +176,7 @@ export default function Navbar() {
                       <Link
                         href={link.href}
                         onClick={() => setMenuOpen(false)}
-                        className={`block text-5xl lg:text-7xl font-bold tracking-tighter hover:pl-4 transition-all duration-500 uppercase leading-none ${
+                        className={`block text-4xl lg:text-5xl font-bold tracking-tighter hover:pl-4 transition-all duration-500 uppercase leading-none ${
                           pathname === link.href ? "text-primary" : "text-gray-300 hover:text-primary"
                         }`}
                       >
@@ -239,7 +222,7 @@ export default function Navbar() {
                 </div>
               </motion.div>
             </motion.div>
-          </motion.div>
+          </>
         )}
       </AnimatePresence>
     </>
