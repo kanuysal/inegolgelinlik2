@@ -5,6 +5,7 @@ import Link from "next/link";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
 import { getPublicFeaturedGowns } from "@/app/admin/actions";
+import { getApprovedListings } from "@/app/shop/actions";
 
 const DEFAULT_FEATURED = [
   { id: '1', title: 'The Maya', subtitle: 'Size 4 • Excellent Condition', price: '$4,200', image_url: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Maya_side.jpg', link: '/shop' },
@@ -17,6 +18,7 @@ const DEFAULT_FEATURED = [
 
 export default function Home() {
   const [featuredGowns, setFeaturedGowns] = useState(DEFAULT_FEATURED);
+  const [listings, setListings] = useState<any[]>([]);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isMuted, setIsMuted] = useState(true);
 
@@ -33,6 +35,11 @@ export default function Home() {
         setFeaturedGowns(data);
       }
     });
+    getApprovedListings().then((data) => {
+      if (data && data.length > 0) {
+        setListings(data.slice(0, 6));
+      }
+    });
   }, []);
 
   return (
@@ -40,37 +47,162 @@ export default function Home() {
 
       <Navbar />
 
-      <header className="relative w-full h-screen overflow-hidden mb-12 group">
+      {/* ── Hero ── */}
+      <header className="relative w-full h-screen overflow-hidden group">
         <video ref={videoRef} autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover">
           <source src="/videos/hero.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-black/20"></div>
+        <div className="absolute inset-0 bg-black/30"></div>
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-6">
+          <p className="text-[11px] md:text-xs uppercase tracking-[0.4em] text-white/70 mb-4">Galia Lahav</p>
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif font-light leading-tight mb-6">
+            Our Official<br />Resale Marketplace
+          </h1>
+          <p className="text-sm md:text-base text-white/70 max-w-md mb-10">
+            Authenticated pre-loved gowns, curated for their next grand entrance.
+          </p>
+          <Link href="/shop" className="bg-white text-gray-900 px-8 py-3 md:px-10 md:py-4 font-medium text-sm md:text-base uppercase tracking-widest hover:bg-gray-100 hover:scale-105 transition-all duration-300 shadow-xl flex items-center gap-3 group font-sans">
+            Shop the Collection
+            <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+          </Link>
+        </div>
         <button
           onClick={toggleMute}
-          className="absolute bottom-10 right-6 md:right-10 z-10 w-10 h-10 flex items-center justify-center bg-white/15 backdrop-blur-sm border border-white/20 text-white hover:bg-white/25 transition-all duration-300"
+          className="absolute bottom-6 right-6 md:right-10 z-10 w-10 h-10 flex items-center justify-center bg-white/15 backdrop-blur-sm border border-white/20 text-white hover:bg-white/25 transition-all duration-300"
           aria-label={isMuted ? "Unmute" : "Mute"}
         >
           <span className="material-symbols-outlined text-lg">{isMuted ? "volume_off" : "volume_up"}</span>
         </button>
-        <div className="absolute bottom-10 left-0 w-full text-center px-4 fade-in-up">
-          <div className="mb-12 md:mb-16 flex justify-center">
-            <Link href="/shop" className="bg-white text-gray-900 px-8 py-3 md:px-10 md:py-4 font-medium text-sm md:text-base uppercase tracking-widest hover:bg-gray-100 hover:scale-105 transition-all duration-300 shadow-xl flex items-center gap-3 group font-sans">
-              Shop the Collection
-              <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
-            </Link>
-          </div>
-        </div>
       </header>
 
-      <section className="py-20 px-6 max-w-4xl mx-auto text-center">
-        <h2 className="text-3xl md:text-5xl font-medium leading-tight mb-6 text-gray-900 font-serif">
-          Pre-loved elegance, curated perfection<br />and ceremony-ready.
-        </h2>
-        <p className="text-gray-600 text-lg">
-          Discover the premier marketplace for authenticated Galia Lahav masterpieces.
-        </p>
+      {/* ── Featured Gowns — Horizontal Scroll ── */}
+      <section className="py-16 overflow-hidden">
+        <div className="px-6 mb-12 flex flex-col md:flex-row justify-between items-end max-w-[1400px] mx-auto">
+          <div>
+            <h3 className="text-4xl md:text-5xl font-medium tracking-tight mb-2 font-serif">Featured Gowns</h3>
+            <p className="text-gray-500">Timeless silhouettes, available now.</p>
+          </div>
+          <Link href="/shop" className="hidden md:block px-6 py-2 border border-gray-300 hover:bg-gray-100 transition text-sm uppercase tracking-wider text-black">
+            View All
+          </Link>
+        </div>
+        <div className="flex overflow-x-auto gap-6 px-6 pb-12 snap-x snap-mandatory" style={{ scrollbarWidth: "none", msOverflowStyle: "none", WebkitOverflowScrolling: "touch" }}>
+          {featuredGowns.map((gown) => (
+            <Link key={gown.id} href={gown.link || "/shop"} className="min-w-[300px] md:min-w-[380px] snap-center group relative overflow-hidden h-[500px] flex-shrink-0">
+              <img alt={`${gown.title} Gown`} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src={gown.image_url} />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
+              <div className="absolute bottom-0 left-0 p-6 w-full text-white">
+                <h4 className="text-2xl font-semibold mb-1">{gown.title}</h4>
+                {gown.subtitle && <p className="text-sm opacity-80 mb-4">{gown.subtitle}</p>}
+                {gown.price && <span className="font-medium">{gown.price}</span>}
+              </div>
+            </Link>
+          ))}
+        </div>
       </section>
 
+      {/* ── New Arrivals Grid ── */}
+      {listings.length > 0 && (
+        <section className="py-16 px-6 md:px-10 max-w-[1400px] mx-auto">
+          <div className="flex justify-between items-end mb-10">
+            <div>
+              <p className="text-[11px] uppercase tracking-[0.4em] text-gray-400 mb-3">Just Listed</p>
+              <h3 className="text-4xl md:text-5xl font-medium tracking-tight font-serif">New Arrivals</h3>
+            </div>
+            <Link href="/shop" className="hidden md:block px-6 py-2 border border-gray-300 hover:bg-gray-100 transition text-sm uppercase tracking-wider text-black">
+              Browse All
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {listings.map((listing: any) => {
+              const image = listing.images?.[0] || listing.products?.images?.[0] || '/placeholder-gown.jpg';
+              const price = listing.price;
+              const msrp = listing.msrp || listing.products?.msrp;
+              const conditionMap: Record<string, string> = {
+                new_unworn: "New Never Worn",
+                excellent: "Excellent",
+                good: "Good",
+              };
+              return (
+                <Link href={`/shop/${listing.id}`} key={listing.id}>
+                  <div className="group relative flex flex-col bg-white border border-slate-200 overflow-hidden transition-all hover:border-slate-400 h-full">
+                    <div className="aspect-[3/4] overflow-hidden relative bg-slate-100">
+                      <img
+                        alt={listing.title}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        src={image}
+                      />
+                    </div>
+                    <div className="p-5 flex flex-col flex-grow">
+                      <div className="mb-3">
+                        <div className="flex justify-between items-start mb-1">
+                          <h3 className="text-lg font-normal tracking-tight font-serif">{listing.title}</h3>
+                          {listing.size_us && (
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
+                              SIZE {listing.size_us}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-[10px] text-slate-400 uppercase tracking-widest">
+                          {listing.products?.style_name || listing.category || "Couture"}
+                        </p>
+                      </div>
+                      <div className="mt-auto pt-4 border-t border-slate-100 flex justify-between items-end">
+                        <div>
+                          <p className="text-[9px] text-slate-400 uppercase tracking-widest mb-1">
+                            {conditionMap[listing.condition] || "Excellent"}
+                          </p>
+                          <div className="flex items-baseline gap-3">
+                            <p className="text-lg font-bold tracking-tight">
+                              ${price?.toLocaleString()}
+                            </p>
+                            {msrp && msrp > price && (
+                              <p className="text-sm text-slate-300 line-through">
+                                ${msrp.toLocaleString()}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:text-primary transition-colors">
+                          View
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+          <div className="text-center mt-10 md:hidden">
+            <Link href="/shop" className="inline-block px-8 py-3 border border-gray-300 hover:bg-gray-100 transition text-sm uppercase tracking-wider text-black">
+              Browse All Gowns
+            </Link>
+          </div>
+        </section>
+      )}
+
+      {/* ── Sell CTA ── */}
+      <section className="relative py-32 px-6 overflow-hidden">
+        <div className="absolute inset-0">
+          <img alt="Road landscape background" className="w-full h-full object-cover grayscale brightness-50" src="/images/hiw/staircase.jpg" />
+        </div>
+        <div className="relative z-10 max-w-4xl mx-auto text-center text-white">
+          <div className="flex justify-center mb-6">
+            <span className="flex gap-2">
+              <span className="w-2 h-2 bg-white rounded-full"></span>
+              <span className="w-2 h-2 bg-white/50 rounded-full"></span>
+            </span>
+          </div>
+          <h2 className="text-4xl md:text-6xl font-serif font-light leading-tight mb-8">
+            Give Your Gown<br />a Second Story
+          </h2>
+          <Link href="/sell" className="inline-block px-8 py-3 border border-white/30 bg-white/10 backdrop-blur hover:bg-white hover:text-black transition duration-300 text-sm font-semibold tracking-wide text-white">
+            Start Selling
+          </Link>
+        </div>
+      </section>
+
+      {/* ── Verified Authenticity ── */}
       <section className="py-24 px-6 md:px-12 max-w-[1400px] mx-auto">
         <div className="text-center mb-20">
           <p className="text-[11px] uppercase tracking-[0.4em] text-gray-400 mb-4">The RE:GALIA Promise</p>
@@ -100,77 +232,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Featured Gowns — Horizontal Scroll ── */}
-      <section className="py-16 overflow-hidden">
-        <div className="px-6 mb-12 flex flex-col md:flex-row justify-between items-end max-w-[1400px] mx-auto">
-          <div>
-            <h3 className="text-4xl md:text-5xl font-medium tracking-tight mb-2 font-serif">Featured Gowns</h3>
-            <p className="text-gray-500">Timeless silhouettes, available now.</p>
-          </div>
-          <Link href="/shop" className="hidden md:block px-6 py-2 border border-gray-300 hover:bg-gray-100 transition text-sm uppercase tracking-wider text-black">
-            View All
-          </Link>
-        </div>
-        <div className="flex overflow-x-auto gap-6 px-6 pb-12 snap-x snap-mandatory" style={{ scrollbarWidth: "none", msOverflowStyle: "none", WebkitOverflowScrolling: "touch" }}>
-          {featuredGowns.map((gown) => (
-            <Link key={gown.id} href={gown.link || "/shop"} className="min-w-[300px] md:min-w-[380px] snap-center group relative overflow-hidden h-[500px] flex-shrink-0">
-              <img alt={`${gown.title} Gown`} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src={gown.image_url} />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
-              <div className="absolute bottom-0 left-0 p-6 w-full text-white">
-                <h4 className="text-2xl font-semibold mb-1">{gown.title}</h4>
-                {gown.subtitle && <p className="text-sm opacity-80 mb-4">{gown.subtitle}</p>}
-                {gown.price && <span className="font-medium">{gown.price}</span>}
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      <section className="relative py-32 px-6 overflow-hidden">
-        <div className="absolute inset-0">
-          <img alt="Road landscape background" className="w-full h-full object-cover grayscale brightness-50" src="/images/hiw/staircase.jpg" />
-        </div>
-        <div className="relative z-10 max-w-4xl mx-auto text-center text-white">
-          <div className="flex justify-center mb-6">
-            <span className="flex gap-2">
-              <span className="w-2 h-2 bg-white rounded-full"></span>
-              <span className="w-2 h-2 bg-white/50 rounded-full"></span>
-            </span>
-          </div>
-          <h2 className="text-4xl md:text-6xl font-serif font-light leading-tight mb-8">
-            Give Your Gown<br />a Second Story
-          </h2>
-          <Link href="/sell" className="inline-block px-8 py-3 border border-white/30 bg-white/10 backdrop-blur hover:bg-white hover:text-black transition duration-300 text-sm font-semibold tracking-wide text-white">
-            Start Selling
-          </Link>
-        </div>
-      </section>
-
-      <section className="py-24 px-6 md:px-12 max-w-[1400px] mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          <div className="lg:col-span-5 order-2 lg:order-1">
-            <h3 className="text-3xl md:text-5xl font-medium leading-tight mb-8 text-gray-900 font-serif">
-              Discover a better way to love luxury, where heritage meets circularity.
-            </h3>
-            <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-              Extending the life of couture gowns isn't just about value—it's about the story. Our verified marketplace ensures that every bead, stitch, and layer of tulle is preserved for its next grand entrance. With secure payments and white-glove shipping, your dream dress is closer than you think.
-            </p>
-            <Link href="/how-it-works" className="inline-block px-6 py-2 border border-gray-300 hover:bg-gray-100 transition text-sm uppercase tracking-wider text-black">
-              Our Philosophy
-            </Link>
-          </div>
-          <div className="lg:col-span-7 order-1 lg:order-2">
-            <div className="relative overflow-hidden aspect-video">
-              <img alt="Bridal atelier team working" className="w-full h-full object-cover" src="/images/hiw/veil.jpg" />
-              <div className="absolute bottom-6 left-6 max-w-sm text-white drop-shadow-lg">
-                <p className="text-xs uppercase tracking-widest mb-2">The Atelier Standard</p>
-                <p className="text-sm opacity-90">Every gown is inspected by our team of expert seamstresses before listing.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
+      {/* ── Newsletter ── */}
       <section className="py-20 px-6">
         <div className="max-w-[1400px] mx-auto bg-surface-light overflow-hidden relative">
           <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: "radial-gradient(#999 1px, transparent 1px)", backgroundSize: "20px 20px" }}></div>
