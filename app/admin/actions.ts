@@ -808,6 +808,111 @@ export async function reorderFeaturedGown(id: string, direction: 'up' | 'down') 
   return { success: true }
 }
 
+// ── Delete Listing ──────────────────────────────────
+export async function deleteListing(listingId: string) {
+  await requireAdminRole()
+  const supabase = await adminDb()
+
+  const { error } = await supabase
+    .from('listings')
+    .delete()
+    .eq('id', listingId)
+
+  if (error) return { error: error.message }
+  revalidatePath('/admin')
+  revalidatePath('/')
+  revalidatePath('/shop')
+  return { success: true }
+}
+
+// ── Seed Test Listings ──────────────────────────────
+const SEED_GOWNS = [
+  { title: 'Tal', condition: 'excellent', silhouette: 'mermaid', price: 7668, msrp: 15000, size: '0', img: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Maya_side.jpg' },
+  { title: 'Camellia', condition: 'good', silhouette: 'a_line', price: 7045, msrp: 19912, size: '12', img: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Nora_2.jpg' },
+  { title: 'Hazel', condition: 'excellent', silhouette: 'sheath', price: 3416, msrp: 8142, size: '6', img: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/FABIANAB.jpg' },
+  { title: 'Meghan', condition: 'excellent', silhouette: 'ball_gown', price: 9896, msrp: 20323, size: '2', img: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Lorena_-_Studio_-_Ai.jpg' },
+  { title: 'Lia', condition: 'new_unworn', silhouette: 'fit_and_flare', price: 3733, msrp: 12266, size: '2', img: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/BlancheM.jpg' },
+  { title: 'Toni', condition: 'excellent', silhouette: 'mermaid', price: 8492, msrp: 15339, size: '4', img: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Gaia_1.jpg' },
+  { title: 'Lilah', condition: 'good', silhouette: 'a_line', price: 7050, msrp: 21054, size: '16', img: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Maya_side.jpg' },
+  { title: 'Willow', condition: 'new_unworn', silhouette: 'sheath', price: 5485, msrp: 18200, size: '16', img: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Nora_2.jpg' },
+  { title: 'Tango', condition: 'excellent', silhouette: 'trumpet', price: 4506, msrp: 14214, size: '10', img: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/FABIANAB.jpg' },
+  { title: 'Stassie', condition: 'good', silhouette: 'ball_gown', price: 4234, msrp: 11331, size: '8', img: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Lorena_-_Studio_-_Ai.jpg' },
+  { title: 'Hallie', condition: 'excellent', silhouette: 'mermaid', price: 10951, msrp: 16034, size: '10', img: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/BlancheM.jpg' },
+  { title: 'Courtney', condition: 'good', silhouette: 'a_line', price: 4279, msrp: 8347, size: '10', img: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Gaia_1.jpg' },
+  { title: 'Ina', condition: 'excellent', silhouette: 'sheath', price: 7017, msrp: 16165, size: '10', img: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Maya_side.jpg' },
+  { title: 'Clara', condition: 'excellent', silhouette: 'fit_and_flare', price: 8715, msrp: 22060, size: '6', img: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Nora_2.jpg' },
+  { title: 'Frankie', condition: 'new_unworn', silhouette: 'trumpet', price: 5880, msrp: 14427, size: '12', img: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/FABIANAB.jpg' },
+  { title: 'Angel', condition: 'excellent', silhouette: 'a_line', price: 6320, msrp: 13500, size: '2', img: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Lorena_-_Studio_-_Ai.jpg' },
+  { title: 'Lily', condition: 'good', silhouette: 'mermaid', price: 5100, msrp: 11200, size: '14', img: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/BlancheM.jpg' },
+  { title: 'Brielle', condition: 'new_unworn', silhouette: 'ball_gown', price: 11200, msrp: 22000, size: '4', img: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Gaia_1.jpg' },
+  { title: 'Dahlia', condition: 'excellent', silhouette: 'sheath', price: 4850, msrp: 9700, size: '8', img: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Maya_side.jpg' },
+  { title: 'Ember', condition: 'good', silhouette: 'fit_and_flare', price: 6750, msrp: 15300, size: '6', img: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Nora_2.jpg' },
+  { title: 'Faye', condition: 'excellent', silhouette: 'trumpet', price: 8900, msrp: 17800, size: '10', img: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/FABIANAB.jpg' },
+  { title: 'Gemma', condition: 'new_unworn', silhouette: 'a_line', price: 7200, msrp: 14400, size: '0', img: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Lorena_-_Studio_-_Ai.jpg' },
+  { title: 'Harlow', condition: 'excellent', silhouette: 'mermaid', price: 9350, msrp: 19500, size: '4', img: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/BlancheM.jpg' },
+  { title: 'Ivy', condition: 'good', silhouette: 'ball_gown', price: 5600, msrp: 12800, size: '12', img: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Gaia_1.jpg' },
+  { title: 'Juniper', condition: 'excellent', silhouette: 'sheath', price: 4100, msrp: 8600, size: '2', img: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Maya_side.jpg' },
+  { title: 'Kira', condition: 'new_unworn', silhouette: 'fit_and_flare', price: 10500, msrp: 21000, size: '8', img: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Nora_2.jpg' },
+  { title: 'Luna', condition: 'excellent', silhouette: 'trumpet', price: 7800, msrp: 16200, size: '6', img: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/FABIANAB.jpg' },
+  { title: 'Maren', condition: 'good', silhouette: 'a_line', price: 3950, msrp: 9100, size: '14', img: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Lorena_-_Studio_-_Ai.jpg' },
+  { title: 'Nadia', condition: 'excellent', silhouette: 'mermaid', price: 8100, msrp: 18000, size: '4', img: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/BlancheM.jpg' },
+  { title: 'Opal', condition: 'new_unworn', silhouette: 'ball_gown', price: 12500, msrp: 25000, size: '6', img: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Gaia_1.jpg' },
+]
+
+export async function seedTestListings() {
+  const user = await requireAdminRole()
+  const supabase = await adminDb()
+
+  let created = 0
+  let errors = 0
+
+  for (const gown of SEED_GOWNS) {
+    const { error } = await supabase.from('listings').insert({
+      seller_id: user.id,
+      title: gown.title,
+      category: 'bridal',
+      listing_type: 'sample_sale',
+      condition: gown.condition,
+      size_us: gown.size,
+      silhouette: gown.silhouette,
+      price: gown.price,
+      msrp: gown.msrp,
+      images: [gown.img],
+      status: 'approved',
+    })
+
+    if (error) {
+      console.error(`Seed error for ${gown.title}:`, error.message)
+      errors++
+    } else {
+      created++
+    }
+  }
+
+  revalidatePath('/')
+  revalidatePath('/shop')
+  revalidatePath('/admin')
+  return { success: true, created, errors }
+}
+
+export async function deleteAllTestListings() {
+  const user = await requireAdminRole()
+  const supabase = await adminDb()
+
+  const { data, error } = await supabase
+    .from('listings')
+    .delete()
+    .eq('seller_id', user.id)
+    .eq('listing_type', 'sample_sale')
+    .select('id')
+
+  if (error) return { error: error.message }
+  revalidatePath('/')
+  revalidatePath('/shop')
+  revalidatePath('/admin')
+  return { success: true, deleted: data?.length || 0 }
+}
+
 // ── Claims / Disputes ────────────────────────────────
 export async function getClaims() {
   await requireModRole()

@@ -24,6 +24,9 @@ import {
   syncStockistPage,
   getClaims,
   resolveClaim,
+  deleteListing,
+  seedTestListings,
+  deleteAllTestListings,
   getFeaturedGowns,
   addFeaturedGown,
   updateFeaturedGown,
@@ -381,11 +384,50 @@ function TransactionsTab({ mode }: { mode: 'all' | 'transactions' }) {
   const [items, setItems] = useState<any[]>([]);
   const [filter, setFilter] = useState('all');
   const [loading, setLoading] = useState(true);
+  const [isPending, startTransition] = useTransition();
+  const [seedMsg, setSeedMsg] = useState('');
 
-  useEffect(() => {
+  const refresh = () => {
     setLoading(true);
     getAllListings(filter).then(d => { setItems(d); setLoading(false); });
-  }, [filter]);
+  };
+
+  useEffect(() => { refresh(); }, [filter]);
+
+  const handleDelete = (id: string) => {
+    if (!confirm('Delete this listing permanently?')) return;
+    startTransition(async () => {
+      const res = await deleteListing(id);
+      if (res.success) setItems(prev => prev.filter(l => l.id !== id));
+    });
+  };
+
+  const handleSeed = () => {
+    setSeedMsg('Seeding...');
+    startTransition(async () => {
+      const res = await seedTestListings();
+      if (res.success) {
+        setSeedMsg(`Created ${res.created} listings (${res.errors} errors)`);
+        refresh();
+      } else {
+        setSeedMsg('Error: ' + (res as any).error);
+      }
+    });
+  };
+
+  const handleClearTest = () => {
+    if (!confirm('Delete ALL test/sample listings you created?')) return;
+    setSeedMsg('Deleting...');
+    startTransition(async () => {
+      const res = await deleteAllTestListings();
+      if (res.success) {
+        setSeedMsg(`Deleted ${res.deleted} test listings`);
+        refresh();
+      } else {
+        setSeedMsg('Error: ' + (res as any).error);
+      }
+    });
+  };
 
   if (loading) return <div className="p-8"><LoadingSkeleton /></div>;
 
@@ -410,6 +452,23 @@ function TransactionsTab({ mode }: { mode: 'all' | 'transactions' }) {
             <option value="rejected">Rejected</option>
           </select>
         </div>
+        <div className="flex gap-2 items-center">
+          {seedMsg && <span className="text-[10px] text-slate-500">{seedMsg}</span>}
+          <button
+            disabled={isPending}
+            onClick={handleSeed}
+            className="px-4 py-2 bg-emerald-600 text-white text-[10px] font-bold uppercase tracking-widest hover:bg-emerald-700 transition-all disabled:opacity-50"
+          >
+            Seed 30 Listings
+          </button>
+          <button
+            disabled={isPending}
+            onClick={handleClearTest}
+            className="px-4 py-2 bg-red-600 text-white text-[10px] font-bold uppercase tracking-widest hover:bg-red-700 transition-all disabled:opacity-50"
+          >
+            Clear Test Data
+          </button>
+        </div>
       </div>
 
       <div className="bg-white border border-slate-200 overflow-hidden">
@@ -422,12 +481,13 @@ function TransactionsTab({ mode }: { mode: 'all' | 'transactions' }) {
                 <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Seller</th>
                 <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Price</th>
                 <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Status</th>
-                <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400 text-right">Date</th>
+                <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Date</th>
+                <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {items.map(l => (
-                <tr key={l.id} className="hover:bg-slate-50/50 transition-colors cursor-pointer group">
+                <tr key={l.id} className="hover:bg-slate-50/50 transition-colors group">
                   <td className="px-6 py-4">
                     <span className="text-[11px] font-mono text-slate-400 group-hover:text-accent transition-colors">#{l.id.slice(0, 8)}</span>
                   </td>
@@ -444,14 +504,23 @@ function TransactionsTab({ mode }: { mode: 'all' | 'transactions' }) {
                   <td className="px-6 py-4">
                     <StatusBadge status={l.status} />
                   </td>
-                  <td className="px-6 py-4 text-right">
+                  <td className="px-6 py-4">
                     <p className="text-[10px] text-slate-400 uppercase tracking-tighter">{new Date(l.created_at).toLocaleDateString()}</p>
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <button
+                      disabled={isPending}
+                      onClick={() => handleDelete(l.id)}
+                      className="w-8 h-8 inline-flex items-center justify-center border border-red-200 hover:bg-red-50 transition-colors disabled:opacity-50"
+                    >
+                      <span className="material-symbols-outlined text-sm text-red-500">delete</span>
+                    </button>
                   </td>
                 </tr>
               ))}
               {items.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-slate-400 text-sm">No listings found</td>
+                  <td colSpan={7} className="px-6 py-12 text-center text-slate-400 text-sm">No listings found</td>
                 </tr>
               )}
             </tbody>
