@@ -109,7 +109,7 @@ export default function ShopPage() {
         </div>
 
         {/* ── Filters bar ── */}
-        <div className="flex flex-wrap items-center gap-4 mb-10 border-b border-slate-100 pb-6">
+        <div className="flex flex-wrap items-center gap-4 mb-10 border-b border-slate-100 pb-6 sticky top-20 z-30 bg-background-light pt-4 -mt-4">
           {/* Search */}
           <div className="relative">
             <span className="material-symbols-outlined absolute left-0 top-1/2 -translate-y-1/2 text-slate-400 text-lg">
