@@ -226,36 +226,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Verified Authenticity ── */}
-      <section className="py-24 px-6 md:px-12 max-w-[1400px] mx-auto">
-        <div className="text-center mb-20">
-          <p className="text-[11px] uppercase tracking-[0.4em] text-gray-400 mb-4">The RE:GALIA Promise</p>
-          <h2 className="text-4xl md:text-6xl font-normal leading-tight text-gray-900 font-serif">
-            Verified Authenticity
-          </h2>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="relative group cursor-pointer">
-            <div className="aspect-[3/4] overflow-hidden">
-              <img alt="Close up of lace detail" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://cdn.shopify.com/s/files/1/0839/7222/7357/files/BlancheM.jpg" />
-            </div>
-            <div className="mt-6">
-              <h3 className="text-xl font-normal font-serif mb-2">Inspected Detail</h3>
-              <p className="text-sm text-gray-400 leading-relaxed">Every bead, stitch, and layer of fabric is examined by our atelier team before listing.</p>
-            </div>
-          </div>
-          <div className="relative group cursor-pointer mt-0 md:mt-16">
-            <div className="aspect-[3/4] overflow-hidden">
-              <img alt="Gown embellishment close-up" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Gaia_1.jpg" />
-            </div>
-            <div className="mt-6">
-              <h3 className="text-xl font-normal font-serif mb-2">Curated Quality</h3>
-              <p className="text-sm text-gray-400 leading-relaxed">Only gowns that meet our condition standards are accepted into the collection.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* ── Newsletter ── */}
       <section className="py-20 px-6">
         <div className="max-w-[1400px] mx-auto bg-surface-light overflow-hidden relative">
