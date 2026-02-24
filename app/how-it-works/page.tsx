@@ -412,18 +412,21 @@ export default function HowItWorksPage() {
               <span className="italic">Your Story</span>?
             </h2>
             <div className="flex flex-col sm:flex-row gap-4 justify-center mt-12">
-              <Link
-                href="/shop"
-                className="px-14 py-5 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-[#333] transition-all duration-300 text-center"
-              >
-                Shop the Collection
-              </Link>
-              <Link
-                href="/sell/submit"
-                className="px-14 py-5 border border-[#1c1c1c]/10 text-[#1c1c1c]/50 font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:text-[#1c1c1c] hover:border-[#1c1c1c]/30 transition-all duration-300 text-center"
-              >
-                Start Consigning
-              </Link>
+              {activeTab === "buying" ? (
+                <Link
+                  href="/shop"
+                  className="px-14 py-5 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-[#333] transition-all duration-300 text-center"
+                >
+                  Shop the Collection
+                </Link>
+              ) : (
+                <Link
+                  href="/sell/submit"
+                  className="px-14 py-5 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-[#333] transition-all duration-300 text-center"
+                >
+                  Start Consigning
+                </Link>
+              )}
             </div>
           </motion.div>
         </div>
