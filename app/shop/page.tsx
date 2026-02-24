@@ -82,39 +82,52 @@ function FilterDropdown({
   }, []);
 
   const activeLabel = value === "all" ? label : options.find((o) => o.value === value)?.label || label;
+  const isActive = value !== "all";
 
   return (
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-widest hover:text-accent transition-colors"
+        className={`flex items-center gap-1.5 py-1 transition-colors duration-200 ${
+          isActive
+            ? "text-[#1c1c1c]"
+            : "text-slate-400 hover:text-[#1c1c1c]"
+        }`}
       >
-        <span className={value !== "all" ? "text-primary" : ""}>{activeLabel}</span>
+        <span className="text-[11px] font-medium uppercase tracking-[0.15em]">{activeLabel}</span>
         <svg
-          className={`w-3 h-3 transition-transform ${open ? "rotate-180" : ""}`}
+          className={`w-2.5 h-2.5 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
           viewBox="0 0 12 12"
           fill="none"
         >
           <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
+        {isActive && <span className="w-1 h-1 rounded-full bg-[#1c1c1c]" />}
       </button>
 
       {open && (
-        <div className="absolute top-full left-0 mt-2 min-w-[180px] bg-white border border-slate-200 shadow-lg z-50 py-1">
+        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 min-w-[200px] bg-white/95 backdrop-blur-xl border border-[#1c1c1c]/8 shadow-[0_12px_40px_rgba(0,0,0,0.12)] z-50 py-2">
+          <div className="px-4 pt-1 pb-2 border-b border-[#1c1c1c]/5 mb-1">
+            <span className="text-[9px] font-light uppercase tracking-[0.2em] text-[#1c1c1c]/30">{label}</span>
+          </div>
           <button
             onClick={() => { onChange("all"); setOpen(false); }}
-            className={`w-full text-left px-4 py-2 text-[11px] uppercase tracking-widest transition-colors ${
-              value === "all" ? "font-bold text-primary" : "text-slate-500 hover:text-primary hover:bg-slate-50"
+            className={`w-full text-left px-5 py-2.5 text-[12px] tracking-wide transition-all duration-200 font-serif ${
+              value === "all"
+                ? "text-[#1c1c1c] bg-[#1c1c1c]/[0.03]"
+                : "text-[#1c1c1c]/40 hover:text-[#1c1c1c] hover:bg-[#1c1c1c]/[0.02] hover:pl-6"
             }`}
           >
-            {label}
+            All {label}
           </button>
           {options.map((opt) => (
             <button
               key={opt.value}
               onClick={() => { onChange(opt.value); setOpen(false); }}
-              className={`w-full text-left px-4 py-2 text-[11px] uppercase tracking-widest transition-colors ${
-                value === opt.value ? "font-bold text-primary" : "text-slate-500 hover:text-primary hover:bg-slate-50"
+              className={`w-full text-left px-5 py-2.5 text-[12px] tracking-wide transition-all duration-200 font-serif ${
+                value === opt.value
+                  ? "text-[#1c1c1c] bg-[#1c1c1c]/[0.03]"
+                  : "text-[#1c1c1c]/40 hover:text-[#1c1c1c] hover:bg-[#1c1c1c]/[0.02] hover:pl-6"
               }`}
             >
               {opt.label}
