@@ -10,8 +10,8 @@ import type { User } from "@supabase/supabase-js";
 
 const MENU_LINKS = [
   { href: "/shop", label: "Bridal Gowns" },
-  { href: "/sell", label: "List a Gown" },
   { href: "/how-it-works", label: "How It Works" },
+  { href: "/how-it-works", label: "Sell" },
   { href: "/dashboard", label: "My Account" },
 ];
 
@@ -115,16 +115,19 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Right — Sell + Bag */}
+          {/* Right — Sell + Wishlist + Cart */}
           <div className="flex items-center gap-4">
             <Link
-              href="/sell"
+              href="/how-it-works"
               className={`text-sm font-medium tracking-widest uppercase transition-colors duration-300 hidden sm:block ${useLight ? "text-white" : "text-primary"}`}
             >
               Sell
             </Link>
+            <Link href="/dashboard?tab=wishlist">
+              <span className={`material-symbols-outlined text-xl cursor-pointer transition-colors duration-300 ${useLight ? "text-white" : "text-primary"}`}>favorite_border</span>
+            </Link>
             <Link href="/shop">
-              <span className={`material-symbols-outlined text-xl cursor-pointer transition-colors duration-300 ${useLight ? "text-white" : "text-primary"}`}>shopping_bag</span>
+              <span className={`material-symbols-outlined text-xl cursor-pointer transition-colors duration-300 ${useLight ? "text-white" : "text-primary"}`}>shopping_cart</span>
             </Link>
           </div>
         </div>

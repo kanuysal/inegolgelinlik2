@@ -220,7 +220,7 @@ export default function Home() {
           <h2 className="text-4xl md:text-6xl font-serif font-light leading-tight mb-8">
             Give Your Gown<br />a Second Story
           </h2>
-          <Link href="/sell" className="inline-block px-8 py-3 border border-white/30 bg-white/10 backdrop-blur hover:bg-white hover:text-black transition duration-300 text-sm font-semibold tracking-wide text-white">
+          <Link href="/how-it-works" className="inline-block px-8 py-3 border border-white/30 bg-white/10 backdrop-blur hover:bg-white hover:text-black transition duration-300 text-sm font-semibold tracking-wide text-white">
             Start Selling
           </Link>
         </div>
