@@ -283,15 +283,15 @@ export default function ShopPage() {
                 <div className="p-3 md:p-4 flex flex-col flex-grow">
                   <div className="mb-2">
                     <div className="flex justify-between items-start mb-1">
-                      <h3 className="text-base md:text-lg font-normal tracking-tight font-serif">{listing.title}</h3>
-                      <span className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-tighter flex-shrink-0 ml-2">
+                      <h3 className="text-lg md:text-xl font-normal tracking-tight font-serif">{listing.title}</h3>
+                      <span className="text-[11px] md:text-xs font-bold text-slate-400 uppercase tracking-tighter flex-shrink-0 ml-2">
                         SIZE {listing.size}
                       </span>
                     </div>
                   </div>
                   <div className="mt-auto pt-3 border-t border-slate-100 flex justify-between items-end">
                     <div>
-                      <p className="text-[8px] md:text-[9px] text-slate-400 uppercase tracking-widest mb-1">
+                      <p className="text-[10px] md:text-[11px] text-slate-400 uppercase tracking-widest mb-1">
                         {listing.condition}
                       </p>
                       <div className="flex items-baseline gap-2">
