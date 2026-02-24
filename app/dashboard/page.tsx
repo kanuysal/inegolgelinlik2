@@ -19,8 +19,10 @@ import {
   getMyNotifications,
   markNotificationRead,
 } from "./actions";
+import { getApprovedListings } from "@/app/shop/actions";
+import { useWishlist } from "@/lib/wishlist-context";
 
-type Tab = "listings" | "purchases" | "messages" | "profile";
+type Tab = "listings" | "purchases" | "messages" | "wishlist" | "profile";
 
 /* ── Loading Skeleton ── */
 function LoadingSkeleton() {
@@ -523,6 +525,103 @@ function ProfileTab() {
 }
 
 /* ══════════════════════════════════════════════════
+   WISHLIST TAB
+   ══════════════════════════════════════════════════ */
+function WishlistTab() {
+  const { ids, toggle } = useWishlist();
+  const [listings, setListings] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (ids.length === 0) {
+      setListings([]);
+      setLoading(false);
+      return;
+    }
+    getApprovedListings().then((data) => {
+      if (data) {
+        setListings(data.filter((l: any) => ids.includes(l.id)));
+      }
+      setLoading(false);
+    });
+  }, [ids]);
+
+  if (loading) return <LoadingSkeleton />;
+
+  return (
+    <div className="max-w-[1600px] mx-auto pt-8">
+      <div className="mb-12">
+        <h2 className="text-4xl font-light mb-2">My Wishlist</h2>
+        <p className="text-xs text-slate-400 uppercase tracking-[0.2em]">
+          {listings.length} {listings.length === 1 ? "gown" : "gowns"} saved
+        </p>
+      </div>
+
+      {listings.length === 0 ? (
+        <div className="text-center py-20">
+          <span className="material-symbols-outlined text-5xl text-slate-200 mb-4 block">favorite_border</span>
+          <p className="text-slate-400 mb-2">Your wishlist is empty</p>
+          <p className="text-xs text-slate-300 mb-8">Tap the heart on any gown to save it here.</p>
+          <Link href="/shop" className="inline-flex items-center gap-2 bg-primary text-white px-8 py-3 text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-accent transition-all">
+            Browse Gowns
+            <span className="material-symbols-outlined text-sm">arrow_forward</span>
+          </Link>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+          {listings.map((listing: any) => {
+            const image = listing.images?.[0] || listing.products?.images?.[0] || "/placeholder-gown.jpg";
+            const msrp = listing.msrp || listing.products?.msrp;
+            const conditionMap: Record<string, string> = {
+              new_unworn: "New Never Worn",
+              excellent: "Excellent",
+              good: "Good",
+            };
+            return (
+              <div key={listing.id} className="group flex flex-col bg-white border border-slate-100 transition-all duration-500 hover:shadow-2xl hover:shadow-black/5">
+                <Link href={`/shop/${listing.id}`}>
+                  <div className="relative aspect-[3/4] overflow-hidden bg-slate-100">
+                    <img alt={listing.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src={image} />
+                  </div>
+                </Link>
+                <div className="p-4 md:p-6 flex flex-col flex-grow">
+                  <div className="flex justify-between items-start mb-1">
+                    <Link href={`/shop/${listing.id}`}>
+                      <h3 className="text-lg font-normal tracking-tight font-serif hover:text-accent transition-colors">{listing.title}</h3>
+                    </Link>
+                    {listing.size_us && (
+                      <span className="text-[11px] font-bold text-slate-400 uppercase tracking-tighter ml-2">SIZE {listing.size_us}</span>
+                    )}
+                  </div>
+                  <p className="text-[10px] text-slate-400 uppercase tracking-widest mb-3">
+                    {conditionMap[listing.condition] || "Excellent"}
+                  </p>
+                  <div className="mt-auto pt-3 border-t border-slate-100 flex justify-between items-center">
+                    <div className="flex items-baseline gap-2">
+                      <p className="text-base font-bold tracking-tight">${listing.price?.toLocaleString()}</p>
+                      {msrp && msrp > listing.price && (
+                        <p className="text-xs text-slate-300 line-through">${msrp.toLocaleString()}</p>
+                      )}
+                    </div>
+                    <button
+                      onClick={() => toggle(listing.id)}
+                      className="text-red-500 hover:text-red-600 transition-colors"
+                      aria-label="Remove from wishlist"
+                    >
+                      <span className="material-symbols-outlined text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>favorite</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════
    MAIN DASHBOARD PAGE
    ══════════════════════════════════════════════════ */
 function DashboardContent() {
@@ -534,6 +633,7 @@ function DashboardContent() {
     { key: "listings", label: "Listings" },
     { key: "purchases", label: "Orders" },
     { key: "messages", label: "Messages" },
+    { key: "wishlist", label: "Wishlist" },
     { key: "profile", label: "Profile" },
   ];
 
@@ -567,6 +667,7 @@ function DashboardContent() {
             {tab === "listings" && <ListingsTab />}
             {tab === "purchases" && <PurchasesTab />}
             {tab === "messages" && <MessagesTab />}
+            {tab === "wishlist" && <WishlistTab />}
             {tab === "profile" && <ProfileTab />}
           </div>
         </div>

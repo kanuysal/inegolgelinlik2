@@ -22,6 +22,7 @@ export const metadata: Metadata = {
 };
 
 import SmoothScroll from "@/components/ui/SmoothScroll";
+import Providers from "@/components/Providers";
 
 export default function RootLayout({
   children,
@@ -37,9 +38,11 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-white text-[#1c1c1c] antialiased font-sans">
-        <SmoothScroll>
-          {children}
-        </SmoothScroll>
+        <Providers>
+          <SmoothScroll>
+            {children}
+          </SmoothScroll>
+        </Providers>
       </body>
     </html>
   );

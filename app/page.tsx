@@ -6,6 +6,7 @@ import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
 import { getPublicFeaturedGowns } from "@/app/admin/actions";
 import { getApprovedListings } from "@/app/shop/actions";
+import { useWishlist } from "@/lib/wishlist-context";
 
 const DEFAULT_FEATURED = [
   { id: '1', title: 'The Maya', subtitle: 'Size 4 • Excellent Condition', price: '$4,200', image_url: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Maya_side.jpg', link: '/shop' },
@@ -17,6 +18,7 @@ const DEFAULT_FEATURED = [
 ];
 
 export default function Home() {
+  const { has: isWished, toggle: toggleWish } = useWishlist();
   const [featuredGowns, setFeaturedGowns] = useState(DEFAULT_FEATURED);
   const [listings, setListings] = useState<any[]>([]);
   const [listingsLoading, setListingsLoading] = useState(true);
@@ -152,6 +154,15 @@ export default function Home() {
                           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                           src={image}
                         />
+                        <button
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleWish(listing.id); }}
+                          className="absolute top-3 right-3 z-10 w-8 h-8 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white transition-all"
+                          aria-label={isWished(listing.id) ? "Remove from wishlist" : "Add to wishlist"}
+                        >
+                          <span className={`material-symbols-outlined text-lg ${isWished(listing.id) ? "text-red-500" : "text-slate-400"}`} style={isWished(listing.id) ? { fontVariationSettings: "'FILL' 1" } : {}}>
+                            favorite
+                          </span>
+                        </button>
                       </div>
                       <div className="p-3 md:p-4 flex flex-col flex-grow">
                         <div className="mb-2">

@@ -416,7 +416,7 @@ export default function HowItWorksPage() {
                 href="/shop"
                 className="px-14 py-5 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-[#333] transition-all duration-300 text-center"
               >
-                Explore Collection
+                Shop the Collection
               </Link>
               <Link
                 href="/sell/submit"

@@ -6,6 +6,7 @@ import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
 import { mockListings, type Listing } from "@/lib/mock-listings";
 import { getApprovedListings } from "./actions";
+import { useWishlist } from "@/lib/wishlist-context";
 
 function mapDbListing(row: any): Listing {
   const conditionMap: Record<string, Listing["condition"]> = {
@@ -140,6 +141,7 @@ function FilterDropdown({
 }
 
 export default function ShopPage() {
+  const { has: isWished, toggle: toggleWish } = useWishlist();
   const [listings, setListings] = useState<Listing[]>(mockListings);
   const [search, setSearch] = useState("");
   const [seller, setSeller] = useState("all");
@@ -279,6 +281,15 @@ export default function ShopPage() {
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     src={listing.imageUrl}
                   />
+                  <button
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleWish(listing.id); }}
+                    className="absolute top-3 right-3 z-10 w-8 h-8 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white transition-all"
+                    aria-label={isWished(listing.id) ? "Remove from wishlist" : "Add to wishlist"}
+                  >
+                    <span className={`material-symbols-outlined text-lg ${isWished(listing.id) ? "text-red-500" : "text-slate-400"}`} style={isWished(listing.id) ? { fontVariationSettings: "'FILL' 1" } : {}}>
+                      favorite
+                    </span>
+                  </button>
                 </div>
                 <div className="p-3 md:p-4 flex flex-col flex-grow">
                   <div className="mb-2">

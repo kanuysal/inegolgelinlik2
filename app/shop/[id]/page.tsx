@@ -15,6 +15,7 @@ import { GOWN_CATALOG } from "@/lib/catalog";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
 import { createClient } from "@/lib/supabase/client";
+import { useWishlist } from "@/lib/wishlist-context";
 
 /* ── Helpers ────────────────────────────────────── */
 
@@ -135,6 +136,7 @@ interface StockistData {
 export default function ProductDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const { has: isWished, toggle: toggleWish } = useWishlist();
   const [activeImage, setActiveImage] = useState(0);
   const [listing, setListing] = useState<Listing | null>(null);
   const [productDescription, setProductDescription] = useState<string>("");
@@ -375,12 +377,24 @@ export default function ProductDetailPage() {
                 ))}
               </div>
 
-              <div className="mb-16">
+              <div className="mb-16 flex gap-3">
                 <button
                   onClick={() => setShowInquiry(true)}
-                  className="w-full py-5 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-[#333] transition-all duration-300"
+                  className="flex-1 py-5 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-[#333] transition-all duration-300"
                 >
                   Inquire Now
+                </button>
+                <button
+                  onClick={() => toggleWish(listing.id)}
+                  className={`w-14 flex items-center justify-center border transition-all duration-300 ${isWished(listing.id) ? "border-red-200 bg-red-50" : "border-[#1c1c1c]/10 hover:border-[#1c1c1c]/30"}`}
+                  aria-label={isWished(listing.id) ? "Remove from wishlist" : "Add to wishlist"}
+                >
+                  <span
+                    className={`material-symbols-outlined text-xl ${isWished(listing.id) ? "text-red-500" : "text-[#1c1c1c]/30"}`}
+                    style={isWished(listing.id) ? { fontVariationSettings: "'FILL' 1" } : {}}
+                  >
+                    favorite
+                  </span>
                 </button>
               </div>
 
