@@ -94,7 +94,7 @@ function FilterDropdown({
             : "text-slate-400 hover:text-[#1c1c1c]"
         }`}
       >
-        <span className="text-[11px] font-medium uppercase tracking-[0.15em]">{activeLabel}</span>
+        <span className="text-[13px] font-medium uppercase tracking-[0.12em]">{activeLabel}</span>
         <svg
           className={`w-2.5 h-2.5 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
           viewBox="0 0 12 12"
@@ -107,12 +107,12 @@ function FilterDropdown({
 
       {open && (
         <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 min-w-[200px] bg-white/95 backdrop-blur-xl border border-[#1c1c1c]/8 shadow-[0_12px_40px_rgba(0,0,0,0.12)] z-50 py-2">
-          <div className="px-4 pt-1 pb-2 border-b border-[#1c1c1c]/5 mb-1">
-            <span className="text-[9px] font-light uppercase tracking-[0.2em] text-[#1c1c1c]/30">{label}</span>
+          <div className="px-5 pt-2 pb-2.5 border-b border-[#1c1c1c]/5 mb-1">
+            <span className="text-[10px] font-light uppercase tracking-[0.2em] text-[#1c1c1c]/30">{label}</span>
           </div>
           <button
             onClick={() => { onChange("all"); setOpen(false); }}
-            className={`w-full text-left px-5 py-2.5 text-[12px] tracking-wide transition-all duration-200 font-serif ${
+            className={`w-full text-left px-5 py-3 text-sm tracking-wide transition-all duration-200 font-serif ${
               value === "all"
                 ? "text-[#1c1c1c] bg-[#1c1c1c]/[0.03]"
                 : "text-[#1c1c1c]/40 hover:text-[#1c1c1c] hover:bg-[#1c1c1c]/[0.02] hover:pl-6"
@@ -124,7 +124,7 @@ function FilterDropdown({
             <button
               key={opt.value}
               onClick={() => { onChange(opt.value); setOpen(false); }}
-              className={`w-full text-left px-5 py-2.5 text-[12px] tracking-wide transition-all duration-200 font-serif ${
+              className={`w-full text-left px-5 py-3 text-sm tracking-wide transition-all duration-200 font-serif ${
                 value === opt.value
                   ? "text-[#1c1c1c] bg-[#1c1c1c]/[0.03]"
                   : "text-[#1c1c1c]/40 hover:text-[#1c1c1c] hover:bg-[#1c1c1c]/[0.02] hover:pl-6"
@@ -283,14 +283,11 @@ export default function ShopPage() {
                 <div className="p-3 md:p-4 flex flex-col flex-grow">
                   <div className="mb-2">
                     <div className="flex justify-between items-start mb-1">
-                      <h3 className="text-sm md:text-base font-normal tracking-tight font-serif">{listing.title}</h3>
-                      <span className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
+                      <h3 className="text-base md:text-lg font-normal tracking-tight font-serif">{listing.title}</h3>
+                      <span className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-tighter flex-shrink-0 ml-2">
                         SIZE {listing.size}
                       </span>
                     </div>
-                    <p className="text-[9px] md:text-[10px] text-slate-400 uppercase tracking-widest">
-                      {listing.collection}
-                    </p>
                   </div>
                   <div className="mt-auto pt-3 border-t border-slate-100 flex justify-between items-end">
                     <div>
@@ -308,8 +305,8 @@ export default function ShopPage() {
                         )}
                       </div>
                     </div>
-                    <span className="hidden md:block text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:text-primary transition-colors">
-                      View
+                    <span className="hidden md:block text-[10px] font-bold uppercase tracking-widest bg-[#1c1c1c] text-white px-3 py-1.5 hover:bg-[#333] transition-colors">
+                      Buy Now
                     </span>
                   </div>
                 </div>
