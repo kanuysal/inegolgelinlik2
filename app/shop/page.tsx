@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import Link from "next/link";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
@@ -56,6 +56,74 @@ function mapDbListing(row: any): Listing {
       height: row.height_cm ? `${row.height_cm}cm` : "—",
     },
   };
+}
+
+/* ── Custom Filter Dropdown ── */
+function FilterDropdown({
+  label,
+  value,
+  options,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  options: { value: string; label: string }[];
+  onChange: (v: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const activeLabel = value === "all" ? label : options.find((o) => o.value === value)?.label || label;
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-widest hover:text-accent transition-colors"
+      >
+        <span className={value !== "all" ? "text-primary" : ""}>{activeLabel}</span>
+        <svg
+          className={`w-3 h-3 transition-transform ${open ? "rotate-180" : ""}`}
+          viewBox="0 0 12 12"
+          fill="none"
+        >
+          <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+
+      {open && (
+        <div className="absolute top-full left-0 mt-2 min-w-[180px] bg-white border border-slate-200 shadow-lg z-50 py-1">
+          <button
+            onClick={() => { onChange("all"); setOpen(false); }}
+            className={`w-full text-left px-4 py-2 text-[11px] uppercase tracking-widest transition-colors ${
+              value === "all" ? "font-bold text-primary" : "text-slate-500 hover:text-primary hover:bg-slate-50"
+            }`}
+          >
+            {label}
+          </button>
+          {options.map((opt) => (
+            <button
+              key={opt.value}
+              onClick={() => { onChange(opt.value); setOpen(false); }}
+              className={`w-full text-left px-4 py-2 text-[11px] uppercase tracking-widest transition-colors ${
+                value === opt.value ? "font-bold text-primary" : "text-slate-500 hover:text-primary hover:bg-slate-50"
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default function ShopPage() {
@@ -124,59 +192,55 @@ export default function ShopPage() {
             />
           </div>
 
-          {/* Seller */}
-          <select
+          <FilterDropdown
+            label="Sellers"
             value={seller}
-            onChange={(e) => setSeller(e.target.value)}
-            className="p-0 bg-transparent border-none text-[11px] font-bold uppercase tracking-widest focus:ring-0 cursor-pointer hover:text-accent transition-colors outline-none"
-          >
-            <option value="all">Sellers</option>
-            <option value="samples">Galia Lahav Samples</option>
-            <option value="brides">Galia Lahav Brides</option>
-          </select>
+            onChange={setSeller}
+            options={[
+              { value: "samples", label: "GL Samples" },
+              { value: "brides", label: "GL Brides" },
+            ]}
+          />
 
-          {/* Collection */}
-          <select
+          <FilterDropdown
+            label="Collections"
             value={collection}
-            onChange={(e) => setCollection(e.target.value)}
-            className="p-0 bg-transparent border-none text-[11px] font-bold uppercase tracking-widest focus:ring-0 cursor-pointer hover:text-accent transition-colors outline-none"
-          >
-            <option value="all">Collections</option>
-            <option value="Le Secret Royal">Le Secret Royal</option>
-            <option value="Allegria">Allegria</option>
-            <option value="Couture">Couture</option>
-            <option value="GALA">GALA</option>
-          </select>
+            onChange={setCollection}
+            options={[
+              { value: "Le Secret Royal", label: "Le Secret Royal" },
+              { value: "Allegria", label: "Allegria" },
+              { value: "Couture", label: "Couture" },
+              { value: "GALA", label: "GALA" },
+            ]}
+          />
 
-          {/* Condition */}
-          <select
+          <FilterDropdown
+            label="Condition"
             value={condition}
-            onChange={(e) => setCondition(e.target.value)}
-            className="p-0 bg-transparent border-none text-[11px] font-bold uppercase tracking-widest focus:ring-0 cursor-pointer hover:text-accent transition-colors outline-none"
-          >
-            <option value="all">Conditions</option>
-            <option value="New Never Worn">New with Tags</option>
-            <option value="Excellent">Excellent</option>
-            <option value="Good">Good</option>
-          </select>
+            onChange={setCondition}
+            options={[
+              { value: "New Never Worn", label: "New with Tags" },
+              { value: "Excellent", label: "Excellent" },
+              { value: "Good", label: "Good" },
+            ]}
+          />
 
-          {/* Size */}
-          <select
+          <FilterDropdown
+            label="Sizes"
             value={size}
-            onChange={(e) => setSize(e.target.value)}
-            className="p-0 bg-transparent border-none text-[11px] font-bold uppercase tracking-widest focus:ring-0 cursor-pointer hover:text-accent transition-colors outline-none"
-          >
-            <option value="all">Sizes</option>
-            <option value="0">0</option>
-            <option value="2">2</option>
-            <option value="4">4</option>
-            <option value="6">6</option>
-            <option value="8">8</option>
-            <option value="10">10</option>
-            <option value="12">12</option>
-            <option value="14">14</option>
-            <option value="16">16</option>
-          </select>
+            onChange={setSize}
+            options={[
+              { value: "0", label: "0" },
+              { value: "2", label: "2" },
+              { value: "4", label: "4" },
+              { value: "6", label: "6" },
+              { value: "8", label: "8" },
+              { value: "10", label: "10" },
+              { value: "12", label: "12" },
+              { value: "14", label: "14" },
+              { value: "16", label: "16" },
+            ]}
+          />
 
           {/* Reset */}
           {(search || seller !== "all" || collection !== "all" || condition !== "all" || size !== "all") && (

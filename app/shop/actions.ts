@@ -38,8 +38,7 @@ export async function getListingById(id: string) {
       .from('listings')
       .select(`
         *,
-        products(style_name, sku, images, msrp, silhouette, train_style, category, description, stockist_id, stockist_data),
-        public_profiles(display_name)
+        products(style_name, sku, images, msrp, silhouette, train_style, category, description, stockist_id, stockist_data)
       `)
       .eq('id', id)
       .eq('status', 'approved')
