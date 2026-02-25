@@ -172,7 +172,7 @@ export default function Navbar() {
                   backgroundPosition: 'center',
                 }}
               >
-                <div className="absolute inset-0 bg-white/80 backdrop-blur-sm"></div>
+                <div className="absolute inset-0 bg-white/40 backdrop-blur-sm"></div>
               </div>
               {/* Close button */}
               <button
