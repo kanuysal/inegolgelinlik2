@@ -75,16 +75,9 @@ function ListingsTab() {
   };
 
   const handleUnpublish = (id: string) => {
-    console.log('handleUnpublish called with id:', id);
-    if (!confirm("Unpublish this listing? It will be hidden from the shop but you can republish it later.")) {
-      console.log('User cancelled unpublish');
-      return;
-    }
-    console.log('Starting unpublish...');
     startTransition(async () => {
       try {
         const res = await unpublishListing(id);
-        console.log('Unpublish response:', res);
         if (res?.success) {
           setListings((prev) =>
             prev.map((l) => (l.id === id ? { ...l, status: 'archived' } : l))
@@ -96,14 +89,12 @@ function ListingsTab() {
           toast.error('Unexpected response: ' + JSON.stringify(res));
         }
       } catch (error: any) {
-        console.error('Unpublish error:', error);
         toast.error('Exception during unpublish: ' + error.message);
       }
     });
   };
 
   const handleRepublish = (id: string) => {
-    if (!confirm("Republish this listing? It will appear in the shop again.")) return;
     startTransition(async () => {
       const res = await republishListing(id);
       if (res.success) {
