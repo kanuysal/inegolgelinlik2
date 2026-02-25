@@ -178,9 +178,10 @@ export async function submitListing(formData: {
     return { error: `Failed to submit listing: ${error.message}` }
   }
 
-  // Revalidate shop and home pages so new listing appears immediately
+  // Revalidate shop, home, and admin pages so new listing appears immediately
   revalidatePath('/shop')
   revalidatePath('/')
+  revalidatePath('/admin')
 
   return { success: true, listingId: data.id }
 }

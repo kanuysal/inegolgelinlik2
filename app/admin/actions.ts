@@ -51,11 +51,15 @@ export async function getPendingListings() {
   await requireModRole()
   const supabase = await db()
 
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('listings')
     .select('*, profiles(display_name, full_name)')
     .eq('status', 'pending_review')
     .order('created_at', { ascending: true })
+
+  if (error) {
+    console.error('getPendingListings error:', error)
+  }
 
   return data || []
 }
