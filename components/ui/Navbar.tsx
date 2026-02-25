@@ -177,7 +177,7 @@ export default function Navbar() {
               {/* Close button */}
               <button
                 onClick={() => setMenuOpen(false)}
-                className="absolute top-8 right-8 z-[110] group flex items-center gap-3"
+                className="absolute top-8 right-8 z-[110] group flex items-center gap-3 text-[#1c1c1c]"
                 aria-label="Close menu"
               >
                 <span className="text-[10px] uppercase tracking-[0.2em] font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300">Close</span>
@@ -199,7 +199,7 @@ export default function Navbar() {
                         href={link.href}
                         onClick={() => setMenuOpen(false)}
                         className={`block text-4xl lg:text-5xl font-bold tracking-tighter hover:pl-4 transition-all duration-500 uppercase leading-none ${
-                          pathname === link.href ? "text-primary" : "text-gray-300 hover:text-primary"
+                          pathname === link.href ? "text-[#1c1c1c]" : "text-[#1c1c1c]/60 hover:text-[#1c1c1c]"
                         }`}
                       >
                         {link.label}
@@ -217,12 +217,12 @@ export default function Navbar() {
                 transition={{ delay: 0.5 }}
                 className="px-8 lg:px-16 pb-12"
               >
-                <div className="flex flex-wrap gap-8 border-t border-gray-200 pt-8">
+                <div className="flex flex-wrap gap-8 border-t border-[#1c1c1c]/10 pt-8">
                   {!loading && user && isStaff && (
                     <Link
                       href="/admin"
                       onClick={() => setMenuOpen(false)}
-                      className="text-xs uppercase tracking-[0.2em] font-medium text-primary hover:text-accent transition-colors"
+                      className="text-xs uppercase tracking-[0.2em] font-medium text-[#1c1c1c] hover:text-[#1c1c1c]/60 transition-colors"
                     >
                       Admin Console
                     </Link>
@@ -230,7 +230,7 @@ export default function Navbar() {
                   {!loading && user && (
                     <button
                       onClick={handleSignOut}
-                      className="text-xs uppercase tracking-[0.2em] font-medium text-gray-400 hover:text-red-600 transition-colors"
+                      className="text-xs uppercase tracking-[0.2em] font-medium text-[#1c1c1c]/60 hover:text-red-600 transition-colors"
                     >
                       Sign Out
                     </button>
@@ -238,7 +238,7 @@ export default function Navbar() {
                 </div>
 
                 <div className="mt-12 flex justify-between items-end">
-                  <div className="text-[10px] uppercase tracking-widest text-gray-400">
+                  <div className="text-[10px] uppercase tracking-widest text-[#1c1c1c]/60">
                     &copy; {new Date().getFullYear()} RE:GALIA
                   </div>
                 </div>
