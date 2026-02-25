@@ -1,6 +1,6 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { requireAuth } from '@/lib/auth'
 import { revalidatePath } from 'next/cache'
 import { notifyNewMessage } from '@/lib/notify'
@@ -8,6 +8,10 @@ import * as kustomer from '@/lib/kustomer'
 
 async function db() {
   return (await createClient()) as any
+}
+
+async function adminDb() {
+  return createAdminClient() as any
 }
 
 // ── My Listings ──────────────────────────────────────────────
@@ -27,7 +31,7 @@ export async function getMyListings() {
 
 export async function deleteListing(listingId: string) {
   const user = await requireAuth()
-  const supabase = await db()
+  const supabase = await adminDb() // Use admin client to bypass RLS
 
   // Only allow deleting drafts, rejected, or archived listings
   const { error } = await supabase
@@ -46,7 +50,7 @@ export async function deleteListing(listingId: string) {
 
 export async function unpublishListing(listingId: string) {
   const user = await requireAuth()
-  const supabase = await db()
+  const supabase = await adminDb() // Use admin client to bypass RLS
 
   // Change status from approved to archived (hidden from shop)
   const { error } = await supabase
@@ -68,7 +72,7 @@ export async function unpublishListing(listingId: string) {
 
 export async function republishListing(listingId: string) {
   const user = await requireAuth()
-  const supabase = await db()
+  const supabase = await adminDb() // Use admin client to bypass RLS
 
   // Change status from archived back to approved
   const { error } = await supabase
