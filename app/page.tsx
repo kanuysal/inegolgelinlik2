@@ -207,12 +207,6 @@ export default function Home() {
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent"></div>
         </div>
         <div className="relative z-10 max-w-4xl mx-auto text-center text-white">
-          <div className="flex justify-center mb-6">
-            <span className="flex gap-2">
-              <span className="w-2 h-2 bg-white rounded-full"></span>
-              <span className="w-2 h-2 bg-white/50 rounded-full"></span>
-            </span>
-          </div>
           <h2 className="text-4xl md:text-6xl font-serif font-light leading-tight mb-8">
             Give Your Gown<br />a Second Story
           </h2>
