@@ -181,9 +181,9 @@ export default function ShopPage() {
       <Navbar />
 
       {/* ── Header ── */}
-      <div className="px-4 md:px-8 pt-28 max-w-[1600px] mx-auto mb-8">
-        <h2 className="text-5xl font-normal tracking-tight mb-4 font-serif">Bridal Gowns</h2>
-        <p className="text-[11px] text-slate-400 uppercase tracking-[0.4em]">
+      <div className="px-4 md:px-8 pt-28 max-w-[1600px] mx-auto mb-8 text-center">
+        <h2 className="text-5xl font-normal tracking-tight mb-4 font-serif text-[#1c1c1c]">Bridal Gowns</h2>
+        <p className="text-[11px] text-[#1c1c1c]/60 uppercase tracking-[0.4em]">
           {filtered.length} {filtered.length === 1 ? "gown" : "gowns"} available
         </p>
       </div>
@@ -193,13 +193,13 @@ export default function ShopPage() {
         <div className="max-w-5xl w-full px-6 flex flex-wrap items-center gap-4 py-3 bg-white backdrop-blur-xl shadow-[0_1px_3px_rgba(0,0,0,0.1)] border-b border-slate-100" style={{ fontFamily: "'Lelo', serif" }}>
           {/* Search */}
           <div className="relative">
-            <span className="material-symbols-outlined absolute left-0 top-1/2 -translate-y-1/2 text-slate-400 text-lg">
+            <span className="material-symbols-outlined absolute left-0 top-1/2 -translate-y-1/2 text-[#1c1c1c]/40 text-lg">
               search
             </span>
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-7 pr-4 py-1.5 text-xs bg-transparent border-b border-slate-200 focus:border-slate-400 focus:ring-0 placeholder:text-slate-400 uppercase tracking-widest font-medium outline-none transition-colors w-40"
+              className="pl-7 pr-4 py-1.5 text-xs bg-transparent border-b border-slate-200 focus:border-[#1c1c1c] focus:ring-0 placeholder:text-[#1c1c1c]/40 text-[#1c1c1c] uppercase tracking-widest font-medium outline-none transition-colors w-40"
               placeholder="Search..."
               type="text"
             />
@@ -258,7 +258,7 @@ export default function ShopPage() {
           {(search || seller !== "all" || collection !== "all" || condition !== "all" || size !== "all") && (
             <button
               onClick={() => { setSearch(""); setSeller("all"); setCollection("all"); setCondition("all"); setSize("all"); }}
-              className="text-[10px] uppercase tracking-widest text-slate-400 hover:text-primary transition-colors ml-auto"
+              className="text-[10px] uppercase tracking-widest text-[#1c1c1c]/60 hover:text-[#1c1c1c] transition-colors ml-auto"
             >
               Clear
             </button>

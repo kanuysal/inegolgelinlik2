@@ -67,7 +67,7 @@ export default function Home() {
           </p>
           <Link href="/shop" className="inline-flex items-center gap-3 bg-white text-gray-900 px-8 py-3 md:px-10 md:py-4 font-medium text-sm uppercase tracking-widest hover:bg-gray-100 hover:scale-105 transition-all duration-300 shadow-xl group font-sans">
             Shop Now
-            <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+            <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform" style={{ fontVariationSettings: "'wght' 200" }}>arrow_forward</span>
           </Link>
         </div>
         <button
@@ -195,7 +195,7 @@ export default function Home() {
         <div className="text-center py-10">
           <Link href="/shop" className="inline-flex items-center gap-3 px-12 py-4 bg-primary text-white text-sm font-semibold uppercase tracking-widest hover:bg-gray-800 transition-all duration-300 shadow-lg">
             View Full Collection
-            <span className="material-symbols-outlined text-sm">arrow_forward</span>
+            <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'wght' 200" }}>arrow_forward</span>
           </Link>
         </div>
       </section>
@@ -203,14 +203,13 @@ export default function Home() {
       {/* ── Sell CTA ── */}
       <section className="relative py-32 px-6 overflow-hidden">
         <div className="absolute inset-0">
-          <img alt="Bridal background" className="w-full h-full object-cover brightness-75" src="/images/hiw/banner.jpg" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent"></div>
+          <img alt="Bridal background" className="w-full h-full object-cover" src="/images/hiw/banner.jpg" />
         </div>
         <div className="relative z-10 max-w-4xl mx-auto text-center text-white">
           <h2 className="text-4xl md:text-6xl font-serif font-light leading-tight mb-8">
             Give Your Gown<br />a Second Story
           </h2>
-          <Link href="/how-it-works" className="inline-block px-8 py-3 border border-white/30 bg-white/10 backdrop-blur hover:bg-white hover:text-black transition duration-300 text-sm font-semibold tracking-wide text-white">
+          <Link href="/how-it-works" className="inline-block px-8 py-3 border border-white bg-white text-[#1c1c1c] hover:bg-white/90 transition duration-300 text-sm font-semibold tracking-wide">
             Start Selling
           </Link>
         </div>
@@ -228,9 +227,9 @@ export default function Home() {
               </h3>
               <form className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
                 <input className="bg-white border-0 px-6 py-3 text-sm focus:ring-2 focus:ring-gray-400 w-full shadow-sm text-gray-900 placeholder-gray-400" placeholder="name@email.com" type="email" />
-                <button className="bg-primary text-white px-8 py-3 text-sm font-medium hover:bg-gray-800 transition shadow-lg flex items-center justify-center gap-2 group whitespace-nowrap" type="submit">
+                <button className="bg-[#1c1c1c] text-white px-8 py-3 text-sm font-medium hover:bg-[#1c1c1c]/90 transition shadow-lg flex items-center justify-center gap-2 group whitespace-nowrap" type="submit">
                   Register
-                  <span className="material-symbols-outlined text-xs group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                  <span className="material-symbols-outlined text-xs group-hover:translate-x-1 transition-transform" style={{ fontVariationSettings: "'wght' 200" }}>arrow_forward</span>
                 </button>
               </form>
             </div>

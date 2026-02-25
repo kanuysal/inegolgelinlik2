@@ -342,7 +342,7 @@ export default function ProductDetailPage() {
           <div className="w-full lg:w-[45%] lg:pt-10">
             <div className="max-w-xl">
               <div className="flex items-center gap-4 mb-4">
-                <p className="font-sans text-[11px] font-light uppercase tracking-[0.15em] text-[#1c1c1c]/40">
+                <p className="font-sans text-sm font-medium uppercase tracking-[0.15em] text-[#1c1c1c]">
                   {listing.collection}
                 </p>
               </div>
@@ -377,12 +377,15 @@ export default function ProductDetailPage() {
                   ...(stockistData?.collectionLine ? [["Collection", `${stockistData.collectionLine} — ${stockistData.collection}`]] : []),
                   ...(stockistData?.modelNumber ? [["Model", stockistData.modelNumber]] : []),
                   ...(stockistData?.retailPrice ? [["Retail Price", fmt(stockistData.retailPrice.amount)]] : []),
-                ].filter(([, value]) => value && value !== "—").map(([label, value]) => (
-                  <div key={label}>
-                    <span className="font-sans text-[10px] font-light uppercase tracking-[0.15em] text-[#1c1c1c]/25 block mb-2">{label}</span>
-                    <span className="font-sans text-base text-[#1c1c1c]/70 font-light">{value}</span>
-                  </div>
-                ))}
+                ].filter(([, value]) => value && value !== "—").map(([label, value]) => {
+                  const isEmphasized = ["Size", "Silhouette", "Condition"].includes(label);
+                  return (
+                    <div key={label}>
+                      <span className={`font-sans font-light uppercase tracking-[0.15em] text-[#1c1c1c]/25 block mb-2 ${isEmphasized ? "text-xs" : "text-[10px]"}`}>{label}</span>
+                      <span className={`font-sans text-[#1c1c1c] ${isEmphasized ? "text-lg font-medium" : "text-base text-[#1c1c1c]/70 font-light"}`}>{value}</span>
+                    </div>
+                  );
+                })}
               </div>
 
               <div className="mb-16 flex gap-3">
