@@ -64,7 +64,7 @@ export async function getPendingListings() {
 
   // Fetch profiles separately to avoid join issues
   if (data && data.length > 0) {
-    const sellerIds = [...new Set(data.map((l: any) => l.seller_id))]
+    const sellerIds = Array.from(new Set(data.map((l: any) => l.seller_id)))
     const { data: profiles } = await supabase
       .from('profiles')
       .select('id, display_name, full_name')
