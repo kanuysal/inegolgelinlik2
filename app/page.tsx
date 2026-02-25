@@ -156,36 +156,31 @@ export default function Home() {
                       <div className="p-3 md:p-4 flex flex-col flex-grow">
                         <div className="mb-2">
                           <div className="flex justify-between items-start mb-1">
-                            <h3 className="text-sm md:text-base font-normal tracking-tight font-serif">{listing.title}</h3>
+                            <h3 className="text-sm md:text-base font-normal tracking-tight font-serif text-[#1c1c1c]">{listing.title}</h3>
                             {listing.size_us && (
-                              <span className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
+                              <span className="text-[9px] md:text-[10px] font-bold text-[#1c1c1c]/60 uppercase tracking-tighter">
                                 SIZE {listing.size_us}
                               </span>
                             )}
                           </div>
-                          <p className="text-[9px] md:text-[10px] text-slate-400 uppercase tracking-widest">
+                          <p className="text-[9px] md:text-[10px] text-[#1c1c1c]/60 uppercase tracking-widest">
                             {listing.products?.style_name || listing.category || "Couture"}
                           </p>
                         </div>
-                        <div className="mt-auto pt-3 border-t border-slate-100 flex justify-between items-end">
-                          <div>
-                            <p className="text-[8px] md:text-[9px] text-slate-400 uppercase tracking-widest mb-1">
-                              {conditionMap[listing.condition] || "Excellent"}
+                        <div className="mt-auto pt-3 border-t border-slate-100">
+                          <p className="text-[8px] md:text-[9px] text-[#1c1c1c]/60 uppercase tracking-widest mb-1">
+                            {conditionMap[listing.condition] || "Excellent"}
+                          </p>
+                          <div className="flex items-baseline gap-2 md:gap-3">
+                            <p className="text-sm md:text-base font-bold tracking-tight text-[#1c1c1c]">
+                              ${price?.toLocaleString()}
                             </p>
-                            <div className="flex items-baseline gap-2 md:gap-3">
-                              <p className="text-sm md:text-base font-bold tracking-tight">
-                                ${price?.toLocaleString()}
+                            {msrp && msrp > price && (
+                              <p className="text-xs md:text-sm text-[#1c1c1c]/30 line-through">
+                                ${msrp.toLocaleString()}
                               </p>
-                              {msrp && msrp > price && (
-                                <p className="text-xs md:text-sm text-slate-300 line-through">
-                                  ${msrp.toLocaleString()}
-                                </p>
-                              )}
-                            </div>
+                            )}
                           </div>
-                          <span className="hidden md:block text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:text-primary transition-colors">
-                            View
-                          </span>
                         </div>
                       </div>
                     </div>

@@ -118,7 +118,7 @@ function FilterDropdown({
                 : "text-[#1c1c1c]/40 hover:text-[#1c1c1c] hover:bg-[#1c1c1c]/[0.02] hover:pl-6"
             }`}
           >
-            All {label}
+            {label}
           </button>
           {options.map((opt) => (
             <button
@@ -282,31 +282,26 @@ export default function ShopPage() {
                 <div className="p-3 md:p-4 flex flex-col flex-grow">
                   <div className="mb-2">
                     <div className="flex justify-between items-start mb-1">
-                      <h3 className="text-lg md:text-xl font-normal tracking-tight font-serif">{listing.title}</h3>
-                      <span className="text-[11px] md:text-xs font-bold text-slate-400 uppercase tracking-tighter flex-shrink-0 ml-2">
+                      <h3 className="text-lg md:text-xl font-normal tracking-tight font-serif text-[#1c1c1c]">{listing.title}</h3>
+                      <span className="text-[11px] md:text-xs font-bold text-[#1c1c1c]/60 uppercase tracking-tighter flex-shrink-0 ml-2">
                         SIZE {listing.size}
                       </span>
                     </div>
                   </div>
-                  <div className="mt-auto pt-3 border-t border-slate-100 flex justify-between items-end">
-                    <div>
-                      <p className="text-[10px] md:text-[11px] text-slate-400 uppercase tracking-widest mb-1">
-                        {listing.condition}
+                  <div className="mt-auto pt-3 border-t border-slate-100">
+                    <p className="text-[10px] md:text-[11px] text-[#1c1c1c]/60 uppercase tracking-widest mb-1">
+                      {listing.condition}
+                    </p>
+                    <div className="flex items-baseline gap-2">
+                      <p className="text-sm md:text-base font-bold tracking-tight text-[#1c1c1c]">
+                        ${listing.salePrice.toLocaleString()}
                       </p>
-                      <div className="flex items-baseline gap-2">
-                        <p className="text-sm md:text-base font-bold tracking-tight">
-                          ${listing.salePrice.toLocaleString()}
+                      {listing.originalPrice > listing.salePrice && (
+                        <p className="text-xs text-[#1c1c1c]/30 line-through">
+                          ${listing.originalPrice.toLocaleString()}
                         </p>
-                        {listing.originalPrice > listing.salePrice && (
-                          <p className="text-xs text-slate-300 line-through">
-                            ${listing.originalPrice.toLocaleString()}
-                          </p>
-                        )}
-                      </div>
+                      )}
                     </div>
-                    <span className="hidden md:block text-[10px] font-bold uppercase tracking-widest bg-[#1c1c1c] text-white px-3 py-1.5 hover:bg-[#333] transition-colors">
-                      Buy Now
-                    </span>
                   </div>
                 </div>
               </div>
