@@ -64,7 +64,12 @@ function ListingsTab() {
     if (!confirm("Delete this listing? This cannot be undone.")) return;
     startTransition(async () => {
       const res = await deleteListing(id);
-      if (res.success) setListings((prev) => prev.filter((l) => l.id !== id));
+      if (res.success) {
+        setListings((prev) => prev.filter((l) => l.id !== id));
+        alert('Listing deleted successfully!');
+      } else if (res.error) {
+        alert('Error deleting: ' + res.error);
+      }
     });
   };
 
@@ -76,6 +81,9 @@ function ListingsTab() {
         setListings((prev) =>
           prev.map((l) => (l.id === id ? { ...l, status: 'archived' } : l))
         );
+        alert('Listing unpublished successfully!');
+      } else if (res.error) {
+        alert('Error unpublishing: ' + res.error);
       }
     });
   };
@@ -88,6 +96,9 @@ function ListingsTab() {
         setListings((prev) =>
           prev.map((l) => (l.id === id ? { ...l, status: 'approved' } : l))
         );
+        alert('Listing republished successfully!');
+      } else if (res.error) {
+        alert('Error republishing: ' + res.error);
       }
     });
   };
