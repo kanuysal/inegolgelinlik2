@@ -206,7 +206,7 @@ export default function ShopPage() {
           </div>
 
           <FilterDropdown
-            label="All Sellers"
+            label="Sellers"
             value={seller}
             onChange={setSeller}
             options={[
@@ -216,7 +216,7 @@ export default function ShopPage() {
           />
 
           <FilterDropdown
-            label="All Collections"
+            label="Collections"
             value={collection}
             onChange={setCollection}
             options={[
@@ -227,7 +227,7 @@ export default function ShopPage() {
           />
 
           <FilterDropdown
-            label="All Conditions"
+            label="Condition"
             value={condition}
             onChange={setCondition}
             options={[
@@ -238,7 +238,7 @@ export default function ShopPage() {
           />
 
           <FilterDropdown
-            label="All Sizes"
+            label="Sizes"
             value={size}
             onChange={setSize}
             options={[
