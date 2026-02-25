@@ -190,7 +190,7 @@ export default function ShopPage() {
 
       {/* ── Filters bar — sticks under navbar on scroll, matches navbar width ── */}
       <div className="sticky top-[76px] z-30 flex justify-center px-4">
-        <div className="max-w-5xl w-full px-6 flex flex-wrap items-center gap-4 py-3 bg-white/85 backdrop-blur-xl shadow-[0_8px_30px_rgba(0,0,0,0.08)] border border-white/60">
+        <div className="max-w-5xl w-full px-6 flex flex-wrap items-center gap-4 py-3 bg-white backdrop-blur-xl shadow-[0_1px_3px_rgba(0,0,0,0.1)] border-b border-slate-100" style={{ fontFamily: "'Lelo', serif" }}>
           {/* Search */}
           <div className="relative">
             <span className="material-symbols-outlined absolute left-0 top-1/2 -translate-y-1/2 text-slate-400 text-lg">
@@ -206,29 +206,28 @@ export default function ShopPage() {
           </div>
 
           <FilterDropdown
-            label="Sellers"
+            label="All Sellers"
             value={seller}
             onChange={setSeller}
             options={[
-              { value: "samples", label: "GL Samples" },
+              { value: "samples", label: "Vendor Name" },
               { value: "brides", label: "GL Brides" },
             ]}
           />
 
           <FilterDropdown
-            label="Collections"
+            label="All Collections"
             value={collection}
             onChange={setCollection}
             options={[
-              { value: "Le Secret Royal", label: "Le Secret Royal" },
-              { value: "Allegria", label: "Allegria" },
               { value: "Couture", label: "Couture" },
-              { value: "GALA", label: "GALA" },
+              { value: "GALA", label: "Gala" },
+              { value: "Ready to Wear", label: "Ready to Wear" },
             ]}
           />
 
           <FilterDropdown
-            label="Condition"
+            label="All Conditions"
             value={condition}
             onChange={setCondition}
             options={[
@@ -239,7 +238,7 @@ export default function ShopPage() {
           />
 
           <FilterDropdown
-            label="Sizes"
+            label="All Sizes"
             value={size}
             onChange={setSize}
             options={[

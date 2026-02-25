@@ -66,7 +66,7 @@ export default function Home() {
             Authenticated pre-loved gowns, curated for their next grand entrance.
           </p>
           <Link href="/shop" className="inline-flex items-center gap-3 bg-white text-gray-900 px-8 py-3 md:px-10 md:py-4 font-medium text-sm uppercase tracking-widest hover:bg-gray-100 hover:scale-105 transition-all duration-300 shadow-xl group font-sans">
-            Shop the Collection
+            Shop Now
             <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
           </Link>
         </div>

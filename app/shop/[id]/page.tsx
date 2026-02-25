@@ -10,7 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { mockListings, type Listing, type ListingType } from "@/lib/mock-listings";
-import { getListingById, startConversation } from "../actions";
+import { getListingById, startConversation, getRelatedListings } from "../actions";
 import { GOWN_CATALOG } from "@/lib/catalog";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
@@ -147,6 +147,7 @@ export default function ProductDetailPage() {
   const [inquiryMsg, setInquiryMsg] = useState("");
   const [inquirySending, setInquirySending] = useState(false);
   const [inquiryError, setInquiryError] = useState<string | null>(null);
+  const [relatedListings, setRelatedListings] = useState<any[]>([]);
 
   useEffect(() => {
     const id = params.id as string;
@@ -180,10 +181,12 @@ export default function ProductDetailPage() {
         const color = sd?.colors?.join(", ") || "Ivory";
         const materials = sd?.materials?.join(", ") || "";
 
+        const collection = sd?.collection || dbRow.products?.style_name || dbRow.category || "Couture";
+
         setListing({
           id: dbRow.id,
           title: dbRow.title,
-          collection: sd?.collection || dbRow.products?.style_name || dbRow.category || "Couture",
+          collection,
           designer: "Galia Lahav",
           originalPrice: productMsrp || dbRow.price * 1.4,
           salePrice: dbRow.price,
@@ -208,6 +211,11 @@ export default function ProductDetailPage() {
             hips: dbRow.hips_cm ? `${dbRow.hips_cm}cm` : "—",
             height: dbRow.height_cm ? `${dbRow.height_cm}cm` : "—",
           },
+        });
+
+        // Fetch related listings from the same collection
+        getRelatedListings(id, dbRow.category || collection, 4).then((related) => {
+          setRelatedListings(related);
         });
       } else {
         const found = mockListings.find((l) => l.id === id);
@@ -459,7 +467,7 @@ export default function ProductDetailPage() {
 
               <div className="space-y-2">
                 <AccordionSection title="Seller Notes" defaultOpen>
-                  <div className="space-y-4 font-sans text-sm text-[#1c1c1c]/50 leading-relaxed font-light">
+                  <div className="space-y-4 font-sans text-sm text-[#1c1c1c] leading-relaxed font-light">
                     {productDescription ? <p>{productDescription}</p> : (
                       <p>This gown has been inspected and authenticated by the Galia Lahav atelier.</p>
                     )}
@@ -476,7 +484,7 @@ export default function ProductDetailPage() {
                   </div>
                 </AccordionSection>
                 <AccordionSection title="Size Guide">
-                  <div className="space-y-6 font-sans text-sm text-[#1c1c1c]/50 leading-relaxed font-light">
+                  <div className="space-y-6 font-sans text-sm text-[#1c1c1c] leading-relaxed font-light">
                     <div>
                       <h4 className="font-sans text-[11px] uppercase tracking-[0.1em] text-[#1c1c1c]/70 font-medium mb-3">Couture & Gala</h4>
                       <div className="overflow-x-auto">
@@ -555,7 +563,7 @@ export default function ProductDetailPage() {
                   </div>
                 </AccordionSection>
                 <AccordionSection title="Shipping & Returns">
-                  <div className="space-y-4 font-sans text-sm text-[#1c1c1c]/50 leading-relaxed font-light">
+                  <div className="space-y-4 font-sans text-sm text-[#1c1c1c] leading-relaxed font-light">
                     <p>Worldwide white-glove shipping insured for full value.</p>
                     <p>14-day archival return window included with our authenticity guarantee.</p>
                   </div>
@@ -565,6 +573,46 @@ export default function ProductDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* ── Similar Styles ── */}
+      {relatedListings.length > 0 && (
+        <section className="max-w-[1400px] mx-auto px-6 py-20">
+          <h2 className="font-serif text-3xl md:text-4xl font-light text-[#1c1c1c] mb-2">Similar Styles</h2>
+          <p className="text-sm text-[#1c1c1c]/40 mb-10">From the same collection</p>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            {relatedListings.map((item: any) => {
+              const image = item.images?.[0] || "/placeholder-gown.jpg";
+              const conditionMap: Record<string, string> = {
+                new_unworn: "New Never Worn",
+                excellent: "Excellent",
+                good: "Good",
+              };
+              return (
+                <Link href={`/shop/${item.id}`} key={item.id} className="group">
+                  <div className="relative aspect-[3/4] overflow-hidden bg-slate-100 mb-3">
+                    <img
+                      src={image}
+                      alt={item.title}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                  </div>
+                  <h3 className="font-serif text-base font-normal mb-1">{item.title}</h3>
+                  <p className="text-xs text-slate-400 uppercase tracking-wider mb-2">
+                    {conditionMap[item.condition] || "Excellent"}
+                  </p>
+                  <div className="flex items-baseline gap-2">
+                    <p className="text-sm font-bold">${item.price?.toLocaleString()}</p>
+                    {item.msrp && item.msrp > item.price && (
+                      <p className="text-xs text-slate-300 line-through">${item.msrp.toLocaleString()}</p>
+                    )}
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       <Footer />
     </div>

@@ -7,6 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { checkIsStaff } from "@/app/auth/actions";
 import type { User } from "@supabase/supabase-js";
+import { useWishlist } from "@/lib/wishlist-context";
 
 const MENU_LINKS = [
   { href: "/shop", label: "Bridal Gowns" },
@@ -79,6 +80,7 @@ export default function Navbar() {
     router.refresh();
   };
 
+  const { count: wishCount } = useWishlist();
   const isHome = pathname === "/";
   const useLight = isHome && !scrolled;
 
@@ -97,8 +99,9 @@ export default function Navbar() {
             <button
               onClick={() => setMenuOpen(true)}
               aria-label="Open menu"
+              className="w-6 h-6 flex items-center justify-center"
             >
-              <span className={`material-symbols-outlined text-xl transition-colors duration-300 ${useLight ? "text-white" : "text-primary"}`}>menu</span>
+              <span className={`material-symbols-outlined text-xl transition-colors duration-300 ${useLight ? "text-white" : "text-primary"}`} style={{ fontVariationSettings: "'wght' 300" }}>menu</span>
             </button>
             <Link
               href="/shop"
@@ -123,11 +126,16 @@ export default function Navbar() {
             >
               Sell
             </Link>
-            <Link href="/dashboard?tab=wishlist">
-              <span className={`material-symbols-outlined text-xl cursor-pointer transition-colors duration-300 ${useLight ? "text-white" : "text-primary"}`}>favorite_border</span>
+            <Link href="/dashboard?tab=wishlist" className="relative w-6 h-6 flex items-center justify-center">
+              <span className={`material-symbols-outlined text-xl cursor-pointer transition-colors duration-300 ${useLight ? "text-white" : "text-primary"}`} style={{ fontVariationSettings: "'wght' 300" }}>favorite_border</span>
+              {wishCount > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center leading-none">
+                  {wishCount > 9 ? "9+" : wishCount}
+                </span>
+              )}
             </Link>
-            <Link href="/shop">
-              <span className={`material-symbols-outlined text-xl cursor-pointer transition-colors duration-300 ${useLight ? "text-white" : "text-primary"}`}>shopping_cart</span>
+            <Link href="/shop" className="w-6 h-6 flex items-center justify-center">
+              <span className={`material-symbols-outlined text-xl cursor-pointer transition-colors duration-300 ${useLight ? "text-white" : "text-primary"}`} style={{ fontVariationSettings: "'wght' 300" }}>shopping_cart</span>
             </Link>
           </div>
         </div>
