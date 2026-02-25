@@ -203,7 +203,8 @@ export default function Home() {
       {/* ── Sell CTA ── */}
       <section className="relative py-32 px-6 overflow-hidden">
         <div className="absolute inset-0">
-          <img alt="Road landscape background" className="w-full h-full object-cover grayscale brightness-50" src="/images/hiw/banner.jpg" />
+          <img alt="Road landscape background" className="w-full h-full object-cover" src="/images/hiw/banner.jpg" />
+          <div className="absolute inset-0 bg-black/40"></div>
         </div>
         <div className="relative z-10 max-w-4xl mx-auto text-center text-white">
           <div className="flex justify-center mb-6">
