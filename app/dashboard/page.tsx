@@ -4,6 +4,7 @@ import { useState, useEffect, useTransition, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
+import toast, { Toaster } from "react-hot-toast";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
 import {
@@ -66,9 +67,9 @@ function ListingsTab() {
       const res = await deleteListing(id);
       if (res.success) {
         setListings((prev) => prev.filter((l) => l.id !== id));
-        alert('Listing deleted successfully!');
+        toast.success('Listing deleted successfully!');
       } else if (res.error) {
-        alert('Error deleting: ' + res.error);
+        toast.error('Error deleting: ' + res.error);
       }
     });
   };
@@ -88,15 +89,15 @@ function ListingsTab() {
           setListings((prev) =>
             prev.map((l) => (l.id === id ? { ...l, status: 'archived' } : l))
           );
-          alert('Listing unpublished successfully!');
+          toast.success('Listing unpublished successfully!');
         } else if (res?.error) {
-          alert('Error unpublishing: ' + res.error);
+          toast.error('Error unpublishing: ' + res.error);
         } else {
-          alert('Unexpected response: ' + JSON.stringify(res));
+          toast.error('Unexpected response: ' + JSON.stringify(res));
         }
       } catch (error: any) {
         console.error('Unpublish error:', error);
-        alert('Exception during unpublish: ' + error.message);
+        toast.error('Exception during unpublish: ' + error.message);
       }
     });
   };
@@ -109,9 +110,9 @@ function ListingsTab() {
         setListings((prev) =>
           prev.map((l) => (l.id === id ? { ...l, status: 'approved' } : l))
         );
-        alert('Listing republished successfully!');
+        toast.success('Listing republished successfully!');
       } else if (res.error) {
-        alert('Error republishing: ' + res.error);
+        toast.error('Error republishing: ' + res.error);
       }
     });
   };
@@ -725,6 +726,7 @@ function DashboardContent() {
 
   return (
     <main className="min-h-screen bg-background-light text-slate-900 font-sans">
+      <Toaster position="top-right" />
       <Navbar />
 
       <div className="pt-28 pb-10">
