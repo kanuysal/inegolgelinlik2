@@ -5,6 +5,7 @@ import { requireAuth } from '@/lib/auth'
 import { listingSchema } from '@/lib/validators/listing'
 import { GOWN_CATALOG } from '@/lib/catalog'
 import { SIZE_DATABASE } from '@/lib/sizes'
+import { revalidatePath } from 'next/cache'
 
 // Helper: get an untyped supabase client (DB types don't match runtime schema)
 async function getSupabase() {
@@ -167,7 +168,7 @@ export async function submitListing(formData: {
       msrp: result.data.msrp ?? null,
       product_id: productId,
       images: formData.images || [],
-      status: 'pending_review',
+      status: 'approved',
     })
     .select('id')
     .single()
@@ -176,6 +177,10 @@ export async function submitListing(formData: {
     console.error('Listing insert error:', error)
     return { error: `Failed to submit listing: ${error.message}` }
   }
+
+  // Revalidate shop and home pages so new listing appears immediately
+  revalidatePath('/shop')
+  revalidatePath('/')
 
   return { success: true, listingId: data.id }
 }
