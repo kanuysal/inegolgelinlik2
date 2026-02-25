@@ -9,6 +9,8 @@ import Footer from "@/components/ui/Footer";
 import {
   getMyListings,
   deleteListing,
+  unpublishListing,
+  republishListing,
   getMyPurchases,
   getMySales,
   getMyConversations,
@@ -66,6 +68,30 @@ function ListingsTab() {
     });
   };
 
+  const handleUnpublish = (id: string) => {
+    if (!confirm("Unpublish this listing? It will be hidden from the shop but you can republish it later.")) return;
+    startTransition(async () => {
+      const res = await unpublishListing(id);
+      if (res.success) {
+        setListings((prev) =>
+          prev.map((l) => (l.id === id ? { ...l, status: 'unlisted' } : l))
+        );
+      }
+    });
+  };
+
+  const handleRepublish = (id: string) => {
+    if (!confirm("Republish this listing? It will appear in the shop again.")) return;
+    startTransition(async () => {
+      const res = await republishListing(id);
+      if (res.success) {
+        setListings((prev) =>
+          prev.map((l) => (l.id === id ? { ...l, status: 'approved' } : l))
+        );
+      }
+    });
+  };
+
   if (loading) return <LoadingSkeleton />;
 
   return (
@@ -87,8 +113,16 @@ function ListingsTab() {
             <div className="relative aspect-[3/4] overflow-hidden">
               <img alt={listing.title} className="listing-image w-full h-full object-cover transition-transform duration-700" src={listing.images?.[0] || 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Lorena_-_Studio_-_Ai.jpg'} />
               <div className="absolute top-4 left-4">
-                <span className={`border px-3 py-1 text-[9px] font-bold uppercase tracking-widest rounded-full backdrop-blur-sm ${listing.status === 'approved' ? 'bg-green-500 text-white' : 'status-badge-live'}`}>
-                  {listing.status || 'Live'}
+                <span className={`border px-3 py-1 text-[9px] font-bold uppercase tracking-widest rounded-full backdrop-blur-sm ${
+                  listing.status === 'approved' ? 'bg-green-500 text-white border-green-500' :
+                  listing.status === 'unlisted' ? 'bg-gray-500 text-white border-gray-500' :
+                  listing.status === 'pending_review' ? 'bg-amber-500 text-white border-amber-500' :
+                  listing.status === 'rejected' ? 'bg-red-500 text-white border-red-500' :
+                  'bg-slate-200 text-slate-700 border-slate-300'
+                }`}>
+                  {listing.status === 'pending_review' ? 'PENDING' :
+                   listing.status === 'unlisted' ? 'UNLISTED' :
+                   listing.status || 'DRAFT'}
                 </span>
               </div>
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-3 z-10">
@@ -122,10 +156,37 @@ function ListingsTab() {
                     <button
                       onClick={() => handleDelete(listing.id)}
                       disabled={isPending}
-                      className="text-red-400 text-[9px] font-bold uppercase tracking-widest hover:text-red-600 transition-colors"
+                      className="text-red-400 text-[9px] font-bold uppercase tracking-widest hover:text-red-600 transition-colors disabled:opacity-50"
                     >
                       Delete
                     </button>
+                  )}
+                  {listing.status === "approved" && (
+                    <button
+                      onClick={() => handleUnpublish(listing.id)}
+                      disabled={isPending}
+                      className="text-amber-600 text-[9px] font-bold uppercase tracking-widest hover:text-amber-800 transition-colors disabled:opacity-50"
+                    >
+                      Unpublish
+                    </button>
+                  )}
+                  {listing.status === "unlisted" && (
+                    <>
+                      <button
+                        onClick={() => handleRepublish(listing.id)}
+                        disabled={isPending}
+                        className="text-green-600 text-[9px] font-bold uppercase tracking-widest hover:text-green-800 transition-colors disabled:opacity-50"
+                      >
+                        Republish
+                      </button>
+                      <button
+                        onClick={() => handleDelete(listing.id)}
+                        disabled={isPending}
+                        className="text-red-400 text-[9px] font-bold uppercase tracking-widest hover:text-red-600 transition-colors disabled:opacity-50"
+                      >
+                        Delete
+                      </button>
+                    </>
                   )}
                 </div>
                 <Link href={`/shop/${listing.id}`} className="text-[10px] font-bold uppercase tracking-widest text-primary hover:text-accent transition-colors flex items-center gap-1">

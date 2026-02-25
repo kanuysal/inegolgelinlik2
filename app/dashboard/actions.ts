@@ -39,6 +39,52 @@ export async function deleteListing(listingId: string) {
 
   if (error) return { error: error.message }
   revalidatePath('/dashboard')
+  revalidatePath('/shop')
+  revalidatePath('/')
+  return { success: true }
+}
+
+export async function unpublishListing(listingId: string) {
+  const user = await requireAuth()
+  const supabase = await db()
+
+  // Change status from approved to unlisted (hidden from shop)
+  const { error } = await supabase
+    .from('listings')
+    .update({
+      status: 'unlisted',
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', listingId)
+    .eq('seller_id', user.id)
+    .eq('status', 'approved')
+
+  if (error) return { error: error.message }
+  revalidatePath('/dashboard')
+  revalidatePath('/shop')
+  revalidatePath('/')
+  return { success: true }
+}
+
+export async function republishListing(listingId: string) {
+  const user = await requireAuth()
+  const supabase = await db()
+
+  // Change status from unlisted back to approved
+  const { error } = await supabase
+    .from('listings')
+    .update({
+      status: 'approved',
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', listingId)
+    .eq('seller_id', user.id)
+    .eq('status', 'unlisted')
+
+  if (error) return { error: error.message }
+  revalidatePath('/dashboard')
+  revalidatePath('/shop')
+  revalidatePath('/')
   return { success: true }
 }
 
