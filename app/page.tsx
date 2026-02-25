@@ -156,27 +156,27 @@ export default function Home() {
                       <div className="p-2.5 md:p-3 flex flex-col flex-grow">
                         <div className="mb-1.5">
                           <div className="flex justify-between items-start mb-0.5">
-                            <h3 className="text-sm md:text-base font-normal tracking-tight font-serif text-[#1c1c1c]">{listing.title}</h3>
+                            <h3 className="text-base md:text-lg font-normal tracking-tight font-serif text-[#1c1c1c]">{listing.title}</h3>
                             {listing.size_us && (
-                              <span className="text-[9px] md:text-[10px] font-bold text-[#1c1c1c]/60 uppercase tracking-tighter">
+                              <span className="text-[10px] md:text-xs font-bold text-[#1c1c1c]/60 uppercase tracking-tighter">
                                 SIZE {listing.size_us}
                               </span>
                             )}
                           </div>
-                          <p className="text-[8px] md:text-[9px] text-[#1c1c1c]/60 uppercase tracking-widest">
+                          <p className="text-[10px] md:text-[11px] text-[#1c1c1c]/60 uppercase tracking-widest">
                             {listing.products?.style_name || listing.category || "Couture"}
                           </p>
                         </div>
                         <div className="mt-auto pt-2 border-t border-slate-100">
-                          <p className="text-[8px] md:text-[9px] text-[#1c1c1c]/60 uppercase tracking-widest mb-0.5">
+                          <p className="text-[10px] md:text-[11px] text-[#1c1c1c]/60 uppercase tracking-widest mb-0.5">
                             {conditionMap[listing.condition] || "Excellent"}
                           </p>
                           <div className="flex items-baseline gap-1.5 md:gap-2">
-                            <p className="text-sm md:text-base font-bold tracking-tight text-[#1c1c1c]">
+                            <p className="text-base md:text-lg font-bold tracking-tight text-[#1c1c1c]">
                               ${price?.toLocaleString()}
                             </p>
                             {msrp && msrp > price && (
-                              <p className="text-[10px] md:text-xs text-[#1c1c1c]/30 line-through">
+                              <p className="text-xs md:text-sm text-[#1c1c1c]/30 line-through">
                                 ${msrp.toLocaleString()}
                               </p>
                             )}

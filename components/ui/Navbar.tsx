@@ -161,8 +161,15 @@ export default function Navbar() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ duration: 0.5, ease: [0.32, 0.72, 0, 1] }}
-              className="fixed top-0 right-0 z-[101] w-full sm:w-[50%] h-screen bg-[#faf9f8] flex flex-col"
+              className="fixed top-0 right-0 z-[101] w-full sm:w-[50%] h-screen flex flex-col relative"
+              style={{
+                backgroundImage: 'url(/images/hiw/Menu.jpg)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }}
             >
+              {/* Overlay for text readability */}
+              <div className="absolute inset-0 bg-white/80 backdrop-blur-sm -z-10"></div>
               {/* Close button */}
               <button
                 onClick={() => setMenuOpen(false)}
