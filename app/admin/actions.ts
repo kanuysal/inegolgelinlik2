@@ -53,12 +53,29 @@ export async function getPendingListings() {
 
   const { data, error } = await supabase
     .from('listings')
-    .select('*, profiles(display_name, full_name)')
+    .select('*')
     .eq('status', 'pending_review')
     .order('created_at', { ascending: true })
 
   if (error) {
     console.error('getPendingListings error:', error)
+    return []
+  }
+
+  // Fetch profiles separately to avoid join issues
+  if (data && data.length > 0) {
+    const sellerIds = [...new Set(data.map((l: any) => l.seller_id))]
+    const { data: profiles } = await supabase
+      .from('profiles')
+      .select('id, display_name, full_name')
+      .in('id', sellerIds)
+
+    const profileMap = new Map(profiles?.map((p: any) => [p.id, p]) || [])
+
+    return data.map((listing: any) => ({
+      ...listing,
+      profiles: profileMap.get(listing.seller_id) || null,
+    }))
   }
 
   return data || []
