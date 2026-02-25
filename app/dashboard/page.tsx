@@ -91,12 +91,13 @@ function ListingsTab() {
                   {listing.status || 'Live'}
                 </span>
               </div>
-              <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4">
-                <Link href={`/sell/submit?edit=${listing.id}`} className="w-10 h-10 rounded-full bg-white text-primary flex items-center justify-center hover:bg-accent hover:text-white transition-colors">
-                  <span className="material-symbols-outlined text-lg">edit</span>
-                </Link>
-                <Link href={`/shop/${listing.id}`} className="w-10 h-10 rounded-full bg-white text-primary flex items-center justify-center hover:bg-accent hover:text-white transition-colors">
-                  <span className="material-symbols-outlined text-lg">visibility</span>
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-3 z-10">
+                <Link
+                  href={`/shop/${listing.id}`}
+                  className="w-12 h-12 rounded-full bg-white shadow-lg text-primary flex items-center justify-center hover:bg-accent hover:text-white transition-all hover:scale-110"
+                  title="View listing"
+                >
+                  <span className="material-symbols-outlined text-xl">visibility</span>
                 </Link>
               </div>
             </div>
