@@ -74,7 +74,7 @@ function ListingsTab() {
       const res = await unpublishListing(id);
       if (res.success) {
         setListings((prev) =>
-          prev.map((l) => (l.id === id ? { ...l, status: 'unlisted' } : l))
+          prev.map((l) => (l.id === id ? { ...l, status: 'archived' } : l))
         );
       }
     });
@@ -115,13 +115,13 @@ function ListingsTab() {
               <div className="absolute top-4 left-4">
                 <span className={`border px-3 py-1 text-[9px] font-bold uppercase tracking-widest rounded-full backdrop-blur-sm ${
                   listing.status === 'approved' ? 'bg-green-500 text-white border-green-500' :
-                  listing.status === 'unlisted' ? 'bg-gray-500 text-white border-gray-500' :
+                  listing.status === 'archived' ? 'bg-gray-500 text-white border-gray-500' :
                   listing.status === 'pending_review' ? 'bg-amber-500 text-white border-amber-500' :
                   listing.status === 'rejected' ? 'bg-red-500 text-white border-red-500' :
                   'bg-slate-200 text-slate-700 border-slate-300'
                 }`}>
                   {listing.status === 'pending_review' ? 'PENDING' :
-                   listing.status === 'unlisted' ? 'UNLISTED' :
+                   listing.status === 'archived' ? 'ARCHIVED' :
                    listing.status || 'DRAFT'}
                 </span>
               </div>
@@ -170,7 +170,7 @@ function ListingsTab() {
                       Unpublish
                     </button>
                   )}
-                  {listing.status === "unlisted" && (
+                  {listing.status === "archived" && (
                     <>
                       <button
                         onClick={() => handleRepublish(listing.id)}

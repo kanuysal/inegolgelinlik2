@@ -29,13 +29,13 @@ export async function deleteListing(listingId: string) {
   const user = await requireAuth()
   const supabase = await db()
 
-  // Only allow deleting drafts or rejected listings
+  // Only allow deleting drafts, rejected, or archived listings
   const { error } = await supabase
     .from('listings')
     .delete()
     .eq('id', listingId)
     .eq('seller_id', user.id)
-    .in('status', ['draft', 'rejected'])
+    .in('status', ['draft', 'rejected', 'archived'])
 
   if (error) return { error: error.message }
   revalidatePath('/dashboard')
@@ -48,11 +48,11 @@ export async function unpublishListing(listingId: string) {
   const user = await requireAuth()
   const supabase = await db()
 
-  // Change status from approved to unlisted (hidden from shop)
+  // Change status from approved to archived (hidden from shop)
   const { error } = await supabase
     .from('listings')
     .update({
-      status: 'unlisted',
+      status: 'archived',
       updated_at: new Date().toISOString()
     })
     .eq('id', listingId)
@@ -70,7 +70,7 @@ export async function republishListing(listingId: string) {
   const user = await requireAuth()
   const supabase = await db()
 
-  // Change status from unlisted back to approved
+  // Change status from archived back to approved
   const { error } = await supabase
     .from('listings')
     .update({
@@ -79,7 +79,7 @@ export async function republishListing(listingId: string) {
     })
     .eq('id', listingId)
     .eq('seller_id', user.id)
-    .eq('status', 'unlisted')
+    .eq('status', 'archived')
 
   if (error) return { error: error.message }
   revalidatePath('/dashboard')
