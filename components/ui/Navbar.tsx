@@ -12,7 +12,7 @@ import { useWishlist } from "@/lib/wishlist-context";
 const MENU_LINKS = [
   { href: "/shop", label: "Bridal Gowns" },
   { href: "/how-it-works", label: "How It Works" },
-  { href: "/how-it-works", label: "Sell" },
+  { href: "/consign", label: "Sell" },
   { href: "/dashboard", label: "My Account" },
 ];
 
@@ -121,7 +121,7 @@ export default function Navbar() {
           {/* Right — Sell + Wishlist + Cart */}
           <div className="flex items-center gap-4">
             <Link
-              href="/how-it-works"
+              href="/consign"
               className={`text-sm font-medium tracking-widest uppercase transition-colors duration-300 hidden sm:block ${useLight ? "text-white" : "text-primary"}`}
             >
               Sell
