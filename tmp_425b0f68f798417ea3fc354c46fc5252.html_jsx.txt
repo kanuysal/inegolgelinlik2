@@ -1,0 +1,273 @@
+
+<nav className="border-b border-slate-200 dark:border-slate-800 sticky top-0 bg-white/80 dark:bg-black/80 backdrop-blur-md z-40">
+<div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+<div className="flex items-center gap-8">
+<button className="text-slate-600 dark:text-slate-400 hover:text-black dark:hover:text-white transition-colors">
+<span className="material-icons-outlined">menu</span>
+</button>
+<div className="hidden md:flex gap-6 text-xs uppercase tracking-[0.2em] font-medium">
+<a className="hover:opacity-60 transition-opacity" href="#">Shop</a>
+<a className="hover:opacity-60 transition-opacity" href="#">Sell</a>
+<a className="hover:opacity-60 transition-opacity" href="#">About</a>
+</div>
+</div>
+<div className="absolute left-1/2 -translate-x-1/2">
+<h1 className="font-display text-2xl md:text-3xl tracking-widest uppercase">Galia Lahav</h1>
+</div>
+<div className="flex items-center gap-6">
+<span className="material-icons-outlined cursor-pointer">search</span>
+<span className="material-icons-outlined cursor-pointer">favorite_border</span>
+<span className="material-icons-outlined cursor-pointer">shopping_bag</span>
+</div>
+</div>
+</nav>
+<main className="max-w-7xl mx-auto px-6 py-12">
+<div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+<div className="lg:col-span-7 space-y-6">
+<div className="aspect-[3/4] bg-slate-100 dark:bg-slate-900 overflow-hidden">
+<img alt="Galia Lahav Couture Gown Front View" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCohv9BjSWzQXvwsaRCNFQmNA9WYm1Tj_DWPSdLCGCcpAbYLPGsPBP_3tL7MRpHY19ZmMlhH-v2ddUdZ01dYeYuHJZj9pj3Uu_nhREkQPPvAduOxm75I1oCAEXX0fA3TsjcOmiTyjRoodIZgcpfr9ppdtu_mBqvDZUDdMEhveBg9E8pdD3cwyQjsv_6a56wpULlZ1VIvCajUDb4zGYRpnbn1W63CRvhHAWbvkWbtZ4w7sI4iNALPltrPimLhtY5bsOSdEvOF1vI2STR"/>
+</div>
+<div className="grid grid-cols-4 gap-4">
+<div className="aspect-[3/4] bg-slate-100 dark:bg-slate-900 ring-1 ring-black dark:ring-white">
+<img alt="Thumbnail 1" className="w-full h-full object-cover opacity-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDObER8WFX99RoNJXHkdUf2bHcQaVmlFL95iIHBTGkQlCy0UxJBGtHaXgvrmOP3tZzcEIQhwQbuH-8frI_LW7dA2sLLU3qpdN7Jpcfcq9sXybtGuBPfhFCnETdTTNnCl12CiDheR7q2YBFawdmF28Snif4VwFtO3PbJZNbyFPcoP-oFD4_93e0-og_X0Z74EHotkIU6I3WjDMecmv7lVUw0KrAc5LnYnVR7rubOR4eHYGwDROBB81i6QsQmlDZbHjqSTwrtWC1YF8-l"/>
+</div>
+<div className="aspect-[3/4] bg-slate-100 dark:bg-slate-900">
+<img alt="Thumbnail 2" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC228-BzNlmvs7vfJBDhpalTVrbjefiszEI004Uspeq-eFtFfhE8yub5NHe9RhLviIEB_vkLPHi8HLZ6R0_E7H26V3Vwb4ksFwMkIVpQaHCbKeOg8uVdXD_LYcF0_jyYRzziyoCTQco_GQbq-RqHpuyyLntVieKMgS3WSHZ0nQUiyNlcR2KLzMhyUDXrKDQIrtVQYdglNN4QCNlFWDVX7Yl7-5ufW-0h-5k7O0n5YEWZprwkdSJuuEZNVN8zN_xIMEHCDaKH2ONRRPd"/>
+</div>
+<div className="aspect-[3/4] bg-slate-100 dark:bg-slate-900">
+<img alt="Thumbnail 3" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBW9wk5t0D6bcvkHifXIUf-SS7A-WpgLHNO_V7w2UilMF-rylVmuNuINNcAjqfnuJ_WGlxB5GalcxBewdL1koEzlSUX7FoOIwLFwfoCgrQCaFUQJStqCRQwHUxIBI7kmKSwbCYpgo7Ac8ooAgZk5BQiXi_NQNgECQdnt1ILNR7r8bPN7iqUJpJX9FUSeyxltWPNDTF4pgBcyzTc1CgEIcD6rbwnEaYziAcZ9aBtIcvjX3Rfd3vT7ZVWzWTpX96erzYRVtfw8VFgtdx8"/>
+</div>
+<div className="aspect-[3/4] bg-slate-100 dark:bg-slate-900">
+<img alt="Thumbnail 4" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDypkgCoaSLgJ4UHOEdAJbJarvXLUKm4tvzEJY0igajpJ3GNPgeX2MVSmI4Lzj2_1mvExf4uLSc6S6SUOa1TbOPBuTiYP8FfJFDQx94aXlZeH7eAW9ua3RsfwkmCjoJ1L2G9qbQrHNJja2osDvyTyUbKauO4nFJOqJfesNlx_t6-H2-E0MrKnJ3YmOx6rlrPvlsVV8hSK1X-v8H8BJAi-kRzfZsLvZLMYGJcsqVNIQl6LZoVGKQii3Hb4ZWHFrwuygisB1Ffc30bu1n"/>
+</div>
+</div>
+</div>
+<div className="lg:col-span-5 relative">
+<div className="sticky top-32 space-y-8">
+<div className="space-y-4">
+<div className="flex items-center gap-2">
+<span className="text-[10px] uppercase tracking-[0.3em] font-semibold bg-slate-100 dark:bg-slate-800 px-3 py-1">Alegria Collection</span>
+<span className="text-[10px] uppercase tracking-[0.3em] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 px-3 py-1">Authenticated</span>
+</div>
+<h2 className="font-display text-4xl md:text-5xl leading-tight">The Fabiana Gown</h2>
+<div className="flex items-baseline gap-4">
+<span className="text-2xl font-light">$7,200</span>
+<span className="text-slate-400 line-through text-lg">$12,400</span>
+<span className="text-rose-600 text-sm font-medium">42% OFF</span>
+</div>
+</div>
+<div className="space-y-4 pt-4">
+<button className="w-full bg-primary text-white py-5 px-8 text-xs uppercase tracking-[0.2em] hover:bg-slate-800 transition-colors font-medium" onclick="document.getElementById('inquiry-modal').classList.remove('hidden')">
+                        Inquire Now
+                    </button>
+<button className="w-full border border-slate-200 dark:border-slate-800 py-5 px-8 text-xs uppercase tracking-[0.2em] hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors font-medium">
+                        Save to Wishlist
+                    </button>
+</div>
+<div className="grid grid-cols-2 gap-y-6 pt-8 border-t border-slate-100 dark:border-slate-800">
+<div>
+<p className="text-[10px] uppercase tracking-wider text-slate-400 mb-1">Size</p>
+<p className="text-sm">US 4 (EU 36)</p>
+</div>
+<div>
+<p className="text-[10px] uppercase tracking-wider text-slate-400 mb-1">Silhouette</p>
+<p className="text-sm">A-Line</p>
+</div>
+<div>
+<p className="text-[10px] uppercase tracking-wider text-slate-400 mb-1">Condition</p>
+<p className="text-sm">Excellent / Once Worn</p>
+</div>
+<div>
+<p className="text-[10px] uppercase tracking-wider text-slate-400 mb-1">Location</p>
+<p className="text-sm">Paris, France</p>
+</div>
+<div>
+<p className="text-[10px] uppercase tracking-wider text-slate-400 mb-1">Neckline</p>
+<p className="text-sm">Sweetheart</p>
+</div>
+<div>
+<p className="text-[10px] uppercase tracking-wider text-slate-400 mb-1">Material</p>
+<p className="text-sm">Silk Tulle, Lace</p>
+</div>
+</div>
+<div className="pt-8 space-y-1">
+<details className="group border-t border-slate-100 dark:border-slate-800 py-4" open="">
+<summary className="flex justify-between items-center cursor-pointer list-none">
+<span className="text-xs uppercase tracking-[0.15em] font-medium">About This Gown</span>
+<span className="material-icons-outlined text-lg group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<div className="mt-4 text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-light">
+<p>The Fabiana is a hand-embellished masterpiece from the Alegria collection. Featuring intricate floral 3D appliqués and a shimmering sequin underlay that catches the light beautifully. This specific gown was worn for a 4-hour indoor ceremony and has been professionally dry-cleaned by a bridal specialist.</p>
+</div>
+</details>
+<details className="group border-t border-slate-100 dark:border-slate-800 py-4">
+<summary className="flex justify-between items-center cursor-pointer list-none">
+<span className="text-xs uppercase tracking-[0.15em] font-medium">Detailed Measurements</span>
+<span className="material-icons-outlined text-lg group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<div className="mt-4 space-y-2 text-sm text-slate-600 dark:text-slate-400">
+<div className="flex justify-between border-b border-slate-50 dark:border-slate-900 pb-2"><span>Bust</span><span>34"</span></div>
+<div className="flex justify-between border-b border-slate-50 dark:border-slate-900 pb-2"><span>Waist</span><span>26"</span></div>
+<div className="flex justify-between border-b border-slate-50 dark:border-slate-900 pb-2"><span>Hips</span><span>37"</span></div>
+<div className="flex justify-between pb-2"><span>Height with Shoes</span><span>5'10"</span></div>
+</div>
+</details>
+<details className="group border-y border-slate-100 dark:border-slate-800 py-4">
+<summary className="flex justify-between items-center cursor-pointer list-none">
+<span className="text-xs uppercase tracking-[0.15em] font-medium">Shipping &amp; Returns</span>
+<span className="material-icons-outlined text-lg group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<div className="mt-4 text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-light">
+<p>Global insured shipping via DHL Express. This item is final sale due to its high-value nature. We recommend requesting a video call before purchase.</p>
+</div>
+</details>
+</div>
+</div>
+</div>
+</div>
+<section className="mt-40 border-t border-slate-100 dark:border-slate-800 pt-24">
+<h2 className="font-display text-4xl md:text-5xl text-center mb-20 tracking-tight">You Might Also Like</h2>
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+<div className="group cursor-pointer">
+<div className="aspect-[3/4] bg-slate-100 dark:bg-slate-900 mb-6 overflow-hidden relative">
+<img alt="Recommended Gown 1" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDObER8WFX99RoNJXHkdUf2bHcQaVmlFL95iIHBTGkQlCy0UxJBGtHaXgvrmOP3tZzcEIQhwQbuH-8frI_LW7dA2sLLU3qpdN7Jpcfcq9sXybtGuBPfhFCnETdTTNnCl12CiDheR7q2YBFawdmF28Snif4VwFtO3PbJZNbyFPcoP-oFD4_93e0-og_X0Z74EHotkIU6I3WjDMecmv7lVUw0KrAc5LnYnVR7rubOR4eHYGwDROBB81i6QsQmlDZbHjqSTwrtWC1YF8-l"/>
+<div className="absolute top-4 left-4">
+<div className="flex items-center gap-1.5 bg-white/90 dark:bg-black/90 backdrop-blur px-2 py-1">
+<span className="material-symbols-outlined text-[14px] text-emerald-600">verified</span>
+<span className="text-[9px] uppercase tracking-widest font-bold text-slate-900 dark:text-white">Verified</span>
+</div>
+</div>
+</div>
+<div className="space-y-1">
+<p className="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-semibold">Le Secret Royal</p>
+<h3 className="text-sm font-medium tracking-wide">The Ms. Elle Gown</h3>
+<p className="text-sm font-light text-slate-600 dark:text-slate-400 pt-1">$6,800</p>
+</div>
+</div>
+<div className="group cursor-pointer">
+<div className="aspect-[3/4] bg-slate-100 dark:bg-slate-900 mb-6 overflow-hidden relative">
+<img alt="Recommended Gown 2" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC228-BzNlmvs7vfJBDhpalTVrbjefiszEI004Uspeq-eFtFfhE8yub5NHe9RhLviIEB_vkLPHi8HLZ6R0_E7H26V3Vwb4ksFwMkIVpQaHCbKeOg8uVdXD_LYcF0_jyYRzziyoCTQco_GQbq-RqHpuyyLntVieKMgS3WSHZ0nQUiyNlcR2KLzMhyUDXrKDQIrtVQYdglNN4QCNlFWDVX7Yl7-5ufW-0h-5k7O0n5YEWZprwkdSJuuEZNVN8zN_xIMEHCDaKH2ONRRPd"/>
+<div className="absolute top-4 left-4">
+<div className="flex items-center gap-1.5 bg-white/90 dark:bg-black/90 backdrop-blur px-2 py-1">
+<span className="material-symbols-outlined text-[14px] text-emerald-600">verified</span>
+<span className="text-[9px] uppercase tracking-widest font-bold text-slate-900 dark:text-white">Verified</span>
+</div>
+</div>
+</div>
+<div className="space-y-1">
+<p className="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-semibold">Alegria</p>
+<h3 className="text-sm font-medium tracking-wide">The Bellina Gown</h3>
+<p className="text-sm font-light text-slate-600 dark:text-slate-400 pt-1">$8,200</p>
+</div>
+</div>
+<div className="group cursor-pointer">
+<div className="aspect-[3/4] bg-slate-100 dark:bg-slate-900 mb-6 overflow-hidden relative">
+<img alt="Recommended Gown 3" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBW9wk5t0D6bcvkHifXIUf-SS7A-WpgLHNO_V7w2UilMF-rylVmuNuINNcAjqfnuJ_WGlxB5GalcxBewdL1koEzlSUX7FoOIwLFwfoCgrQCaFUQJStqCRQwHUxIBI7kmKSwbCYpgo7Ac8ooAgZk5BQiXi_NQNgECQdnt1ILNR7r8bPN7iqUJpJX9FUSeyxltWPNDTF4pgBcyzTc1CgEIcD6rbwnEaYziAcZ9aBtIcvjX3Rfd3vT7ZVWzWTpX96erzYRVtfw8VFgtdx8"/>
+<div className="absolute top-4 left-4">
+<div className="flex items-center gap-1.5 bg-white/90 dark:bg-black/90 backdrop-blur px-2 py-1">
+<span className="material-symbols-outlined text-[14px] text-emerald-600">verified</span>
+<span className="text-[9px] uppercase tracking-widest font-bold text-slate-900 dark:text-white">Verified</span>
+</div>
+</div>
+</div>
+<div className="space-y-1">
+<p className="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-semibold">Queen of Hearts</p>
+<h3 className="text-sm font-medium tracking-wide">The Rhiannon Gown</h3>
+<p className="text-sm font-light text-slate-600 dark:text-slate-400 pt-1">$7,500</p>
+</div>
+</div>
+<div className="group cursor-pointer">
+<div className="aspect-[3/4] bg-slate-100 dark:bg-slate-900 mb-6 overflow-hidden relative">
+<img alt="Recommended Gown 4" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDypkgCoaSLgJ4UHOEdAJbJarvXLUKm4tvzEJY0igajpJ3GNPgeX2MVSmI4Lzj2_1mvExf4uLSc6S6SUOa1TbOPBuTiYP8FfJFDQx94aXlZeH7eAW9ua3RsfwkmCjoJ1L2G9qbQrHNJja2osDvyTyUbKauO4nFJOqJfesNlx_t6-H2-E0MrKnJ3YmOx6rlrPvlsVV8hSK1X-v8H8BJAi-kRzfZsLvZLMYGJcsqVNIQl6LZoVGKQii3Hb4ZWHFrwuygisB1Ffc30bu1n"/>
+<div className="absolute top-4 left-4">
+<div className="flex items-center gap-1.5 bg-white/90 dark:bg-black/90 backdrop-blur px-2 py-1">
+<span className="material-symbols-outlined text-[14px] text-emerald-600">verified</span>
+<span className="text-[9px] uppercase tracking-widest font-bold text-slate-900 dark:text-white">Verified</span>
+</div>
+</div>
+</div>
+<div className="space-y-1">
+<p className="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-semibold">GALA</p>
+<h3 className="text-sm font-medium tracking-wide">The G-204 Gown</h3>
+<p className="text-sm font-light text-slate-600 dark:text-slate-400 pt-1">$5,900</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer className="mt-32 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-black/20">
+<div className="max-w-7xl mx-auto px-6 py-20">
+<div className="grid grid-cols-2 md:grid-cols-4 gap-12">
+<div className="space-y-6">
+<h3 className="font-display text-xl">The Brand</h3>
+<ul className="space-y-3 text-sm text-slate-500 font-light">
+<li><a className="hover:text-black dark:hover:text-white" href="#">Our Story</a></li>
+<li><a className="hover:text-black dark:hover:text-white" href="#">Craftsmanship</a></li>
+<li><a className="hover:text-black dark:hover:text-white" href="#">Contact</a></li>
+</ul>
+</div>
+<div className="space-y-6">
+<h3 className="font-display text-xl">Concierge</h3>
+<ul className="space-y-3 text-sm text-slate-500 font-light">
+<li><a className="hover:text-black dark:hover:text-white" href="#">Sizing Guide</a></li>
+<li><a className="hover:text-black dark:hover:text-white" href="#">Authentication</a></li>
+<li><a className="hover:text-black dark:hover:text-white" href="#">Secure Payments</a></li>
+</ul>
+</div>
+<div className="col-span-2 space-y-6">
+<h3 className="font-display text-xl">Newsletter</h3>
+<p className="text-sm text-slate-500 font-light">Join the circle for exclusive access to pre-owned couture launches.</p>
+<div className="flex">
+<input className="bg-transparent border-slate-200 dark:border-slate-800 w-full focus:ring-0 focus:border-black dark:focus:border-white transition-colors py-3 text-sm" placeholder="Email Address" type="email"/>
+<button className="bg-primary text-white px-8 text-xs uppercase tracking-widest font-medium">Join</button>
+</div>
+</div>
+</div>
+<div className="mt-20 pt-8 border-t border-slate-100 dark:border-slate-800 flex flex-col md:flex-row justify-between items-center gap-6">
+<p className="text-[10px] uppercase tracking-widest text-slate-400">© 2024 Galia Lahav Archive. All Rights Reserved.</p>
+<div className="flex gap-8">
+<span className="text-[10px] uppercase tracking-widest text-slate-400">Instagram</span>
+<span className="text-[10px] uppercase tracking-widest text-slate-400">Pinterest</span>
+<span className="text-[10px] uppercase tracking-widest text-slate-400">Terms</span>
+</div>
+</div>
+</div>
+</footer>
+<div className="hidden fixed inset-0 z-50 flex items-center justify-center p-6" id="inquiry-modal">
+<div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="this.parentElement.classList.add('hidden')"></div>
+<div className="bg-white dark:bg-slate-900 w-full max-w-2xl relative shadow-2xl">
+<div className="grid grid-cols-1 md:grid-cols-2">
+<div className="hidden md:block bg-slate-50 dark:bg-slate-800">
+<img alt="The Fabiana Gown Small" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBAQ_BtXtvgZQQRvsyLpDjsD8UT9LAE2VqC181fai1CrSn_ozBYm0oTQ34mG_iGwPefq_feE5MhekKJG2P0dd3MvMcIDWvXzjLPvfxeY9Cka_nspvs6yQL83K4mZ3yPR2JRgdkaaoIp61A0qhkMWmIrXr1IZ0S7gaFpNLbrNnLnj_wmWtBO-0v9SnEpk_t3bOHAtSYJrfEctjWkfeeBLC0KHKzYAZrS8qKTVNFN2DLiUDA44FgtzqhENx1Wxyz2PMZEmcGMvL0tZfIC"/>
+</div>
+<div className="p-8 md:p-10 space-y-6">
+<div className="flex justify-between items-start">
+<div>
+<h3 className="font-display text-2xl mb-1">Inquire about Fabiana</h3>
+<p className="text-xs text-slate-400 uppercase tracking-widest">Message Seller</p>
+</div>
+<button className="material-icons-outlined text-slate-400 hover:text-black" onclick="document.getElementById('inquiry-modal').classList.add('hidden')">close</button>
+</div>
+<form className="space-y-4">
+<div className="space-y-1">
+<label className="text-[10px] uppercase tracking-widest font-semibold">Name</label>
+<input className="w-full border-slate-200 dark:border-slate-700 bg-transparent py-3 text-sm focus:ring-1 focus:ring-black" type="text"/>
+</div>
+<div className="space-y-1">
+<label className="text-[10px] uppercase tracking-widest font-semibold">Email</label>
+<input className="w-full border-slate-200 dark:border-slate-700 bg-transparent py-3 text-sm focus:ring-1 focus:ring-black" type="email"/>
+</div>
+<div className="space-y-1">
+<label className="text-[10px] uppercase tracking-widest font-semibold">Message</label>
+<textarea className="w-full border-slate-200 dark:border-slate-700 bg-transparent py-3 text-sm focus:ring-1 focus:ring-black" placeholder="I am interested in this gown and have a question about..." rows="4"></textarea>
+</div>
+<div className="pt-4">
+<button className="w-full bg-primary text-white py-4 text-xs uppercase tracking-widest font-medium hover:bg-slate-800 transition-all" type="submit">Send Inquiry</button>
+</div>
+<p className="text-[10px] text-center text-slate-400 font-light italic">Your information is protected by our luxury buyer guarantee.</p>
+</form>
+</div>
+</div>
+</div>
+</div>
+

@@ -1,0 +1,186 @@
+
+<header className="border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md sticky top-0 z-50">
+<div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+<div className="flex items-center gap-2">
+<span className="font-display italic text-2xl tracking-tight text-primary dark:text-white">Galia Lahav</span>
+<span className="text-[10px] uppercase tracking-widest text-accent font-semibold ml-2">Authenticated Resale</span>
+</div>
+<button className="text-sm font-medium hover:opacity-70 transition-opacity flex items-center gap-2">
+                Save &amp; Exit
+                <span className="material-symbols-outlined text-sm">close</span>
+</button>
+</div>
+<div className="max-w-7xl mx-auto px-6">
+<div className="flex justify-between text-[11px] uppercase tracking-[0.2em] font-medium text-gray-400 py-3 overflow-x-auto whitespace-nowrap gap-8">
+<span className="flex items-center gap-2 text-primary dark:text-white"><span className="material-symbols-outlined text-xs">check_circle</span> 01 Gown Details</span>
+<span className="flex items-center gap-2 text-primary dark:text-white"><span className="material-symbols-outlined text-xs">check_circle</span> 02 Condition</span>
+<span className="flex items-center gap-2 text-primary dark:text-white border-b-2 border-primary pb-1">03 Sizing</span>
+<span className="">04 Photos</span>
+<span className="">05 Price &amp; Post</span>
+</div>
+<div className="w-full bg-gray-100 dark:bg-gray-800 h-[2px]">
+<div className="bg-primary dark:bg-white h-[2px] transition-all duration-500" style="width: 60%;"></div>
+</div>
+</div>
+</header>
+<main className="max-w-7xl mx-auto px-6 py-12">
+<div className="grid lg:grid-cols-12 gap-16">
+<div className="lg:col-span-5 space-y-10">
+<section>
+<h1 className="font-display text-4xl mb-4 leading-tight">Size &amp; Fit</h1>
+<p className="text-gray-500 dark:text-gray-400 font-light leading-relaxed">
+                        Galia Lahav gowns are known for their precision fit. Providing exact measurements ensures a seamless match for potential buyers and reduces the likelihood of returns.
+                    </p>
+</section>
+<div className="relative bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-xl p-8 shadow-sm">
+<h3 className="text-xs uppercase tracking-[0.2em] font-semibold text-accent mb-8">Measurement Guide</h3>
+<div className="flex justify-center relative">
+<div className="w-64 relative group">
+<img alt="Bridal gown silhouette guide" className="w-full opacity-90 dark:invert" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYA8FdC2Fxq86Jd3Zj8TF6JstZpuK0CUJSJaCoMFR9EGFByxyDW8Pfn_d_oQJrAwg7EIKjMWCiJYYI_StPGDNrleFcmzfqRxrWj4KWK1S5w9ijxP-tV3zbpE8IYxm6Ou1AvERQUh6iZMQoMijsPCCPyczuUSopSE2tA5KV0XbCQrlVElzJDM01yo8Kpqh5tx8yENKbCGyhe9Ze7OpX6cFD_CQX7QJHirv8IQikmBDnDhEJgUrdLMTQaJFU0HkM6tI2thNyatPOt3jP"/>
+<div className="absolute top-[25%] left-0 w-full flex items-center justify-center">
+<div className="w-full h-[1px] bg-accent/30 border-t border-dashed border-accent"></div>
+<span className="absolute -right-12 bg-accent text-white text-[10px] px-2 py-0.5 rounded">Bust</span>
+</div>
+<div className="absolute top-[38%] left-0 w-full flex items-center justify-center">
+<div className="w-full h-[1px] bg-accent/30 border-t border-dashed border-accent"></div>
+<span className="absolute -right-12 bg-accent text-white text-[10px] px-2 py-0.5 rounded">Waist</span>
+</div>
+<div className="absolute top-[48%] left-0 w-full flex items-center justify-center">
+<div className="w-full h-[1px] bg-accent/30 border-t border-dashed border-accent"></div>
+<span className="absolute -right-12 bg-accent text-white text-[10px] px-2 py-0.5 rounded">Hips</span>
+</div>
+<div className="absolute bottom-[5%] left-0 w-full flex items-center justify-center">
+<div className="w-full h-[1px] bg-accent/30 border-t border-dashed border-accent"></div>
+<span className="absolute -right-12 bg-accent text-white text-[10px] px-2 py-0.5 rounded">Length</span>
+</div>
+</div>
+</div>
+<div className="mt-8 space-y-4">
+<div className="flex gap-4 items-start">
+<span className="material-symbols-outlined text-accent text-sm mt-0.5">info</span>
+<p className="text-xs text-gray-500 leading-relaxed italic">
+                                For the most accurate results, measure while wearing the undergarments and shoes you plan to wear with the gown.
+                            </p>
+</div>
+</div>
+</div>
+</div>
+<div className="lg:col-span-7">
+<div className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 shadow-xl shadow-gray-200/50 dark:shadow-none rounded-xl overflow-hidden">
+<div className="p-8 md:p-12 space-y-12">
+<section className="space-y-6">
+<div className="flex items-end justify-between">
+<h2 className="text-lg font-medium">Standard Sizing</h2>
+<span className="text-[10px] uppercase tracking-widest text-gray-400">Step 1 of 2</span>
+</div>
+<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div className="space-y-2">
+<label className="block text-xs uppercase tracking-widest font-semibold text-gray-500">Label Size (EU)</label>
+<select className="w-full bg-gray-50 dark:bg-zinc-800 border-gray-200 dark:border-zinc-700 rounded-none py-3 text-sm transition-all focus:ring-accent">
+<option>Select Size</option>
+<option>EU 32</option>
+<option>EU 34</option>
+<option>EU 36</option>
+<option>EU 38</option>
+<option>EU 40</option>
+<option>EU 42</option>
+<option>Custom / Made-to-measure</option>
+</select>
+</div>
+<div className="space-y-2">
+<label className="block text-xs uppercase tracking-widest font-semibold text-gray-500">Street Size (US)</label>
+<select className="w-full bg-gray-50 dark:bg-zinc-800 border-gray-200 dark:border-zinc-700 rounded-none py-3 text-sm transition-all focus:ring-accent">
+<option>Select Size</option>
+<option>US 0</option>
+<option>US 2</option>
+<option>US 4</option>
+<option>US 6</option>
+<option>US 8</option>
+<option>US 10</option>
+</select>
+</div>
+</div>
+</section>
+<section className="space-y-6">
+<div className="flex items-end justify-between">
+<h2 className="text-lg font-medium">Detailed Measurements</h2>
+<div className="flex bg-gray-100 dark:bg-zinc-800 p-1 rounded">
+<button className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider bg-white dark:bg-zinc-700 shadow-sm">IN</button>
+<button className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-gray-400">CM</button>
+</div>
+</div>
+<div className="grid grid-cols-2 gap-x-8 gap-y-8">
+<div className="space-y-2">
+<div className="flex justify-between items-center">
+<label className="text-xs uppercase tracking-widest font-semibold text-gray-500">Bust</label>
+<span className="material-symbols-outlined text-gray-300 text-sm">help_outline</span>
+</div>
+<div className="relative">
+<input className="w-full bg-transparent border-b border-gray-200 dark:border-zinc-700 border-t-0 border-x-0 focus:ring-0 px-0 py-3 text-xl font-light placeholder:text-gray-200" placeholder="00.0" type="number"/>
+<span className="absolute right-0 bottom-3 text-[10px] uppercase tracking-widest text-gray-400">Inches</span>
+</div>
+</div>
+<div className="space-y-2">
+<div className="flex justify-between items-center">
+<label className="text-xs uppercase tracking-widest font-semibold text-gray-500">Waist</label>
+<span className="material-symbols-outlined text-gray-300 text-sm">help_outline</span>
+</div>
+<div className="relative">
+<input className="w-full bg-transparent border-b border-gray-200 dark:border-zinc-700 border-t-0 border-x-0 focus:ring-0 px-0 py-3 text-xl font-light placeholder:text-gray-200" placeholder="00.0" type="number"/>
+<span className="absolute right-0 bottom-3 text-[10px] uppercase tracking-widest text-gray-400">Inches</span>
+</div>
+</div>
+<div className="space-y-2">
+<div className="flex justify-between items-center">
+<label className="text-xs uppercase tracking-widest font-semibold text-gray-500">Hips</label>
+<span className="material-symbols-outlined text-gray-300 text-sm">help_outline</span>
+</div>
+<div className="relative">
+<input className="w-full bg-transparent border-b border-gray-200 dark:border-zinc-700 border-t-0 border-x-0 focus:ring-0 px-0 py-3 text-xl font-light placeholder:text-gray-200" placeholder="00.0" type="number"/>
+<span className="absolute right-0 bottom-3 text-[10px] uppercase tracking-widest text-gray-400">Inches</span>
+</div>
+</div>
+<div className="space-y-2">
+<div className="flex justify-between items-center">
+<label className="text-xs uppercase tracking-widest font-semibold text-gray-500">Hollow-to-Hem</label>
+<span className="material-symbols-outlined text-gray-300 text-sm">help_outline</span>
+</div>
+<div className="relative">
+<input className="w-full bg-transparent border-b border-gray-200 dark:border-zinc-700 border-t-0 border-x-0 focus:ring-0 px-0 py-3 text-xl font-light placeholder:text-gray-200" placeholder="00.0" type="number"/>
+<span className="absolute right-0 bottom-3 text-[10px] uppercase tracking-widest text-gray-400">Inches</span>
+</div>
+</div>
+</div>
+</section>
+<section className="space-y-6">
+<h2 className="text-lg font-medium">Alteration Details</h2>
+<div className="space-y-4">
+<label className="flex items-start gap-3 cursor-pointer group">
+<div className="mt-1">
+<input className="rounded-none border-gray-300 text-primary focus:ring-accent w-4 h-4" type="checkbox"/>
+</div>
+<div>
+<p className="text-sm font-medium">Has this gown been altered?</p>
+<p className="text-xs text-gray-400 mt-1">If yes, please specify where the alterations were made below.</p>
+</div>
+</label>
+<textarea className="w-full bg-gray-50 dark:bg-zinc-800 border-gray-200 dark:border-zinc-700 rounded-none text-sm p-4 placeholder:text-gray-400 focus:ring-accent" placeholder="e.g. Hemmed for 5'6 stature with 4' heels, cups added, waist taken in 0.5 inches..." rows="3"></textarea>
+</div>
+</section>
+</div>
+<div className="p-8 bg-gray-50 dark:bg-zinc-900 border-t border-gray-100 dark:border-zinc-800 flex justify-between items-center">
+<button className="flex items-center gap-2 text-sm text-gray-500 hover:text-primary dark:hover:text-white transition-colors group">
+<span className="material-symbols-outlined text-lg group-hover:-translate-x-1 transition-transform">arrow_back</span>
+                            Back
+                        </button>
+<div className="flex gap-4">
+<button className="px-8 py-3 bg-primary text-white text-xs uppercase tracking-widest font-semibold hover:bg-zinc-800 transition-all shadow-lg shadow-black/5">
+                                Save &amp; Continue
+                            </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+

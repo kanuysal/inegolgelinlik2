@@ -1,0 +1,135 @@
+
+<header className="h-20 border-b border-slate-100 dark:border-slate-800 bg-white/80 dark:bg-black/80 backdrop-blur-md sticky top-0 z-50">
+<div className="max-w-[1600px] mx-auto h-full px-8 flex items-center justify-between">
+<div className="flex items-center gap-12">
+<h1 className="text-2xl font-medium tracking-widest uppercase cursor-pointer">
+                    Galia Lahav
+                    <span className="block text-[8px] tracking-[0.4em] mt-0.5 text-slate-400">MARKETPLACE</span>
+</h1>
+<nav className="hidden md:flex items-center gap-8">
+<a className="text-[10px] font-bold tracking-[0.2em] uppercase text-slate-400 hover:text-accent transition-colors" href="#">Listings</a>
+<a className="text-[10px] font-bold tracking-[0.2em] uppercase text-slate-400 hover:text-accent transition-colors" href="#">Orders</a>
+<a className="text-[10px] font-bold tracking-[0.2em] uppercase text-slate-400 hover:text-accent transition-colors" href="#">Messages</a>
+<a className="text-[10px] font-bold tracking-[0.2em] uppercase text-primary dark:text-white border-b border-accent pb-1" href="#">Profile</a>
+</nav>
+</div>
+<div className="flex items-center gap-6">
+<button className="material-symbols-outlined text-slate-400 hover:text-primary transition-colors">search</button>
+<div className="h-8 w-8 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center overflow-hidden border border-slate-200 dark:border-slate-700">
+<img alt="Profile" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUB7g7mKfGdsaAIl1gBF-ltUbuB6-bJgoc1z5M80M0Cr1Gs37LV8hFEhms7DAkGbwxvAt8NUruOhChOusQIe8tbmcDmF-X5juAgIjansZ9Aqf5VOPntygM-Yt3VnhHMM-OUle5UshFthY4r2whvpm5_OgZTJp8vl7tjDAssQl7vmuCaY7-PD8OViYbTo4guAjPr07giJj-tW6f94MNUgsmTO2wGhIqthXeKNfYKdDlJa6PZP1v4oWXrJNYuuVwPUrNRT7r83uMN0EZ"/>
+</div>
+<button className="material-symbols-outlined text-slate-400" onclick="document.documentElement.classList.toggle('dark')">dark_mode</button>
+</div>
+</div>
+</header>
+<main className="max-w-5xl mx-auto px-8 py-16">
+<div className="flex flex-col md:flex-row gap-16">
+<aside className="w-full md:w-64 flex-shrink-0">
+<div className="flex flex-col items-center text-center">
+<div className="relative group">
+<div className="w-40 h-40 rounded-full overflow-hidden border border-slate-100 dark:border-slate-800 p-1 mb-6">
+<img alt="User Avatar" className="w-full h-full object-cover rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUB7g7mKfGdsaAIl1gBF-ltUbuB6-bJgoc1z5M80M0Cr1Gs37LV8hFEhms7DAkGbwxvAt8NUruOhChOusQIe8tbmcDmF-X5juAgIjansZ9Aqf5VOPntygM-Yt3VnhHMM-OUle5UshFthY4r2whvpm5_OgZTJp8vl7tjDAssQl7vmuCaY7-PD8OViYbTo4guAjPr07giJj-tW6f94MNUgsmTO2wGhIqthXeKNfYKdDlJa6PZP1v4oWXrJNYuuVwPUrNRT7r83uMN0EZ"/>
+</div>
+<button className="absolute bottom-6 right-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-full p-2 shadow-sm hover:border-accent transition-colors">
+<span className="material-symbols-outlined text-sm">photo_camera</span>
+</button>
+</div>
+<h2 className="text-3xl font-light mb-1 italic">Alexandra V.</h2>
+<p className="text-[10px] tracking-[0.3em] uppercase text-slate-400 mb-8">Member since 2023</p>
+<div className="w-full bg-slate-50 dark:bg-white/5 rounded-2xl p-6 border border-slate-100 dark:border-slate-800">
+<div className="flex items-center justify-between mb-4">
+<span className="text-[10px] font-bold tracking-widest uppercase text-slate-900 dark:text-white">Seller Status</span>
+<span className="material-symbols-outlined text-accent text-lg">verified</span>
+</div>
+<div className="h-1 w-full bg-slate-200 dark:bg-slate-800 rounded-full mb-3 overflow-hidden">
+<div className="h-full bg-accent w-3/4 rounded-full"></div>
+</div>
+<p className="text-[11px] text-slate-500 mb-4 leading-relaxed">75% of verification completed. Link your social profile to reach Pro status.</p>
+<button className="text-[10px] font-bold tracking-widest uppercase text-accent border-b border-accent/30 hover:border-accent transition-all pb-0.5">Complete Profile</button>
+</div>
+</div>
+</aside>
+<section className="flex-1">
+<div className="flex justify-between items-end mb-12 pb-4 border-b border-slate-100 dark:border-slate-800">
+<h3 className="text-3xl font-light">Personal Details</h3>
+<button className="text-[11px] font-bold uppercase tracking-[0.2em] text-accent hover:text-primary transition-colors">Save Changes</button>
+</div>
+<form className="space-y-10">
+<div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
+<div className="space-y-1">
+<label className="label-luxe">Full Name</label>
+<input className="form-input-luxe" type="text" value="Alexandra Von Furstenberg"/>
+</div>
+<div className="space-y-1">
+<label className="label-luxe">Email Address</label>
+<input className="form-input-luxe" type="email" value="a.furstenberg@atelier.com"/>
+</div>
+<div className="space-y-1">
+<label className="label-luxe">Phone Number</label>
+<input className="form-input-luxe" type="tel" value="+1 (555) 890-2344"/>
+</div>
+<div className="space-y-1">
+<label className="label-luxe">Preferred Language</label>
+<select className="form-input-luxe appearance-none">
+<option>English (US)</option>
+<option>French</option>
+<option>Italian</option>
+</select>
+</div>
+</div>
+<div className="pt-8">
+<h3 className="text-3xl font-light mb-10 pb-4 border-b border-slate-100 dark:border-slate-800">Shipping Address</h3>
+<div className="space-y-10">
+<div className="space-y-1">
+<label className="label-luxe">Street Address</label>
+<input className="form-input-luxe" type="text" value="742 Evergreen Terrace"/>
+</div>
+<div className="grid grid-cols-1 md:grid-cols-3 gap-x-12 gap-y-10">
+<div className="space-y-1">
+<label className="label-luxe">City</label>
+<input className="form-input-luxe" type="text" value="Los Angeles"/>
+</div>
+<div className="space-y-1">
+<label className="label-luxe">State / Province</label>
+<input className="form-input-luxe" type="text" value="California"/>
+</div>
+<div className="space-y-1">
+<label className="label-luxe">Postal Code</label>
+<input className="form-input-luxe" type="text" value="90210"/>
+</div>
+</div>
+<div className="space-y-1">
+<label className="label-luxe">Country</label>
+<input className="form-input-luxe" type="text" value="United States"/>
+</div>
+</div>
+</div>
+<div className="pt-12 flex items-center justify-between border-t border-slate-100 dark:border-slate-800">
+<div>
+<h4 className="text-lg font-medium mb-1">Account Privacy</h4>
+<p className="text-xs text-slate-400">Manage how your profile appears to other brides.</p>
+</div>
+<label className="relative inline-flex items-center cursor-pointer">
+<input checked="" className="sr-only peer" type="checkbox" value=""/>
+<div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-accent"></div>
+</label>
+</div>
+<div className="flex justify-end gap-6 pt-6">
+<button className="px-8 py-3 text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-primary transition-colors" type="button">Deactivate Account</button>
+<button className="px-10 py-3 bg-primary dark:bg-white text-white dark:text-black text-[10px] font-bold uppercase tracking-widest hover:bg-accent dark:hover:bg-accent dark:hover:text-white transition-all shadow-lg shadow-primary/5" type="submit">Update Profile</button>
+</div>
+</form>
+</section>
+</div>
+</main>
+<footer className="mt-20 border-t border-slate-100 dark:border-slate-800 py-12">
+<div className="max-w-5xl mx-auto px-8 flex flex-col md:flex-row justify-between items-center gap-8">
+<p className="text-[10px] tracking-[0.2em] uppercase text-slate-400">© 2024 Galia Lahav Marketplace. All Rights Reserved.</p>
+<div className="flex gap-8">
+<a className="text-[10px] tracking-[0.2em] uppercase text-slate-400 hover:text-accent transition-colors" href="#">Privacy</a>
+<a className="text-[10px] tracking-[0.2em] uppercase text-slate-400 hover:text-accent transition-colors" href="#">Terms</a>
+<a className="text-[10px] tracking-[0.2em] uppercase text-slate-400 hover:text-accent transition-colors" href="#">Support</a>
+</div>
+</div>
+</footer>
+

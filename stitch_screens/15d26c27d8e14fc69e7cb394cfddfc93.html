@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Secure Checkout | The Archive</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#1a1a1a",
+                        "background-light": "#f8f8f8",
+                        "background-dark": "#0f0f0f",
+                        secondary: "#f9f8f6",
+                        accent: "#bfa482"
+                    },
+                    fontFamily: {
+                        display: ["Playfair Display", "serif"],
+                        sans: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0px",
+                    },
+                },
+            },
+        };
+    </script>
+<style type="text/tailwindcss">
+        body { font-family: 'Inter', sans-serif; }
+        .font-display { font-family: 'Playfair Display', serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 24;
+        }
+        input:focus, select:focus {
+            --tw-ring-color: transparent !important;
+            border-color: theme('colors.accent') !important;
+        }
+        .step-inactive { opacity: 0.5; pointer-events: none; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-primary dark:text-gray-100 antialiased transition-colors duration-300 min-h-screen">
+<nav class="border-b border-gray-100 dark:border-zinc-800 bg-white/80 dark:bg-black/80 backdrop-blur-md z-50">
+<div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-xs uppercase tracking-[0.2em] text-gray-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-lg">arrow_back</span>
+<span>Back to Collection</span>
+</a>
+</div>
+<div class="absolute left-1/2 -translate-x-1/2 text-center">
+<h1 class="font-display text-2xl tracking-widest uppercase">The Archive</h1>
+</div>
+<div class="flex items-center space-x-4">
+<span class="material-symbols-outlined text-gray-400">lock</span>
+<span class="text-[10px] uppercase tracking-widest text-gray-400 font-medium">Secure Checkout</span>
+</div>
+</div>
+</nav>
+<main class="max-w-6xl mx-auto px-6 py-16">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
+<div class="lg:col-span-7 space-y-12">
+<section class="border-b border-gray-200 dark:border-zinc-800 pb-12">
+<div class="flex items-center justify-between mb-8">
+<h2 class="text-xs uppercase tracking-[0.3em] font-semibold flex items-center">
+<span class="w-6 h-6 rounded-full border border-primary dark:border-white flex items-center justify-center text-[10px] mr-4">01</span>
+                        Shipping Details
+                    </h2>
+</div>
+<div class="space-y-6">
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-1">
+<label class="text-[10px] uppercase tracking-widest text-gray-400">First Name</label>
+<input class="w-full bg-white dark:bg-zinc-900 border-gray-200 dark:border-zinc-800 py-3 px-4 text-sm focus:outline-none" placeholder="Eleanor" type="text"/>
+</div>
+<div class="space-y-1">
+<label class="text-[10px] uppercase tracking-widest text-gray-400">Last Name</label>
+<input class="w-full bg-white dark:bg-zinc-900 border-gray-200 dark:border-zinc-800 py-3 px-4 text-sm focus:outline-none" placeholder="Vance" type="text"/>
+</div>
+</div>
+<div class="space-y-1">
+<label class="text-[10px] uppercase tracking-widest text-gray-400">Address</label>
+<input class="w-full bg-white dark:bg-zinc-900 border-gray-200 dark:border-zinc-800 py-3 px-4 text-sm focus:outline-none" placeholder="123 Madison Avenue" type="text"/>
+</div>
+<div class="grid grid-cols-3 gap-4">
+<div class="space-y-1 col-span-1">
+<label class="text-[10px] uppercase tracking-widest text-gray-400">City</label>
+<input class="w-full bg-white dark:bg-zinc-900 border-gray-200 dark:border-zinc-800 py-3 px-4 text-sm focus:outline-none" placeholder="New York" type="text"/>
+</div>
+<div class="space-y-1">
+<label class="text-[10px] uppercase tracking-widest text-gray-400">State</label>
+<select class="w-full bg-white dark:bg-zinc-900 border-gray-200 dark:border-zinc-800 py-3 px-4 text-sm focus:outline-none">
+<option>NY</option>
+<option>CA</option>
+<option>TX</option>
+</select>
+</div>
+<div class="space-y-1">
+<label class="text-[10px] uppercase tracking-widest text-gray-400">Postal Code</label>
+<input class="w-full bg-white dark:bg-zinc-900 border-gray-200 dark:border-zinc-800 py-3 px-4 text-sm focus:outline-none" placeholder="10016" type="text"/>
+</div>
+</div>
+<div class="pt-6">
+<label class="text-[10px] uppercase tracking-widest text-gray-400 block mb-4">Delivery Method</label>
+<div class="border border-primary dark:border-accent p-6 bg-white dark:bg-zinc-900/50 flex items-start space-x-4">
+<div class="mt-1">
+<span class="material-symbols-outlined text-accent">verified</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-center mb-1">
+<span class="text-sm font-semibold uppercase tracking-wider">White-Glove Concierge</span>
+<span class="text-xs font-medium italic">Included</span>
+</div>
+<p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed font-light">
+                                    Insured priority transport, signature required. Includes professional inspection report and archival packaging.
+                                </p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="pb-12">
+<div class="flex items-center justify-between mb-8">
+<h2 class="text-xs uppercase tracking-[0.3em] font-semibold flex items-center">
+<span class="w-6 h-6 rounded-full border border-primary dark:border-white flex items-center justify-center text-[10px] mr-4">02</span>
+                        Payment Information
+                    </h2>
+</div>
+<div class="space-y-8">
+<div class="bg-secondary dark:bg-zinc-900 p-4 border-l-2 border-accent flex items-center space-x-4">
+<span class="material-symbols-outlined text-accent">security</span>
+<p class="text-[11px] leading-relaxed text-gray-600 dark:text-gray-400 uppercase tracking-wider">
+<span class="font-bold text-primary dark:text-white">Escrow Protection Active:</span> Funds are held securely and only released to the seller once you confirm delivery and condition.
+                        </p>
+</div>
+<div class="space-y-4">
+<div class="space-y-1">
+<label class="text-[10px] uppercase tracking-widest text-gray-400">Cardholder Name</label>
+<input class="w-full bg-white dark:bg-zinc-900 border-gray-200 dark:border-zinc-800 py-3 px-4 text-sm focus:outline-none" placeholder="Eleanor Vance" type="text"/>
+</div>
+<div class="space-y-1">
+<label class="text-[10px] uppercase tracking-widest text-gray-400">Card Number</label>
+<div class="relative">
+<input class="w-full bg-white dark:bg-zinc-900 border-gray-200 dark:border-zinc-800 py-3 px-4 text-sm focus:outline-none" placeholder="0000 0000 0000 0000" type="text"/>
+<div class="absolute right-4 top-1/2 -translate-y-1/2 flex space-x-2">
+<div class="w-8 h-5 bg-gray-100 dark:bg-zinc-800 rounded-sm"></div>
+<div class="w-8 h-5 bg-gray-100 dark:bg-zinc-800 rounded-sm"></div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-1">
+<label class="text-[10px] uppercase tracking-widest text-gray-400">Expiry</label>
+<input class="w-full bg-white dark:bg-zinc-900 border-gray-200 dark:border-zinc-800 py-3 px-4 text-sm focus:outline-none" placeholder="MM / YY" type="text"/>
+</div>
+<div class="space-y-1">
+<label class="text-[10px] uppercase tracking-widest text-gray-400">CVC</label>
+<input class="w-full bg-white dark:bg-zinc-900 border-gray-200 dark:border-zinc-800 py-3 px-4 text-sm focus:outline-none" placeholder="***" type="text"/>
+</div>
+</div>
+</div>
+<div class="flex items-center space-x-3">
+<input class="rounded-none border-gray-300 text-accent focus:ring-0" id="billing" type="checkbox"/>
+<label class="text-[11px] uppercase tracking-widest text-gray-500" for="billing">Billing address is same as shipping</label>
+</div>
+<button class="w-full bg-primary text-white dark:bg-white dark:text-black py-5 text-xs uppercase tracking-[0.3em] font-semibold hover:bg-opacity-90 transition-all">
+                        Complete Purchase
+                    </button>
+<p class="text-center text-[10px] text-gray-400 uppercase tracking-widest leading-loose">
+                        By clicking complete purchase, you agree to our <a class="underline underline-offset-4" href="#">Terms of Service</a> and <a class="underline underline-offset-4" href="#">Buyer Protection Policy</a>.
+                    </p>
+</div>
+</section>
+</div>
+<div class="lg:col-span-5 lg:sticky lg:top-32">
+<div class="bg-white dark:bg-zinc-900 p-8 border border-gray-100 dark:border-zinc-800">
+<h3 class="text-xs uppercase tracking-[0.3em] font-semibold mb-8 border-b border-gray-100 dark:border-zinc-800 pb-4">Order Summary</h3>
+<div class="flex space-x-6 mb-8">
+<div class="w-32 aspect-[3/4] bg-gray-100 dark:bg-zinc-800 flex-shrink-0">
+<img alt="Galia Lahav Fabiana Gown" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCnC2L4kwLoUiTUTwrwUHq6Fyq6ytEulFYpaEASpEfNmmfufdf2XcQMhpFZDLbDZLaQPZtMZTC5SPJ7KTa8nIchKDrCaeO3MBlXWdSE-FcvUauiLdF5S33BoISx00FsCl2yGOptgMfVpiOsnJ7AoihFx1ZBngMoBF-srsHF21nooIkHUKn0Rqkjj3G2uSheOXK0KnQk3sRYpU-2tGdynSa3T7fxBK0aHgzfVzChZhRd2blzsvyKauVlsGYDugE7KONJ8wPIC5higC2q"/>
+</div>
+<div class="flex-1 space-y-2">
+<p class="text-[10px] uppercase tracking-widest text-gray-400">Couture Collection</p>
+<h4 class="font-display text-xl">Fabiana Gown</h4>
+<div class="space-y-1 pt-2">
+<p class="text-[10px] uppercase tracking-widest text-gray-500">Size: 36 (EU)</p>
+<p class="text-[10px] uppercase tracking-widest text-gray-500">Condition: Pristine</p>
+<p class="text-[10px] uppercase tracking-widest text-gray-500">Color: Ivory/Blush</p>
+</div>
+</div>
+</div>
+<div class="space-y-4 border-t border-gray-100 dark:border-zinc-800 pt-6">
+<div class="flex justify-between text-xs uppercase tracking-widest">
+<span class="text-gray-500">Subtotal</span>
+<span>$6,400.00</span>
+</div>
+<div class="flex justify-between text-xs uppercase tracking-widest">
+<span class="text-gray-500">Concierge Shipping</span>
+<span class="text-accent">Complimentary</span>
+</div>
+<div class="flex justify-between text-xs uppercase tracking-widest">
+<span class="text-gray-500">Authentication Fee</span>
+<span>$250.00</span>
+</div>
+<div class="flex justify-between text-xs uppercase tracking-widest pt-4 border-t border-gray-100 dark:border-zinc-800">
+<span class="font-bold">Total</span>
+<span class="font-bold text-lg">$6,650.00</span>
+</div>
+</div>
+<div class="mt-8 pt-8 border-t border-gray-100 dark:border-zinc-800 grid grid-cols-2 gap-4">
+<div class="text-center p-3 bg-secondary dark:bg-zinc-800/50">
+<span class="material-symbols-outlined text-accent text-lg mb-1">verified_user</span>
+<p class="text-[9px] uppercase tracking-widest font-semibold block">100% Authenticated</p>
+</div>
+<div class="text-center p-3 bg-secondary dark:bg-zinc-800/50">
+<span class="material-symbols-outlined text-accent text-lg mb-1">local_shipping</span>
+<p class="text-[9px] uppercase tracking-widest font-semibold block">Global Delivery</p>
+</div>
+</div>
+</div>
+<div class="mt-8 flex justify-center">
+<button class="w-10 h-10 bg-white dark:bg-zinc-800 shadow-sm rounded-full flex items-center justify-center border border-gray-100 dark:border-zinc-700" onclick="document.documentElement.classList.toggle('dark')">
+<span class="material-symbols-outlined dark:hidden text-lg">dark_mode</span>
+<span class="material-symbols-outlined hidden dark:block text-yellow-500 text-lg">light_mode</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<footer class="bg-white dark:bg-black py-12 px-6 border-t border-gray-100 dark:border-zinc-800">
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-[10px] uppercase tracking-widest text-gray-400">
+<p>© 2024 The Archive Marketplace. Encrypted and Secure.</p>
+<div class="flex space-x-8 mt-6 md:mt-0">
+<span class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-sm">lock</span>
+<span>SSL Secured</span>
+</span>
+<span class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-sm">payments</span>
+<span>PCI Compliant</span>
+</span>
+</div>
+</div>
+</footer>
+
+</body></html>

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Executive Dashboard | Luxury Bridal Marketplace</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&amp;family=Inter:wght@300;400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#111111",
+                        "background-light": "#F9F9F9",
+                        "background-dark": "#0A0A0A",
+                        accent: "#C5A059",
+                    },
+                    fontFamily: {
+                        display: ["Cormorant Garamond", "serif"],
+                        sans: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "2px",
+                        'lg': "4px",
+                    },
+                },
+            },
+        };
+    </script>
+<style type="text/tailwindcss">
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .brand-font { font-family: 'Cormorant Garamond', serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e5e5e5; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #333; }
+        .sparkline {
+            stroke-dasharray: 100;
+            stroke-dashoffset: 0;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 transition-colors duration-200">
+<aside class="fixed left-0 top-0 h-full w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-[#111] z-50">
+<div class="p-8">
+<h1 class="text-2xl font-medium tracking-widest uppercase border-b border-slate-100 dark:border-slate-800 pb-6 mb-8">
+                Luxe Bridal
+                <span class="block text-[10px] tracking-[0.3em] mt-1 text-slate-400 font-sans">ADMIN CONSOLE</span>
+</h1>
+<nav class="space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 bg-primary text-white transition-all shadow-lg" href="#">
+<span class="material-symbols-outlined text-lg">dashboard</span>
+<span class="text-xs font-medium tracking-wider uppercase">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined text-lg">verified_user</span>
+<span class="text-xs font-medium tracking-wider uppercase">Moderation</span>
+<span class="ml-auto bg-accent text-[10px] px-1.5 py-0.5 rounded text-white">12</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined text-lg">inventory_2</span>
+<span class="text-xs font-medium tracking-wider uppercase">Inventory</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined text-lg">people_outline</span>
+<span class="text-xs font-medium tracking-wider uppercase">Sellers</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined text-lg">payments</span>
+<span class="text-xs font-medium tracking-wider uppercase">Transactions</span>
+</a>
+</nav>
+</div>
+<div class="absolute bottom-0 w-full p-8 border-t border-slate-100 dark:border-slate-800">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-[10px] font-bold">JD</div>
+<div>
+<p class="text-xs font-semibold">Julianne Deville</p>
+<p class="text-[10px] text-slate-400">Executive Director</p>
+</div>
+</div>
+</div>
+</aside>
+<main class="ml-64 min-h-screen">
+<header class="h-16 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-[#111]/80 backdrop-blur-md flex items-center justify-between px-8 sticky top-0 z-40">
+<div class="flex items-center gap-4">
+<span class="text-xs text-slate-400 tracking-widest uppercase">Overview</span>
+<span class="h-4 w-px bg-slate-200 dark:bg-slate-800"></span>
+<span class="text-xs font-medium uppercase tracking-wider">Executive Dashboard</span>
+</div>
+<div class="flex items-center gap-6">
+<button class="material-symbols-outlined text-slate-400 hover:text-primary dark:hover:text-white transition-colors">search</button>
+<button class="material-symbols-outlined text-slate-400 hover:text-primary dark:hover:text-white transition-colors">notifications</button>
+<button class="material-symbols-outlined text-slate-400 hover:text-primary dark:hover:text-white transition-colors" onclick="document.documentElement.classList.toggle('dark')">contrast</button>
+</div>
+</header>
+<div class="p-8 space-y-8">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<div class="bg-white dark:bg-[#111] p-6 border border-slate-200 dark:border-slate-800 relative group">
+<p class="text-[10px] font-bold tracking-[0.2em] text-slate-400 uppercase mb-4">Pending Review</p>
+<div class="flex items-baseline gap-2">
+<h3 class="text-3xl font-light font-display">12</h3>
+<span class="text-[10px] text-slate-400">Submissions</span>
+</div>
+<a class="mt-4 flex items-center gap-2 text-[10px] font-bold text-accent uppercase tracking-widest group-hover:gap-3 transition-all" href="#">
+                        Go to moderation <span class="material-symbols-outlined text-xs">arrow_forward</span>
+</a>
+</div>
+<div class="bg-white dark:bg-[#111] p-6 border border-slate-200 dark:border-slate-800">
+<p class="text-[10px] font-bold tracking-[0.2em] text-slate-400 uppercase mb-4">Total Active Listings</p>
+<div class="flex items-baseline gap-2">
+<h3 class="text-3xl font-light font-display">1,482</h3>
+</div>
+<p class="mt-4 text-[11px] text-slate-500 font-medium">Est. GMV: <span class="text-slate-900 dark:text-white">$12.4M</span></p>
+</div>
+<div class="bg-white dark:bg-[#111] p-6 border border-slate-200 dark:border-slate-800">
+<div class="flex justify-between items-start mb-4">
+<p class="text-[10px] font-bold tracking-[0.2em] text-slate-400 uppercase">Monthly Sales Volume</p>
+<span class="text-green-500 text-[10px] font-bold flex items-center gap-0.5">+14.2% <span class="material-symbols-outlined text-[10px]">trending_up</span></span>
+</div>
+<h3 class="text-3xl font-light font-display">$842.5k</h3>
+<div class="mt-4 h-6 w-full">
+<svg class="w-full h-full" viewBox="0 0 100 20">
+<path d="M0 18 Q 10 15, 20 16 T 40 10 T 60 12 T 80 5 T 100 8" fill="none" stroke="#C5A059" stroke-width="1.5"></path>
+</svg>
+</div>
+</div>
+<div class="bg-white dark:bg-[#111] p-6 border border-slate-200 dark:border-slate-800">
+<p class="text-[10px] font-bold tracking-[0.2em] text-slate-400 uppercase mb-4">Open Claims</p>
+<div class="flex items-baseline gap-2">
+<h3 class="text-3xl font-light font-display text-red-500">4</h3>
+<span class="text-[10px] text-slate-400">High priority</span>
+</div>
+<div class="mt-4 flex -space-x-2">
+<div class="w-6 h-6 rounded-full border-2 border-white dark:border-[#111] bg-slate-200 flex items-center justify-center text-[8px] font-bold">JD</div>
+<div class="w-6 h-6 rounded-full border-2 border-white dark:border-[#111] bg-slate-300 flex items-center justify-center text-[8px] font-bold">AS</div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div class="lg:col-span-1 space-y-6">
+<h2 class="text-xl font-medium tracking-tight">Recent Activity</h2>
+<div class="relative space-y-8 before:absolute before:inset-0 before:ml-4 before:-translate-x-px before:h-full before:w-0.5 before:bg-gradient-to-b before:from-slate-200 before:via-slate-200 before:to-transparent dark:before:from-slate-800 dark:before:via-slate-800">
+<div class="relative flex items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white dark:bg-[#111] ring-1 ring-slate-200 dark:ring-slate-800">
+<span class="material-symbols-outlined text-sm text-accent">add_circle</span>
+</div>
+<div>
+<p class="text-[13px] font-medium">New Listing: Couture Gown</p>
+<p class="text-[10px] text-slate-400 uppercase tracking-widest">By Elena Rodriguez • 2m ago</p>
+</div>
+</div>
+</div>
+<div class="relative flex items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white dark:bg-[#111] ring-1 ring-slate-200 dark:ring-slate-800">
+<span class="material-symbols-outlined text-sm text-green-500">check_circle</span>
+</div>
+<div>
+<p class="text-[13px] font-medium">Listing Approved</p>
+<p class="text-[10px] text-slate-400 uppercase tracking-widest">SKU GL-2024-088 • 45m ago</p>
+</div>
+</div>
+</div>
+<div class="relative flex items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white dark:bg-[#111] ring-1 ring-slate-200 dark:ring-slate-800">
+<span class="material-symbols-outlined text-sm text-blue-500">shopping_bag</span>
+</div>
+<div>
+<p class="text-[13px] font-medium">Item Sold: 'Maya' Custom</p>
+<p class="text-[10px] text-slate-400 uppercase tracking-widest">$12,400 Transaction • 2h ago</p>
+</div>
+</div>
+</div>
+<div class="relative flex items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white dark:bg-[#111] ring-1 ring-slate-200 dark:ring-slate-800">
+<span class="material-symbols-outlined text-sm text-red-500">report</span>
+</div>
+<div>
+<p class="text-[13px] font-medium">New Claim Opened</p>
+<p class="text-[10px] text-slate-400 uppercase tracking-widest">Order #9821 • 5h ago</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-2 space-y-6">
+<div class="flex items-center justify-between">
+<h2 class="text-xl font-medium tracking-tight">Listing Performance</h2>
+<div class="flex gap-4">
+<span class="text-[10px] uppercase font-bold tracking-widest text-slate-400">Sales by Collection</span>
+<span class="text-[10px] uppercase font-bold tracking-widest text-accent">Last 30 Days</span>
+</div>
+</div>
+<div class="bg-white dark:bg-[#111] p-8 border border-slate-200 dark:border-slate-800">
+<div class="h-64 w-full flex items-end gap-6">
+<div class="flex-1 group relative">
+<div class="bg-slate-100 dark:bg-white/5 w-full h-full absolute bottom-0"></div>
+<div class="bg-primary dark:bg-white/20 w-full h-[85%] absolute bottom-0 transition-all group-hover:bg-accent"></div>
+<div class="absolute -bottom-6 left-0 right-0 text-center text-[10px] font-bold text-slate-400 uppercase tracking-tighter truncate px-1">GALA</div>
+</div>
+<div class="flex-1 group relative">
+<div class="bg-slate-100 dark:bg-white/5 w-full h-full absolute bottom-0"></div>
+<div class="bg-primary dark:bg-white/20 w-full h-[45%] absolute bottom-0 transition-all group-hover:bg-accent"></div>
+<div class="absolute -bottom-6 left-0 right-0 text-center text-[10px] font-bold text-slate-400 uppercase tracking-tighter truncate px-1">Le Secret</div>
+</div>
+<div class="flex-1 group relative">
+<div class="bg-slate-100 dark:bg-white/5 w-full h-full absolute bottom-0"></div>
+<div class="bg-primary dark:bg-white/20 w-full h-[65%] absolute bottom-0 transition-all group-hover:bg-accent"></div>
+<div class="absolute -bottom-6 left-0 right-0 text-center text-[10px] font-bold text-slate-400 uppercase tracking-tighter truncate px-1">Couture</div>
+</div>
+<div class="flex-1 group relative">
+<div class="bg-slate-100 dark:bg-white/5 w-full h-full absolute bottom-0"></div>
+<div class="bg-primary dark:bg-white/20 w-full h-[30%] absolute bottom-0 transition-all group-hover:bg-accent"></div>
+<div class="absolute -bottom-6 left-0 right-0 text-center text-[10px] font-bold text-slate-400 uppercase tracking-tighter truncate px-1">Queen Hearts</div>
+</div>
+<div class="flex-1 group relative">
+<div class="bg-slate-100 dark:bg-white/5 w-full h-full absolute bottom-0"></div>
+<div class="bg-primary dark:bg-white/20 w-full h-[95%] absolute bottom-0 transition-all group-hover:bg-accent"></div>
+<div class="absolute -bottom-6 left-0 right-0 text-center text-[10px] font-bold text-slate-400 uppercase tracking-tighter truncate px-1">Rise</div>
+</div>
+<div class="flex-1 group relative">
+<div class="bg-slate-100 dark:bg-white/5 w-full h-full absolute bottom-0"></div>
+<div class="bg-primary dark:bg-white/20 w-full h-[55%] absolute bottom-0 transition-all group-hover:bg-accent"></div>
+<div class="absolute -bottom-6 left-0 right-0 text-center text-[10px] font-bold text-slate-400 uppercase tracking-tighter truncate px-1">Alegria</div>
+</div>
+</div>
+<div class="mt-12 flex justify-between items-center pt-8 border-t border-slate-100 dark:border-slate-800">
+<div>
+<p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">Top Performing</p>
+<p class="text-lg font-display">Rise Collection</p>
+</div>
+<div class="text-right">
+<p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">Avg. Sale Price</p>
+<p class="text-lg font-display">$9,240</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+
+</body></html>

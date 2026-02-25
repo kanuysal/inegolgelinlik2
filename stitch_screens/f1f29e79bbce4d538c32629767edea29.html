@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>My Listings | Luxury Bridal Marketplace</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&amp;family=Inter:wght@300;400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#111111",
+                        "background-light": "#FDFDFD",
+                        "background-dark": "#0A0A0A",
+                        accent: "#C5A059",
+                    },
+                    fontFamily: {
+                        display: ["Cormorant Garamond", "serif"],
+                        sans: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        'none': '0',
+                        'sm': '0.125rem',
+                        DEFAULT: '0.25rem',
+                        'md': '0.375rem',
+                        'lg': '1rem',
+                        'xl': '1.5rem',
+                        'full': '9999px',
+                    },
+                },
+            },
+        };
+    </script>
+<style type="text/tailwindcss">
+        @layer base {
+            body { font-family: 'Inter', sans-serif; }
+            h1, h2, h3, .brand-font { font-family: 'Cormorant Garamond', serif; }
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
+        .listing-card:hover .listing-image {
+            transform: scale(1.05);
+        }
+        .status-badge-live {
+            @apply bg-green-50 text-green-700 border-green-100 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800/30;
+        }
+        .status-badge-review {
+            @apply bg-amber-50 text-amber-700 border-amber-100 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800/30;
+        }
+        .status-badge-sold {
+            @apply bg-slate-50 text-slate-700 border-slate-100 dark:bg-slate-800/50 dark:text-slate-400 dark:border-slate-700/50;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 transition-colors duration-200">
+<header class="h-20 border-b border-slate-100 dark:border-slate-800 bg-white/80 dark:bg-black/80 backdrop-blur-md sticky top-0 z-50">
+<div class="max-w-[1600px] mx-auto h-full px-8 flex items-center justify-between">
+<div class="flex items-center gap-12">
+<h1 class="text-2xl font-medium tracking-widest uppercase cursor-pointer">
+                Galia Lahav
+                <span class="block text-[8px] tracking-[0.4em] mt-0.5 text-slate-400">MARKETPLACE</span>
+</h1>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-[10px] font-bold tracking-[0.2em] uppercase text-primary dark:text-white border-b border-accent pb-1" href="#">Listings</a>
+<a class="text-[10px] font-bold tracking-[0.2em] uppercase text-slate-400 hover:text-accent transition-colors" href="#">Orders</a>
+<a class="text-[10px] font-bold tracking-[0.2em] uppercase text-slate-400 hover:text-accent transition-colors" href="#">Messages</a>
+<a class="text-[10px] font-bold tracking-[0.2em] uppercase text-slate-400 hover:text-accent transition-colors" href="#">Profile</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<button class="material-symbols-outlined text-slate-400 hover:text-primary transition-colors">search</button>
+<div class="h-8 w-8 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center overflow-hidden border border-slate-200 dark:border-slate-700">
+<img alt="Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUB7g7mKfGdsaAIl1gBF-ltUbuB6-bJgoc1z5M80M0Cr1Gs37LV8hFEhms7DAkGbwxvAt8NUruOhChOusQIe8tbmcDmF-X5juAgIjansZ9Aqf5VOPntygM-Yt3VnhHMM-OUle5UshFthY4r2whvpm5_OgZTJp8vl7tjDAssQl7vmuCaY7-PD8OViYbTo4guAjPr07giJj-tW6f94MNUgsmTO2wGhIqthXeKNfYKdDlJa6PZP1v4oWXrJNYuuVwPUrNRT7r83uMN0EZ"/>
+</div>
+<button class="material-symbols-outlined text-slate-400" onclick="document.documentElement.classList.toggle('dark')">dark_mode</button>
+</div>
+</div>
+</header>
+<main class="max-w-[1600px] mx-auto px-8 py-12">
+<div class="flex justify-between items-end mb-12">
+<div>
+<h2 class="text-4xl font-light mb-2">My Listings</h2>
+<p class="text-xs text-slate-400 uppercase tracking-[0.2em]">Manage your bridal collection</p>
+</div>
+<button class="bg-primary text-white px-8 py-3 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-accent transition-all flex items-center gap-2 shadow-xl shadow-black/5">
+<span class="material-symbols-outlined text-sm">add</span>
+            Create New Listing
+        </button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+<div class="listing-card group flex flex-col bg-white dark:bg-white/5 border border-slate-100 dark:border-slate-800 transition-all duration-500 hover:shadow-2xl hover:shadow-black/5">
+<div class="relative aspect-[3/4] overflow-hidden">
+<img alt="Maya Gown" class="listing-image w-full h-full object-cover transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAB0006uTOXiNE75r6mJRAs0hdyCjbjWVYF-GTOrqHizSsH7S9yg2t56kKi0tHcOyYmDmFKcYgYgNYVcdHvy2oLldAAtBNzP1yMZW4fQUK8pV_O2f1yUEvAUjBWnuOmVfqEOPtfUSZ7Ur-MwVpfGFJqtygxiYUPp0ax0tA6xijRprAMB1ISD9wtn0x9IuTmxhrRHMm9j9cBSjfdaxbvl1A_OUczzGLj_Z3Fwu_bw_LFPkC6E2ukCqSr17rnDhg-I-2UNFexp_ZcYJl_"/>
+<div class="absolute top-4 left-4">
+<span class="status-badge-live border px-3 py-1 text-[9px] font-bold uppercase tracking-widest rounded-full backdrop-blur-sm">Live</span>
+</div>
+<div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4">
+<button class="w-10 h-10 rounded-full bg-white text-primary flex items-center justify-center hover:bg-accent hover:text-white transition-colors">
+<span class="material-symbols-outlined text-lg">edit</span>
+</button>
+<button class="w-10 h-10 rounded-full bg-white text-primary flex items-center justify-center hover:bg-accent hover:text-white transition-colors">
+<span class="material-symbols-outlined text-lg">visibility</span>
+</button>
+</div>
+</div>
+<div class="p-6 flex flex-col flex-1">
+<div class="flex justify-between items-start mb-2">
+<h3 class="text-xl font-light">Maya Gown</h3>
+<span class="text-sm font-medium">$7,500</span>
+</div>
+<p class="text-[10px] text-slate-400 uppercase tracking-widest mb-6">Custom Size • Pristine Condition</p>
+<div class="mt-auto pt-6 border-t border-slate-50 dark:border-slate-800/50 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<span class="text-[10px] text-slate-400 flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">visibility</span> 142
+                        </span>
+<span class="text-[10px] text-slate-400 flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">favorite</span> 28
+                        </span>
+</div>
+<button class="text-[10px] font-bold uppercase tracking-widest text-primary dark:text-white hover:text-accent transition-colors flex items-center gap-1">
+                        View Details
+                        <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<div class="listing-card group flex flex-col bg-white dark:bg-white/5 border border-slate-100 dark:border-slate-800 transition-all duration-500 hover:shadow-2xl hover:shadow-black/5">
+<div class="relative aspect-[3/4] overflow-hidden">
+<img alt="Seraphina Gown" class="listing-image w-full h-full object-cover transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDf_X9iRQWo_GoVxXEetGe-5oKrbLFK3thm5XThCeSlQb1AFCIGUlFhNkD6wsM2Wc86RPebUvXTVG4pECgQ0UUpVmv1FEECwDLOXNUXCQO529y8ULqXsnMHnkGv9eNm0BfFsX5Qp2J7h_QvjrJxVKOHpUiFT2aLkcMbzas-9YGGz7jqKXc9jvLimY5P727_2B3zcTvrWvJe-Fcjt8xUazhPmyLz2PYqpfu955vpsHa5eGVxtiAAM2dPKO2U5npUSlFk7y0JqhAL871v"/>
+<div class="absolute top-4 left-4">
+<span class="status-badge-review border px-3 py-1 text-[9px] font-bold uppercase tracking-widest rounded-full backdrop-blur-sm">Under Review</span>
+</div>
+</div>
+<div class="p-6 flex flex-col flex-1">
+<div class="flex justify-between items-start mb-2">
+<h3 class="text-xl font-light">Seraphina</h3>
+<span class="text-sm font-medium">$5,200</span>
+</div>
+<p class="text-[10px] text-slate-400 uppercase tracking-widest mb-6">US Size 4 • Cathedral Train</p>
+<div class="mt-auto pt-6 border-t border-slate-50 dark:border-slate-800/50 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<span class="text-[10px] text-slate-400 flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">visibility</span> 0
+                        </span>
+</div>
+<button class="text-[10px] font-bold uppercase tracking-widest text-primary dark:text-white hover:text-accent transition-colors flex items-center gap-1">
+                        View Details
+                        <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<div class="listing-card group flex flex-col bg-white dark:bg-white/5 border border-slate-100 dark:border-slate-800 transition-all duration-500 hover:shadow-2xl hover:shadow-black/5">
+<div class="relative aspect-[3/4] overflow-hidden">
+<img alt="Fabiana Gown" class="listing-image w-full h-full object-cover transition-transform duration-700 opacity-60 grayscale" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQu-pCh7dYPrNg0NJXFZt0qCxUkFFLKoKCU_4cHUsrbaSeBYqEYTWsB1y45FllEG73YKO19bAStyP8ufp4Sf5ecQhEMuyUwARwH324KccISgawJIZj2WcMgxVJRHF6ddtQo2UHm_2yWAFf80SH6M3pAswknQV-A2rHcFlOEF3ZcM0uY7WcxZNpcEprubGO9gIRyhK54D4S2ldapRkcK-LUwsq4P3Fo8f7bRNYMsPkg_wiLlBan93qniYxsA5t3Y7nLRLbCeiOHV5Gy"/>
+<div class="absolute top-4 left-4">
+<span class="status-badge-sold border px-3 py-1 text-[9px] font-bold uppercase tracking-widest rounded-full backdrop-blur-sm">Sold</span>
+</div>
+</div>
+<div class="p-6 flex flex-col flex-1">
+<div class="flex justify-between items-start mb-2">
+<h3 class="text-xl font-light text-slate-500">Fabiana</h3>
+<span class="text-sm font-medium text-slate-500">$9,800</span>
+</div>
+<p class="text-[10px] text-slate-400 uppercase tracking-widest mb-6">US Size 2 • Professionally Boxed</p>
+<div class="mt-auto pt-6 border-t border-slate-50 dark:border-slate-800/50 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<span class="text-[10px] text-slate-400 flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">check_circle</span> Sold Oct 12
+                        </span>
+</div>
+<button class="text-[10px] font-bold uppercase tracking-widest text-primary dark:text-white hover:text-accent transition-colors flex items-center gap-1">
+                        View Order
+                        <span class="material-symbols-outlined text-sm">receipt</span>
+</button>
+</div>
+</div>
+</div>
+<div class="listing-card group flex flex-col bg-slate-50 dark:bg-white/5 border border-dashed border-slate-200 dark:border-slate-800 transition-all duration-500 hover:border-accent">
+<div class="flex-1 flex flex-col items-center justify-center p-12 text-center">
+<div class="w-16 h-16 rounded-full border border-slate-200 dark:border-slate-800 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-slate-300 group-hover:text-accent">add</span>
+</div>
+<h3 class="text-lg font-light mb-2">Sell your Gown</h3>
+<p class="text-xs text-slate-400 leading-relaxed mb-8 max-w-[200px]">Turn your beautiful memories into another bride's dream.</p>
+<button class="text-[10px] font-bold uppercase tracking-widest text-accent border border-accent/20 px-6 py-2 rounded-full hover:bg-accent hover:text-white transition-all">
+                    Get Started
+                </button>
+</div>
+</div>
+</div>
+</main>
+<footer class="mt-20 border-t border-slate-100 dark:border-slate-800 py-12 px-8">
+<div class="max-w-[1600px] mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="flex flex-col items-center md:items-start">
+<h1 class="text-xl font-medium tracking-widest uppercase mb-2">
+                Galia Lahav
+                <span class="block text-[7px] tracking-[0.4em] mt-0.5 text-slate-400">MARKETPLACE</span>
+</h1>
+<p class="text-[10px] text-slate-400 uppercase tracking-widest">© 2024 Curated Luxury P2P</p>
+</div>
+<div class="flex gap-12">
+<div class="flex flex-col gap-4">
+<span class="text-[10px] font-bold uppercase tracking-widest text-primary dark:text-white">Resources</span>
+<a class="text-[10px] text-slate-400 hover:text-accent uppercase tracking-widest" href="#">Pricing Guide</a>
+<a class="text-[10px] text-slate-400 hover:text-accent uppercase tracking-widest" href="#">Shipping Policy</a>
+</div>
+<div class="flex flex-col gap-4">
+<span class="text-[10px] font-bold uppercase tracking-widest text-primary dark:text-white">Legal</span>
+<a class="text-[10px] text-slate-400 hover:text-accent uppercase tracking-widest" href="#">Terms of Service</a>
+<a class="text-[10px] text-slate-400 hover:text-accent uppercase tracking-widest" href="#">Privacy Policy</a>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<span class="text-[10px] text-slate-400 flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">security</span>
+                SSL Secured
+            </span>
+<span class="text-[10px] text-slate-400 flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">verified_user</span>
+                Authenticity Guaranteed
+            </span>
+</div>
+</div>
+</footer>
+
+</body></html>

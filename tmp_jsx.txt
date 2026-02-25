@@ -1,0 +1,278 @@
+
+<nav className="fixed w-full z-50 px-6 py-4 flex justify-between items-center mix-blend-difference text-white">
+<div className="flex gap-4 items-center">
+<span className="material-icons cursor-pointer">menu</span>
+<span className="text-sm font-medium tracking-widest hidden md:block">SHOP</span>
+</div>
+<div className="text-2xl font-bold tracking-tighter">RE:GALIA</div>
+<div className="flex gap-4 items-center">
+<span className="text-sm font-medium tracking-widest hidden md:block">SELL</span>
+<span className="material-icons cursor-pointer">shopping_bag</span>
+</div>
+</nav>
+<header className="relative w-full h-hero overflow-hidden rounded-b-2xl mb-12 group">
+<img alt="Bride in a luxury gown walking in a landscape" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuApOL6IabwRqinf4WUDEjX5XSfT-fwYCryqEFEwGEAPPFHul3jmtjdsATi0V4pn0v7qoS-fiS69OypjwRpdxKrTPiSsEGw85zt-hw7A_Y0audsValikskgao4-qhZckQmvwtvThvZClbU_hIjli730_PsyaB1kQkGkqNaIKurx9lKq66DdAF6kZ24KFRi5PMlJfy6S7Er9L2QkG0zu6PWzWZzREo6SmChZZbGsZuWQ3RHqnq7T739KOkhgZbGTz8AIKQNPFfes2nC79"/>
+<div className="absolute inset-0 bg-black/20 dark:bg-black/40"></div>
+<div className="absolute bottom-10 left-0 w-full text-center px-4 fade-in-up">
+<h1 className="text-white text-6xl md:text-8xl lg:text-9xl font-bold tracking-tight mb-4 drop-shadow-lg">
+                Meet the Couture
+            </h1>
+<div className="flex justify-between items-end w-full max-w-7xl mx-auto px-4 text-white/90">
+<span className="material-icons animate-bounce">arrow_downward</span>
+<span className="text-xs uppercase tracking-widest">Scroll to explore</span>
+</div>
+</div>
+</header>
+<section className="py-20 px-6 max-w-4xl mx-auto text-center">
+<h2 className="text-3xl md:text-5xl font-medium leading-tight mb-6 text-gray-900 dark:text-white">
+            Pre-loved elegance, curated perfection<br/>and ceremony-ready.
+        </h2>
+<p className="text-gray-600 dark:text-gray-400 text-lg">
+            Discover the premier marketplace for authenticated Galia Lahav masterpieces.
+        </p>
+</section>
+<section className="py-12 px-4 md:px-8 max-w-[1400px] mx-auto">
+<div className="text-center mb-16">
+<h2 className="text-6xl md:text-8xl lg:text-[10rem] font-bold tracking-tighter leading-none text-gray-900 dark:text-white">
+                Verified
+            </h2>
+<h2 className="text-6xl md:text-8xl lg:text-[10rem] font-bold tracking-tighter leading-none text-gray-900 dark:text-white -mt-4 md:-mt-10 lg:-mt-16 relative z-10 mix-blend-overlay dark:mix-blend-normal">
+                Authenticity
+            </h2>
+</div>
+<div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-24">
+<div className="relative group cursor-pointer">
+<div className="aspect-[4/3] rounded-xl overflow-hidden mb-4">
+<img alt="Close up of lace detail" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD26ERf7qdIwvqZsAGj3CgoSiRHdrhvyt0UM4U-XPsDdtGLzEETP1xuXzKGGORvUWAjKYvZbfI89znoKyb_jeClPVAVeo0xdY5fGjOJHAs7LDbo0J31hBVZ7f57IpEW6GEQyQ0mDCEeHKQk92dZ4dphYrYzpe45tTv-EmomWlBbjdrXyKh7GN07s8QJK1rau1DMFI6tUbUxr7lVPTjS2_lKa3O22mOmV4b_HhNNS2iEX5GKtJvKMB0HxuPND5poFLIM8CFH7CYd03IP"/>
+</div>
+<h3 className="text-3xl font-medium text-center text-white absolute bottom-10 left-0 right-0 drop-shadow-md">Inspected Detail</h3>
+</div>
+<div className="relative group cursor-pointer mt-0 md:mt-24">
+<div className="aspect-[4/3] rounded-xl overflow-hidden mb-4">
+<img alt="Gown silhouette in desert" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXeTEcNmV8Mf5CYFHbd06II_JjZ59jGzoFcd3H4i1L5zDmRPslL5M8bAYKPXL3MpF1nt0zhmqQB2wycK7GQEXwR1eBR3A9gB8f_8qiZ2thMyewC208LhZwqbTox1LMCJEj0DzwS4gI8sfUr0tzpl6TyO8s3c5roy2DKo5KbVtYf0vWHr4vp1W0jmQsjD_t3wrZ4PjCvhNeHNSRRJ9iBN4tQl2I-1_aeA6Rzbgi2BfIPHPRsp2wMsOluFRXQfOnJVjSNdDCN7rf_0fr"/>
+</div>
+<h3 className="text-3xl font-medium text-center text-white absolute bottom-10 left-0 right-0 drop-shadow-md">Curated Quality</h3>
+</div>
+</div>
+</section>
+<section className="py-16 overflow-hidden">
+<div className="px-6 mb-12 flex flex-col md:flex-row justify-between items-end max-w-[1400px] mx-auto">
+<div>
+<h3 className="text-4xl md:text-5xl font-medium tracking-tight mb-2">Featured Gowns</h3>
+<p className="text-gray-500 dark:text-gray-400">Timeless silhouettes, available now.</p>
+</div>
+<button className="hidden md:block px-6 py-2 rounded-full border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition text-sm uppercase tracking-wider">
+                View All Collection
+            </button>
+</div>
+<div className="flex overflow-x-auto gap-6 px-6 pb-12 no-scrollbar snap-x snap-mandatory">
+<div className="min-w-[300px] md:min-w-[400px] snap-center group relative rounded-xl overflow-hidden h-[500px]">
+<img alt="Silk wedding dress" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrSRGMoy4dMxNj1PQzw3nffo5wBOsvnze21R76OJXfIoPim-dBSVlMAH0xBwes67v0QawrvElOOcO-D-7zG7aBSKznr9JCdrj-vMiyoEIe4dFdUPOG_H-DVNFzD5TxDg_uP4bm79FzFkmnJgDqPUjKR__Tc1Ir1qFLJ2GQNhvFCv5_k2U9k0Tb4j_b69t0N5-CKRFPNoI6feMHRyJ0rxhDM2yPBSVxGskjGVF4z0Z9TYO7numZhzPBrlcoJxdtLfnoT1XrGO0IcTuj"/>
+<div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
+<div className="absolute bottom-0 left-0 p-6 w-full text-white">
+<span className="bg-white/20 backdrop-blur-sm text-xs px-2 py-1 rounded mb-3 inline-block">New Arrival</span>
+<h4 className="text-2xl font-semibold mb-1">The Maya</h4>
+<p className="text-sm opacity-80 mb-4">Size 4 • Excellent Condition</p>
+<div className="flex justify-between items-center">
+<span className="font-medium">$4,200</span>
+<button className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0 duration-300">
+<span className="material-icons text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<div className="min-w-[300px] md:min-w-[400px] snap-center group relative rounded-xl overflow-hidden h-[500px]">
+<img alt="Lace wedding dress back" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJwCik15AN2javDp9pWFeRp4q5gkaj3x9kSLjaF9Qp9F_P78YJxHGmOU3Mittjhxwfacp90SFNsZCEuz_G25GWdg3goBfXhcNqeWp4T6S_NmGmEquwFZqT6xj5O8aUhiU9XxIjFU7K1Qutn1P_szkZ8xAQUSdwR-Di8OfPzkIjFPXlmCjp3l4P4K6DbQTEDP-OKBTr-VSEid3cTcIDWyQlztyIeDp8yhU_gUIgxgGXl8d-63WecgslirU3nPbR5m-w0ODeOP91ZqnN"/>
+<div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
+<div className="absolute bottom-0 left-0 p-6 w-full text-white">
+<span className="bg-white/20 backdrop-blur-sm text-xs px-2 py-1 rounded mb-3 inline-block">Rare Find</span>
+<h4 className="text-2xl font-semibold mb-1">The Gala 802</h4>
+<p className="text-sm opacity-80 mb-4">Size 6 • Like New</p>
+<div className="flex justify-between items-center">
+<span className="font-medium">$5,800</span>
+<button className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0 duration-300">
+<span className="material-icons text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<div className="min-w-[300px] md:min-w-[400px] snap-center group relative rounded-xl overflow-hidden h-[500px]">
+<img alt="Mermaid style gown" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8Rnxxs4I0PPHJ0nx1CVmRQ8DR2XDjAgSPOR47y6-EPPAZukqthaJDFbqjnxEYKa1a7fkUjluih_Ampsbsct2IL1WRRDbiCdWjhcbRJmKGsFFECDbXuzw-dewnMB6td_7br2UnQ015t4GB7tODu2waTc2Efp-2C-P1nmvx0K_nBhYTBaIb3O0ylO-qthteB37H0xIG2dOdPqqFwFTqiAZIdA7m-zTnJEBMrnN4nXZlC9PMU2KS1II7HNyx3KHLzO7LefRB0OeYOlCd"/>
+<div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
+<div className="absolute bottom-0 left-0 p-6 w-full text-white">
+<h4 className="text-2xl font-semibold mb-1">The Fabiana</h4>
+<p className="text-sm opacity-80 mb-4">Size 2 • Professionally Cleaned</p>
+<div className="flex justify-between items-center">
+<span className="font-medium">$6,100</span>
+<button className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0 duration-300">
+<span className="material-icons text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<div className="min-w-[300px] md:min-w-[400px] snap-center group relative rounded-xl overflow-hidden h-[500px]">
+<img alt="Boho chic wedding dress" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWoG3HkivmLCLn65_p96jjRaollUoiR2ZskUAVu0XpFnbtW501x3-D1WxyydFCjvPqZQ0BGJpXzX3qvtZhmOiIQzSqT1Pkq0uDUBBQmNtVZ_rBfeRymZv3fEBW2ywew0csegSsTS6Lxecop8mwDW9WZwCbqcCcoDFuTionDJo1khs_ei7eVJ9wx07vSYfoq5vAFJkSPgw_1GgF4jgok23zEQE6_5tHFLCEtUwq8N2twogrX4elNQ692ddCZzwEkmDYhJ4LZYoG94tT"/>
+<div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
+<div className="absolute bottom-0 left-0 p-6 w-full text-white">
+<h4 className="text-2xl font-semibold mb-1">The Alesia</h4>
+<p className="text-sm opacity-80 mb-4">Size 8 • Altered</p>
+<div className="flex justify-between items-center">
+<span className="font-medium">$3,900</span>
+<button className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0 duration-300">
+<span className="material-icons text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div className="flex gap-4 px-6 max-w-[1400px] mx-auto">
+<button className="w-10 h-10 rounded-full border border-gray-300 dark:border-gray-700 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-800">
+<span className="material-icons text-sm">arrow_back</span>
+</button>
+<button className="w-10 h-10 rounded-full border border-gray-300 dark:border-gray-700 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-800">
+<span className="material-icons text-sm">arrow_forward</span>
+</button>
+</div>
+</section>
+<section className="relative py-32 px-6 overflow-hidden">
+<div className="absolute inset-0">
+<img alt="Road landscape background" className="w-full h-full object-cover grayscale brightness-50 dark:brightness-40" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7OOpQgP4ddYWDRzDcYV4pCom6NX3PjAOvfinaFf8CrFjG4xsqlunwCTjvspVkMetY85KW6XYuCdV4hvHKWtwSPY3SKwoh76O3GdYmOOdOgKpaxgnU1vHc09XgcrjfTXoPV8uzk9seszkmAg06gpA_WqK1G-vJ9MTu9fF6gJyZf09mYuzqZhwmC8Q7uoFHxQRgbrHkgeabWiSPcCe8TEKoMh7YCUFSJgEgHF4oi9J-s39rHf-copwPfxJ871r17SIXdl7Y_OqwM2-9"/>
+</div>
+<div className="relative z-10 max-w-4xl mx-auto text-center text-white">
+<div className="flex justify-center mb-6">
+<span className="flex gap-2">
+<span className="w-2 h-2 bg-white rounded-full"></span>
+<span className="w-2 h-2 bg-white/50 rounded-full"></span>
+</span>
+</div>
+<h2 className="text-4xl md:text-6xl font-medium leading-tight mb-8">
+                The Journey Continues<br/>with a Seamless Resale.
+            </h2>
+<button className="px-8 py-3 rounded-full border border-white/30 bg-white/10 backdrop-blur hover:bg-white hover:text-black transition duration-300 text-sm font-semibold tracking-wide">
+                Start Selling
+            </button>
+</div>
+</section>
+<section className="py-24 px-6 md:px-12 max-w-[1400px] mx-auto">
+<div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+<div className="lg:col-span-5 order-2 lg:order-1">
+<h3 className="text-3xl md:text-5xl font-medium leading-tight mb-8 text-gray-900 dark:text-white">
+                    Discover a better way to love luxury, where heritage meets circularity.
+                </h3>
+<p className="text-lg text-gray-600 dark:text-gray-400 mb-8 leading-relaxed">
+                    Extending the life of couture gowns isn't just about value—it's about the story. Our verified marketplace ensures that every bead, stitch, and layer of tulle is preserved for its next grand entrance. With secure payments and white-glove shipping, your dream dress is closer than you think.
+                </p>
+<button className="px-6 py-2 rounded-full border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition text-sm uppercase tracking-wider">
+                    Our Philosophy
+                </button>
+</div>
+<div className="lg:col-span-7 order-1 lg:order-2">
+<div className="relative rounded-2xl overflow-hidden aspect-video">
+<img alt="Bridal atelier team working" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhcLCbNt46OFJp1unwdLAP5CBX_XNbzji-Dzv1asj3WSXe34Qtm-K_q4sdhfhHqmX01_yRiyby2GjtxKVOYupegwUYf4wFUJf2g1TQpyHB4vXinHnPhrelJdWxHCEj2uOFJAaNQIDSypiiz8EnJg6juhFnsThEew-d2Esam6AzlciGrnlEMSphYdJ_lhM-JCA5vNUcRO-bmL3e0DM4MCNkr4SEM3T30g-vRT2Wyj54qCEXSye5AJGSqeIZEebtYk1pfAKnnlUIkuxi"/>
+<div className="absolute bottom-6 left-6 max-w-sm text-white drop-shadow-lg">
+<p className="text-xs uppercase tracking-widest mb-2">The Atelier Standard</p>
+<p className="text-sm opacity-90">Every gown is inspected by our team of expert seamstresses before listing.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section className="py-16 px-6 max-w-[1400px] mx-auto">
+<h2 className="text-3xl md:text-4xl font-medium text-center mb-12 text-gray-900 dark:text-white">More to Discover</h2>
+<div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div className="group cursor-pointer">
+<div className="rounded-xl overflow-hidden mb-4 h-64 relative">
+<img alt="Why choose pre-owned" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDGyf7iIpWzXKkMZYJUo9TOFirrw9uFGdtTy9ulmaDrl5CnmQR-cmYoklst7XkwHuYEhzB5eqEN9taUT7i-d31CDGKI1ziH2AhfmYrWyq_MZeDZAGwuECe1Ief_Hhf6J1176J52IetqL31QmBuE3gwmfixXod5df1bms_vJwVd1_R-no0-OXDuJdBa9Z9qgjA8wpzKbQqVxb9M2ZIimslQNyjPSQS-TNME-5cHQBrlHNZrCwvOkeDdZuJiVBh6YBbMk2Sxk3qzrx0M"/>
+</div>
+<h4 className="text-xl font-medium mb-2 group-hover:underline decoration-1 underline-offset-4">Why I Chose Pre-Owned</h4>
+<p className="text-xs text-gray-400 uppercase tracking-widest">09.16.2023</p>
+</div>
+<div className="group cursor-pointer">
+<div className="rounded-xl overflow-hidden mb-4 h-64 relative">
+<img alt="History of Galia Lahav" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWJhh6YLBMh__tb2CSAk5-aprsgsbjkx1NCYUPsLDOVkKO5VTjUyKjT57HRpnawAfzf0o1AmDI_SWsRxMmqff6MfUcImm-ESKLQx5mjbW-s_hKexklmBm4RwDiUk_wYKtbIAkIpN38bk53XIXUe3_1tgiMK7OqSEEe5c57H3nlz9Zwe4mgy-2SmFU-i3-ugTQxn65JD5bdstv58WtdEX_ItcnRqyxHX9dk-XpKqMs5tMkzlUJxjs2t8k9tECJhGp8E6t6-7ojI9M9c"/>
+</div>
+<h4 className="text-xl font-medium mb-2 group-hover:underline decoration-1 underline-offset-4">The Galia Lahav Legacy</h4>
+<p className="text-xs text-gray-400 uppercase tracking-widest">10.29.2023</p>
+</div>
+<div className="group cursor-pointer">
+<div className="rounded-xl overflow-hidden mb-4 h-64 relative">
+<img alt="Preserving your gown" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAD3IMqkyX1h801KLJRzpP0K92umvinL34WugJWDW08Jp7Hh6aqSALQVnzOVcDh6YN_a4xiK2tAdWSWO7l5nv4mCsb6xBH_x9oNuvOtr0okedNngP6Uw1hMwyyjSy6GDj2rdRnIF0erpUSj5sibSqvBM5Dh0Ew5Zh9x9BIUyDhqIdZ7G3ECDAWlZEwRkaUM6xC04Nuq3LjCiAwqKl7S3BlaB4QjWkgFR4aVyullc2El0n1HzMEXuyallfn36bmIT7-fsPk4mhxotMD-"/>
+</div>
+<h4 className="text-xl font-medium mb-2 group-hover:underline decoration-1 underline-offset-4">Complete Gown Care Guide</h4>
+<p className="text-xs text-gray-400 uppercase tracking-widest">04.12.2024</p>
+</div>
+</div>
+</section>
+<section className="py-20 px-6">
+<div className="max-w-[1400px] mx-auto bg-surface-light dark:bg-surface-dark rounded-2xl overflow-hidden relative">
+<div className="absolute inset-0 opacity-10 pointer-events-none" style={{"background-image": "radial-gradient(#999 1px, transparent 1px)", "background-size": "20px 20px"}}></div>
+<div className="flex flex-col lg:flex-row">
+<div className="lg:w-1/2 p-10 md:p-16 flex flex-col justify-center relative z-10">
+<p className="text-xs uppercase tracking-widest text-gray-500 mb-4">Stay in the loop</p>
+<h3 className="text-3xl md:text-4xl font-medium mb-6 leading-tight text-gray-900 dark:text-white">
+                        New arrivals, authentication tips, and bridal inspiration — find it in our newsletter.
+                    </h3>
+<form className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
+<input className="bg-white dark:bg-black border-0 rounded-full px-6 py-3 text-sm focus:ring-2 focus:ring-gray-400 w-full shadow-sm text-gray-900 dark:text-white placeholder-gray-400" placeholder="name@email.com" type="email"/>
+<button className="bg-primary text-white rounded-full px-8 py-3 text-sm font-medium hover:bg-gray-800 transition shadow-lg flex items-center justify-center gap-2 group whitespace-nowrap" type="submit">
+                            Register
+                            <span className="material-icons text-xs group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</form>
+</div>
+<div className="lg:w-1/2 h-64 lg:h-auto relative">
+<img alt="Bridal landscape" className="absolute inset-0 w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcNNxmRqZIEzT15YsKadOe1MVPv5tsVWcqyp_Im3atFKEUQKTCEzNsqx23VZRwKr2-_BbNWVPDTa66DC8BDgeyzLYuEcgzWRacs9E210HsXZtNbc-KYyEcIDI_NkOqqRC8AYLM7TYlO6IPqg-iLSulzvQGvLMSIMSjL1MvqwNIMbaRSToXWgF83ojYddAAp9t7mM5A4KtW1_iNd6O5QVeQrE9McAlS9dHZHZDMUm8K_nQTLXk-sWne_msQQEi6rutblG2zD97qbklG"/>
+</div>
+</div>
+</div>
+</section>
+<footer className="bg-surface-light dark:bg-surface-dark pt-20 pb-10 px-6 mt-12">
+<div className="max-w-[1400px] mx-auto">
+<div className="flex flex-col md:flex-row justify-between items-start mb-16 border-b border-gray-300 dark:border-gray-700 pb-12">
+<div className="max-w-sm mb-10 md:mb-0">
+<h4 className="text-2xl font-bold mb-4">RE:GALIA</h4>
+<p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                        The premier marketplace for pre-owned Galia Lahav couture. Authenticated, secure, and sustainable luxury for the modern bride.
+                    </p>
+</div>
+<div className="flex gap-16 text-sm">
+<div>
+<h5 className="font-bold mb-4 uppercase tracking-wider text-xs">Shop</h5>
+<ul className="space-y-2 text-gray-600 dark:text-gray-400">
+<li><a className="hover:text-primary dark:hover:text-white transition" href="#">New Arrivals</a></li>
+<li><a className="hover:text-primary dark:hover:text-white transition" href="#">Galia Lahav</a></li>
+<li><a className="hover:text-primary dark:hover:text-white transition" href="#">Accessories</a></li>
+<li><a className="hover:text-primary dark:hover:text-white transition" href="#">Sale</a></li>
+</ul>
+</div>
+<div>
+<h5 className="font-bold mb-4 uppercase tracking-wider text-xs">Support</h5>
+<ul className="space-y-2 text-gray-600 dark:text-gray-400">
+<li><a className="hover:text-primary dark:hover:text-white transition" href="#">Authentication</a></li>
+<li><a className="hover:text-primary dark:hover:text-white transition" href="#">Selling Guide</a></li>
+<li><a className="hover:text-primary dark:hover:text-white transition" href="#">FAQ</a></li>
+<li><a className="hover:text-primary dark:hover:text-white transition" href="#">Contact</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div className="flex flex-col md:flex-row justify-between items-center text-xs text-gray-500 dark:text-gray-500">
+<p>© 2024 RE:GALIA. All rights reserved.</p>
+<div className="flex gap-6 mt-4 md:mt-0">
+<a className="hover:text-primary dark:hover:text-white transition" href="#">Privacy Policy</a>
+<a className="hover:text-primary dark:hover:text-white transition" href="#">Terms of Use</a>
+</div>
+<div className="flex gap-4 mt-4 md:mt-0 opacity-60">
+<span className="material-icons text-base cursor-pointer hover:text-black dark:hover:text-white">facebook</span>
+<span className="material-icons text-base cursor-pointer hover:text-black dark:hover:text-white">camera_alt</span> 
+<span className="material-icons text-base cursor-pointer hover:text-black dark:hover:text-white">music_note</span> 
+</div>
+</div>
+</div>
+</footer>
+<div className="fixed bottom-6 right-6 z-50">
+<button className="bg-primary text-white w-14 h-14 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform">
+<span className="material-icons">chat_bubble</span>
+</button>
+</div>
+

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>My Profile | Luxury Bridal Marketplace</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&amp;family=Inter:wght@300;400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#111111",
+                        "background-light": "#FDFDFD",
+                        "background-dark": "#0A0A0A",
+                        accent: "#C5A059",
+                    },
+                    fontFamily: {
+                        display: ["Cormorant Garamond", "serif"],
+                        sans: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        'none': '0',
+                        'sm': '0.125rem',
+                        DEFAULT: '0.25rem',
+                        'md': '0.375rem',
+                        'lg': '1rem',
+                        'xl': '1.5rem',
+                        'full': '9999px',
+                    },
+                },
+            },
+        };
+    </script>
+<style type="text/tailwindcss">
+        @layer base {
+            body { font-family: 'Inter', sans-serif; }
+            h1, h2, h3, h4, .brand-font { font-family: 'Cormorant Garamond', serif; }
+        }
+        .form-input-luxe {
+            @apply w-full bg-transparent border-0 border-b border-slate-200 dark:border-slate-800 px-0 py-3 text-sm focus:ring-0 focus:border-accent transition-colors placeholder:text-slate-300;
+        }
+        .label-luxe {
+            @apply text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-1 block;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 transition-colors duration-200">
+<header class="h-20 border-b border-slate-100 dark:border-slate-800 bg-white/80 dark:bg-black/80 backdrop-blur-md sticky top-0 z-50">
+<div class="max-w-[1600px] mx-auto h-full px-8 flex items-center justify-between">
+<div class="flex items-center gap-12">
+<h1 class="text-2xl font-medium tracking-widest uppercase cursor-pointer">
+                    Galia Lahav
+                    <span class="block text-[8px] tracking-[0.4em] mt-0.5 text-slate-400">MARKETPLACE</span>
+</h1>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-[10px] font-bold tracking-[0.2em] uppercase text-slate-400 hover:text-accent transition-colors" href="#">Listings</a>
+<a class="text-[10px] font-bold tracking-[0.2em] uppercase text-slate-400 hover:text-accent transition-colors" href="#">Orders</a>
+<a class="text-[10px] font-bold tracking-[0.2em] uppercase text-slate-400 hover:text-accent transition-colors" href="#">Messages</a>
+<a class="text-[10px] font-bold tracking-[0.2em] uppercase text-primary dark:text-white border-b border-accent pb-1" href="#">Profile</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<button class="material-symbols-outlined text-slate-400 hover:text-primary transition-colors">search</button>
+<div class="h-8 w-8 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center overflow-hidden border border-slate-200 dark:border-slate-700">
+<img alt="Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUB7g7mKfGdsaAIl1gBF-ltUbuB6-bJgoc1z5M80M0Cr1Gs37LV8hFEhms7DAkGbwxvAt8NUruOhChOusQIe8tbmcDmF-X5juAgIjansZ9Aqf5VOPntygM-Yt3VnhHMM-OUle5UshFthY4r2whvpm5_OgZTJp8vl7tjDAssQl7vmuCaY7-PD8OViYbTo4guAjPr07giJj-tW6f94MNUgsmTO2wGhIqthXeKNfYKdDlJa6PZP1v4oWXrJNYuuVwPUrNRT7r83uMN0EZ"/>
+</div>
+<button class="material-symbols-outlined text-slate-400" onclick="document.documentElement.classList.toggle('dark')">dark_mode</button>
+</div>
+</div>
+</header>
+<main class="max-w-5xl mx-auto px-8 py-16">
+<div class="flex flex-col md:flex-row gap-16">
+<aside class="w-full md:w-64 flex-shrink-0">
+<div class="flex flex-col items-center text-center">
+<div class="relative group">
+<div class="w-40 h-40 rounded-full overflow-hidden border border-slate-100 dark:border-slate-800 p-1 mb-6">
+<img alt="User Avatar" class="w-full h-full object-cover rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUB7g7mKfGdsaAIl1gBF-ltUbuB6-bJgoc1z5M80M0Cr1Gs37LV8hFEhms7DAkGbwxvAt8NUruOhChOusQIe8tbmcDmF-X5juAgIjansZ9Aqf5VOPntygM-Yt3VnhHMM-OUle5UshFthY4r2whvpm5_OgZTJp8vl7tjDAssQl7vmuCaY7-PD8OViYbTo4guAjPr07giJj-tW6f94MNUgsmTO2wGhIqthXeKNfYKdDlJa6PZP1v4oWXrJNYuuVwPUrNRT7r83uMN0EZ"/>
+</div>
+<button class="absolute bottom-6 right-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-full p-2 shadow-sm hover:border-accent transition-colors">
+<span class="material-symbols-outlined text-sm">photo_camera</span>
+</button>
+</div>
+<h2 class="text-3xl font-light mb-1 italic">Alexandra V.</h2>
+<p class="text-[10px] tracking-[0.3em] uppercase text-slate-400 mb-8">Member since 2023</p>
+<div class="w-full bg-slate-50 dark:bg-white/5 rounded-2xl p-6 border border-slate-100 dark:border-slate-800">
+<div class="flex items-center justify-between mb-4">
+<span class="text-[10px] font-bold tracking-widest uppercase text-slate-900 dark:text-white">Seller Status</span>
+<span class="material-symbols-outlined text-accent text-lg">verified</span>
+</div>
+<div class="h-1 w-full bg-slate-200 dark:bg-slate-800 rounded-full mb-3 overflow-hidden">
+<div class="h-full bg-accent w-3/4 rounded-full"></div>
+</div>
+<p class="text-[11px] text-slate-500 mb-4 leading-relaxed">75% of verification completed. Link your social profile to reach Pro status.</p>
+<button class="text-[10px] font-bold tracking-widest uppercase text-accent border-b border-accent/30 hover:border-accent transition-all pb-0.5">Complete Profile</button>
+</div>
+</div>
+</aside>
+<section class="flex-1">
+<div class="flex justify-between items-end mb-12 pb-4 border-b border-slate-100 dark:border-slate-800">
+<h3 class="text-3xl font-light">Personal Details</h3>
+<button class="text-[11px] font-bold uppercase tracking-[0.2em] text-accent hover:text-primary transition-colors">Save Changes</button>
+</div>
+<form class="space-y-10">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
+<div class="space-y-1">
+<label class="label-luxe">Full Name</label>
+<input class="form-input-luxe" type="text" value="Alexandra Von Furstenberg"/>
+</div>
+<div class="space-y-1">
+<label class="label-luxe">Email Address</label>
+<input class="form-input-luxe" type="email" value="a.furstenberg@atelier.com"/>
+</div>
+<div class="space-y-1">
+<label class="label-luxe">Phone Number</label>
+<input class="form-input-luxe" type="tel" value="+1 (555) 890-2344"/>
+</div>
+<div class="space-y-1">
+<label class="label-luxe">Preferred Language</label>
+<select class="form-input-luxe appearance-none">
+<option>English (US)</option>
+<option>French</option>
+<option>Italian</option>
+</select>
+</div>
+</div>
+<div class="pt-8">
+<h3 class="text-3xl font-light mb-10 pb-4 border-b border-slate-100 dark:border-slate-800">Shipping Address</h3>
+<div class="space-y-10">
+<div class="space-y-1">
+<label class="label-luxe">Street Address</label>
+<input class="form-input-luxe" type="text" value="742 Evergreen Terrace"/>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-x-12 gap-y-10">
+<div class="space-y-1">
+<label class="label-luxe">City</label>
+<input class="form-input-luxe" type="text" value="Los Angeles"/>
+</div>
+<div class="space-y-1">
+<label class="label-luxe">State / Province</label>
+<input class="form-input-luxe" type="text" value="California"/>
+</div>
+<div class="space-y-1">
+<label class="label-luxe">Postal Code</label>
+<input class="form-input-luxe" type="text" value="90210"/>
+</div>
+</div>
+<div class="space-y-1">
+<label class="label-luxe">Country</label>
+<input class="form-input-luxe" type="text" value="United States"/>
+</div>
+</div>
+</div>
+<div class="pt-12 flex items-center justify-between border-t border-slate-100 dark:border-slate-800">
+<div>
+<h4 class="text-lg font-medium mb-1">Account Privacy</h4>
+<p class="text-xs text-slate-400">Manage how your profile appears to other brides.</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-accent"></div>
+</label>
+</div>
+<div class="flex justify-end gap-6 pt-6">
+<button class="px-8 py-3 text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-primary transition-colors" type="button">Deactivate Account</button>
+<button class="px-10 py-3 bg-primary dark:bg-white text-white dark:text-black text-[10px] font-bold uppercase tracking-widest hover:bg-accent dark:hover:bg-accent dark:hover:text-white transition-all shadow-lg shadow-primary/5" type="submit">Update Profile</button>
+</div>
+</form>
+</section>
+</div>
+</main>
+<footer class="mt-20 border-t border-slate-100 dark:border-slate-800 py-12">
+<div class="max-w-5xl mx-auto px-8 flex flex-col md:flex-row justify-between items-center gap-8">
+<p class="text-[10px] tracking-[0.2em] uppercase text-slate-400">© 2024 Galia Lahav Marketplace. All Rights Reserved.</p>
+<div class="flex gap-8">
+<a class="text-[10px] tracking-[0.2em] uppercase text-slate-400 hover:text-accent transition-colors" href="#">Privacy</a>
+<a class="text-[10px] tracking-[0.2em] uppercase text-slate-400 hover:text-accent transition-colors" href="#">Terms</a>
+<a class="text-[10px] tracking-[0.2em] uppercase text-slate-400 hover:text-accent transition-colors" href="#">Support</a>
+</div>
+</div>
+</footer>
+
+</body></html>

@@ -489,6 +489,33 @@ export default function SellWizardPage() {
                 </div>
                 <div className="lg:col-span-8 bg-white border border-gray-100 shadow-xl rounded-xl">
                   <div className="p-8 lg:p-12 space-y-6">
+                    {data.stock_images && data.stock_images.length > 0 && (
+                      <div className="mb-8 p-6 bg-blue-50 border border-blue-200 rounded-lg">
+                        <div className="flex items-start gap-3 mb-4">
+                          <span className="material-symbols-outlined text-blue-600 text-xl">info</span>
+                          <div>
+                            <h3 className="text-sm font-bold text-blue-900 mb-1">Reference Photos from Catalog</h3>
+                            <p className="text-xs text-blue-800">These are the professional stock photos of {data.product_name}. Upload similar photos of <strong>yourself wearing the dress</strong> to help buyers visualize the fit.</p>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-3 gap-3 mt-4">
+                          {data.stock_images.slice(0, 3).map((img, i) => (
+                            <div key={i} className="aspect-[3/4] border border-blue-200 rounded overflow-hidden">
+                              <img src={img} alt={`Stock photo ${i + 1}`} className="w-full h-full object-cover" />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
+                      <div className="flex items-center gap-2 text-amber-800">
+                        <span className="material-symbols-outlined text-lg">warning</span>
+                        <p className="text-xs font-bold">Required: At least 2 photos of you wearing the dress</p>
+                      </div>
+                      <p className="text-xs text-amber-700 mt-1">Photos must clearly show you wearing the gown. Stock photos alone will not be accepted.</p>
+                    </div>
+
                     <label className={`block aspect-video lg:aspect-[2.5/1] border-2 border-dashed border-gray-200 bg-gray-50 hover:border-accent hover:bg-accent/5 flex flex-col items-center justify-center cursor-pointer transition-all rounded-xl ${uploading ? 'opacity-50' : ''}`}>
                       <input type="file" accept="image/*" multiple onChange={handlePhotoUpload} className="hidden" disabled={uploading || data.images.length >= 8} />
                       <span className="material-symbols-outlined text-4xl text-gray-400 mb-2">cloud_upload</span>

@@ -1,0 +1,204 @@
+
+<aside className="fixed left-0 top-0 h-full w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-[#111] z-50">
+<div className="p-8">
+<h1 className="text-2xl font-medium tracking-widest uppercase border-b border-slate-100 dark:border-slate-800 pb-6 mb-8">
+                Luxe Bridal
+                <span className="block text-[10px] tracking-[0.3em] mt-1 text-slate-400 font-sans">ADMIN CONSOLE</span>
+</h1>
+<nav className="space-y-1">
+<a className="flex items-center gap-3 px-4 py-3 bg-primary text-white transition-all shadow-lg" href="#">
+<span className="material-symbols-outlined text-lg">dashboard</span>
+<span className="text-xs font-medium tracking-wider uppercase">Dashboard</span>
+</a>
+<a className="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-all" href="#">
+<span className="material-symbols-outlined text-lg">verified_user</span>
+<span className="text-xs font-medium tracking-wider uppercase">Moderation</span>
+<span className="ml-auto bg-accent text-[10px] px-1.5 py-0.5 rounded text-white">12</span>
+</a>
+<a className="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-all" href="#">
+<span className="material-symbols-outlined text-lg">inventory_2</span>
+<span className="text-xs font-medium tracking-wider uppercase">Inventory</span>
+</a>
+<a className="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-all" href="#">
+<span className="material-symbols-outlined text-lg">people_outline</span>
+<span className="text-xs font-medium tracking-wider uppercase">Sellers</span>
+</a>
+<a className="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-all" href="#">
+<span className="material-symbols-outlined text-lg">payments</span>
+<span className="text-xs font-medium tracking-wider uppercase">Transactions</span>
+</a>
+</nav>
+</div>
+<div className="absolute bottom-0 w-full p-8 border-t border-slate-100 dark:border-slate-800">
+<div className="flex items-center gap-3">
+<div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-[10px] font-bold">JD</div>
+<div>
+<p className="text-xs font-semibold">Julianne Deville</p>
+<p className="text-[10px] text-slate-400">Executive Director</p>
+</div>
+</div>
+</div>
+</aside>
+<main className="ml-64 min-h-screen">
+<header className="h-16 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-[#111]/80 backdrop-blur-md flex items-center justify-between px-8 sticky top-0 z-40">
+<div className="flex items-center gap-4">
+<span className="text-xs text-slate-400 tracking-widest uppercase">Overview</span>
+<span className="h-4 w-px bg-slate-200 dark:bg-slate-800"></span>
+<span className="text-xs font-medium uppercase tracking-wider">Executive Dashboard</span>
+</div>
+<div className="flex items-center gap-6">
+<button className="material-symbols-outlined text-slate-400 hover:text-primary dark:hover:text-white transition-colors">search</button>
+<button className="material-symbols-outlined text-slate-400 hover:text-primary dark:hover:text-white transition-colors">notifications</button>
+<button className="material-symbols-outlined text-slate-400 hover:text-primary dark:hover:text-white transition-colors" onclick="document.documentElement.classList.toggle('dark')">contrast</button>
+</div>
+</header>
+<div className="p-8 space-y-8">
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<div className="bg-white dark:bg-[#111] p-6 border border-slate-200 dark:border-slate-800 relative group">
+<p className="text-[10px] font-bold tracking-[0.2em] text-slate-400 uppercase mb-4">Pending Review</p>
+<div className="flex items-baseline gap-2">
+<h3 className="text-3xl font-light font-display">12</h3>
+<span className="text-[10px] text-slate-400">Submissions</span>
+</div>
+<a className="mt-4 flex items-center gap-2 text-[10px] font-bold text-accent uppercase tracking-widest group-hover:gap-3 transition-all" href="#">
+                        Go to moderation <span className="material-symbols-outlined text-xs">arrow_forward</span>
+</a>
+</div>
+<div className="bg-white dark:bg-[#111] p-6 border border-slate-200 dark:border-slate-800">
+<p className="text-[10px] font-bold tracking-[0.2em] text-slate-400 uppercase mb-4">Total Active Listings</p>
+<div className="flex items-baseline gap-2">
+<h3 className="text-3xl font-light font-display">1,482</h3>
+</div>
+<p className="mt-4 text-[11px] text-slate-500 font-medium">Est. GMV: <span className="text-slate-900 dark:text-white">$12.4M</span></p>
+</div>
+<div className="bg-white dark:bg-[#111] p-6 border border-slate-200 dark:border-slate-800">
+<div className="flex justify-between items-start mb-4">
+<p className="text-[10px] font-bold tracking-[0.2em] text-slate-400 uppercase">Monthly Sales Volume</p>
+<span className="text-green-500 text-[10px] font-bold flex items-center gap-0.5">+14.2% <span className="material-symbols-outlined text-[10px]">trending_up</span></span>
+</div>
+<h3 className="text-3xl font-light font-display">$842.5k</h3>
+<div className="mt-4 h-6 w-full">
+<svg className="w-full h-full" viewBox="0 0 100 20">
+<path d="M0 18 Q 10 15, 20 16 T 40 10 T 60 12 T 80 5 T 100 8" fill="none" stroke="#C5A059" strokeWidth="1.5"></path>
+</svg>
+</div>
+</div>
+<div className="bg-white dark:bg-[#111] p-6 border border-slate-200 dark:border-slate-800">
+<p className="text-[10px] font-bold tracking-[0.2em] text-slate-400 uppercase mb-4">Open Claims</p>
+<div className="flex items-baseline gap-2">
+<h3 className="text-3xl font-light font-display text-red-500">4</h3>
+<span className="text-[10px] text-slate-400">High priority</span>
+</div>
+<div className="mt-4 flex -space-x-2">
+<div className="w-6 h-6 rounded-full border-2 border-white dark:border-[#111] bg-slate-200 flex items-center justify-center text-[8px] font-bold">JD</div>
+<div className="w-6 h-6 rounded-full border-2 border-white dark:border-[#111] bg-slate-300 flex items-center justify-center text-[8px] font-bold">AS</div>
+</div>
+</div>
+</div>
+<div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div className="lg:col-span-1 space-y-6">
+<h2 className="text-xl font-medium tracking-tight">Recent Activity</h2>
+<div className="relative space-y-8 before:absolute before:inset-0 before:ml-4 before:-translate-x-px before:h-full before:w-0.5 before:bg-gradient-to-b before:from-slate-200 before:via-slate-200 before:to-transparent dark:before:from-slate-800 dark:before:via-slate-800">
+<div className="relative flex items-center justify-between gap-4">
+<div className="flex items-center gap-4">
+<div className="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white dark:bg-[#111] ring-1 ring-slate-200 dark:ring-slate-800">
+<span className="material-symbols-outlined text-sm text-accent">add_circle</span>
+</div>
+<div>
+<p className="text-[13px] font-medium">New Listing: Couture Gown</p>
+<p className="text-[10px] text-slate-400 uppercase tracking-widest">By Elena Rodriguez • 2m ago</p>
+</div>
+</div>
+</div>
+<div className="relative flex items-center justify-between gap-4">
+<div className="flex items-center gap-4">
+<div className="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white dark:bg-[#111] ring-1 ring-slate-200 dark:ring-slate-800">
+<span className="material-symbols-outlined text-sm text-green-500">check_circle</span>
+</div>
+<div>
+<p className="text-[13px] font-medium">Listing Approved</p>
+<p className="text-[10px] text-slate-400 uppercase tracking-widest">SKU GL-2024-088 • 45m ago</p>
+</div>
+</div>
+</div>
+<div className="relative flex items-center justify-between gap-4">
+<div className="flex items-center gap-4">
+<div className="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white dark:bg-[#111] ring-1 ring-slate-200 dark:ring-slate-800">
+<span className="material-symbols-outlined text-sm text-blue-500">shopping_bag</span>
+</div>
+<div>
+<p className="text-[13px] font-medium">Item Sold: 'Maya' Custom</p>
+<p className="text-[10px] text-slate-400 uppercase tracking-widest">$12,400 Transaction • 2h ago</p>
+</div>
+</div>
+</div>
+<div className="relative flex items-center justify-between gap-4">
+<div className="flex items-center gap-4">
+<div className="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white dark:bg-[#111] ring-1 ring-slate-200 dark:ring-slate-800">
+<span className="material-symbols-outlined text-sm text-red-500">report</span>
+</div>
+<div>
+<p className="text-[13px] font-medium">New Claim Opened</p>
+<p className="text-[10px] text-slate-400 uppercase tracking-widest">Order #9821 • 5h ago</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div className="lg:col-span-2 space-y-6">
+<div className="flex items-center justify-between">
+<h2 className="text-xl font-medium tracking-tight">Listing Performance</h2>
+<div className="flex gap-4">
+<span className="text-[10px] uppercase font-bold tracking-widest text-slate-400">Sales by Collection</span>
+<span className="text-[10px] uppercase font-bold tracking-widest text-accent">Last 30 Days</span>
+</div>
+</div>
+<div className="bg-white dark:bg-[#111] p-8 border border-slate-200 dark:border-slate-800">
+<div className="h-64 w-full flex items-end gap-6">
+<div className="flex-1 group relative">
+<div className="bg-slate-100 dark:bg-white/5 w-full h-full absolute bottom-0"></div>
+<div className="bg-primary dark:bg-white/20 w-full h-[85%] absolute bottom-0 transition-all group-hover:bg-accent"></div>
+<div className="absolute -bottom-6 left-0 right-0 text-center text-[10px] font-bold text-slate-400 uppercase tracking-tighter truncate px-1">GALA</div>
+</div>
+<div className="flex-1 group relative">
+<div className="bg-slate-100 dark:bg-white/5 w-full h-full absolute bottom-0"></div>
+<div className="bg-primary dark:bg-white/20 w-full h-[45%] absolute bottom-0 transition-all group-hover:bg-accent"></div>
+<div className="absolute -bottom-6 left-0 right-0 text-center text-[10px] font-bold text-slate-400 uppercase tracking-tighter truncate px-1">Le Secret</div>
+</div>
+<div className="flex-1 group relative">
+<div className="bg-slate-100 dark:bg-white/5 w-full h-full absolute bottom-0"></div>
+<div className="bg-primary dark:bg-white/20 w-full h-[65%] absolute bottom-0 transition-all group-hover:bg-accent"></div>
+<div className="absolute -bottom-6 left-0 right-0 text-center text-[10px] font-bold text-slate-400 uppercase tracking-tighter truncate px-1">Couture</div>
+</div>
+<div className="flex-1 group relative">
+<div className="bg-slate-100 dark:bg-white/5 w-full h-full absolute bottom-0"></div>
+<div className="bg-primary dark:bg-white/20 w-full h-[30%] absolute bottom-0 transition-all group-hover:bg-accent"></div>
+<div className="absolute -bottom-6 left-0 right-0 text-center text-[10px] font-bold text-slate-400 uppercase tracking-tighter truncate px-1">Queen Hearts</div>
+</div>
+<div className="flex-1 group relative">
+<div className="bg-slate-100 dark:bg-white/5 w-full h-full absolute bottom-0"></div>
+<div className="bg-primary dark:bg-white/20 w-full h-[95%] absolute bottom-0 transition-all group-hover:bg-accent"></div>
+<div className="absolute -bottom-6 left-0 right-0 text-center text-[10px] font-bold text-slate-400 uppercase tracking-tighter truncate px-1">Rise</div>
+</div>
+<div className="flex-1 group relative">
+<div className="bg-slate-100 dark:bg-white/5 w-full h-full absolute bottom-0"></div>
+<div className="bg-primary dark:bg-white/20 w-full h-[55%] absolute bottom-0 transition-all group-hover:bg-accent"></div>
+<div className="absolute -bottom-6 left-0 right-0 text-center text-[10px] font-bold text-slate-400 uppercase tracking-tighter truncate px-1">Alegria</div>
+</div>
+</div>
+<div className="mt-12 flex justify-between items-center pt-8 border-t border-slate-100 dark:border-slate-800">
+<div>
+<p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">Top Performing</p>
+<p className="text-lg font-display">Rise Collection</p>
+</div>
+<div className="text-right">
+<p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">Avg. Sale Price</p>
+<p className="text-lg font-display">$9,240</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+

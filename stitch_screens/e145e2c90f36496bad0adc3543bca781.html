@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Admin Moderation | Luxury Bridal Marketplace</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&amp;family=Inter:wght@300;400;500;600&amp;family=Material+Icons+Outlined&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#111111",
+                        "background-light": "#F9F9F9",
+                        "background-dark": "#0A0A0A",
+                        accent: "#C5A059", // Gold accent for luxury feel
+                    },
+                    fontFamily: {
+                        display: ["Cormorant Garamond", "serif"],
+                        sans: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "2px",
+                        'lg': "4px",
+                    },
+                },
+            },
+        };
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .brand-font { font-family: 'Cormorant Garamond', serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e5e5e5; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #333; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 transition-colors duration-200">
+<aside class="fixed left-0 top-0 h-full w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-[#111] z-50">
+<div class="p-8">
+<h1 class="text-2xl font-medium tracking-widest uppercase border-b border-slate-100 dark:border-slate-800 pb-6 mb-8">
+                Galia Lahav
+                <span class="block text-[10px] tracking-[0.3em] mt-1 text-slate-400">ADMIN CONSOLE</span>
+</h1>
+<nav class="space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-all" href="#">
+<span class="material-icons-outlined text-sm">dashboard</span>
+<span class="text-xs font-medium tracking-wider uppercase">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-primary text-white transition-all" href="#">
+<span class="material-icons-outlined text-sm">verified_user</span>
+<span class="text-xs font-medium tracking-wider uppercase">Moderation</span>
+<span class="ml-auto bg-accent text-[10px] px-1.5 py-0.5 rounded text-white">12</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-all" href="#">
+<span class="material-icons-outlined text-sm">inventory_2</span>
+<span class="text-xs font-medium tracking-wider uppercase">Inventory</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-all" href="#">
+<span class="material-icons-outlined text-sm">people_outline</span>
+<span class="text-xs font-medium tracking-wider uppercase">Sellers</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-all" href="#">
+<span class="material-icons-outlined text-sm">payments</span>
+<span class="text-xs font-medium tracking-wider uppercase">Transactions</span>
+</a>
+</nav>
+</div>
+<div class="absolute bottom-0 w-full p-8 border-t border-slate-100 dark:border-slate-800">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-[10px] font-bold">JD</div>
+<div>
+<p class="text-xs font-semibold">Julianne Deville</p>
+<p class="text-[10px] text-slate-400">Senior Curator</p>
+</div>
+</div>
+</div>
+</aside>
+<main class="ml-64 min-h-screen">
+<header class="h-16 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-[#111]/80 backdrop-blur-md flex items-center justify-between px-8 sticky top-0 z-40">
+<div class="flex items-center gap-4">
+<span class="text-xs text-slate-400 tracking-widest uppercase">Moderation Queue</span>
+<span class="h-4 w-px bg-slate-200 dark:bg-slate-800"></span>
+<span class="text-xs font-medium uppercase tracking-wider">All Submissions</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative">
+<span class="material-icons-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+<input class="pl-10 pr-4 py-1.5 text-xs bg-slate-50 dark:bg-white/5 border-none focus:ring-1 focus:ring-accent w-64 placeholder:text-slate-400" placeholder="Search by ID or Seller" type="text"/>
+</div>
+<button class="material-icons-outlined text-slate-400 hover:text-primary dark:hover:text-white transition-colors">notifications</button>
+<button class="material-icons-outlined text-slate-400 hover:text-primary dark:hover:text-white transition-colors" onclick="document.documentElement.classList.toggle('dark')">dark_mode</button>
+</div>
+</header>
+<div class="p-8 flex gap-8">
+<section class="w-1/3 space-y-4">
+<div class="flex items-center justify-between mb-6">
+<h2 class="text-xl font-medium tracking-tight">Pending Approval</h2>
+<span class="text-[10px] text-slate-400 uppercase tracking-[0.2em]">12 Items Remaining</span>
+</div>
+<div class="p-4 bg-white dark:bg-[#151515] border-l-2 border-accent shadow-sm ring-1 ring-slate-200 dark:ring-slate-800 cursor-pointer">
+<div class="flex gap-4">
+<img alt="Gown preview" class="w-16 h-20 object-cover bg-slate-100" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6WTfNqOFlWyNqNW2MYlx1M5OgMAXd2_likcEpCOMT6J9E4DrdI-PYUPKkF8IMP0Vr5f_uuqN06qHksqxtbb1oUQ329KFw8XU06BHHUIisMgKFLrUs47x1btaGUClSvH_mAnmLeN6nTM7Xzn43Pb2zSmMH16YXTKG5ugwjI6AGUJowgMgZPjfJxvLZYwJ8Zq7oeAo_wx4jRfpi3rgsO1PQ5e46fYvhiuikrUPqPvzlhtPejLWo_KrPWhZ0SgWwLUY-buX2-tN9YOI6"/>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start">
+<p class="text-[10px] text-slate-400 uppercase tracking-widest mb-1">SKU: GL-2024-089</p>
+<span class="bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 text-[9px] px-1.5 py-0.5 font-bold uppercase tracking-wider">Review</span>
+</div>
+<p class="text-sm font-medium truncate">Galia Lahav "Maya" Gown</p>
+<p class="text-xs text-slate-500 mt-1">Seller: Elena Rodriguez</p>
+<p class="text-[10px] text-slate-400 mt-2 italic">2 hours ago</p>
+</div>
+</div>
+</div>
+<div class="p-4 bg-white dark:bg-[#111] border-l-2 border-transparent hover:border-slate-300 dark:hover:border-slate-700 transition-all cursor-pointer">
+<div class="flex gap-4">
+<img alt="Gown preview" class="w-16 h-20 object-cover bg-slate-100" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbIfKdB0HmZ3TPFiE2yvK6jdLYkrR9EWVyjEqQgRdcslrvr002LeQnJDw1lyfM3BIQwj0nVUuzUjnQEJ-2wxCe6XIoK1QMqT5b1Ofc6VfnlVu_TTHet9G0Xe8wxv_dyS2mn0GRGWoB7c0dNyNWExQa4NIBVAo9QjRPatGrJjgR2WRwQDBLyKbcLhN16bDDg3Iu-vJVxXWHqGcRXg2ab-NOu-VcQ7CCfd_QVDI0nyQitReFq_6hhCX8ZUX1gv-UjuimI6FQxETqa-aZ"/>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start">
+<p class="text-[10px] text-slate-400 uppercase tracking-widest mb-1">SKU: GL-2024-088</p>
+</div>
+<p class="text-sm font-medium truncate">Galia Lahav "Seraphina" Custom</p>
+<p class="text-xs text-slate-500 mt-1">Seller: Sarah J. Miller</p>
+<p class="text-[10px] text-slate-400 mt-2 italic">4 hours ago</p>
+</div>
+</div>
+</div>
+<div class="p-4 bg-white dark:bg-[#111] border-l-2 border-transparent hover:border-slate-300 dark:hover:border-slate-700 transition-all cursor-pointer">
+<div class="flex gap-4">
+<img alt="Gown preview" class="w-16 h-20 object-cover bg-slate-100" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBT3FGZ-PGSdthuhOaVZzboEisI9LNHLshX-IVomiCyOwQae9zn5LnqVJHQC72bc216pf8A3Fr_UFhHgRQE3nkj0Y6MSVhcV2RamrxioGd-y3VsTpVYvCWZmTAZ0BFEc_ydGUCMVgxCXdU9FNIUBKbe0e5jVvcckhnY9VVZlsXGp2HYFfnKq-wZpF3hIWO3UzwjLlOs5hqIdqAXNYk_9eyIvgVwu708os_3_rtRy96f-vJYgL5kiQpE0XqO0IkWBSakWDX112komV5Q"/>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start">
+<p class="text-[10px] text-slate-400 uppercase tracking-widest mb-1">SKU: GL-2024-087</p>
+</div>
+<p class="text-sm font-medium truncate">Galia Lahav Couture "Fabiana"</p>
+<p class="text-xs text-slate-500 mt-1">Seller: Boutique Pre-owned</p>
+<p class="text-[10px] text-slate-400 mt-2 italic">Yesterday</p>
+</div>
+</div>
+</div>
+</section>
+<section class="flex-1">
+<div class="bg-white dark:bg-[#111] shadow-xl ring-1 ring-slate-200 dark:ring-slate-800 min-h-[80vh] flex flex-col">
+<div class="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-end">
+<div>
+<p class="text-[11px] text-slate-400 tracking-[0.3em] uppercase mb-2">Submission Details • GL-2024-089</p>
+<h2 class="text-4xl font-light mb-2">"Maya" Couture Gown</h2>
+<div class="flex gap-4 text-xs">
+<span class="flex items-center gap-1 text-slate-500"><span class="material-icons-outlined text-sm">location_on</span> Los Angeles, CA</span>
+<span class="flex items-center gap-1 text-slate-500"><span class="material-icons-outlined text-sm">calendar_today</span> 2022 Collection</span>
+<span class="flex items-center gap-1 text-slate-500"><span class="material-icons-outlined text-sm">sell</span> Asking: $8,400</span>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="px-6 py-3 bg-white dark:bg-transparent border border-slate-300 dark:border-slate-700 text-xs font-bold uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">Request Info</button>
+<button class="px-6 py-3 bg-red-600 text-white text-xs font-bold uppercase tracking-widest hover:bg-red-700 transition-colors" onclick="document.getElementById('rejectModal').classList.remove('hidden')">Reject</button>
+<button class="px-8 py-3 bg-primary text-white text-xs font-bold uppercase tracking-widest hover:bg-slate-800 transition-colors">Approve Listing</button>
+</div>
+</div>
+<div class="flex-1 grid grid-cols-2 gap-px bg-slate-100 dark:bg-slate-800">
+<div class="bg-white dark:bg-[#111] p-8">
+<h3 class="text-xs font-bold tracking-widest uppercase mb-6 text-slate-400">Imagery Verification</h3>
+<div class="grid grid-cols-2 gap-4">
+<img alt="Front view" class="aspect-[3/4] object-cover w-full grayscale-[0.3] hover:grayscale-0 transition-all duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWK7I-4IxhSD3Is2FwgDqfsm3ZRXtukB17bss2q3ouVbarhZqrNBLKh2GlPPMEVqaJzPhLsNJPBFOw6Iw287DAAlTF6ARhBBEVvXVDK09X2yylOvcQcwikLupq_mIxdBkQF2PsN2V06vwhMkY_6c05O7WgoiaJEVZSS_Rd8zx6sD6NnKzD8rw_8ypmm8PGdCkkRCH9z0c0t32xdEFOzbsKObR6BV4fjOq9rbJPC1U42H3V5oRJIn2bv0JKsQAZ2FH5R_iYZ96JgGfY"/>
+<div class="space-y-4">
+<img alt="Detail 1" class="aspect-[3/4] object-cover w-full grayscale-[0.3] hover:grayscale-0 transition-all duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCgQ3Azv4lPCdO3ancL6QxOJq3ehgOxjjXPj7gsnl3PLSHrCLxeuu8yqlsPQDZRGaC_9b1KBWkGkLK4LX399SmKxoz43iy7QjzDKWP7gFiIFxkO6C9Hn89qg6r138FpANN0ofCDWIwVVpzFdJ91LZw-69ha8MDRwQIDdAZzkw2Qn4Atlk3hlt4kqj2hDqugE50yba00IXO3ZkwVUQWb61H9eca6oguVfDDj4RTsi9fXGGFno_KsmQ9RApq8BZX4mHI9CDiisNbAR_hX"/>
+<div class="aspect-[3/4] bg-slate-50 dark:bg-white/5 flex flex-col items-center justify-center text-slate-400">
+<span class="material-icons-outlined mb-2">image</span>
+<span class="text-[10px] uppercase tracking-widest">+4 More Photos</span>
+</div>
+</div>
+</div>
+<div class="mt-8 pt-8 border-t border-slate-100 dark:border-slate-800">
+<h3 class="text-xs font-bold tracking-widest uppercase mb-4 text-slate-400">Seller Note</h3>
+<p class="text-sm leading-relaxed text-slate-600 dark:text-slate-400 italic">
+                                    "This dress was worn once for a 4-hour indoor ceremony. Professionally dry cleaned and preserved immediately after. No tears or stains on the lace or tulle. Original receipt and garment bag included."
+                                </p>
+</div>
+</div>
+<div class="bg-white dark:bg-[#111] p-8 space-y-8 custom-scrollbar overflow-y-auto max-h-[calc(80vh-140px)]">
+<div>
+<h3 class="text-xs font-bold tracking-widest uppercase mb-4 text-slate-400">Specifications</h3>
+<div class="grid grid-cols-2 gap-y-4">
+<div class="border-b border-slate-100 dark:border-slate-800 pb-2">
+<p class="text-[10px] uppercase text-slate-400 mb-1">Size</p>
+<p class="text-sm font-medium">EU 38 / US 4</p>
+</div>
+<div class="border-b border-slate-100 dark:border-slate-800 pb-2">
+<p class="text-[10px] uppercase text-slate-400 mb-1">Color</p>
+<p class="text-sm font-medium">Ivory / Nude</p>
+</div>
+<div class="border-b border-slate-100 dark:border-slate-800 pb-2">
+<p class="text-[10px] uppercase text-slate-400 mb-1">Alterations</p>
+<p class="text-sm font-medium">Hemmed (5'9" total)</p>
+</div>
+<div class="border-b border-slate-100 dark:border-slate-800 pb-2">
+<p class="text-[10px] uppercase text-slate-400 mb-1">Condition</p>
+<p class="text-sm font-medium">Pristine / Like New</p>
+</div>
+</div>
+</div>
+<div>
+<h3 class="text-xs font-bold tracking-widest uppercase mb-4 text-slate-400">Authentication Assets</h3>
+<div class="space-y-3">
+<div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-3">
+<span class="material-icons-outlined text-slate-400">description</span>
+<p class="text-xs font-medium">original_certificate.pdf</p>
+</div>
+<button class="text-[10px] uppercase font-bold text-accent">View</button>
+</div>
+<div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-3">
+<span class="material-icons-outlined text-slate-400">image</span>
+<p class="text-xs font-medium">label_closeup_01.jpg</p>
+</div>
+<button class="text-[10px] uppercase font-bold text-accent">View</button>
+</div>
+</div>
+</div>
+<div>
+<h3 class="text-xs font-bold tracking-widest uppercase mb-4 text-slate-400">Seller Information</h3>
+<div class="flex items-center gap-4 p-4 border border-slate-100 dark:border-slate-800 rounded">
+<div class="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-display text-lg">ER</div>
+<div>
+<p class="text-sm font-semibold">Elena Rodriguez</p>
+<p class="text-xs text-slate-500">Member since Feb 2024 • 0 Previous Sales</p>
+<div class="flex gap-1 mt-1">
+<span class="material-icons-outlined text-[10px] text-green-500">verified</span>
+<span class="text-[10px] text-green-600 font-bold uppercase">Identity Verified</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<div class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4 hidden" id="rejectModal">
+<div class="bg-white dark:bg-[#111] w-full max-w-md p-8 shadow-2xl">
+<h3 class="text-2xl font-display mb-4">Rejection Reason</h3>
+<p class="text-xs text-slate-500 mb-6 uppercase tracking-wider">Please specify why this listing cannot be approved. This message will be sent to the seller.</p>
+<div class="space-y-4">
+<div class="space-y-2">
+<label class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Reason Category</label>
+<select class="w-full bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-slate-800 text-sm py-2 px-3 focus:ring-accent focus:border-accent">
+<option>Insufficient Image Quality</option>
+<option>Verification Documents Missing</option>
+<option>Non-Galia Lahav Product</option>
+<option>Condition Not Meeting Standards</option>
+<option>Pricing Discrepancy</option>
+<option>Other</option>
+</select>
+</div>
+<div class="space-y-2">
+<label class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Detailed Message</label>
+<textarea class="w-full bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-slate-800 text-sm p-3 focus:ring-accent focus:border-accent placeholder:text-slate-400" placeholder="Provide additional details to help the seller correct their listing..." rows="4"></textarea>
+</div>
+</div>
+<div class="mt-8 grid grid-cols-2 gap-4">
+<button class="py-3 border border-slate-300 dark:border-slate-700 text-xs font-bold uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-white/5" onclick="document.getElementById('rejectModal').classList.add('hidden')">Cancel</button>
+<button class="py-3 bg-red-600 text-white text-xs font-bold uppercase tracking-widest hover:bg-red-700">Confirm Rejection</button>
+</div>
+</div>
+</div>
+
+</body></html>

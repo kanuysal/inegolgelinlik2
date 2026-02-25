@@ -1,4 +1,6 @@
-"use client";
+import re
+
+jsx_admin_shell = """\"use client\";
 
 import { useState, useEffect, useTransition } from 'react';
 import Link from 'next/link';
@@ -24,17 +26,9 @@ import {
   syncStockistPage,
   getClaims,
   resolveClaim,
-  deleteListing,
-  seedTestListings,
-  deleteAllTestListings,
-  getFeaturedGowns,
-  addFeaturedGown,
-  updateFeaturedGown,
-  removeFeaturedGown,
-  reorderFeaturedGown,
 } from './actions';
 
-type Tab = 'dashboard' | 'moderation' | 'inventory' | 'sellers' | 'transactions' | 'claims' | 'featured';
+type Tab = 'dashboard' | 'moderation' | 'inventory' | 'sellers' | 'transactions' | 'claims';
 
 // ═══════════════════════════════════════════════════════
 // OVERVIEW TAB (Dashboard)
@@ -51,41 +45,41 @@ function OverviewTab() {
   return (
     <div className="p-8 space-y-8">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-white p-6 border border-slate-200 relative group">
+        <div className="bg-white dark:bg-[#111] p-6 border border-slate-200 dark:border-slate-800 relative group">
           <p className="text-[10px] font-bold tracking-[0.2em] text-slate-400 uppercase mb-4">Pending Review</p>
           <div className="flex items-baseline gap-2">
             <h3 className="text-3xl font-light font-display">{stats.pendingReview || 0}</h3>
             <span className="text-[10px] text-slate-400">Submissions</span>
           </div>
         </div>
-        <div className="bg-white p-6 border border-slate-200">
+        <div className="bg-white dark:bg-[#111] p-6 border border-slate-200 dark:border-slate-800">
           <p className="text-[10px] font-bold tracking-[0.2em] text-slate-400 uppercase mb-4">Total Listings</p>
           <div className="flex items-baseline gap-2">
             <h3 className="text-3xl font-light font-display">{stats.totalListings || 0}</h3>
           </div>
         </div>
-        <div className="bg-white p-6 border border-slate-200">
+        <div className="bg-white dark:bg-[#111] p-6 border border-slate-200 dark:border-slate-800">
           <p className="text-[10px] font-bold tracking-[0.2em] text-slate-400 uppercase mb-4">Total Orders</p>
           <div className="flex items-baseline gap-2">
             <h3 className="text-3xl font-light font-display">{stats.totalOrders || 0}</h3>
           </div>
         </div>
-        <div className="bg-white p-6 border border-slate-200">
+        <div className="bg-white dark:bg-[#111] p-6 border border-slate-200 dark:border-slate-800">
           <p className="text-[10px] font-bold tracking-[0.2em] text-slate-400 uppercase mb-4">Total Users</p>
           <div className="flex items-baseline gap-2">
             <h3 className="text-3xl font-light font-display text-blue-500">{stats.totalUsers || 0}</h3>
           </div>
         </div>
       </div>
-
+      
       {/* Rest of Overview (Placeholder charts) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-1 space-y-6">
           <h2 className="text-xl font-medium tracking-tight">Recent Activity</h2>
-          <div className="relative space-y-8 before:absolute before:inset-0 before:ml-4 before:-translate-x-px before:h-full before:w-0.5 before:bg-gradient-to-b before:from-slate-200 before:via-slate-200 before:to-transparent">
+          <div className="relative space-y-8 before:absolute before:inset-0 before:ml-4 before:-translate-x-px before:h-full before:w-0.5 before:bg-gradient-to-b before:from-slate-200 before:via-slate-200 before:to-transparent dark:before:from-slate-800 dark:before:via-slate-800">
             <div className="relative flex items-center justify-between gap-4">
               <div className="flex items-center gap-4">
-                <div className="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white ring-1 ring-slate-200">
+                <div className="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white dark:bg-[#111] ring-1 ring-slate-200 dark:ring-slate-800">
                   <span className="material-symbols-outlined text-sm text-accent">add_circle</span>
                 </div>
                 <div>
@@ -96,12 +90,12 @@ function OverviewTab() {
             </div>
           </div>
         </div>
-
+        
         <div className="lg:col-span-2 space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-medium tracking-tight">System Status</h2>
           </div>
-          <div className="bg-white p-8 border border-slate-200 flex items-center justify-center h-64">
+          <div className="bg-white dark:bg-[#111] p-8 border border-slate-200 dark:border-slate-800 flex items-center justify-center h-64">
             <p className="text-slate-400 font-sans text-sm">All systems nominal</p>
           </div>
         </div>
@@ -178,19 +172,20 @@ function ModerationTab() {
           <h2 className="text-xl font-medium tracking-tight">Pending Approval</h2>
           <span className="text-[10px] text-slate-400 uppercase tracking-[0.2em]">{pending.length} Items Remaining</span>
         </div>
-
+        
         <div className="space-y-4 overflow-y-auto max-h-[calc(100vh-200px)] custom-scrollbar pr-2">
           {pending.map(listing => (
-            <div
+            <div 
               key={listing.id}
               onClick={() => setActiveItem(listing)}
-              className={`p-4 bg-white transition-all cursor-pointer ${activeItem?.id === listing.id
-                  ? 'border-l-2 border-accent shadow-sm ring-1 ring-slate-200'
-                  : 'border-l-2 border-transparent hover:border-slate-300'
-                }`}
+              className={`p-4 bg-white dark:bg-[#111] transition-all cursor-pointer ${
+                activeItem?.id === listing.id 
+                  ? 'border-l-2 border-accent shadow-sm ring-1 ring-slate-200 dark:ring-slate-800'
+                  : 'border-l-2 border-transparent hover:border-slate-300 dark:hover:border-slate-700'
+              }`}
             >
               <div className="flex gap-4">
-                <div className="w-16 h-20 bg-slate-100 rounded flex-shrink-0 overflow-hidden">
+                <div className="w-16 h-20 bg-slate-100 dark:bg-slate-800 rounded flex-shrink-0 overflow-hidden">
                   {listing.images?.[0] ? (
                     <img src={listing.images[0]} alt="preview" className="w-full h-full object-cover" />
                   ) : (
@@ -199,9 +194,9 @@ function ModerationTab() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-start">
-                    <p className="text-[10px] text-slate-400 uppercase tracking-widest mb-1 truncate">ID: {listing.id.slice(0, 8)}</p>
+                    <p className="text-[10px] text-slate-400 uppercase tracking-widest mb-1 truncate">ID: {listing.id.slice(0,8)}</p>
                     {activeItem?.id === listing.id && (
-                      <span className="bg-amber-50 text-amber-600 text-[9px] px-1.5 py-0.5 font-bold uppercase tracking-wider">Review</span>
+                      <span className="bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 text-[9px] px-1.5 py-0.5 font-bold uppercase tracking-wider">Review</span>
                     )}
                   </div>
                   <p className="text-sm font-medium truncate">{listing.title}</p>
@@ -217,11 +212,11 @@ function ModerationTab() {
       {/* Main Detail View */}
       <section className="flex-1">
         {activeItem ? (
-          <div className="bg-white shadow-xl ring-1 ring-slate-200 min-h-[80vh] flex flex-col">
+          <div className="bg-white dark:bg-[#111] shadow-xl ring-1 ring-slate-200 dark:ring-slate-800 min-h-[80vh] flex flex-col">
             {/* Detail Header */}
-            <div className="p-8 border-b border-slate-100 flex justify-between items-end">
+            <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-end">
               <div>
-                <p className="text-[11px] text-slate-400 tracking-[0.3em] uppercase mb-2">Submission Details • {activeItem.id.slice(0, 8)}</p>
+                <p className="text-[11px] text-slate-400 tracking-[0.3em] uppercase mb-2">Submission Details • {activeItem.id.slice(0,8)}</p>
                 <h2 className="text-4xl font-light mb-2">{activeItem.title}</h2>
                 <div className="flex gap-4 text-xs">
                   <span className="flex items-center gap-1 text-slate-500"><span className="material-symbols-outlined text-sm">sell</span> Asking: ${activeItem.price?.toLocaleString()}</span>
@@ -229,47 +224,27 @@ function ModerationTab() {
                 </div>
               </div>
               <div className="flex gap-3">
-                <button
+                <button 
                   disabled={isPending}
-                  className="px-6 py-3 bg-red-600 text-white text-xs font-bold uppercase tracking-widest hover:bg-red-700 transition-colors disabled:opacity-50"
+                  className="px-6 py-3 bg-red-600 text-white text-xs font-bold uppercase tracking-widest hover:bg-red-700 transition-colors disabled:opacity-50" 
                   onClick={() => setRejectId(activeItem.id)}
                 >
                   Reject
                 </button>
-                <button
-                  disabled={isPending || (activeItem.images?.length || 0) < 2}
-                  className="px-8 py-3 bg-primary text-white text-xs font-bold uppercase tracking-widest hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                <button 
+                  disabled={isPending}
+                  className="px-8 py-3 bg-primary text-white text-xs font-bold uppercase tracking-widest hover:bg-slate-800 transition-colors disabled:opacity-50"
                   onClick={() => handleApprove(activeItem.id)}
-                  title={(activeItem.images?.length || 0) < 2 ? 'Requires at least 2 photos of the bride wearing the dress' : 'Approve this listing'}
                 >
                   Approve Listing
                 </button>
               </div>
             </div>
-
-            <div className="flex-1 grid grid-cols-2 gap-px bg-slate-100">
+            
+            <div className="flex-1 grid grid-cols-2 gap-px bg-slate-100 dark:bg-slate-800">
               {/* Images */}
-              <div className="bg-white p-8">
-                <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-xs font-bold tracking-widest uppercase text-slate-400">Imagery Verification</h3>
-                  <div className={`flex items-center gap-2 text-xs px-3 py-1 rounded-full ${
-                    (activeItem.images?.length || 0) >= 2
-                      ? 'bg-green-50 text-green-700'
-                      : 'bg-red-50 text-red-700'
-                  }`}>
-                    <span className="material-symbols-outlined text-sm">
-                      {(activeItem.images?.length || 0) >= 2 ? 'check_circle' : 'warning'}
-                    </span>
-                    <span className="font-bold">
-                      {activeItem.images?.length || 0} / 2 photos
-                    </span>
-                  </div>
-                </div>
-                {(activeItem.images?.length || 0) < 2 && (
-                  <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded text-xs text-amber-800">
-                    <span className="font-bold">⚠️ Missing photos:</span> Requires at least 2 photos of the bride wearing the dress before approval.
-                  </div>
-                )}
+              <div className="bg-white dark:bg-[#111] p-8">
+                <h3 className="text-xs font-bold tracking-widest uppercase mb-6 text-slate-400">Imagery Verification</h3>
                 <div className="grid grid-cols-2 gap-4">
                   {activeItem.images?.[0] && (
                     <img src={activeItem.images[0]} alt="Front view" className="aspect-[3/4] object-cover w-full grayscale-[0.3] hover:grayscale-0 transition-all duration-700" />
@@ -279,52 +254,52 @@ function ModerationTab() {
                       <img src={activeItem.images[1]} alt="Detail 1" className="aspect-[3/4] object-cover w-full grayscale-[0.3] hover:grayscale-0 transition-all duration-700" />
                     )}
                     {(activeItem.images?.length || 0) > 2 && (
-                      <div className="aspect-[3/4] bg-slate-50 flex flex-col items-center justify-center text-slate-400 rounded">
+                      <div className="aspect-[3/4] bg-slate-50 dark:bg-white/5 flex flex-col items-center justify-center text-slate-400 rounded">
                         <span className="material-symbols-outlined mb-2">image</span>
                         <span className="text-[10px] uppercase tracking-widest">+{activeItem.images.length - 2} More Photos</span>
                       </div>
                     )}
                   </div>
                 </div>
-
+                
                 {activeItem.description && (
-                  <div className="mt-8 pt-8 border-t border-slate-100">
+                  <div className="mt-8 pt-8 border-t border-slate-100 dark:border-slate-800">
                     <h3 className="text-xs font-bold tracking-widest uppercase mb-4 text-slate-400">Seller Note</h3>
-                    <p className="text-sm leading-relaxed text-slate-600 italic">
+                    <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400 italic">
                       "{activeItem.description}"
                     </p>
                   </div>
                 )}
               </div>
-
+              
               {/* Specs & Seller Info */}
-              <div className="bg-white p-8 space-y-8 overflow-y-auto">
+              <div className="bg-white dark:bg-[#111] p-8 space-y-8 overflow-y-auto">
                 <div>
                   <h3 className="text-xs font-bold tracking-widest uppercase mb-4 text-slate-400">Specifications</h3>
                   <div className="grid grid-cols-2 gap-y-4">
-                    <div className="border-b border-slate-100 pb-2">
+                    <div className="border-b border-slate-100 dark:border-slate-800 pb-2">
                       <p className="text-[10px] uppercase text-slate-400 mb-1">Color Options</p>
                       <p className="text-sm font-medium">{activeItem.color_options || '—'}</p>
                     </div>
-                    <div className="border-b border-slate-100 pb-2">
+                    <div className="border-b border-slate-100 dark:border-slate-800 pb-2">
                       <p className="text-[10px] uppercase text-slate-400 mb-1">Condition</p>
                       <p className="text-sm font-medium">{activeItem.condition || '—'}</p>
                     </div>
-                    <div className="border-b border-slate-100 pb-2">
+                    <div className="border-b border-slate-100 dark:border-slate-800 pb-2">
                       <p className="text-[10px] uppercase text-slate-400 mb-1">Year Purchased</p>
                       <p className="text-sm font-medium">{activeItem.year_purchased || '—'}</p>
                     </div>
-                    <div className="border-b border-slate-100 pb-2">
+                    <div className="border-b border-slate-100 dark:border-slate-800 pb-2">
                       <p className="text-[10px] uppercase text-slate-400 mb-1">Status</p>
                       <p className="text-sm font-medium capitalize">{activeItem.status?.replace('_', ' ') || '—'}</p>
                     </div>
                   </div>
                 </div>
-
+                
                 <div>
                   <h3 className="text-xs font-bold tracking-widest uppercase mb-4 text-slate-400">Seller Information</h3>
-                  <div className="flex items-center gap-4 p-4 border border-slate-100 rounded">
-                    <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center font-display text-lg">
+                  <div className="flex items-center gap-4 p-4 border border-slate-100 dark:border-slate-800 rounded">
+                    <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-display text-lg">
                       {(activeItem.profiles?.display_name || activeItem.profiles?.full_name || 'U').charAt(0).toUpperCase()}
                     </div>
                     <div>
@@ -342,53 +317,47 @@ function ModerationTab() {
       {/* Reject Modal */}
       {rejectId && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-md p-8 shadow-2xl">
+          <div className="bg-white dark:bg-[#111] w-full max-w-md p-8 shadow-2xl">
             <h3 className="text-2xl font-display mb-4">Rejection Reason</h3>
-            <div className="bg-blue-50 border border-blue-200 p-3 mb-6 rounded">
-              <p className="text-xs text-blue-800">
-                <span className="font-bold">📧 This message will be sent to the seller.</span> Please be specific about what they need to fix or upload to resubmit the listing.
-              </p>
-            </div>
-
+            <p className="text-xs text-slate-500 mb-6 uppercase tracking-wider">Please specify why this listing cannot be approved. This message will be sent to the seller.</p>
+            
             <div className="space-y-4">
               <div className="space-y-2">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Reason Category</label>
-                <select
-                  className="w-full bg-slate-50 border border-slate-200 text-sm py-2 px-3 focus:ring-accent focus:border-accent"
+                <select 
+                  className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-slate-800 text-sm py-2 px-3 focus:ring-accent focus:border-accent"
                   value={rejectReason}
                   onChange={e => setRejectReason(e.target.value)}
                 >
-                  <option>Insufficient Photos (Need 2+ photos of you wearing the dress)</option>
-                  <option>Poor Image Quality</option>
-                  <option>Missing Verification Photos</option>
+                  <option>Insufficient Image Quality</option>
+                  <option>Verification Documents Missing</option>
                   <option>Non-Galia Lahav Product</option>
                   <option>Condition Not Meeting Standards</option>
                   <option>Pricing Discrepancy</option>
-                  <option>Incomplete Information</option>
                   <option>Other</option>
                 </select>
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Detailed Message to Seller</label>
-                <textarea
-                  className="w-full bg-slate-50 border border-slate-200 text-sm p-3 focus:ring-accent focus:border-accent placeholder:text-slate-400"
-                  placeholder="Example: Please upload at least 2 clear photos of yourself wearing the dress. Include front and back views to help buyers see how the dress looks when worn."
-                  rows={5}
+                <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Detailed Message</label>
+                <textarea 
+                  className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-slate-800 text-sm p-3 focus:ring-accent focus:border-accent placeholder:text-slate-400" 
+                  placeholder="Provide additional details..." 
+                  rows={4}
                   value={rejectDetails}
                   onChange={e => setRejectDetails(e.target.value)}
                 />
               </div>
             </div>
-
+            
             <div className="mt-8 grid grid-cols-2 gap-4">
-              <button
-                className="py-3 border border-slate-300 text-xs font-bold uppercase tracking-widest hover:bg-slate-50"
-                onClick={() => { setRejectId(null); setRejectDetails(''); }}
+              <button 
+                className="py-3 border border-slate-300 dark:border-slate-700 text-xs font-bold uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-white/5" 
+                onClick={() => {setRejectId(null); setRejectDetails('');}}
                 disabled={isPending}
               >
                 Cancel
               </button>
-              <button
+              <button 
                 className="py-3 bg-red-600 text-white text-xs font-bold uppercase tracking-widest hover:bg-red-700 disabled:opacity-50"
                 onClick={handleReject}
                 disabled={isPending}
@@ -410,63 +379,24 @@ function TransactionsTab({ mode }: { mode: 'all' | 'transactions' }) {
   const [items, setItems] = useState<any[]>([]);
   const [filter, setFilter] = useState('all');
   const [loading, setLoading] = useState(true);
-  const [isPending, startTransition] = useTransition();
-  const [seedMsg, setSeedMsg] = useState('');
 
-  const refresh = () => {
+  useEffect(() => {
     setLoading(true);
     getAllListings(filter).then(d => { setItems(d); setLoading(false); });
-  };
-
-  useEffect(() => { refresh(); }, [filter]);
-
-  const handleDelete = (id: string) => {
-    if (!confirm('Delete this listing permanently?')) return;
-    startTransition(async () => {
-      const res = await deleteListing(id);
-      if (res.success) setItems(prev => prev.filter(l => l.id !== id));
-    });
-  };
-
-  const handleSeed = () => {
-    setSeedMsg('Seeding...');
-    startTransition(async () => {
-      const res = await seedTestListings();
-      if (res.success) {
-        setSeedMsg(`Created ${res.created} listings (${res.errors} errors)`);
-        refresh();
-      } else {
-        setSeedMsg('Error: ' + (res as any).error);
-      }
-    });
-  };
-
-  const handleClearTest = () => {
-    if (!confirm('Delete ALL test/sample listings you created?')) return;
-    setSeedMsg('Deleting...');
-    startTransition(async () => {
-      const res = await deleteAllTestListings();
-      if (res.success) {
-        setSeedMsg(`Deleted ${res.deleted} test listings`);
-        refresh();
-      } else {
-        setSeedMsg('Error: ' + (res as any).error);
-      }
-    });
-  };
+  }, [filter]);
 
   if (loading) return <div className="p-8"><LoadingSkeleton /></div>;
 
   return (
     <div className="p-8 space-y-8">
-      <div className="flex items-center justify-between gap-4 bg-white p-4 border border-slate-200">
+      <div className="flex items-center justify-between gap-4 bg-white dark:bg-[#111] p-4 border border-slate-200 dark:border-slate-800">
         <div className="flex items-center gap-4 flex-1">
           <div className="relative flex-1 max-w-sm">
             <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
-            <input className="w-full pl-10 pr-4 py-2 text-xs bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-accent focus:border-accent outline-none" placeholder="Search by details..." type="text" />
+            <input className="w-full pl-10 pr-4 py-2 text-xs bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-slate-800 focus:ring-1 focus:ring-accent focus:border-accent outline-none" placeholder="Search by details..." type="text"/>
           </div>
-          <div className="h-8 w-px bg-slate-200"></div>
-          <select
+          <div className="h-8 w-px bg-slate-200 dark:border-slate-800"></div>
+          <select 
             className="bg-transparent border-none text-[10px] font-bold uppercase tracking-widest focus:ring-0 cursor-pointer outline-none"
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
@@ -478,42 +408,24 @@ function TransactionsTab({ mode }: { mode: 'all' | 'transactions' }) {
             <option value="rejected">Rejected</option>
           </select>
         </div>
-        <div className="flex gap-2 items-center">
-          {seedMsg && <span className="text-[10px] text-slate-500">{seedMsg}</span>}
-          <button
-            disabled={isPending}
-            onClick={handleSeed}
-            className="px-4 py-2 bg-emerald-600 text-white text-[10px] font-bold uppercase tracking-widest hover:bg-emerald-700 transition-all disabled:opacity-50"
-          >
-            Seed 30 Listings
-          </button>
-          <button
-            disabled={isPending}
-            onClick={handleClearTest}
-            className="px-4 py-2 bg-red-600 text-white text-[10px] font-bold uppercase tracking-widest hover:bg-red-700 transition-all disabled:opacity-50"
-          >
-            Clear Test Data
-          </button>
-        </div>
       </div>
 
-      <div className="bg-white border border-slate-200 overflow-hidden">
+      <div className="bg-white dark:bg-[#111] border border-slate-200 dark:border-slate-800 overflow-hidden">
         <div className="overflow-x-auto custom-scrollbar">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-200">
+              <tr className="bg-slate-50 dark:bg-white/[0.02] border-b border-slate-200 dark:border-slate-800">
                 <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">ID</th>
                 <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Title</th>
                 <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Seller</th>
                 <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Price</th>
                 <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Status</th>
-                <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Date</th>
-                <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400 text-right">Actions</th>
+                <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400 text-right">Date</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
               {items.map(l => (
-                <tr key={l.id} className="hover:bg-slate-50/50 transition-colors group">
+                <tr key={l.id} className="hover:bg-slate-50/50 dark:hover:bg-white/[0.01] transition-colors cursor-pointer group">
                   <td className="px-6 py-4">
                     <span className="text-[11px] font-mono text-slate-400 group-hover:text-accent transition-colors">#{l.id.slice(0, 8)}</span>
                   </td>
@@ -525,28 +437,19 @@ function TransactionsTab({ mode }: { mode: 'all' | 'transactions' }) {
                     <p className="text-xs">{l.profiles?.display_name || 'Unknown'}</p>
                   </td>
                   <td className="px-6 py-4">
-                    <p className="text-xs font-medium font-mono text-slate-900">${l.price?.toLocaleString()}</p>
+                    <p className="text-xs font-medium font-mono text-slate-900 dark:text-slate-100">${l.price?.toLocaleString()}</p>
                   </td>
                   <td className="px-6 py-4">
                     <StatusBadge status={l.status} />
                   </td>
-                  <td className="px-6 py-4">
-                    <p className="text-[10px] text-slate-400 uppercase tracking-tighter">{new Date(l.created_at).toLocaleDateString()}</p>
-                  </td>
                   <td className="px-6 py-4 text-right">
-                    <button
-                      disabled={isPending}
-                      onClick={() => handleDelete(l.id)}
-                      className="w-8 h-8 inline-flex items-center justify-center border border-red-200 hover:bg-red-50 transition-colors disabled:opacity-50"
-                    >
-                      <span className="material-symbols-outlined text-sm text-red-500">delete</span>
-                    </button>
+                    <p className="text-[10px] text-slate-400 uppercase tracking-tighter">{new Date(l.created_at).toLocaleDateString()}</p>
                   </td>
                 </tr>
               ))}
               {items.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-slate-400 text-sm">No listings found</td>
+                  <td colSpan={6} className="px-6 py-12 text-center text-slate-400 text-sm">No listings found</td>
                 </tr>
               )}
             </tbody>
@@ -576,34 +479,34 @@ function InventoryTab() {
 
   return (
     <div className="p-8 space-y-8">
-      <div className="flex items-center justify-between gap-4 bg-white p-4 border border-slate-200">
+      <div className="flex items-center justify-between gap-4 bg-white dark:bg-[#111] p-4 border border-slate-200 dark:border-slate-800">
         <div className="flex items-center gap-4 flex-1">
           <div className="relative flex-1 max-w-sm">
             <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
-            <input className="w-full pl-10 pr-4 py-2 text-xs bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-accent focus:border-accent outline-none" placeholder="Search product catalog..." type="text" />
+            <input className="w-full pl-10 pr-4 py-2 text-xs bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-slate-800 focus:ring-1 focus:ring-accent focus:border-accent outline-none" placeholder="Search product catalog..." type="text"/>
           </div>
         </div>
         <div className="flex gap-2">
-          <button
+          <button 
             disabled={isPending}
             className="px-4 py-2 bg-[#1c1c1c] text-white text-[10px] font-bold uppercase tracking-widest hover:bg-[#333] transition-all disabled:opacity-50"
             onClick={() => {
-              startTransition(async () => {
-                await bulkImportCatalog();
-                await refresh();
-              });
+               startTransition(async () => {
+                 await bulkImportCatalog();
+                 await refresh();
+               });
             }}
           >
             Import Missing
           </button>
-          <button
+          <button 
             disabled={isPending}
             className="px-4 py-2 bg-obsidian text-white text-[10px] font-bold uppercase tracking-widest hover:bg-obsidian/80 transition-all disabled:opacity-50"
             onClick={() => {
-              startTransition(async () => {
-                await syncCatalogImages();
-                await refresh();
-              });
+               startTransition(async () => {
+                 await syncCatalogImages();
+                 await refresh();
+               });
             }}
           >
             Sync Images
@@ -613,10 +516,10 @@ function InventoryTab() {
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {products.map(p => (
-          <div key={p.id} className="bg-white border border-slate-200 p-4">
+          <div key={p.id} className="bg-white dark:bg-[#111] border border-slate-200 dark:border-slate-800 p-4">
             <div className="aspect-[3/4] bg-slate-100 rounded overflow-hidden mb-4 relative">
               {p.images?.[0] ? (
-                <img src={p.images[0]} alt="" className="w-full h-full object-cover" />
+                 <img src={p.images[0]} alt="" className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-slate-300">No Image</div>
               )}
@@ -626,19 +529,19 @@ function InventoryTab() {
             </div>
             <p className="font-serif text-lg truncate mb-1">{p.style_name}</p>
             <div className="flex justify-between items-center text-xs text-slate-500">
-              <span>{p.sku || 'No SKU'}</span>
-              <button
-                disabled={isPending}
-                onClick={() => {
-                  startTransition(async () => {
-                    await toggleProductActive(p.id, !p.is_active);
-                    await refresh();
-                  })
-                }}
-                className={`text-[10px] uppercase tracking-widest font-bold ${p.is_active ? 'text-emerald-500' : 'text-red-500'}`}
-              >
-                {p.is_active ? 'Active' : 'Hidden'}
-              </button>
+               <span>{p.sku || 'No SKU'}</span>
+               <button 
+                 disabled={isPending}
+                 onClick={() => {
+                    startTransition(async () => {
+                       await toggleProductActive(p.id, !p.is_active);
+                       await refresh();
+                    })
+                 }}
+                 className={`text-[10px] uppercase tracking-widest font-bold ${p.is_active ? 'text-emerald-500' : 'text-red-500'}`}
+               >
+                 {p.is_active ? 'Active' : 'Hidden'}
+               </button>
             </div>
           </div>
         ))}
@@ -670,18 +573,18 @@ function UsersTab() {
 
   return (
     <div className="p-8 space-y-8">
-      <div className="bg-white border border-slate-200 overflow-hidden">
+      <div className="bg-white dark:bg-[#111] border border-slate-200 dark:border-slate-800 overflow-hidden">
         <div className="overflow-x-auto custom-scrollbar">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-200">
+              <tr className="bg-slate-50 dark:bg-white/[0.02] border-b border-slate-200 dark:border-slate-800">
                 <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">User / Seller</th>
                 <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Joined Date</th>
                 <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Current Role</th>
                 <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
               {users.map((u: any) => (
                 <tr key={u.id} className="hover:bg-slate-50/50 transition-colors">
                   <td className="px-6 py-4">
@@ -690,10 +593,11 @@ function UsersTab() {
                   </td>
                   <td className="px-6 py-4 text-xs text-slate-500">{new Date(u.created_at).toLocaleDateString()}</td>
                   <td className="px-6 py-4">
-                    <span className={`text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-sm ${u.roles?.includes('admin') ? 'bg-purple-100 text-purple-700' :
-                        u.roles?.includes('moderator') ? 'bg-blue-100 text-blue-700' :
-                          'bg-slate-100 text-slate-600'
-                      }`}>
+                    <span className={`text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-sm ${
+                      u.roles?.includes('admin') ? 'bg-purple-100 text-purple-700' :
+                      u.roles?.includes('moderator') ? 'bg-blue-100 text-blue-700' :
+                      'bg-slate-100 text-slate-600'
+                    }`}>
                       {u.roles?.includes('admin') ? 'Admin' : u.roles?.includes('moderator') ? 'Moderator' : 'User'}
                     </span>
                   </td>
@@ -748,42 +652,42 @@ function ClaimsTab() {
   return (
     <div className="p-8 space-y-4">
       {claims.length === 0 ? (
-        <div className="text-center py-20 bg-white border border-slate-200">
-          <span className="material-symbols-outlined text-4xl text-slate-300 mb-2">shield</span>
-          <p className="text-sm text-slate-500 font-medium tracking-wide">No Active Claims</p>
-        </div>
+         <div className="text-center py-20 bg-white border border-slate-200">
+           <span className="material-symbols-outlined text-4xl text-slate-300 mb-2">shield</span>
+           <p className="text-sm text-slate-500 font-medium tracking-wide">No Active Claims</p>
+         </div>
       ) : claims.map(claim => (
         <div key={claim.id} className="bg-white border border-slate-200 p-6 flex flex-col gap-4">
           <div className="flex justify-between items-start">
-            <div>
-              <h3 className="font-serif text-lg">{claim.reason}</h3>
-              <p className="text-xs text-slate-500">Order #{claim.order_id?.slice(0, 8)}</p>
-            </div>
-            <StatusBadge status={claim.status} />
+             <div>
+               <h3 className="font-serif text-lg">{claim.reason}</h3>
+               <p className="text-xs text-slate-500">Order #{claim.order_id?.slice(0, 8)}</p>
+             </div>
+             <StatusBadge status={claim.status} />
           </div>
           {claim.description && (
-            <p className="text-sm text-slate-600">{claim.description}</p>
+             <p className="text-sm text-slate-600">{claim.description}</p>
           )}
-
+          
           {claim.status === 'open' && (
             <div className="mt-4 pt-4 border-t border-slate-100">
               {resolveId === claim.id ? (
-                <div className="space-y-3">
-                  <textarea
-                    value={resolveNotes}
-                    onChange={e => setResolveNotes(e.target.value)}
-                    placeholder="Resolution notes..."
-                    className="w-full text-sm p-3 border border-slate-200 bg-slate-50 outline-none focus:border-accent"
-                    rows={3}
-                  />
-                  <div className="flex gap-2">
-                    <button disabled={isPending} onClick={handleResolve} className="px-4 py-2 bg-emerald-600 text-white text-[10px] font-bold uppercase tracking-widest disabled:opacity-50">Resolve Claim</button>
-                    <button disabled={isPending} onClick={() => setResolveId(null)} className="px-4 py-2 border border-slate-200 text-slate-500 text-[10px] font-bold uppercase tracking-widest">Cancel</button>
-                  </div>
-                </div>
+                 <div className="space-y-3">
+                   <textarea 
+                     value={resolveNotes} 
+                     onChange={e => setResolveNotes(e.target.value)} 
+                     placeholder="Resolution notes..." 
+                     className="w-full text-sm p-3 border border-slate-200 bg-slate-50 outline-none focus:border-accent"
+                     rows={3}
+                   />
+                   <div className="flex gap-2">
+                     <button disabled={isPending} onClick={handleResolve} className="px-4 py-2 bg-emerald-600 text-white text-[10px] font-bold uppercase tracking-widest disabled:opacity-50">Resolve Claim</button>
+                     <button disabled={isPending} onClick={() => setResolveId(null)} className="px-4 py-2 border border-slate-200 text-slate-500 text-[10px] font-bold uppercase tracking-widest">Cancel</button>
+                   </div>
+                 </div>
               ) : (
-                <button
-                  onClick={() => setResolveId(claim.id)}
+                <button 
+                  onClick={() => setResolveId(claim.id)} 
                   className="text-xs text-accent font-medium tracking-wide"
                 >
                   Resolve Dispute →
@@ -793,301 +697,6 @@ function ClaimsTab() {
           )}
         </div>
       ))}
-    </div>
-  );
-}
-
-
-// ═══════════════════════════════════════════════════════
-// FEATURED GOWNS TAB
-// ═══════════════════════════════════════════════════════
-function FeaturedGownsTab() {
-  const [gowns, setGowns] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [needsMigration, setNeedsMigration] = useState(false);
-  const [showForm, setShowForm] = useState(false);
-  const [editId, setEditId] = useState<string | null>(null);
-  const [isPending, startTransition] = useTransition();
-  const [form, setForm] = useState({ title: '', subtitle: '', price: '', image_url: '', link: '/shop' });
-
-  const refresh = () =>
-    getFeaturedGowns().then((res: any) => {
-      if (res.needsMigration) {
-        setNeedsMigration(true);
-      } else {
-        setGowns(res.data || []);
-      }
-      setLoading(false);
-    });
-
-  useEffect(() => { refresh(); }, []);
-
-  const resetForm = () => {
-    setForm({ title: '', subtitle: '', price: '', image_url: '', link: '/shop' });
-    setShowForm(false);
-    setEditId(null);
-  };
-
-  const handleSave = () => {
-    startTransition(async () => {
-      if (editId) {
-        await updateFeaturedGown(editId, form);
-      } else {
-        await addFeaturedGown(form);
-      }
-      resetForm();
-      await refresh();
-    });
-  };
-
-  const handleDelete = (id: string) => {
-    startTransition(async () => {
-      await removeFeaturedGown(id);
-      await refresh();
-    });
-  };
-
-  const handleReorder = (id: string, direction: 'up' | 'down') => {
-    startTransition(async () => {
-      await reorderFeaturedGown(id, direction);
-      await refresh();
-    });
-  };
-
-  const handleEdit = (gown: any) => {
-    setForm({
-      title: gown.title,
-      subtitle: gown.subtitle || '',
-      price: gown.price || '',
-      image_url: gown.image_url || '',
-      link: gown.link || '/shop',
-    });
-    setEditId(gown.id);
-    setShowForm(true);
-  };
-
-  const handleToggle = (gown: any) => {
-    startTransition(async () => {
-      await updateFeaturedGown(gown.id, { is_active: !gown.is_active });
-      await refresh();
-    });
-  };
-
-  if (loading) return <div className="p-8"><LoadingSkeleton /></div>;
-
-  if (needsMigration) {
-    return (
-      <div className="p-8 space-y-6">
-        <div className="bg-amber-50 border border-amber-200 p-8">
-          <h3 className="text-xl font-medium mb-4">Database Setup Required</h3>
-          <p className="text-sm text-slate-600 mb-6">
-            Run this SQL in your Supabase Dashboard &gt; SQL Editor to create the featured_gowns table:
-          </p>
-          <pre className="bg-white border border-slate-200 p-4 text-xs font-mono overflow-x-auto whitespace-pre">
-{`CREATE TABLE featured_gowns (
-  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-  title text NOT NULL,
-  subtitle text,
-  price text,
-  image_url text,
-  link text DEFAULT '/shop',
-  display_order int DEFAULT 0,
-  is_active boolean DEFAULT true,
-  created_at timestamptz DEFAULT now(),
-  updated_at timestamptz DEFAULT now()
-);
-
-ALTER TABLE featured_gowns ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Public read" ON featured_gowns
-  FOR SELECT USING (true);
-
-CREATE POLICY "Admin write" ON featured_gowns
-  FOR ALL USING (
-    EXISTS (SELECT 1 FROM user_roles WHERE user_id = auth.uid() AND role IN ('admin','moderator'))
-  );`}
-          </pre>
-          <button onClick={() => { setNeedsMigration(false); setLoading(true); refresh(); }} className="mt-6 px-6 py-3 bg-primary text-white text-[10px] font-bold uppercase tracking-widest hover:bg-slate-800 transition-colors">
-            Retry Connection
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="p-8 space-y-8">
-      {/* Header */}
-      <div className="flex items-center justify-between bg-white p-4 border border-slate-200">
-        <div>
-          <h2 className="text-lg font-medium tracking-tight">Featured Gowns</h2>
-          <p className="text-[10px] text-slate-400 uppercase tracking-widest mt-1">
-            These appear on the homepage carousel • {gowns.length} gowns configured
-          </p>
-        </div>
-        <button
-          onClick={() => { resetForm(); setShowForm(true); }}
-          className="px-6 py-3 bg-primary text-white text-[10px] font-bold uppercase tracking-widest hover:bg-slate-800 transition-colors flex items-center gap-2"
-        >
-          <span className="material-symbols-outlined text-sm">add</span>
-          Add Gown
-        </button>
-      </div>
-
-      {/* Add/Edit Form */}
-      {showForm && (
-        <div className="bg-white border border-slate-200 p-6 space-y-4">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium tracking-tight">{editId ? 'Edit Gown' : 'Add New Featured Gown'}</h3>
-            <button onClick={resetForm} className="text-slate-400 hover:text-slate-600">
-              <span className="material-symbols-outlined text-sm">close</span>
-            </button>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block">Title</label>
-              <input
-                value={form.title}
-                onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
-                className="w-full bg-slate-50 border border-slate-200 text-sm py-2 px-3 focus:ring-accent focus:border-accent outline-none"
-                placeholder="The Maya"
-              />
-            </div>
-            <div>
-              <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block">Subtitle</label>
-              <input
-                value={form.subtitle}
-                onChange={e => setForm(f => ({ ...f, subtitle: e.target.value }))}
-                className="w-full bg-slate-50 border border-slate-200 text-sm py-2 px-3 focus:ring-accent focus:border-accent outline-none"
-                placeholder="Size 4 • Excellent Condition"
-              />
-            </div>
-            <div>
-              <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block">Price</label>
-              <input
-                value={form.price}
-                onChange={e => setForm(f => ({ ...f, price: e.target.value }))}
-                className="w-full bg-slate-50 border border-slate-200 text-sm py-2 px-3 focus:ring-accent focus:border-accent outline-none"
-                placeholder="$4,200"
-              />
-            </div>
-            <div>
-              <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block">Link</label>
-              <input
-                value={form.link}
-                onChange={e => setForm(f => ({ ...f, link: e.target.value }))}
-                className="w-full bg-slate-50 border border-slate-200 text-sm py-2 px-3 focus:ring-accent focus:border-accent outline-none"
-                placeholder="/shop or /shop/uuid"
-              />
-            </div>
-          </div>
-          <div>
-            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block">Image URL</label>
-            <input
-              value={form.image_url}
-              onChange={e => setForm(f => ({ ...f, image_url: e.target.value }))}
-              className="w-full bg-slate-50 border border-slate-200 text-sm py-2 px-3 focus:ring-accent focus:border-accent outline-none"
-              placeholder="https://cdn.shopify.com/..."
-            />
-          </div>
-          {form.image_url && (
-            <div className="w-24 h-32 bg-slate-100 overflow-hidden">
-              <img src={form.image_url} alt="Preview" className="w-full h-full object-cover" />
-            </div>
-          )}
-          <div className="flex gap-3 pt-2">
-            <button
-              disabled={isPending || !form.title || !form.image_url}
-              onClick={handleSave}
-              className="px-6 py-3 bg-primary text-white text-[10px] font-bold uppercase tracking-widest hover:bg-slate-800 transition-colors disabled:opacity-50"
-            >
-              {editId ? 'Update' : 'Add to Carousel'}
-            </button>
-            <button onClick={resetForm} className="px-6 py-3 border border-slate-200 text-[10px] font-bold uppercase tracking-widest hover:bg-slate-50">
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Gowns list */}
-      {gowns.length === 0 && !showForm ? (
-        <div className="text-center py-20 bg-white border border-slate-200">
-          <span className="material-symbols-outlined text-4xl text-slate-300 mb-2">collections</span>
-          <p className="text-sm text-slate-500 font-medium tracking-wide">No Featured Gowns Yet</p>
-          <p className="text-xs text-slate-400 mt-2">Add gowns to display on the homepage carousel</p>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {gowns.map((gown, idx) => (
-            <div key={gown.id} className={`bg-white border border-slate-200 p-4 flex items-center gap-6 transition-all ${!gown.is_active ? 'opacity-50' : ''}`}>
-              {/* Order controls */}
-              <div className="flex flex-col gap-1">
-                <button
-                  disabled={isPending || idx === 0}
-                  onClick={() => handleReorder(gown.id, 'up')}
-                  className="w-7 h-7 flex items-center justify-center border border-slate-200 hover:bg-slate-50 disabled:opacity-30 transition-colors"
-                >
-                  <span className="material-symbols-outlined text-xs">expand_less</span>
-                </button>
-                <button
-                  disabled={isPending || idx === gowns.length - 1}
-                  onClick={() => handleReorder(gown.id, 'down')}
-                  className="w-7 h-7 flex items-center justify-center border border-slate-200 hover:bg-slate-50 disabled:opacity-30 transition-colors"
-                >
-                  <span className="material-symbols-outlined text-xs">expand_more</span>
-                </button>
-              </div>
-
-              {/* Image */}
-              <div className="w-16 h-20 bg-slate-100 flex-shrink-0 overflow-hidden">
-                {gown.image_url ? (
-                  <img src={gown.image_url} alt={gown.title} className="w-full h-full object-cover" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-slate-300">
-                    <span className="material-symbols-outlined">image</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Info */}
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium">{gown.title}</p>
-                <p className="text-xs text-slate-400 mt-0.5">{gown.subtitle}</p>
-                <div className="flex items-center gap-3 mt-1">
-                  <span className="text-xs font-medium font-mono">{gown.price}</span>
-                  <span className="text-[10px] text-slate-400">{gown.link}</span>
-                </div>
-              </div>
-
-              {/* Actions */}
-              <div className="flex items-center gap-2 flex-shrink-0">
-                <button
-                  disabled={isPending}
-                  onClick={() => handleToggle(gown)}
-                  className={`text-[10px] uppercase tracking-widest font-bold px-3 py-1.5 transition-colors ${gown.is_active ? 'text-emerald-500 hover:text-emerald-700' : 'text-red-500 hover:text-red-700'}`}
-                >
-                  {gown.is_active ? 'Active' : 'Hidden'}
-                </button>
-                <button
-                  disabled={isPending}
-                  onClick={() => handleEdit(gown)}
-                  className="w-8 h-8 flex items-center justify-center border border-slate-200 hover:bg-slate-50 transition-colors"
-                >
-                  <span className="material-symbols-outlined text-sm text-slate-500">edit</span>
-                </button>
-                <button
-                  disabled={isPending}
-                  onClick={() => handleDelete(gown.id)}
-                  className="w-8 h-8 flex items-center justify-center border border-red-200 hover:bg-red-50 transition-colors"
-                >
-                  <span className="material-symbols-outlined text-sm text-red-500">delete</span>
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   );
 }
@@ -1107,7 +716,7 @@ function StatusBadge({ status }: { status: string }) {
     open: 'bg-amber-50 text-amber-600',
     resolved: 'bg-emerald-50 text-emerald-600',
   };
-
+  
   return (
     <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 ${styles[status] || styles.draft} text-[9px] font-bold uppercase tracking-widest`}>
       {status.replace(/_/g, ' ')}
@@ -1162,23 +771,22 @@ export default function AdminPage() {
   }
 
   const handleTab = (t: Tab) => setTab(t);
-
+  
   const T = {
     dashboard: 'Dashboard',
     moderation: 'Moderation Queue',
     inventory: 'Inventory Catalog',
     sellers: 'Sellers & Users',
     transactions: 'All Transactions',
-    claims: 'Dispute Claims',
-    featured: 'Featured Gowns'
+    claims: 'Dispute Claims'
   };
 
   return (
-    <div className="bg-slate-50 min-h-screen">
+    <div className="bg-slate-50 dark:bg-[#0a0a0a] min-h-screen">
       {/* Sidebar Layout matched from Stitch */}
-      <aside className="fixed left-0 top-0 h-full w-64 border-r border-slate-200 bg-white z-50 flex flex-col">
+      <aside className="fixed left-0 top-0 h-full w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-[#111] z-50 flex flex-col">
         <div className="p-8">
-          <h1 className="text-2xl font-medium tracking-widest uppercase border-b border-slate-100 pb-6 mb-8 cursor-pointer" onClick={() => window.location.href = '/'}>
+          <h1 className="text-2xl font-medium tracking-widest uppercase border-b border-slate-100 dark:border-slate-800 pb-6 mb-8 cursor-pointer" onClick={() => window.location.href = '/'}>
             Galia Lahav
             <span className="block text-[10px] tracking-[0.3em] mt-1 text-slate-400">ADMIN CONSOLE</span>
           </h1>
@@ -1207,17 +815,12 @@ export default function AdminPage() {
               <span className="material-symbols-outlined text-sm">shield</span>
               <span className="text-xs font-medium tracking-wider uppercase">Claims</span>
             </button>
-            <div className="h-px bg-slate-100 my-2"></div>
-            <button onClick={() => handleTab('featured')} className={`w-full flex items-center gap-3 px-4 py-3 transition-all ${tab === 'featured' ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:bg-slate-50'}`}>
-              <span className="material-symbols-outlined text-sm">star</span>
-              <span className="text-xs font-medium tracking-wider uppercase">Featured</span>
-            </button>
           </nav>
         </div>
-
-        <div className="mt-auto w-full p-8 border-t border-slate-100">
+        
+        <div className="mt-auto w-full p-8 border-t border-slate-100 dark:border-slate-800">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-bold">A</div>
+            <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-[10px] font-bold">A</div>
             <div>
               <p className="text-xs font-semibold">Admin User</p>
               <Link href="/dashboard" className="text-[10px] text-accent hover:underline uppercase tracking-tighter">Exit Admin</Link>
@@ -1227,17 +830,17 @@ export default function AdminPage() {
       </aside>
 
       <main className="ml-64 min-h-screen flex flex-col">
-        <header className="h-16 border-b border-slate-200 bg-white/80 backdrop-blur-md flex items-center justify-between px-8 sticky top-0 z-40">
+        <header className="h-16 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-[#111]/80 backdrop-blur-md flex items-center justify-between px-8 sticky top-0 z-40">
           <div className="flex items-center gap-4">
             <span className="text-xs text-slate-400 tracking-widest uppercase">Console</span>
-            <span className="h-4 w-px bg-slate-200"></span>
+            <span className="h-4 w-px bg-slate-200 dark:bg-slate-800"></span>
             <span className="text-xs font-medium uppercase tracking-wider text-slate-800">{T[tab]}</span>
           </div>
           <div className="flex items-center gap-6">
             <Link href="/" className="material-symbols-outlined text-slate-400 hover:text-primary transition-colors text-sm">storefront</Link>
           </div>
         </header>
-
+        
         <div className="flex-1">
           {tab === 'dashboard' && <OverviewTab />}
           {tab === 'moderation' && <ModerationTab />}
@@ -1245,9 +848,14 @@ export default function AdminPage() {
           {tab === 'sellers' && <UsersTab />}
           {tab === 'transactions' && <TransactionsTab mode="all" />}
           {tab === 'claims' && <ClaimsTab />}
-          {tab === 'featured' && <FeaturedGownsTab />}
         </div>
       </main>
     </div>
   );
 }
+"""
+
+with open('app/admin/page.tsx', 'w', encoding='utf-8') as f:
+    f.write(jsx_admin_shell)
+
+print("Safely replaced app/admin/page.tsx with combined Stitch Admin layout and integrated hooks.")

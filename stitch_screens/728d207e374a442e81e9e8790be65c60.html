@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Financial Transactions Overview | Admin Console</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#111111",
+                        "background-light": "#F9F9F9",
+                        "background-dark": "#0A0A0A",
+                        accent: "#C5A059",
+                    },
+                    fontFamily: {
+                        display: ["Cormorant Garamond", "serif"],
+                        sans: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "2px",
+                        'lg': "4px",
+                    },
+                },
+            },
+        };
+    </script>
+<style type="text/tailwindcss">
+        @layer base {
+            body { @apply font-sans; }
+            h1, h2, h3, .brand-font { @apply font-display; }
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e5e5e5; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #333; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 transition-colors duration-200">
+<aside class="fixed left-0 top-0 h-full w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-[#111] z-50">
+<div class="p-8">
+<h1 class="text-2xl font-medium tracking-widest uppercase border-b border-slate-100 dark:border-slate-800 pb-6 mb-8">
+            LUXE BRIDAL
+            <span class="block text-[10px] tracking-[0.3em] mt-1 text-slate-400">ADMIN CONSOLE</span>
+</h1>
+<nav class="space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-xs font-medium tracking-wider uppercase">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined">verified_user</span>
+<span class="text-xs font-medium tracking-wider uppercase">Moderation</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="text-xs font-medium tracking-wider uppercase">Inventory</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined">people_outline</span>
+<span class="text-xs font-medium tracking-wider uppercase">Sellers</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-primary text-white transition-all shadow-lg" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="text-xs font-medium tracking-wider uppercase">Transactions</span>
+</a>
+</nav>
+</div>
+<div class="absolute bottom-0 w-full p-8 border-t border-slate-100 dark:border-slate-800">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-[10px] font-bold">JD</div>
+<div>
+<p class="text-xs font-semibold">Julianne Deville</p>
+<p class="text-[10px] text-slate-400 uppercase tracking-tighter">Finance Admin</p>
+</div>
+</div>
+</div>
+</aside>
+<main class="ml-64 min-h-screen">
+<header class="h-16 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-[#111]/80 backdrop-blur-md flex items-center justify-between px-8 sticky top-0 z-40">
+<div class="flex items-center gap-4">
+<span class="text-xs text-slate-400 tracking-widest uppercase">Finance</span>
+<span class="h-4 w-px bg-slate-200 dark:border-slate-800"></span>
+<span class="text-xs font-medium uppercase tracking-wider">Transactions Overview</span>
+</div>
+<div class="flex items-center gap-6">
+<button class="material-symbols-outlined text-slate-400 hover:text-primary dark:hover:text-white transition-colors">notifications</button>
+<button class="material-symbols-outlined text-slate-400 hover:text-primary dark:hover:text-white transition-colors" onclick="document.documentElement.classList.toggle('dark')">contrast</button>
+<button class="bg-primary text-white text-[10px] px-4 py-2 uppercase font-bold tracking-widest hover:bg-slate-800 transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">download</span> Export Reports
+            </button>
+</div>
+</header>
+<div class="p-8 space-y-8">
+<div class="grid grid-cols-4 gap-6">
+<div class="bg-white dark:bg-[#111] p-6 border border-slate-200 dark:border-slate-800">
+<p class="text-[10px] text-slate-400 uppercase tracking-[0.2em] mb-2 font-semibold">Total GMV</p>
+<div class="flex items-baseline gap-2">
+<h3 class="text-2xl font-light">$1,248,400</h3>
+<span class="text-[10px] text-emerald-500 font-bold">+12.4%</span>
+</div>
+<div class="mt-4 h-1 w-full bg-slate-100 dark:bg-slate-800">
+<div class="bg-accent h-full w-[75%]"></div>
+</div>
+</div>
+<div class="bg-white dark:bg-[#111] p-6 border border-slate-200 dark:border-slate-800">
+<p class="text-[10px] text-slate-400 uppercase tracking-[0.2em] mb-2 font-semibold">Net Revenue (Commissions)</p>
+<div class="flex items-baseline gap-2">
+<h3 class="text-2xl font-light">$187,260</h3>
+<span class="text-[10px] text-emerald-500 font-bold">+8.1%</span>
+</div>
+<div class="mt-4 h-1 w-full bg-slate-100 dark:bg-slate-800">
+<div class="bg-accent h-full w-[60%]"></div>
+</div>
+</div>
+<div class="bg-white dark:bg-[#111] p-6 border border-slate-200 dark:border-slate-800">
+<p class="text-[10px] text-slate-400 uppercase tracking-[0.2em] mb-2 font-semibold">Average Order Value</p>
+<div class="flex items-baseline gap-2">
+<h3 class="text-2xl font-light">$6,242</h3>
+<span class="text-[10px] text-slate-400 font-bold">-2.3%</span>
+</div>
+<div class="mt-4 h-1 w-full bg-slate-100 dark:bg-slate-800">
+<div class="bg-accent h-full w-[45%]"></div>
+</div>
+</div>
+<div class="bg-white dark:bg-[#111] p-6 border border-slate-200 dark:border-slate-800">
+<p class="text-[10px] text-slate-400 uppercase tracking-[0.2em] mb-2 font-semibold">Pending Payouts</p>
+<div class="flex items-baseline gap-2">
+<h3 class="text-2xl font-light">$42,900</h3>
+<span class="text-[10px] text-amber-500 font-bold">14 Active</span>
+</div>
+<div class="mt-4 h-1 w-full bg-slate-100 dark:bg-slate-800">
+<div class="bg-accent h-full w-[30%]"></div>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between gap-4 bg-white dark:bg-[#111] p-4 border border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative flex-1 max-w-sm">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+<input class="w-full pl-10 pr-4 py-2 text-xs bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-slate-800 focus:ring-1 focus:ring-accent focus:border-accent" placeholder="Search by Order ID, Buyer, or Seller" type="text"/>
+</div>
+<div class="h-8 w-px bg-slate-200 dark:border-slate-800"></div>
+<select class="bg-transparent border-none text-[10px] font-bold uppercase tracking-widest focus:ring-0 cursor-pointer">
+<option>All Statuses</option>
+<option>Escrow</option>
+<option>Completed</option>
+<option>Refunded</option>
+</select>
+<select class="bg-transparent border-none text-[10px] font-bold uppercase tracking-widest focus:ring-0 cursor-pointer">
+<option>Last 30 Days</option>
+<option>This Quarter</option>
+<option>Year to Date</option>
+<option>Custom Range</option>
+</select>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-[10px] text-slate-400 uppercase tracking-widest font-medium mr-2">Displaying 1,284 transactions</span>
+<button class="p-2 hover:bg-slate-100 dark:hover:bg-white/5 transition-colors">
+<span class="material-symbols-outlined text-slate-400">filter_list</span>
+</button>
+</div>
+</div>
+<div class="bg-white dark:bg-[#111] border border-slate-200 dark:border-slate-800 overflow-hidden">
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-slate-50 dark:bg-white/[0.02] border-b border-slate-200 dark:border-slate-800">
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Order ID</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Gown Name</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Buyer</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Seller</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Total Amount</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Commission</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Status</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400 text-right">Date</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+<tr class="hover:bg-slate-50/50 dark:hover:bg-white/[0.01] transition-colors cursor-pointer group">
+<td class="px-6 py-4">
+<span class="text-[11px] font-mono text-slate-400 group-hover:text-accent transition-colors">#ORD-2024-8921</span>
+</td>
+<td class="px-6 py-4">
+<p class="text-xs font-medium">"Maya" Couture Gown</p>
+</td>
+<td class="px-6 py-4">
+<p class="text-xs">Sophie Bennett</p>
+</td>
+<td class="px-6 py-4">
+<p class="text-xs">Elena Rodriguez</p>
+</td>
+<td class="px-6 py-4">
+<p class="text-xs font-medium font-mono text-slate-900 dark:text-slate-100">$8,400.00</p>
+</td>
+<td class="px-6 py-4">
+<p class="text-xs font-mono text-slate-500">$1,260.00</p>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 text-[9px] font-bold uppercase tracking-wider">
+<span class="w-1 h-1 rounded-full bg-amber-500"></span> Escrow
+                                </span>
+</td>
+<td class="px-6 py-4 text-right">
+<p class="text-[10px] text-slate-400 uppercase tracking-tighter">Oct 24, 2024</p>
+</td>
+</tr>
+<tr class="hover:bg-slate-50/50 dark:hover:bg-white/[0.01] transition-colors cursor-pointer group">
+<td class="px-6 py-4">
+<span class="text-[11px] font-mono text-slate-400 group-hover:text-accent transition-colors">#ORD-2024-8919</span>
+</td>
+<td class="px-6 py-4">
+<p class="text-xs font-medium">"Seraphina" Custom</p>
+</td>
+<td class="px-6 py-4">
+<p class="text-xs">Isabella Rossi</p>
+</td>
+<td class="px-6 py-4">
+<p class="text-xs">Sarah J. Miller</p>
+</td>
+<td class="px-6 py-4">
+<p class="text-xs font-medium font-mono text-slate-900 dark:text-slate-100">$12,200.00</p>
+</td>
+<td class="px-6 py-4">
+<p class="text-xs font-mono text-slate-500">$1,830.00</p>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 text-[9px] font-bold uppercase tracking-wider">
+<span class="w-1 h-1 rounded-full bg-emerald-500"></span> Completed
+                                </span>
+</td>
+<td class="px-6 py-4 text-right">
+<p class="text-[10px] text-slate-400 uppercase tracking-tighter">Oct 22, 2024</p>
+</td>
+</tr>
+<tr class="hover:bg-slate-50/50 dark:hover:bg-white/[0.01] transition-colors cursor-pointer group">
+<td class="px-6 py-4">
+<span class="text-[11px] font-mono text-slate-400 group-hover:text-accent transition-colors">#ORD-2024-8915</span>
+</td>
+<td class="px-6 py-4">
+<p class="text-xs font-medium">Couture "Fabiana"</p>
+</td>
+<td class="px-6 py-4">
+<p class="text-xs">Boutique Pre-owned</p>
+</td>
+<td class="px-6 py-4">
+<p class="text-xs">Chloe Masters</p>
+</td>
+<td class="px-6 py-4">
+<p class="text-xs font-medium font-mono text-slate-900 dark:text-slate-100">$7,100.00</p>
+</td>
+<td class="px-6 py-4">
+<p class="text-xs font-mono text-slate-500">$1,065.00</p>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-[9px] font-bold uppercase tracking-wider">
+<span class="w-1 h-1 rounded-full bg-red-500"></span> Refunded
+                                </span>
+</td>
+<td class="px-6 py-4 text-right">
+<p class="text-[10px] text-slate-400 uppercase tracking-tighter">Oct 21, 2024</p>
+</td>
+</tr>
+<tr class="hover:bg-slate-50/50 dark:hover:bg-white/[0.01] transition-colors cursor-pointer group">
+<td class="px-6 py-4">
+<span class="text-[11px] font-mono text-slate-400 group-hover:text-accent transition-colors">#ORD-2024-8910</span>
+</td>
+<td class="px-6 py-4">
+<p class="text-xs font-medium">"Gala" Collection 708</p>
+</td>
+<td class="px-6 py-4">
+<p class="text-xs">Aria Williams</p>
+</td>
+<td class="px-6 py-4">
+<p class="text-xs">Modern Bride</p>
+</td>
+<td class="px-6 py-4">
+<p class="text-xs font-medium font-mono text-slate-900 dark:text-slate-100">$5,400.00</p>
+</td>
+<td class="px-6 py-4">
+<p class="text-xs font-mono text-slate-500">$810.00</p>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 text-[9px] font-bold uppercase tracking-wider">
+<span class="w-1 h-1 rounded-full bg-emerald-500"></span> Completed
+                                </span>
+</td>
+<td class="px-6 py-4 text-right">
+<p class="text-[10px] text-slate-400 uppercase tracking-tighter">Oct 19, 2024</p>
+</td>
+</tr>
+<tr class="hover:bg-slate-50/50 dark:hover:bg-white/[0.01] transition-colors cursor-pointer group">
+<td class="px-6 py-4">
+<span class="text-[11px] font-mono text-slate-400 group-hover:text-accent transition-colors">#ORD-2024-8908</span>
+</td>
+<td class="px-6 py-4">
+<p class="text-xs font-medium">"Nevis" Sparkle Gown</p>
+</td>
+<td class="px-6 py-4">
+<p class="text-xs">Rachel Quinn</p>
+</td>
+<td class="px-6 py-4">
+<p class="text-xs">Luxe Resale</p>
+</td>
+<td class="px-6 py-4">
+<p class="text-xs font-medium font-mono text-slate-900 dark:text-slate-100">$9,800.00</p>
+</td>
+<td class="px-6 py-4">
+<p class="text-xs font-mono text-slate-500">$1,470.00</p>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 text-[9px] font-bold uppercase tracking-wider">
+<span class="w-1 h-1 rounded-full bg-amber-500"></span> Escrow
+                                </span>
+</td>
+<td class="px-6 py-4 text-right">
+<p class="text-[10px] text-slate-400 uppercase tracking-tighter">Oct 18, 2024</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="px-6 py-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
+<button class="text-[10px] font-bold uppercase tracking-widest text-slate-400 flex items-center gap-2 hover:text-primary transition-colors disabled:opacity-30" disabled="">
+<span class="material-symbols-outlined text-sm">chevron_left</span> Previous
+                </button>
+<div class="flex items-center gap-4">
+<span class="text-[10px] font-bold text-primary dark:text-white">1</span>
+<span class="text-[10px] font-bold text-slate-400 hover:text-primary cursor-pointer">2</span>
+<span class="text-[10px] font-bold text-slate-400 hover:text-primary cursor-pointer">3</span>
+<span class="text-[10px] font-bold text-slate-400">...</span>
+<span class="text-[10px] font-bold text-slate-400 hover:text-primary cursor-pointer">42</span>
+</div>
+<button class="text-[10px] font-bold uppercase tracking-widest text-slate-400 flex items-center gap-2 hover:text-primary transition-colors">
+                    Next <span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+
+</body></html>

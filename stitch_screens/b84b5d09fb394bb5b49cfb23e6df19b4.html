@@ -1,0 +1,286 @@
+<html class="light" lang="en"><head></head><body class="transition-colors duration-200">``` dream-html
+
+
+
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Inventory Gallery | Luxury Bridal Admin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&amp;family=Inter:wght@300;400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#111111",
+                        "background-light": "#F9F9F9",
+                        "background-dark": "#0A0A0A",
+                        accent: "#C5A059",
+                    },
+                    fontFamily: {
+                        display: ["Cormorant Garamond", "serif"],
+                        sans: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0px",
+                        'lg': "0px",
+                    },
+                },
+            },
+        };
+    </script>
+<style type="text/tailwindcss">
+        @layer base {
+            body { @apply font-sans bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100; }
+            h1, h2, h3, .brand-font { @apply font-display; }
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e5e5e5; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #333; }
+    </style>
+
+
+<aside class="fixed left-0 top-0 h-full w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-[#111] z-50">
+<div class="p-8">
+<h1 class="text-2xl font-medium tracking-widest uppercase border-b border-slate-100 dark:border-slate-800 pb-6 mb-8">
+            GL ESTATE
+            <span class="block text-[10px] tracking-[0.3em] mt-1 text-slate-400 font-sans">ADMIN CONSOLE</span>
+</h1>
+<nav class="space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined text-xl">dashboard</span>
+<span class="text-[11px] font-bold tracking-widest uppercase">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined text-xl">verified_user</span>
+<span class="text-[11px] font-bold tracking-widest uppercase">Moderation</span>
+<span class="ml-auto bg-accent/20 text-accent text-[10px] px-1.5 py-0.5 font-bold">12</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-primary text-white transition-all" href="#">
+<span class="material-symbols-outlined text-xl">grid_view</span>
+<span class="text-[11px] font-bold tracking-widest uppercase">Inventory</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined text-xl">people_outline</span>
+<span class="text-[11px] font-bold tracking-widest uppercase">Sellers</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined text-xl">payments</span>
+<span class="text-[11px] font-bold tracking-widest uppercase">Transactions</span>
+</a>
+</nav>
+</div>
+<div class="absolute bottom-0 w-full p-8 border-t border-slate-100 dark:border-slate-800">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-[10px] font-bold">JD</div>
+<div>
+<p class="text-xs font-bold uppercase tracking-tight">Julianne Deville</p>
+<p class="text-[10px] text-slate-400 uppercase tracking-tighter">Senior Curator</p>
+</div>
+</div>
+</div>
+</aside>
+<main class="ml-64 min-h-screen flex flex-col">
+<header class="h-16 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-[#111] flex items-center justify-between px-8 sticky top-0 z-40">
+<div class="flex items-center gap-4">
+<span class="text-[10px] text-slate-400 tracking-[0.3em] uppercase font-sans">Inventory Control</span>
+<span class="h-4 w-px bg-slate-200 dark:bg-slate-800 font-sans"></span>
+<span class="text-[10px] font-bold uppercase tracking-widest font-sans">Gallery View</span>
+</div>
+<div class="flex items-center gap-6">
+<button class="material-symbols-outlined text-slate-400 hover:text-primary dark:hover:text-white transition-colors">notifications</button>
+<button class="material-symbols-outlined text-slate-400 hover:text-primary dark:hover:text-white transition-colors" onclick="document.documentElement.classList.toggle('dark')">contrast</button>
+</div>
+</header>
+<div class="p-10 space-y-10">
+<div class="space-y-8">
+<div>
+<h2 class="text-5xl font-light tracking-tight mb-4">Inventory Gallery</h2>
+<p class="text-[11px] text-slate-400 uppercase tracking-[0.4em] font-sans">Visual Curation &amp; Asset Management</p>
+</div>
+<div class="flex flex-wrap items-center gap-6 border-y border-slate-200 dark:border-slate-800 py-6">
+<div class="relative flex-grow max-w-md">
+<span class="material-symbols-outlined absolute left-0 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
+<input class="w-full pl-8 pr-4 py-2 text-xs bg-transparent border-none focus:ring-0 placeholder:text-slate-400 uppercase tracking-widest font-medium" placeholder="Search Listings..." type="text"/>
+</div>
+<div class="h-8 w-px bg-slate-200 dark:border-slate-800"></div>
+<div class="flex items-center gap-8">
+<div class="flex flex-col gap-1">
+<label class="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">Collection</label>
+<select class="p-0 bg-transparent border-none text-[10px] font-bold uppercase tracking-widest focus:ring-0 cursor-pointer hover:text-accent transition-colors">
+<option>All Collections</option>
+<option>Le Secret Royal</option>
+<option>Allegria</option>
+<option>Couture</option>
+<option>GALA</option>
+</select>
+</div>
+<div class="flex flex-col gap-1">
+<label class="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">Condition</label>
+<select class="p-0 bg-transparent border-none text-[10px] font-bold uppercase tracking-widest focus:ring-0 cursor-pointer hover:text-accent transition-colors">
+<option>All Conditions</option>
+<option>New with Tags</option>
+<option>Pristine</option>
+<option>Excellent</option>
+<option>Good</option>
+</select>
+</div>
+<div class="flex flex-col gap-1">
+<label class="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">Status</label>
+<select class="p-0 bg-transparent border-none text-[10px] font-bold uppercase tracking-widest focus:ring-0 cursor-pointer hover:text-accent transition-colors">
+<option>All Statuses</option>
+<option>Live</option>
+<option>Sold</option>
+<option>Pending</option>
+</select>
+</div>
+</div>
+<button class="ml-auto flex items-center gap-2 px-6 py-2.5 bg-primary text-white text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-sm">add</span>
+            New Listing
+</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
+<div class="group relative flex flex-col bg-white dark:bg-[#111] border border-slate-200 dark:border-slate-800 overflow-hidden transition-all hover:border-slate-400 dark:hover:border-slate-600">
+<div class="aspect-[3/4] overflow-hidden relative">
+<img alt="Maya Gown" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6WTfNqOFlWyNqNW2MYlx1M5OgMAXd2_likcEpCOMT6J9E4DrdI-PYUPKkF8IMP0Vr5f_uuqN06qHksqxtbb1oUQ329KFw8XU06BHHUIisMgKFLrUs47x1btaGUClSvH_mAnmLeN6nTM7Xzn43Pb2zSmMH16YXTKG5ugwjI6AGUJowgMgZPjfJxvLZYwJ8Zq7oeAo_wx4jRfpi3rgsO1PQ5e46fYvhiuikrUPqPvzlhtPejLWo_KrPWhZ0SgWwLUY-buX2-tN9YOI6"/>
+<div class="absolute top-4 left-4">
+<span class="inline-flex items-center px-3 py-1 text-[9px] font-bold uppercase tracking-widest bg-amber-50/90 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 backdrop-blur-sm border border-amber-200/50 dark:border-amber-800/50">Pending Approval</span>
+</div>
+<div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="w-8 h-8 bg-white/90 dark:bg-black/90 flex items-center justify-center border border-slate-200 dark:border-slate-800">
+<span class="material-symbols-outlined text-lg">more_horiz</span>
+</button>
+</div>
+</div>
+<div class="p-6 flex flex-col flex-grow">
+<div class="mb-4">
+<div class="flex justify-between items-start mb-1">
+<h3 class="text-xl font-medium tracking-tight">Maya Couture</h3>
+<span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">GL-2024-089</span>
+</div>
+<p class="text-[10px] text-slate-400 uppercase tracking-widest font-sans">Elena Rodriguez • Verified Seller</p>
+</div>
+<div class="mt-auto pt-6 border-t border-slate-100 dark:border-slate-800 flex justify-between items-end">
+<div>
+<p class="text-[9px] text-slate-400 uppercase tracking-widest mb-1 font-sans">Listed Oct 24, 2024</p>
+<p class="text-lg font-bold tracking-tight">$8,400.00</p>
+</div>
+<button class="text-[10px] font-bold uppercase tracking-widest text-accent hover:text-primary dark:hover:text-white transition-colors">Edit Details</button>
+</div>
+</div>
+</div>
+<div class="group relative flex flex-col bg-white dark:bg-[#111] border border-slate-200 dark:border-slate-800 overflow-hidden transition-all hover:border-slate-400 dark:hover:border-slate-600">
+<div class="aspect-[3/4] overflow-hidden relative">
+<img alt="Seraphina Gown" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbIfKdB0HmZ3TPFiE2yvK6jdLYkrR9EWVyjEqQgRdcslrvr002LeQnJDw1lyfM3BIQwj0nVUuzUjnQEJ-2wxCe6XIoK1QMqT5b1Ofc6VfnlVu_TTHet9G0Xe8wxv_dyS2mn0GRGWoB7c0dNyNWExQa4NIBVAo9QjRPatGrJjgR2WRwQDBLyKbcLhN16bDDg3Iu-vJVxXWHqGcRXg2ab-NOu-VcQ7CCfd_QVDI0nyQitReFq_6hhCX8ZUX1gv-UjuimI6FQxETqa-aZ"/>
+<div class="absolute top-4 left-4">
+<span class="inline-flex items-center px-3 py-1 text-[9px] font-bold uppercase tracking-widest bg-green-50/90 dark:bg-green-900/40 text-green-600 dark:text-green-400 backdrop-blur-sm border border-green-200/50 dark:border-green-800/50">Live Marketplace</span>
+</div>
+<div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="w-8 h-8 bg-white/90 dark:bg-black/90 flex items-center justify-center border border-slate-200 dark:border-slate-800">
+<span class="material-symbols-outlined text-lg">more_horiz</span>
+</button>
+</div>
+</div>
+<div class="p-6 flex flex-col flex-grow">
+<div class="mb-4">
+<div class="flex justify-between items-start mb-1">
+<h3 class="text-xl font-medium tracking-tight">Seraphina Custom</h3>
+<span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">GL-2024-088</span>
+</div>
+<p class="text-[10px] text-slate-400 uppercase tracking-widest font-sans">Sarah J. Miller • Boutique Partner</p>
+</div>
+<div class="mt-auto pt-6 border-t border-slate-100 dark:border-slate-800 flex justify-between items-end">
+<div>
+<p class="text-[9px] text-slate-400 uppercase tracking-widest mb-1 font-sans">Listed Oct 23, 2024</p>
+<p class="text-lg font-bold tracking-tight">$12,200.00</p>
+</div>
+<button class="text-[10px] font-bold uppercase tracking-widest text-accent hover:text-primary dark:hover:text-white transition-colors">Edit Details</button>
+</div>
+</div>
+</div>
+<div class="group relative flex flex-col bg-white dark:bg-[#111] border border-slate-200 dark:border-slate-800 overflow-hidden transition-all hover:border-slate-400 dark:hover:border-slate-600">
+<div class="aspect-[3/4] overflow-hidden relative">
+<div class="absolute inset-0 bg-black/40 z-10"></div>
+<img alt="Fabiana Gown" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 grayscale" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBT3FGZ-PGSdthuhOaVZzboEisI9LNHLshX-IVomiCyOwQae9zn5LnqVJHQC72bc216pf8A3Fr_UFhHgRQE3nkj0Y6MSVhcV2RamrxioGd-y3VsTpVYvCWZmTAZ0BFEc_ydGUCMVgxCXdU9FNIUBKbe0e5jVvcckhnY9VVZlsXGp2HYFfnKq-wZpF3hIWO3UzwjLlOs5hqIdqAXNYk_9eyIvgVwu708os_3_rtRy96f-vJYgL5kiQpE0XqO0IkWBSakWDX112komV5Q"/>
+<div class="absolute top-4 left-4 z-20">
+<span class="inline-flex items-center px-3 py-1 text-[9px] font-bold uppercase tracking-widest bg-slate-900/80 text-white backdrop-blur-sm border border-white/20">Sold Out</span>
+</div>
+<div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity z-20">
+<button class="w-8 h-8 bg-white/90 dark:bg-black/90 flex items-center justify-center border border-slate-200 dark:border-slate-800">
+<span class="material-symbols-outlined text-lg">more_horiz</span>
+</button>
+</div>
+</div>
+<div class="p-6 flex flex-col flex-grow">
+<div class="mb-4">
+<div class="flex justify-between items-start mb-1">
+<h3 class="text-xl font-medium tracking-tight">Fabiana Couture</h3>
+<span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">GL-2024-087</span>
+</div>
+<p class="text-[10px] text-slate-400 uppercase tracking-widest font-sans">Boutique Pre-owned • Bulk Seller</p>
+</div>
+<div class="mt-auto pt-6 border-t border-slate-100 dark:border-slate-800 flex justify-between items-end">
+<div>
+<p class="text-[9px] text-slate-400 uppercase tracking-widest mb-1 font-sans">Listed Oct 22, 2024</p>
+<p class="text-lg font-bold tracking-tight text-slate-400">$9,850.00</p>
+</div>
+<button class="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-primary dark:hover:text-white transition-colors">Archive</button>
+</div>
+</div>
+</div>
+<div class="group relative flex flex-col bg-white dark:bg-[#111] border border-slate-200 dark:border-slate-800 overflow-hidden transition-all hover:border-slate-400 dark:hover:border-slate-600">
+<div class="aspect-[3/4] overflow-hidden relative">
+<img alt="Navia Gown" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWK7I-4IxhSD3Is2FwgDqfsm3ZRXtukB17bss2q3ouVbarhZqrNBLKh2GlPPMEVqaJzPhLsNJPBFOw6Iw287DAAlTF6ARhBBEVvXVDK09X2yylOvcQcwikLupq_mIxdBkQF2PsN2V06vwhMkY_6c05O7WgoiaJEVZSS_Rd8zx6sD6NnKzD8rw_8ypmm8PGdCkkRCH9z0c0t32xdEFOzbsKObR6BV4fjOq9rbJPC1U42H3V5oRJIn2bv0JKsQAZ2FH5R_iYZ96JgGfY"/>
+<div class="absolute top-4 left-4">
+<span class="inline-flex items-center px-3 py-1 text-[9px] font-bold uppercase tracking-widest bg-green-50/90 dark:bg-green-900/40 text-green-600 dark:text-green-400 backdrop-blur-sm border border-green-200/50 dark:border-green-800/50">Live Marketplace</span>
+</div>
+<div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="w-8 h-8 bg-white/90 dark:bg-black/90 flex items-center justify-center border border-slate-200 dark:border-slate-800">
+<span class="material-symbols-outlined text-lg">more_horiz</span>
+</button>
+</div>
+</div>
+<div class="p-6 flex flex-col flex-grow">
+<div class="mb-4">
+<div class="flex justify-between items-start mb-1">
+<h3 class="text-xl font-medium tracking-tight">Navia GALA</h3>
+<span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">GL-2024-086</span>
+</div>
+<p class="text-[10px] text-slate-400 uppercase tracking-widest font-sans">Sophia Loren • Verified Seller</p>
+</div>
+<div class="mt-auto pt-6 border-t border-slate-100 dark:border-slate-800 flex justify-between items-end">
+<div>
+<p class="text-[9px] text-slate-400 uppercase tracking-widest mb-1 font-sans">Listed Oct 21, 2024</p>
+<p class="text-lg font-bold tracking-tight">$5,600.00</p>
+</div>
+<button class="text-[10px] font-bold uppercase tracking-widest text-accent hover:text-primary dark:hover:text-white transition-colors">Edit Details</button>
+</div>
+</div>
+</div>
+</div>
+<div class="pt-10 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
+<span class="text-[10px] text-slate-400 uppercase tracking-[0.3em] font-bold font-sans">Showing 4 of 1,248 Master Assets</span>
+<div class="flex gap-4 items-center">
+<button class="w-10 h-10 flex items-center justify-center border border-slate-200 dark:border-slate-800 text-slate-400 hover:border-primary dark:hover:border-white transition-all">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<div class="flex items-center gap-2">
+<span class="text-[10px] font-bold uppercase tracking-widest font-sans">Page 01</span>
+<span class="text-[10px] text-slate-300 font-sans">/ 312</span>
+</div>
+<button class="w-10 h-10 flex items-center justify-center border border-primary bg-primary text-white hover:bg-slate-800 transition-all">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+
+</body></html>

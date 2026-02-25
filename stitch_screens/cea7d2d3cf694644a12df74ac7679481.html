@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Admin Seller Directory | Luxury Bridal Marketplace</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&amp;family=Inter:wght@300;400;500;600&amp;family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&amp;display=swap" rel="stylesheet"/>
+<style type="text/tailwindcss">
+        :root {
+            --primary: #111111;
+            --background-light: #F9F9F9;
+            --background-dark: #0A0A0A;
+            --accent: #C5A059;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .brand-font { font-family: 'Cormorant Garamond', serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e5e5e5; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #333; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20;
+        }
+    </style>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#111111",
+                        "background-light": "#F9F9F9",
+                        "background-dark": "#0A0A0A",
+                        accent: "#C5A059",
+                    },
+                    fontFamily: {
+                        display: ["Cormorant Garamond", "serif"],
+                        sans: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "2px",
+                        'lg': "4px",
+                    },
+                },
+            },
+        };
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 transition-colors duration-200">
+<aside class="fixed left-0 top-0 h-full w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-[#111] z-50">
+<div class="p-8">
+<h1 class="text-2xl font-medium tracking-widest uppercase border-b border-slate-100 dark:border-slate-800 pb-6 mb-8">
+                GL Admin
+                <span class="block text-[10px] tracking-[0.3em] mt-1 text-slate-400">SELLER DIRECTORY</span>
+</h1>
+<nav class="space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined text-xl">dashboard</span>
+<span class="text-xs font-medium tracking-wider uppercase">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined text-xl">verified_user</span>
+<span class="text-xs font-medium tracking-wider uppercase">Moderation</span>
+<span class="ml-auto bg-accent text-[10px] px-1.5 py-0.5 rounded text-white">12</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined text-xl">inventory_2</span>
+<span class="text-xs font-medium tracking-wider uppercase">Inventory</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-primary text-white transition-all shadow-lg shadow-black/5" href="#">
+<span class="material-symbols-outlined text-xl">group</span>
+<span class="text-xs font-medium tracking-wider uppercase">Sellers</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined text-xl">payments</span>
+<span class="text-xs font-medium tracking-wider uppercase">Transactions</span>
+</a>
+</nav>
+</div>
+<div class="absolute bottom-0 w-full p-8 border-t border-slate-100 dark:border-slate-800">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-[10px] font-bold">JD</div>
+<div>
+<p class="text-xs font-semibold">Julianne Deville</p>
+<p class="text-[10px] text-slate-400">Operations Manager</p>
+</div>
+</div>
+</div>
+</aside>
+<main class="ml-64 min-h-screen">
+<header class="h-16 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-[#111]/80 backdrop-blur-md flex items-center justify-between px-8 sticky top-0 z-40">
+<div class="flex items-center gap-4">
+<span class="text-xs text-slate-400 tracking-widest uppercase">Management</span>
+<span class="h-4 w-px bg-slate-200 dark:bg-slate-800"></span>
+<span class="text-xs font-medium uppercase tracking-wider">Seller Directory</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2 mr-4">
+<span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Verified Only</span>
+<button class="relative inline-flex h-5 w-9 items-center rounded-full bg-slate-200 dark:bg-slate-800 transition-colors">
+<span class="inline-block h-3 w-3 translate-x-1 rounded-full bg-white transition-transform"></span>
+</button>
+</div>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
+<input class="pl-10 pr-4 py-1.5 text-xs bg-slate-50 dark:bg-white/5 border-none focus:ring-1 focus:ring-accent w-72 placeholder:text-slate-400" placeholder="Search by name or email address..." type="text"/>
+</div>
+<button class="material-symbols-outlined text-slate-400 hover:text-primary dark:hover:text-white transition-colors" onclick="document.documentElement.classList.toggle('dark')">contrast</button>
+</div>
+</header>
+<div class="p-8">
+<div class="grid grid-cols-4 gap-6 mb-8">
+<div class="bg-white dark:bg-[#111] p-6 border border-slate-100 dark:border-slate-800">
+<p class="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-2">Total Sellers</p>
+<p class="text-3xl font-display font-light">1,248</p>
+<div class="mt-2 text-[10px] text-emerald-600 font-medium">+12% this month</div>
+</div>
+<div class="bg-white dark:bg-[#111] p-6 border border-slate-100 dark:border-slate-800">
+<p class="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-2">Verified Rate</p>
+<p class="text-3xl font-display font-light">84.2%</p>
+<div class="mt-2 text-[10px] text-slate-400 font-medium">1,051 Active Badge</div>
+</div>
+<div class="bg-white dark:bg-[#111] p-6 border border-slate-100 dark:border-slate-800">
+<p class="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-2">Total Inventory Value</p>
+<p class="text-3xl font-display font-light">$2.4M</p>
+<div class="mt-2 text-[10px] text-slate-400 font-medium">Pre-owned Assets</div>
+</div>
+<div class="bg-white dark:bg-[#111] p-6 border border-slate-100 dark:border-slate-800">
+<p class="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-2">Avg. Seller Sales</p>
+<p class="text-3xl font-display font-light">$12,400</p>
+<div class="mt-2 text-[10px] text-accent font-medium">Top Tier Performance</div>
+</div>
+</div>
+<div class="bg-white dark:bg-[#111] border border-slate-200 dark:border-slate-800">
+<table class="w-full text-left">
+<thead>
+<tr class="border-b border-slate-100 dark:border-slate-800">
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Seller Details</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Status</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Listings</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Total Sales</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Joined</th>
+<th class="px-6 py-4 text-right"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-50 dark:divide-slate-800/50">
+<tr class="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+<td class="px-6 py-5">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-display text-base">ER</div>
+<div>
+<p class="text-sm font-semibold">Elena Rodriguez</p>
+<p class="text-xs text-slate-400">elena.rod@example.com</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="inline-flex items-center gap-1 text-[10px] font-bold uppercase bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 px-2 py-1">
+<span class="material-symbols-outlined text-[14px]">verified</span> Verified
+                                </span>
+</td>
+<td class="px-6 py-5">
+<p class="text-sm font-medium">8 Active</p>
+<p class="text-[10px] text-slate-400 uppercase tracking-tighter">14 Total</p>
+</td>
+<td class="px-6 py-5">
+<p class="text-sm font-medium">$42,800</p>
+<p class="text-[10px] text-slate-400 uppercase tracking-tighter">6 Completed</p>
+</td>
+<td class="px-6 py-5 text-xs text-slate-500">Feb 14, 2024</td>
+<td class="px-6 py-5 text-right">
+<button class="material-symbols-outlined text-slate-400 hover:text-primary dark:hover:text-white transition-colors">more_horiz</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+<td class="px-6 py-5">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-display text-base">SM</div>
+<div>
+<p class="text-sm font-semibold">Sarah J. Miller</p>
+<p class="text-xs text-slate-400">sarah.miller@test.com</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="inline-flex items-center gap-1 text-[10px] font-bold uppercase bg-slate-100 dark:bg-slate-800 text-slate-500 px-2 py-1">
+<span class="material-symbols-outlined text-[14px]">pending</span> Pending
+                                </span>
+</td>
+<td class="px-6 py-5">
+<p class="text-sm font-medium">1 Active</p>
+<p class="text-[10px] text-slate-400 uppercase tracking-tighter">1 Total</p>
+</td>
+<td class="px-6 py-5">
+<p class="text-sm font-medium">$0</p>
+<p class="text-[10px] text-slate-400 uppercase tracking-tighter">0 Completed</p>
+</td>
+<td class="px-6 py-5 text-xs text-slate-500">Mar 02, 2024</td>
+<td class="px-6 py-5 text-right">
+<button class="material-symbols-outlined text-slate-400 hover:text-primary dark:hover:text-white transition-colors">more_horiz</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+<td class="px-6 py-5">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-display text-base text-accent">BP</div>
+<div>
+<p class="text-sm font-semibold">Boutique Pre-owned</p>
+<p class="text-xs text-slate-400">info@boutiquepreowned.com</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="inline-flex items-center gap-1 text-[10px] font-bold uppercase bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 px-2 py-1">
+<span class="material-symbols-outlined text-[14px]">verified</span> Verified
+                                </span>
+</td>
+<td class="px-6 py-5">
+<p class="text-sm font-medium">24 Active</p>
+<p class="text-[10px] text-slate-400 uppercase tracking-tighter">89 Total</p>
+</td>
+<td class="px-6 py-5">
+<p class="text-sm font-medium">$156,200</p>
+<p class="text-[10px] text-slate-400 uppercase tracking-tighter">42 Completed</p>
+</td>
+<td class="px-6 py-5 text-xs text-slate-500">Dec 20, 2023</td>
+<td class="px-6 py-5 text-right">
+<button class="material-symbols-outlined text-slate-400 hover:text-primary dark:hover:text-white transition-colors">more_horiz</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+<td class="px-6 py-5">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-display text-base">KC</div>
+<div>
+<p class="text-sm font-semibold">Katherine Chen</p>
+<p class="text-xs text-slate-400">k.chen@domain.co</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="inline-flex items-center gap-1 text-[10px] font-bold uppercase bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 px-2 py-1">
+<span class="material-symbols-outlined text-[14px]">verified</span> Verified
+                                </span>
+</td>
+<td class="px-6 py-5">
+<p class="text-sm font-medium">3 Active</p>
+<p class="text-[10px] text-slate-400 uppercase tracking-tighter">5 Total</p>
+</td>
+<td class="px-6 py-5">
+<p class="text-sm font-medium">$18,900</p>
+<p class="text-[10px] text-slate-400 uppercase tracking-tighter">2 Completed</p>
+</td>
+<td class="px-6 py-5 text-xs text-slate-500">Jan 12, 2024</td>
+<td class="px-6 py-5 text-right">
+<button class="material-symbols-outlined text-slate-400 hover:text-primary dark:hover:text-white transition-colors">more_horiz</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+<td class="px-6 py-5">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-display text-base">AL</div>
+<div>
+<p class="text-sm font-semibold">Amanda Lee</p>
+<p class="text-xs text-slate-400">alee_92@mail.com</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="inline-flex items-center gap-1 text-[10px] font-bold uppercase bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 px-2 py-1">
+<span class="material-symbols-outlined text-[14px]">warning</span> Flagged
+                                </span>
+</td>
+<td class="px-6 py-5">
+<p class="text-sm font-medium">0 Active</p>
+<p class="text-[10px] text-slate-400 uppercase tracking-tighter">3 Total</p>
+</td>
+<td class="px-6 py-5">
+<p class="text-sm font-medium">$6,400</p>
+<p class="text-[10px] text-slate-400 uppercase tracking-tighter">1 Completed</p>
+</td>
+<td class="px-6 py-5 text-xs text-slate-500">Nov 05, 2023</td>
+<td class="px-6 py-5 text-right">
+<button class="material-symbols-outlined text-slate-400 hover:text-primary dark:hover:text-white transition-colors">more_horiz</button>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="px-6 py-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+<p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Showing 1-10 of 1,248 Sellers</p>
+<div class="flex gap-2">
+<button class="px-3 py-1 text-[10px] uppercase font-bold tracking-widest border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-white/5 disabled:opacity-50" disabled="">Prev</button>
+<button class="px-3 py-1 text-[10px] uppercase font-bold tracking-widest border border-slate-200 dark:border-slate-800 bg-primary text-white">1</button>
+<button class="px-3 py-1 text-[10px] uppercase font-bold tracking-widest border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-white/5">2</button>
+<button class="px-3 py-1 text-[10px] uppercase font-bold tracking-widest border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-white/5">3</button>
+<button class="px-3 py-1 text-[10px] uppercase font-bold tracking-widest border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-white/5">Next</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+
+</body></html>

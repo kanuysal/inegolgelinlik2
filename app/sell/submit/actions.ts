@@ -128,10 +128,11 @@ export async function submitListing(formData: {
   const user = await requireAuth()
   const supabase = await getSupabase()
 
-  // Validate with Zod
+  // Validate with Zod (including images)
   const result = listingSchema.safeParse({
     ...formData,
     listing_type: 'peer_to_peer',
+    images: formData.images || [],
   })
 
   if (!result.success) {

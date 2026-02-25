@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Orders &amp; Sales | Luxury Bridal Marketplace</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&amp;family=Inter:wght@300;400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#111111",
+                        "background-light": "#F9F9F9",
+                        "background-dark": "#0A0A0A",
+                        accent: "#C5A059",
+                    },
+                    fontFamily: {
+                        display: ["Cormorant Garamond", "serif"],
+                        sans: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        'none': '0',
+                        'sm': '0.125rem',
+                        DEFAULT: '0.25rem',
+                        'md': '0.375rem',
+                        'lg': '1rem',
+                        'xl': '1.5rem',
+                        'full': '9999px',
+                    },
+                },
+            },
+        };
+    </script>
+<style type="text/tailwindcss">
+        @layer base {
+            body { font-family: 'Inter', sans-serif; }
+            h1, h2, h3, .brand-font { font-family: 'Cormorant Garamond', serif; }
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+        .order-card {
+            @apply bg-white dark:bg-white/5 border border-slate-100 dark:border-slate-800 p-6 transition-all hover:shadow-sm;
+        }
+        .status-badge {
+            @apply px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 transition-colors duration-200">
+<header class="h-20 border-b border-slate-100 dark:border-slate-800 bg-white/80 dark:bg-black/80 backdrop-blur-md sticky top-0 z-50">
+<div class="max-w-[1600px] mx-auto h-full px-8 flex items-center justify-between">
+<div class="flex items-center gap-12">
+<h1 class="text-2xl font-medium tracking-widest uppercase cursor-pointer">
+                Galia Lahav
+                <span class="block text-[8px] tracking-[0.4em] mt-0.5 text-slate-400">MARKETPLACE</span>
+</h1>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-[10px] font-bold tracking-[0.2em] uppercase text-slate-400 hover:text-accent transition-colors" href="#">Listings</a>
+<a class="text-[10px] font-bold tracking-[0.2em] uppercase text-primary dark:text-white border-b border-accent pb-1" href="#">Orders</a>
+<a class="text-[10px] font-bold tracking-[0.2em] uppercase text-slate-400 hover:text-accent transition-colors" href="#">Messages</a>
+<a class="text-[10px] font-bold tracking-[0.2em] uppercase text-slate-400 hover:text-accent transition-colors" href="#">Profile</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<button class="material-symbols-outlined text-slate-400 hover:text-primary transition-colors">search</button>
+<div class="h-8 w-8 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center overflow-hidden border border-slate-200 dark:border-slate-700">
+<img alt="Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUB7g7mKfGdsaAIl1gBF-ltUbuB6-bJgoc1z5M80M0Cr1Gs37LV8hFEhms7DAkGbwxvAt8NUruOhChOusQIe8tbmcDmF-X5juAgIjansZ9Aqf5VOPntygM-Yt3VnhHMM-OUle5UshFthY4r2whvpm5_OgZTJp8vl7tjDAssQl7vmuCaY7-PD8OViYbTo4guAjPr07giJj-tW6f94MNUgsmTO2wGhIqthXeKNfYKdDlJa6PZP1v4oWXrJNYuuVwPUrNRT7r83uMN0EZ"/>
+</div>
+<button class="material-symbols-outlined text-slate-400" onclick="document.documentElement.classList.toggle('dark')">dark_mode</button>
+</div>
+</div>
+</header>
+<main class="max-w-[1400px] mx-auto px-8 py-12">
+<header class="mb-12">
+<h2 class="text-4xl font-light mb-2">My Orders</h2>
+<p class="text-slate-400 text-sm">Manage your purchases and track your sales activity.</p>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+<section>
+<div class="flex items-center justify-between mb-8 border-b border-slate-200 dark:border-slate-800 pb-4">
+<h3 class="text-xl font-medium tracking-tight">Purchases</h3>
+<span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">3 Active</span>
+</div>
+<div class="space-y-4">
+<div class="order-card">
+<div class="flex gap-6">
+<div class="w-24 h-32 flex-shrink-0">
+<img alt="Gown" class="w-full h-full object-cover rounded-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAB0006uTOXiNE75r6mJRAs0hdyCjbjWVYF-GTOrqHizSsH7S9yg2t56kKi0tHcOyYmDmFKcYgYgNYVcdHvy2oLldAAtBNzP1yMZW4fQUK8pV_O2f1yUEvAUjBWnuOmVfqEOPtfUSZ7Ur-MwVpfGFJqtygxiYUPp0ax0tA6xijRprAMB1ISD9wtn0x9IuTmxhrRHMm9j9cBSjfdaxbvl1A_OUczzGLj_Z3Fwu_bw_LFPkC6E2ukCqSr17rnDhg-I-2UNFexp_ZcYJl_"/>
+</div>
+<div class="flex-1 flex flex-col">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h4 class="text-lg font-medium leading-none mb-1">Maya Gown</h4>
+<p class="text-[11px] text-slate-400 uppercase tracking-widest">Custom Size • Galia Lahav House</p>
+</div>
+<span class="status-badge bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400">In Transit</span>
+</div>
+<div class="mt-auto grid grid-cols-2 gap-4 text-[11px]">
+<div>
+<p class="text-slate-400 uppercase tracking-tighter text-[9px]">Order Date</p>
+<p class="font-medium">Oct 14, 2023</p>
+</div>
+<div>
+<p class="text-slate-400 uppercase tracking-tighter text-[9px]">Order Number</p>
+<p class="font-medium">#GL-82910</p>
+</div>
+</div>
+<div class="mt-4 pt-4 border-t border-slate-50 dark:border-slate-800/50 flex justify-between items-center">
+<span class="text-sm font-semibold">$8,400.00</span>
+<a class="text-[10px] font-bold uppercase tracking-widest text-accent hover:underline" href="#">Details &amp; Tracking</a>
+</div>
+</div>
+</div>
+</div>
+<div class="order-card opacity-80">
+<div class="flex gap-6">
+<div class="w-24 h-32 flex-shrink-0">
+<img alt="Gown" class="w-full h-full object-cover rounded-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDf_X9iRQWo_GoVxXEetGe-5oKrbLFK3thm5XThCeSlQb1AFCIGUlFhNkD6wsM2Wc86RPebUvXTVG4pECgQ0UUpVmv1FEECwDLOXNUXCQO529y8ULqXsnMHnkGv9eNm0BfFsX5Qp2J7h_QvjrJxVKOHpUiFT2aLkcMbzas-9YGGz7jqKXc9jvLimY5P727_2B3zcTvrWvJe-Fcjt8xUazhPmyLz2PYqpfu955vpsHa5eGVxtiAAM2dPKO2U5npUSlFk7y0JqhAL871v"/>
+</div>
+<div class="flex-1 flex flex-col">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h4 class="text-lg font-medium leading-none mb-1">Seraphina</h4>
+<p class="text-[11px] text-slate-400 uppercase tracking-widest">US 4 • Couture Collection</p>
+</div>
+<span class="status-badge bg-green-50 text-green-600 dark:bg-green-900/20 dark:text-green-400">Delivered</span>
+</div>
+<div class="mt-auto grid grid-cols-2 gap-4 text-[11px]">
+<div>
+<p class="text-slate-400 uppercase tracking-tighter text-[9px]">Order Date</p>
+<p class="font-medium">Sep 28, 2023</p>
+</div>
+<div>
+<p class="text-slate-400 uppercase tracking-tighter text-[9px]">Order Number</p>
+<p class="font-medium">#GL-77201</p>
+</div>
+</div>
+<div class="mt-4 pt-4 border-t border-slate-50 dark:border-slate-800/50 flex justify-between items-center">
+<span class="text-sm font-semibold">$6,200.00</span>
+<a class="text-[10px] font-bold uppercase tracking-widest text-accent hover:underline" href="#">View Invoice</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section>
+<div class="flex items-center justify-between mb-8 border-b border-slate-200 dark:border-slate-800 pb-4">
+<h3 class="text-xl font-medium tracking-tight">Sales</h3>
+<span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">1 Pending</span>
+</div>
+<div class="space-y-4">
+<div class="order-card">
+<div class="flex gap-6">
+<div class="w-24 h-32 flex-shrink-0">
+<img alt="Gown" class="w-full h-full object-cover rounded-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_f3eO1d1C8-moiDRhxfgSPreUTF1T3Qht8RL9UAr8Wa2fx0Nmp8a0b-ux3d-v8JC3vbjByBsCkjTOMVUg9prGOdcqVB252AJ5yuNU9n1F3oU-cqJuWmnF2txNl5LbrHcbtXvtzjBIXg8sautaQsweLCW3OAPjFTps05QmLNRJJe8XNyGWV9aaIcaF_IACA_av0p2OmJgySRGBgB4C32ZtkML9KAdUDSjZLXZsA1Hi5HRkcwAOiKCGFiCz_aZl3vExYkVDnxPdiIz7"/>
+</div>
+<div class="flex-1 flex flex-col">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h4 class="text-lg font-medium leading-none mb-1">Fabiana</h4>
+<p class="text-[11px] text-slate-400 uppercase tracking-widest">US 2 • GALA Collection</p>
+</div>
+<span class="status-badge bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400">Awaiting Authentication</span>
+</div>
+<div class="mt-auto grid grid-cols-2 gap-4 text-[11px]">
+<div>
+<p class="text-slate-400 uppercase tracking-tighter text-[9px]">Sold Date</p>
+<p class="font-medium">Oct 16, 2023</p>
+</div>
+<div>
+<p class="text-slate-400 uppercase tracking-tighter text-[9px]">Order Number</p>
+<p class="font-medium">#SL-99302</p>
+</div>
+</div>
+<div class="mt-4 pt-4 border-t border-slate-50 dark:border-slate-800/50 flex justify-between items-center">
+<span class="text-sm font-semibold text-green-600">$5,450.00 Payout</span>
+<a class="text-[10px] font-bold uppercase tracking-widest text-accent hover:underline" href="#">Manage Sale</a>
+</div>
+</div>
+</div>
+</div>
+<div class="order-card border-dashed bg-transparent flex flex-col items-center justify-center py-12 text-center opacity-40">
+<span class="material-symbols-outlined text-4xl mb-2 font-light">history</span>
+<p class="text-[10px] font-bold uppercase tracking-widest">No Previous Sales History</p>
+</div>
+</div>
+</section>
+</div>
+</main>
+<footer class="mt-20 border-t border-slate-100 dark:border-slate-800 py-12 bg-white dark:bg-black/20">
+<div class="max-w-[1400px] mx-auto px-8 flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="flex items-center gap-8">
+<span class="text-[10px] text-slate-400 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">verified_user</span>
+                Marketplace Authenticity Guaranteed
+            </span>
+<span class="text-[10px] text-slate-400 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">lock</span>
+                Encrypted Transaction Processing
+            </span>
+</div>
+<div class="flex gap-6">
+<a class="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-primary" href="#">Support</a>
+<a class="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-primary" href="#">Shipping Policy</a>
+<a class="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-primary" href="#">Terms</a>
+</div>
+</div>
+</footer>
+
+</body></html>

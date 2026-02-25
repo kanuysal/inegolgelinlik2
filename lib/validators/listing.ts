@@ -68,6 +68,10 @@ export const listingSchema = z.object({
     .optional()
     .nullable(),
   product_id: z.string().optional().nullable(),
+  images: z
+    .array(z.string().url('Each image must be a valid URL'))
+    .min(2, 'At least 2 photos of you wearing the dress are required')
+    .max(10, 'Maximum 10 images allowed'),
 })
 
 export type ListingInput = z.infer<typeof listingSchema>

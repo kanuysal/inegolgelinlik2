@@ -1,0 +1,178 @@
+
+<header className="border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md sticky top-0 z-50">
+<div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+<div className="flex items-center gap-2">
+<span className="font-display italic text-2xl tracking-tight">Galia Lahav</span>
+<span className="text-[10px] uppercase tracking-widest text-accent font-semibold ml-2">Authenticated Resale</span>
+</div>
+<button className="text-sm font-medium hover:opacity-70 transition-opacity flex items-center gap-2">
+                Save &amp; Exit
+                <span className="material-icons-outlined text-sm">close</span>
+</button>
+</div>
+<div className="max-w-7xl mx-auto px-6">
+<div className="flex justify-between text-[11px] uppercase tracking-[0.2em] font-medium text-gray-400 py-3">
+<span className="flex items-center gap-2 text-primary dark:text-white"><span className="material-icons-outlined text-xs">check_circle</span> 01 Gown Details</span>
+<span className="flex items-center gap-2 text-primary dark:text-white"><span className="material-icons-outlined text-xs">check_circle</span> 02 Sizing</span>
+<span className="flex items-center gap-2 text-primary dark:text-white"><span className="material-icons-outlined text-xs">check_circle</span> 03 Condition</span>
+<span className="flex items-center gap-2 text-primary dark:text-white border-b-2 border-primary pb-1">04 Photos</span>
+<span className="">05 Price &amp; Post</span>
+</div>
+<div className="w-full bg-gray-100 dark:bg-gray-800 h-[2px]">
+<div className="bg-primary dark:bg-white h-[2px] transition-all duration-500" style="width: 80%;"></div>
+</div>
+</div>
+</header>
+<main className="max-w-7xl mx-auto px-6 py-12">
+<div className="grid lg:grid-cols-12 gap-16">
+<div className="lg:col-span-4 space-y-10">
+<section>
+<h1 className="font-display text-4xl mb-4 leading-tight">Capture the Magic</h1>
+<p className="text-gray-500 dark:text-gray-400 font-light leading-relaxed">
+                        To authenticate your Galia Lahav gown and attract high-end buyers, we require high-resolution imagery from specific angles.
+                    </p>
+</section>
+<div className="space-y-8">
+<h3 className="text-xs uppercase tracking-[0.2em] font-semibold text-accent">Required Checklist</h3>
+<div className="space-y-6">
+<div className="flex gap-4 group">
+<div className="w-20 h-24 bg-gray-100 dark:bg-zinc-800 flex-shrink-0 overflow-hidden rounded shadow-sm border border-gray-200 dark:border-zinc-700">
+<img alt="Example front silhouette photo" className="w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDk17s5nEWPzH4eLrfF5YNIB7a82QgL-MWSimmzWEu6QnuEArApbWhZKjCaLFh9sruYWhz7ogh_UmqjmY1Yme2GV3stAb1Bx9UI9f14Lu0gYpdX1NeTdgoXC_ZxebshuSA03P1CBnROECCHx-ZvBJYtf_8YPlZCSg0rj8UUP8o-g8iGYB3mU8P00D44e1oo3I1clu8eG5mD_loYJt8c8nn3C4fkAgEw0aYIHcF0Z8IPs07vdZKwBgdcv0f9L0NTlnQjjbTnZxjUJ06T"/>
+</div>
+<div className="flex flex-col justify-center">
+<h4 className="font-medium text-sm">Full Front Silhouette</h4>
+<p className="text-xs text-gray-500 mt-1">Gown hanging or on a mannequin in natural light.</p>
+</div>
+</div>
+<div className="flex gap-4 group">
+<div className="w-20 h-24 bg-gray-100 dark:bg-zinc-800 flex-shrink-0 overflow-hidden rounded shadow-sm border border-gray-200 dark:border-zinc-700">
+<img alt="Example brand label photo" className="w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9YNlFC1gF6sO9mY8RMJp9ZmuGhFHdtTeNSvytmnsxOrwpxdG0JfFddgS9RqUHhUyzxRGEwhD_cu2UNijQ-jpLwbOzzBCetoHilyqgKtvBSN8o5AijTyPsBqRUD1Hvp1-85kXcCrsSTZ3H_qqrxiuP-6K9pVJeKk60aBhSYJpGojxvAvnPKlx6nWtZ3Wo7orwZBsNnwNvYgJ3R3E8j2o4Uk_hK0vIXoSK6W7SnLbUcNJuPjnRe1adgZ9Irk_wrNQYMRsSQDBPLWUGm"/>
+</div>
+<div className="flex flex-col justify-center">
+<h4 className="font-medium text-sm">Brand &amp; Care Label</h4>
+<p className="text-xs text-gray-500 mt-1">Close-up of the interior labels for authenticity check.</p>
+</div>
+</div>
+<div className="flex gap-4 group">
+<div className="w-20 h-24 bg-gray-100 dark:bg-zinc-800 flex-shrink-0 overflow-hidden rounded shadow-sm border border-gray-200 dark:border-zinc-700">
+<img alt="Example lace detail photo" className="w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpVjRJ3PBly4dfAyFfhNprnXHA0kf4nxgyRfLnkqHZNDsILwbqvX2jCtWudWylY9Z7j2g6IhqbOZP_t3YBsWNJws72qeRGvLq9P9GimvL-EHDM53bzR2Q9JQSs--0j6Cga4PbRjuw7AYjWBIzCxdiLoJIWMajRMg3rneJjHzq8-Kv2-rJH8DyZN7Hjk5VV6X4AhKqoEtF_9zsmhwv407aKtxdcPb4MHce6l9tXkpdeKKp_FLu2QmZJVEVy-eN7kniVA-ww9omNr6RJ"/>
+</div>
+<div className="flex flex-col justify-center">
+<h4 className="font-medium text-sm">Embroidery &amp; Lace</h4>
+<p className="text-xs text-gray-500 mt-1">Macro shots of the unique Galia Lahav textures.</p>
+</div>
+</div>
+<div className="flex gap-4 group">
+<div className="w-20 h-24 bg-gray-100 dark:bg-zinc-800 flex-shrink-0 overflow-hidden rounded shadow-sm border border-gray-200 dark:border-zinc-700">
+<img alt="Example dress train photo" className="w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKzg4YM-OHE5r9lSK2iEUslC4Hm75BfIl6XZ-CtZ5YFtGwY7XrSa1ykvnhxCursFcQvs_dKGmvOwapRaFhgWeSS9HZDFdl3RfD0OZt_2vgHtlw8zbV0clz4ydNFadT0hbu3i551vRXaV9HxnFbsSefVKFu3ScqQr7AY--iQhU4r_Jwg8_zG0xfZBMUfjVIqjSAdNaAVsijw35-TM3TazYd3UGlhkk5XC-HNZAIM0egt1yv-1cIk8o6gNyhsASW7Wrvpzi5CZIyiDqe"/>
+</div>
+<div className="flex flex-col justify-center">
+<h4 className="font-medium text-sm">Train &amp; Back View</h4>
+<p className="text-xs text-gray-500 mt-1">Show the full length of the train and back closure.</p>
+</div>
+</div>
+</div>
+</div>
+<div className="p-6 bg-accent/5 dark:bg-accent/10 border border-accent/20 rounded-lg">
+<p className="text-xs italic text-accent leading-relaxed">
+                        "Natural lighting is key. Avoid using flash or heavy filters to ensure the color accuracy of your gown is preserved."
+                    </p>
+</div>
+</div>
+<div className="lg:col-span-8">
+<div className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 shadow-xl shadow-gray-200/50 dark:shadow-none rounded-xl overflow-hidden min-h-[600px] flex flex-col">
+<div className="p-12 border-b border-dashed border-gray-200 dark:border-zinc-800 flex flex-col items-center justify-center text-center group cursor-pointer hover:bg-gray-50 dark:hover:bg-zinc-800/50 transition-colors">
+<div className="w-16 h-16 bg-gray-50 dark:bg-zinc-800 rounded-full flex items-center justify-center mb-6 border border-gray-100 dark:border-zinc-700 group-hover:scale-110 transition-transform duration-300">
+<span className="material-icons-outlined text-gray-400 group-hover:text-primary dark:group-hover:text-white">add_a_photo</span>
+</div>
+<h2 className="text-lg font-medium mb-2">Drag and drop your photos here</h2>
+<p className="text-gray-400 text-sm mb-6 max-w-sm">Upload up to 15 high-quality JPEG or PNG files. Recommended size 2048px on the long edge.</p>
+<button className="px-8 py-3 bg-primary text-white text-xs uppercase tracking-widest font-semibold hover:bg-zinc-800 transition-colors">
+                            Select Files from Device
+                        </button>
+</div>
+<div className="p-8 bg-gray-50/50 dark:bg-zinc-900/50 flex-grow">
+<div className="flex items-center justify-between mb-6">
+<h3 className="text-xs uppercase tracking-[0.2em] font-semibold text-gray-500">Your Uploads (3/15)</h3>
+<span className="text-xs text-accent">Minimum 4 photos required</span>
+</div>
+<div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div className="aspect-[3/4] bg-white dark:bg-zinc-800 rounded border border-gray-200 dark:border-zinc-700 relative group overflow-hidden shadow-sm">
+<img alt="Uploaded photo 1" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcdwcupoyQMLhXw2Azu7yN8YnOuFw-F6TttmjZ9dmWzXq5TJ1CN7QCupMnq9n9WdZ5RZwAFR4LcVp4Ikw9qQGkPayYk5iBy3k0iQrAKR1bE9_KxylHrtvMrJyTeKNNwJLALnIdbqbrVmKkwX6QE1ccWg70sP1ziFTN4hGONurJz7SZv-5B9LfuS0dlj8RcYcOh2YNsTScxcYwcZcJgmIKepOzf0E2NmNlbTl1yihhWTz3m5VK82czaOgWadWFuZ70Pt77ZioZHt8M7"/>
+<div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+<button className="bg-white/20 hover:bg-white/40 p-2 rounded-full backdrop-blur-md text-white">
+<span className="material-icons-outlined text-lg">visibility</span>
+</button>
+<button className="bg-white/20 hover:bg-red-500/80 p-2 rounded-full backdrop-blur-md text-white">
+<span className="material-icons-outlined text-lg">delete</span>
+</button>
+</div>
+<div className="absolute bottom-2 left-2 right-2">
+<span className="bg-primary/80 backdrop-blur-md text-[9px] uppercase tracking-wider text-white px-2 py-1 rounded">Front Silhouette</span>
+</div>
+</div>
+<div className="aspect-[3/4] bg-white dark:bg-zinc-800 rounded border border-gray-200 dark:border-zinc-700 relative group overflow-hidden shadow-sm">
+<img alt="Uploaded photo 2" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOC0rQ9Akz_9UhEw2B4ILM0He_ndpR0ONwc6LvEZFkp7WqaAKzh5PcTtWlkRz25UrbapD8IhnvF9PJ4Z8eaCLqbEz8lsTGxymod-ZmnjZ4WcLiSoQEthOBCLA6lbbf-vepOj3bBVXkcibgTW6HIZJDvU23Wae1fxQ8NZY55AMhcwG7RM6b7K9Q5y8GNDNRXo6nu7CW3aQBCCSO8wWI9PMkCHTZvDAzm1PxpzsHNQjmkL0FXuAmZ_MOYraCsgPTi4sQRRC8-UdvIFRO"/>
+<div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+<button className="bg-white/20 hover:bg-white/40 p-2 rounded-full backdrop-blur-md text-white">
+<span className="material-icons-outlined text-lg">visibility</span>
+</button>
+<button className="bg-white/20 hover:bg-red-500/80 p-2 rounded-full backdrop-blur-md text-white">
+<span className="material-icons-outlined text-lg">delete</span>
+</button>
+</div>
+<div className="absolute bottom-2 left-2 right-2">
+<span className="bg-primary/80 backdrop-blur-md text-[9px] uppercase tracking-wider text-white px-2 py-1 rounded">Detail Shot</span>
+</div>
+</div>
+<div className="aspect-[3/4] bg-white dark:bg-zinc-800 rounded border border-gray-200 dark:border-zinc-700 relative group overflow-hidden shadow-sm">
+<img alt="Uploaded photo 3" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPdVy_9YCMAcD90BIy4TlGWM-Ra6kc46RyNdgPuvDEhPZjQ-gSqHzRda-UWuffhvzgPmbJEUZRHR4wBdWtR-btmpl4Q3JT0-myP-lO_K3HKN7N2lvqsniPniWLIyCKQ-mJuA2KCeR6x1PfYLlGWeUMZv8zGjVgaGCJtC5eS_iTS_K8MInqpDAXHW8H_O3mR7j4oQusgZ6nNcu5-bYfso4YhtJn5TYg2kSHQUbCBe19D36tsEQ-isjGXt_bK8uNDX9BrY9V6LqhHYyd"/>
+<div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+<button className="bg-white/20 hover:bg-white/40 p-2 rounded-full backdrop-blur-md text-white">
+<span className="material-icons-outlined text-lg">visibility</span>
+</button>
+<button className="bg-white/20 hover:bg-red-500/80 p-2 rounded-full backdrop-blur-md text-white">
+<span className="material-icons-outlined text-lg">delete</span>
+</button>
+</div>
+<div className="absolute bottom-2 left-2 right-2">
+<span className="bg-primary/80 backdrop-blur-md text-[9px] uppercase tracking-wider text-white px-2 py-1 rounded">Label View</span>
+</div>
+</div>
+<div className="aspect-[3/4] bg-white/50 dark:bg-zinc-800/30 rounded border-2 border-dashed border-gray-200 dark:border-zinc-700 flex flex-col items-center justify-center text-center p-4">
+<span className="material-icons-outlined text-gray-300 dark:text-zinc-600 mb-2">add</span>
+<p className="text-[10px] text-gray-400 uppercase tracking-widest font-medium">Add Train Shot</p>
+</div>
+</div>
+</div>
+<div className="p-8 bg-white dark:bg-zinc-900 border-t border-gray-100 dark:border-zinc-800 flex justify-between items-center">
+<button className="flex items-center gap-2 text-sm text-gray-500 hover:text-primary dark:hover:text-white transition-colors group">
+<span className="material-icons-outlined text-lg group-hover:-translate-x-1 transition-transform">arrow_back</span>
+                            Back to Condition
+                        </button>
+<div className="flex gap-4">
+<button className="px-8 py-3 bg-primary text-white text-xs uppercase tracking-widest font-semibold hover:bg-zinc-800 transition-all shadow-lg shadow-black/5">
+                                Save &amp; Continue
+                            </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<div className="fixed bottom-8 right-8 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 shadow-2xl rounded-lg p-4 flex items-center gap-4 animate-bounce hover:animate-none cursor-pointer transform translate-y-24 opacity-0 transition-all duration-500">
+<div className="w-10 h-10 bg-green-500/10 text-green-500 rounded-full flex items-center justify-center">
+<span className="material-icons-outlined">done</span>
+</div>
+<div>
+<p className="text-sm font-semibold">Image Uploaded</p>
+<p className="text-xs text-gray-500">Gown_Detail_03.jpg successfully added.</p>
+</div>
+</div>
+<script>
+        // Simple dark mode toggle logic for preview (optional)
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            // document.documentElement.classList.add('dark');
+        }
+    </script>
+

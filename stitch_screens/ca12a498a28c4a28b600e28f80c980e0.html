@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Messages | Luxury Bridal Marketplace</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&amp;family=Inter:wght@300;400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#111111",
+                        "background-light": "#FDFDFD",
+                        "background-dark": "#0A0A0A",
+                        accent: "#C5A059",
+                    },
+                    fontFamily: {
+                        display: ["Cormorant Garamond", "serif"],
+                        sans: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        'none': '0',
+                        'sm': '0.125rem',
+                        DEFAULT: '0.25rem',
+                        'md': '0.375rem',
+                        'lg': '1rem',
+                        'xl': '1.5rem',
+                        'full': '9999px',
+                    },
+                },
+            },
+        };
+    </script>
+<style type="text/tailwindcss">
+        @layer base {
+            body { font-family: 'Inter', sans-serif; }
+            h1, h2, h3, .brand-font { font-family: 'Cormorant Garamond', serif; }
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
+        .chat-bubble-received {
+            @apply bg-slate-100 dark:bg-white/5 text-slate-900 dark:text-slate-100 rounded-2xl rounded-tl-none px-5 py-3 text-sm max-w-[85%];
+        }
+        .chat-bubble-sent {
+            @apply bg-primary text-white rounded-2xl rounded-tr-none px-5 py-3 text-sm max-w-[85%] ml-auto;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 transition-colors duration-200 overflow-hidden">
+<header class="h-20 border-b border-slate-100 dark:border-slate-800 bg-white/80 dark:bg-black/80 backdrop-blur-md sticky top-0 z-50">
+<div class="max-w-[1600px] mx-auto h-full px-8 flex items-center justify-between">
+<div class="flex items-center gap-12">
+<h1 class="text-2xl font-medium tracking-widest uppercase cursor-pointer">
+                Galia Lahav
+                <span class="block text-[8px] tracking-[0.4em] mt-0.5 text-slate-400">MARKETPLACE</span>
+</h1>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-[10px] font-bold tracking-[0.2em] uppercase text-slate-400 hover:text-accent transition-colors" href="#">Listings</a>
+<a class="text-[10px] font-bold tracking-[0.2em] uppercase text-slate-400 hover:text-accent transition-colors" href="#">Orders</a>
+<a class="text-[10px] font-bold tracking-[0.2em] uppercase text-primary dark:text-white border-b border-accent pb-1" href="#">Messages</a>
+<a class="text-[10px] font-bold tracking-[0.2em] uppercase text-slate-400 hover:text-accent transition-colors" href="#">Profile</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<button class="material-symbols-outlined text-slate-400 hover:text-primary transition-colors">search</button>
+<div class="h-8 w-8 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center overflow-hidden border border-slate-200 dark:border-slate-700">
+<img alt="Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUB7g7mKfGdsaAIl1gBF-ltUbuB6-bJgoc1z5M80M0Cr1Gs37LV8hFEhms7DAkGbwxvAt8NUruOhChOusQIe8tbmcDmF-X5juAgIjansZ9Aqf5VOPntygM-Yt3VnhHMM-OUle5UshFthY4r2whvpm5_OgZTJp8vl7tjDAssQl7vmuCaY7-PD8OViYbTo4guAjPr07giJj-tW6f94MNUgsmTO2wGhIqthXeKNfYKdDlJa6PZP1v4oWXrJNYuuVwPUrNRT7r83uMN0EZ"/>
+</div>
+<button class="material-symbols-outlined text-slate-400" onclick="document.documentElement.classList.toggle('dark')">dark_mode</button>
+</div>
+</div>
+</header>
+<main class="max-w-[1600px] mx-auto h-[calc(100vh-80px)] flex">
+<aside class="w-full md:w-[400px] border-r border-slate-100 dark:border-slate-800 flex flex-col bg-white dark:bg-black/20">
+<div class="p-6 border-b border-slate-100 dark:border-slate-800">
+<h2 class="text-2xl font-light mb-4">Inbox</h2>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-white/5 border-none rounded-full text-xs focus:ring-1 focus:ring-accent/50 transition-all" placeholder="Search conversations..." type="text"/>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto custom-scrollbar">
+<div class="p-6 bg-slate-50 dark:bg-white/5 border-l-4 border-accent flex gap-4 cursor-pointer transition-colors">
+<div class="relative flex-shrink-0">
+<img alt="Gown thumbnail" class="w-14 h-14 rounded-lg object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAB0006uTOXiNE75r6mJRAs0hdyCjbjWVYF-GTOrqHizSsH7S9yg2t56kKi0tHcOyYmDmFKcYgYgNYVcdHvy2oLldAAtBNzP1yMZW4fQUK8pV_O2f1yUEvAUjBWnuOmVfqEOPtfUSZ7Ur-MwVpfGFJqtygxiYUPp0ax0tA6xijRprAMB1ISD9wtn0x9IuTmxhrRHMm9j9cBSjfdaxbvl1A_OUczzGLj_Z3Fwu_bw_LFPkC6E2ukCqSr17rnDhg-I-2UNFexp_ZcYJl_"/>
+<div class="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"></div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start mb-1">
+<h4 class="text-sm font-semibold truncate">Elena Vance</h4>
+<span class="text-[10px] text-slate-400">2:45 PM</span>
+</div>
+<p class="text-[11px] font-medium text-accent mb-1 truncate uppercase tracking-widest">Maya Gown • Custom</p>
+<p class="text-xs text-slate-500 truncate">Is it possible to see more photos of the train?</p>
+</div>
+</div>
+<div class="p-6 hover:bg-slate-50 dark:hover:bg-white/5 border-l-4 border-transparent flex gap-4 cursor-pointer transition-colors border-b border-slate-50 dark:border-slate-900/50">
+<div class="flex-shrink-0">
+<img alt="Gown thumbnail" class="w-14 h-14 rounded-lg object-cover grayscale opacity-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDf_X9iRQWo_GoVxXEetGe-5oKrbLFK3thm5XThCeSlQb1AFCIGUlFhNkD6wsM2Wc86RPebUvXTVG4pECgQ0UUpVmv1FEECwDLOXNUXCQO529y8ULqXsnMHnkGv9eNm0BfFsX5Qp2J7h_QvjrJxVKOHpUiFT2aLkcMbzas-9YGGz7jqKXc9jvLimY5P727_2B3zcTvrWvJe-Fcjt8xUazhPmyLz2PYqpfu955vpsHa5eGVxtiAAM2dPKO2U5npUSlFk7y0JqhAL871v"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start mb-1">
+<h4 class="text-sm font-medium truncate text-slate-600 dark:text-slate-400">Sarah Jenkins</h4>
+<span class="text-[10px] text-slate-400">Yesterday</span>
+</div>
+<p class="text-[11px] font-medium text-slate-400 mb-1 truncate uppercase tracking-widest">Seraphina • US 4</p>
+<p class="text-xs text-slate-400 truncate">Thank you for the prompt shipping!</p>
+</div>
+</div>
+<div class="p-6 hover:bg-slate-50 dark:hover:bg-white/5 border-l-4 border-transparent flex gap-4 cursor-pointer transition-colors border-b border-slate-50 dark:border-slate-900/50">
+<div class="flex-shrink-0">
+<img alt="Gown thumbnail" class="w-14 h-14 rounded-lg object-cover grayscale opacity-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_f3eO1d1C8-moiDRhxfgSPreUTF1T3Qht8RL9UAr8Wa2fx0Nmp8a0b-ux3d-v8JC3vbjByBsCkjTOMVUg9prGOdcqVB252AJ5yuNU9n1F3oU-cqJuWmnF2txNl5LbrHcbtXvtzjBIXg8sautaQsweLCW3OAPjFTps05QmLNRJJe8XNyGWV9aaIcaF_IACA_av0p2OmJgySRGBgB4C32ZtkML9KAdUDSjZLXZsA1Hi5HRkcwAOiKCGFiCz_aZl3vExYkVDnxPdiIz7"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start mb-1">
+<h4 class="text-sm font-medium truncate text-slate-600 dark:text-slate-400">Atelier Support</h4>
+<span class="text-[10px] text-slate-400">Mon</span>
+</div>
+<p class="text-[11px] font-medium text-slate-400 mb-1 truncate uppercase tracking-widest">Verification Status</p>
+<p class="text-xs text-slate-400 truncate text-green-600">Your account has been verified.</p>
+</div>
+</div>
+<div class="p-6 hover:bg-slate-50 dark:hover:bg-white/5 border-l-4 border-transparent flex gap-4 cursor-pointer transition-colors border-b border-slate-50 dark:border-slate-900/50">
+<div class="flex-shrink-0">
+<img alt="Gown thumbnail" class="w-14 h-14 rounded-lg object-cover grayscale opacity-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQu-pCh7dYPrNg0NJXFZt0qCxUkFFLKoKCU_4cHUsrbaSeBYqEYTWsB1y45FllEG73YKO19bAStyP8ufp4Sf5ecQhEMuyUwARwH324KccISgawJIZj2WcMgxVJRHF6ddtQo2UHm_2yWAFf80SH6M3pAswknQV-A2rHcFlOEF3ZcM0uY7WcxZNpcEprubGO9gIRyhK54D4S2ldapRkcK-LUwsq4P3Fo8f7bRNYMsPkg_wiLlBan93qniYxsA5t3Y7nLRLbCeiOHV5Gy"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start mb-1">
+<h4 class="text-sm font-medium truncate text-slate-600 dark:text-slate-400">Monica G.</h4>
+<span class="text-[10px] text-slate-400">Oct 12</span>
+</div>
+<p class="text-[11px] font-medium text-slate-400 mb-1 truncate uppercase tracking-widest">Fabiana • US 2</p>
+<p class="text-xs text-slate-400 truncate">Is the price firm or are you open to offers?</p>
+</div>
+</div>
+</div>
+</aside>
+<section class="flex-1 flex flex-col bg-background-light dark:bg-background-dark">
+<header class="h-20 px-8 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-white dark:bg-transparent">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-white/10 overflow-hidden border border-slate-200 dark:border-slate-800">
+<img alt="Elena Vance" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSmcSzomsfO9QsQyDWWrWlxRKE2s2o8cWUiCvkM6RbJm73acp6K4J9rxwbWRQDES1SDuAJfE7xjH3tFrHRlQ5pEcgM0YFNe33jEcQxrlXZ8uIcbQf07fAujMzr1eA_9bVJ5SWX2QrxgTP5E8u583VQ-B_C8WFxZhSXamsEJiHW_Mdh2Ame0nYclC1eHoeEvan1cq-GhbW1JviDI3Zv1vMJfOeg_X6CtjTwbyLBw-oxJnXgoxzAEd0cuECLyd8aOE-KWhqpFvXIta1f"/>
+</div>
+<div>
+<h3 class="text-sm font-semibold">Elena Vance</h3>
+<p class="text-[10px] uppercase tracking-widest text-accent font-medium">Inquiring about Maya Gown</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="px-4 py-2 border border-slate-200 dark:border-slate-800 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">View Listing</button>
+<button class="material-symbols-outlined text-slate-400 hover:text-slate-900 transition-colors">more_vert</button>
+</div>
+</header>
+<div class="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar bg-[url('https://www.transparenttextures.com/patterns/pinstriped-suit.png')] opacity-80">
+<div class="flex justify-center">
+<span class="text-[10px] font-bold tracking-[0.2em] uppercase text-slate-400 bg-white dark:bg-slate-900 px-4 py-1 rounded-full border border-slate-100 dark:border-slate-800">Today</span>
+</div>
+<div class="flex flex-col items-start gap-2">
+<div class="chat-bubble-received">
+                    Hello! I'm absolutely in love with your Galia Lahav Maya gown. Is it still available for purchase?
+                </div>
+<span class="text-[9px] text-slate-400 ml-1">11:20 AM</span>
+</div>
+<div class="flex flex-col items-end gap-2">
+<div class="chat-bubble-sent">
+                    Hi Elena! Yes, it is still available. I just had it professionally cleaned and it's in pristine condition, ready for its next home.
+                </div>
+<span class="text-[9px] text-slate-400 mr-1">11:45 AM</span>
+</div>
+<div class="flex flex-col items-start gap-2">
+<div class="chat-bubble-received">
+                    That's wonderful to hear. Could you please share some close-up photos of the lace detailing on the bodice and the length of the train? 
+                </div>
+<span class="text-[9px] text-slate-400 ml-1">12:05 PM</span>
+</div>
+<div class="flex flex-col items-end gap-2">
+<div class="max-w-[85%] space-y-2">
+<div class="grid grid-cols-2 gap-2">
+<img alt="Detail 1" class="rounded-xl border border-slate-200 dark:border-slate-800" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpggdSEUQrcP8OCfaRwrGdFAv9eTNJ9gpXzFhtKww905_13-kQKqUDG8NLHe-2Y4DAf0dg3foBHJNZVxiV9rhK_6L131tH-unXZ21wzeaoC89ShxV6sqvz46zBjei6J0uTdsj2e-nKYxY-Rd3JezPHqdrGWtSW7jfjheIEYBTt96gRM9JyNQzdu0kmJF9Led1yP43RrL0381YmGAGlCZmrBr5UbJq5I8XTZk5BOMtflbco_ZQUmKR1W9MkG2DYpJSdKbOR7oqJ9BC9"/>
+<img alt="Detail 2" class="rounded-xl border border-slate-200 dark:border-slate-800" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4LXeVSy_msKiLTVG9ao0DjndzR7e9twHpA_0F3OnH8GpndYGfo7v5K2DAgIZj9sDKhaHCDE52jnyffglNCJKcAAAxFJia-dg83vMsUiTfayx3U90RPPMQUlE1n2AKEozoYFKA_thdz2BG-0qo9Yj2m1jlYXMJ3YcCJDIWhJcPvOG3RyqrgDNSmHA79OcJXuFCnaXYUgoDIId6cz7MEkq8bkicJLSB7DIjjqULIKCLavd925hU8PdH60mOjsqlAo3_N3SkcuPj2_sM"/>
+</div>
+<div class="chat-bubble-sent">
+                        Of course! Here are some detailed shots of the 3D floral appliqués and the Cathedral length train. Let me know if you need any specific angles!
+                    </div>
+</div>
+<span class="text-[9px] text-slate-400 mr-1">12:30 PM • Read</span>
+</div>
+<div class="flex flex-col items-start gap-2">
+<div class="chat-bubble-received">
+                    The details are breathtaking. Is it possible to see more photos of the train? Also, are you open to a small discount if I purchase by tomorrow?
+                </div>
+<span class="text-[9px] text-slate-400 ml-1">2:45 PM</span>
+</div>
+</div>
+<footer class="p-6 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-transparent">
+<div class="max-w-4xl mx-auto flex items-end gap-4 bg-slate-50 dark:bg-white/5 p-3 rounded-[2rem] border border-slate-200 dark:border-slate-800">
+<button class="material-symbols-outlined p-2 text-slate-400 hover:text-accent transition-colors">add_circle</button>
+<button class="material-symbols-outlined p-2 text-slate-400 hover:text-accent transition-colors">image</button>
+<textarea class="flex-1 bg-transparent border-none focus:ring-0 text-sm py-2 px-0 resize-none custom-scrollbar max-h-32" placeholder="Type your message..." rows="1"></textarea>
+<button class="bg-primary text-white h-10 w-10 rounded-full flex items-center justify-center hover:bg-accent transition-all">
+<span class="material-symbols-outlined text-sm">send</span>
+</button>
+</div>
+<div class="mt-3 flex justify-center gap-6">
+<span class="text-[10px] text-slate-400 flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">security</span>
+                    Secure Payments via Marketplace
+                </span>
+<span class="text-[10px] text-slate-400 flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">verified_user</span>
+                    Verified Seller Protection
+                </span>
+</div>
+</footer>
+</section>
+</main>
+
+</body></html>

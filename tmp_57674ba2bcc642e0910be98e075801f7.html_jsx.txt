@@ -1,0 +1,138 @@
+
+<header className="border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md sticky top-0 z-50">
+<div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+<div className="flex items-center gap-2">
+<span className="font-display italic text-2xl tracking-tight">Galia Lahav</span>
+<span className="text-[10px] uppercase tracking-widest text-accent font-semibold ml-2 border-l border-gray-200 pl-3">Resale Archive</span>
+</div>
+<button className="text-sm font-medium hover:opacity-70 transition-opacity flex items-center gap-2">
+            Save &amp; Exit
+            <span className="material-symbols-outlined text-sm">close</span>
+</button>
+</div>
+<div className="max-w-7xl mx-auto px-6">
+<div className="flex justify-between text-[11px] uppercase tracking-[0.2em] font-medium text-gray-400 py-3">
+<span className="flex items-center gap-2 text-primary dark:text-white border-b-2 border-primary pb-1">01 Find Gown</span>
+<span className="flex items-center gap-2">02 Details</span>
+<span className="flex items-center gap-2">03 Sizing</span>
+<span className="flex items-center gap-2">04 Photos</span>
+<span className="">05 Price &amp; Post</span>
+</div>
+<div className="w-full bg-gray-100 dark:bg-gray-800 h-[2px]">
+<div className="bg-primary dark:bg-white h-[2px] transition-all duration-500" style="width: 20%;"></div>
+</div>
+</div>
+</header>
+<main className="max-w-7xl mx-auto px-6 py-16">
+<div className="max-w-4xl mx-auto text-center mb-16">
+<h1 className="font-display text-5xl mb-6 leading-tight">Identify Your Piece</h1>
+<p className="text-gray-500 dark:text-gray-400 font-light text-lg leading-relaxed">
+            Search our master archive to automatically import your gown's specifications, original retail price, and professional imagery.
+        </p>
+</div>
+<div className="max-w-3xl mx-auto mb-20">
+<div className="relative group">
+<div className="absolute inset-y-0 left-6 flex items-center pointer-events-none">
+<span className="material-symbols-outlined text-gray-400 group-focus-within:text-primary transition-colors">search</span>
+</div>
+<input className="w-full pl-16 pr-6 py-6 bg-white dark:bg-zinc-900 border-gray-200 dark:border-zinc-800 focus:ring-accent focus:border-accent text-lg shadow-sm rounded-xl placeholder:text-gray-300" placeholder="Search by gown name (e.g. 'Fabiana' or 'Gala-1001')" type="text"/>
+<div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 shadow-2xl rounded-xl z-10 overflow-hidden">
+<div className="p-4 border-b border-gray-50 dark:border-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-800 cursor-pointer flex items-center gap-4 transition-colors">
+<div className="w-12 h-16 bg-gray-100 dark:bg-zinc-800 rounded overflow-hidden">
+<img alt="Fabiana" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDk17s5nEWPzH4eLrfF5YNIB7a82QgL-MWSimmzWEu6QnuEArApbWhZKjCaLFh9sruYWhz7ogh_UmqjmY1Yme2GV3stAb1Bx9UI9f14Lu0gYpdX1NeTdgoXC_ZxebshuSA03P1CBnROECCHx-ZvBJYtf_8YPlZCSg0rj8UUP8o-g8iGYB3mU8P00D44e1oo3I1clu8eG5mD_loYJt8c8nn3C4fkAgEw0aYIHcF0Z8IPs07vdZKwBgdcv0f9L0NTlnQjjbTnZxjUJ06T"/>
+</div>
+<div>
+<p className="font-medium">Fabiana</p>
+<p className="text-xs text-gray-400">Couture Collection - 2019</p>
+</div>
+</div>
+<div className="p-4 border-b border-gray-50 dark:border-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-800 cursor-pointer flex items-center gap-4 transition-colors">
+<div className="w-12 h-16 bg-gray-100 dark:bg-zinc-800 rounded overflow-hidden">
+<img alt="Gala-1001" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcdwcupoyQMLhXw2Azu7yN8YnOuFw-F6TttmjZ9dmWzXq5TJ1CN7QCupMnq9n9WdZ5RZwAFR4LcVp4Ikw9qQGkPayYk5iBy3k0iQrAKR1bE9_KxylHrtvMrJyTeKNNwJLALnIdbqbrVmKkwX6QE1ccWg70sP1ziFTN4hGONurJz7SZv-5B9LfuS0dlj8RcYcOh2YNsTScxcYwcZcJgmIKepOzf0E2NmNlbTl1yihhWTz3m5VK82czaOgWadWFuZ70Pt77ZioZHt8M7"/>
+</div>
+<div>
+<p className="font-medium">GALA-1001</p>
+<p className="text-xs text-gray-400">GALA Collection No. 1</p>
+</div>
+</div>
+<div className="p-3 bg-gray-50 dark:bg-zinc-800/50 text-center">
+<button className="text-xs font-semibold text-accent uppercase tracking-widest">View All Results</button>
+</div>
+</div>
+</div>
+<div className="flex items-center justify-center gap-8 mt-12">
+<span className="h-px w-20 bg-gray-200 dark:bg-zinc-800"></span>
+<span className="text-xs uppercase tracking-[0.3em] font-semibold text-gray-400">Or Browse By</span>
+<span className="h-px w-20 bg-gray-200 dark:bg-zinc-800"></span>
+</div>
+<div className="mt-12 flex justify-center">
+<div className="relative w-64">
+<select className="w-full bg-transparent border-b-2 border-gray-200 dark:border-zinc-800 border-t-0 border-x-0 focus:ring-0 focus:border-primary dark:focus:border-white py-3 text-sm uppercase tracking-widest font-medium appearance-none cursor-pointer">
+<option>Select Collection</option>
+<option>Couture</option>
+<option>GALA</option>
+<option>Pre-a-Porter</option>
+</select>
+<span className="material-symbols-outlined absolute right-0 top-3 pointer-events-none text-gray-400">expand_more</span>
+</div>
+</div>
+</div>
+<div className="space-y-12">
+<div className="flex items-end justify-between border-b border-gray-100 dark:border-zinc-800 pb-4">
+<h2 className="font-display text-2xl">Popular Silhouettes</h2>
+<a className="text-xs uppercase tracking-widest font-semibold text-accent hover:text-primary transition-colors" href="#">View All Styles</a>
+</div>
+<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
+<div className="group cursor-pointer">
+<div className="aspect-[3/4] mb-4 overflow-hidden bg-gray-50 dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-sm">
+<img alt="A-Line" className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpVjRJ3PBly4dfAyFfhNprnXHA0kf4nxgyRfLnkqHZNDsILwbqvX2jCtWudWylY9Z7j2g6IhqbOZP_t3YBsWNJws72qeRGvLq9P9GimvL-EHDM53bzR2Q9JQSs--0j6Cga4PbRjuw7AYjWBIzCxdiLoJIWMajRMg3rneJjHzq8-Kv2-rJH8DyZN7Hjk5VV6X4AhKqoEtF_9zsmhwv407aKtxdcPb4MHce6l9tXkpdeKKp_FLu2QmZJVEVy-eN7kniVA-ww9omNr6RJ"/>
+</div>
+<p className="text-[11px] uppercase tracking-widest font-semibold text-center group-hover:text-accent transition-colors">A-Line</p>
+</div>
+<div className="group cursor-pointer">
+<div className="aspect-[3/4] mb-4 overflow-hidden bg-gray-50 dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-sm">
+<img alt="Mermaid" className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9YNlFC1gF6sO9mY8RMJp9ZmuGhFHdtTeNSvytmnsxOrwpxdG0JfFddgS9RqUHhUyzxRGEwhD_cu2UNijQ-jpLwbOzzBCetoHilyqgKtvBSN8o5AijTyPsBqRUD1Hvp1-85kXcCrsSTZ3H_qqrxiuP-6K9pVJeKk60aBhSYJpGojxvAvnPKlx6nWtZ3Wo7orwZBsNnwNvYgJ3R3E8j2o4Uk_hK0vIXoSK6W7SnLbUcNJuPjnRe1adgZ9Irk_wrNQYMRsSQDBPLWUGm"/>
+</div>
+<p className="text-[11px] uppercase tracking-widest font-semibold text-center group-hover:text-accent transition-colors">Mermaid</p>
+</div>
+<div className="group cursor-pointer">
+<div className="aspect-[3/4] mb-4 overflow-hidden bg-gray-50 dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-sm">
+<img alt="Ballgown" className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKzg4YM-OHE5r9lSK2iEUslC4Hm75BfIl6XZ-CtZ5YFtGwY7XrSa1ykvnhxCursFcQvs_dKGmvOwapRaFhgWeSS9HZDFdl3RfD0OZt_2vgHtlw8zbV0clz4ydNFadT0hbu3i551vRXaV9HxnFbsSefVKFu3ScqQr7AY--iQhU4r_Jwg8_zG0xfZBMUfjVIqjSAdNaAVsijw35-TM3TazYd3UGlhkk5XC-HNZAIM0egt1yv-1cIk8o6gNyhsASW7Wrvpzi5CZIyiDqe"/>
+</div>
+<p className="text-[11px] uppercase tracking-widest font-semibold text-center group-hover:text-accent transition-colors">Ballgown</p>
+</div>
+<div className="group cursor-pointer">
+<div className="aspect-[3/4] mb-4 overflow-hidden bg-gray-50 dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-sm">
+<img alt="Trumpet" className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOC0rQ9Akz_9UhEw2B4ILM0He_ndpR0ONwc6LvEZFkp7WqaAKzh5PcTtWlkRz25UrbapD8IhnvF9PJ4Z8eaCLqbEz8lsTGxymod-ZmnjZ4WcLiSoQEthOBCLA6lbbf-vepOj3bBVXkcibgTW6HIZJDvU23Wae1fxQ8NZY55AMhcwG7RM6b7K9Q5y8GNDNRXo6nu7CW3aQBCCSO8wWI9PMkCHTZvDAzm1PxpzsHNQjmkL0FXuAmZ_MOYraCsgPTi4sQRRC8-UdvIFRO"/>
+</div>
+<p className="text-[11px] uppercase tracking-widest font-semibold text-center group-hover:text-accent transition-colors">Trumpet</p>
+</div>
+<div className="group cursor-pointer">
+<div className="aspect-[3/4] mb-4 overflow-hidden bg-gray-50 dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-sm">
+<img alt="Sheath" className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPdVy_9YCMAcD90BIy4TlGWM-Ra6kc46RyNdgPuvDEhPZjQ-gSqHzRda-UWuffhvzgPmbJEUZRHR4wBdWtR-btmpl4Q3JT0-myP-lO_K3HKN7N2lvqsniPniWLIyCKQ-mJuA2KCeR6x1PfYLlGWeUMZv8zGjVgaGCJtC5eS_iTS_K8MInqpDAXHW8H_O3mR7j4oQusgZ6nNcu5-bYfso4YhtJn5TYg2kSHQUbCBe19D36tsEQ-isjGXt_bK8uNDX9BrY9V6LqhHYyd"/>
+</div>
+<p className="text-[11px] uppercase tracking-widest font-semibold text-center group-hover:text-accent transition-colors">Sheath</p>
+</div>
+<div className="group cursor-pointer">
+<div className="aspect-[3/4] mb-4 overflow-hidden bg-gray-100 dark:bg-zinc-800 border border-gray-100 dark:border-zinc-800 rounded-sm flex items-center justify-center">
+<span className="material-symbols-outlined text-4xl text-gray-300">more_horiz</span>
+</div>
+<p className="text-[11px] uppercase tracking-widest font-semibold text-center">Other Style</p>
+</div>
+</div>
+</div>
+</main>
+<footer className="fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border-t border-gray-200 dark:border-zinc-800 z-40">
+<div className="max-w-7xl mx-auto px-6 py-6 flex justify-between items-center">
+<div className="flex items-center gap-3 text-xs text-gray-500">
+<span className="material-symbols-outlined text-accent text-lg">info</span>
+            Can't find your gown? <a className="underline hover:text-primary" href="#">List manually</a>
+</div>
+<div className="flex gap-6">
+<button className="px-10 py-4 bg-primary text-white text-[11px] uppercase tracking-[0.2em] font-semibold hover:bg-zinc-800 transition-all shadow-xl shadow-black/10 disabled:opacity-50" disabled="">
+                Continue to Details
+            </button>
+</div>
+</div>
+</footer>
+

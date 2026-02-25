@@ -1,0 +1,145 @@
+
+<header className="border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md sticky top-0 z-50">
+<div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+<div className="flex items-center gap-2">
+<span className="font-display italic text-2xl tracking-tight">Galia Lahav</span>
+<span className="text-[10px] uppercase tracking-widest text-accent font-semibold ml-2 text-nowrap">Authenticated Resale</span>
+</div>
+<button className="text-sm font-medium hover:opacity-70 transition-opacity flex items-center gap-2">
+            Save &amp; Exit
+            <span className="material-symbols-outlined text-lg">close</span>
+</button>
+</div>
+<div className="max-w-7xl mx-auto px-6">
+<div className="flex justify-between text-[11px] uppercase tracking-[0.2em] font-medium text-gray-400 py-3 overflow-x-auto no-scrollbar">
+<span className="flex items-center gap-2 text-primary dark:text-white shrink-0"><span className="material-symbols-outlined text-sm">check_circle</span> 01 Designer</span>
+<span className="flex items-center gap-2 text-primary dark:text-white border-b-2 border-primary pb-1 shrink-0">02 Gown Details</span>
+<span className="shrink-0">03 Sizing &amp; Condition</span>
+<span className="shrink-0">04 Photos</span>
+<span className="shrink-0">05 Price &amp; Post</span>
+</div>
+<div className="w-full bg-gray-100 dark:bg-gray-800 h-[2px]">
+<div className="bg-primary dark:bg-white h-[2px] transition-all duration-500" style="width: 40%;"></div>
+</div>
+</div>
+</header>
+<main className="max-w-7xl mx-auto px-6 py-12 lg:py-20">
+<div className="grid lg:grid-cols-12 gap-16 items-start">
+<div className="lg:col-span-4 space-y-10">
+<section>
+<h1 className="font-display text-4xl lg:text-5xl mb-6 leading-tight">Gown Details</h1>
+<p className="text-gray-500 dark:text-gray-400 font-light leading-relaxed text-lg">
+                    Tell us about your masterpiece. Providing accurate details helps us authenticate your gown and ensures the right bride finds her dream dress.
+                </p>
+</section>
+<div className="space-y-8">
+<div className="p-8 bg-accent/5 dark:bg-accent/10 border border-accent/20 rounded-lg">
+<h3 className="text-xs uppercase tracking-[0.2em] font-semibold text-accent mb-4">Pro Tip</h3>
+<p className="text-sm italic text-accent leading-relaxed">
+                        "The Story" is where you can share the emotion of your wedding day. Mention any custom modifications or specific collections to make your listing stand out.
+                    </p>
+</div>
+</div>
+</div>
+<div className="lg:col-span-8">
+<form className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 shadow-xl shadow-gray-200/50 dark:shadow-none rounded-xl overflow-hidden">
+<div className="p-8 lg:p-12 space-y-10">
+<div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10">
+<div className="space-y-2">
+<label className="text-[11px] uppercase tracking-widest font-semibold text-gray-500 dark:text-gray-400">Category</label>
+<select className="w-full bg-transparent border-0 border-b border-gray-200 dark:border-zinc-700 py-3 px-0 focus:ring-0 focus:border-accent transition-colors appearance-none text-sm">
+<option value="">Select Category</option>
+<option>Bridal Gown</option>
+<option>Evening Wear</option>
+<option>Accessories</option>
+</select>
+</div>
+<div className="space-y-2">
+<label className="text-[11px] uppercase tracking-widest font-semibold text-gray-500 dark:text-gray-400">Silhouette</label>
+<select className="w-full bg-transparent border-0 border-b border-gray-200 dark:border-zinc-700 py-3 px-0 focus:ring-0 focus:border-accent transition-colors appearance-none text-sm">
+<option value="">Select Silhouette</option>
+<option>A-Line</option>
+<option>Ball Gown</option>
+<option>Mermaid / Trumpet</option>
+<option>Sheath / Column</option>
+<option>Fit &amp; Flare</option>
+</select>
+</div>
+<div className="space-y-2">
+<label className="text-[11px] uppercase tracking-widest font-semibold text-gray-500 dark:text-gray-400">Neckline</label>
+<select className="w-full bg-transparent border-0 border-b border-gray-200 dark:border-zinc-700 py-3 px-0 focus:ring-0 focus:border-accent transition-colors appearance-none text-sm">
+<option value="">Select Neckline</option>
+<option>Sweetheart</option>
+<option>V-Neck</option>
+<option>Off-the-Shoulder</option>
+<option>High Neck</option>
+<option>Square</option>
+<option>Plunging</option>
+</select>
+</div>
+<div className="space-y-2">
+<label className="text-[11px] uppercase tracking-widest font-semibold text-gray-500 dark:text-gray-400">Sleeves</label>
+<select className="w-full bg-transparent border-0 border-b border-gray-200 dark:border-zinc-700 py-3 px-0 focus:ring-0 focus:border-accent transition-colors appearance-none text-sm">
+<option value="">Select Sleeves</option>
+<option>Sleeveless / Straps</option>
+<option>Short Sleeves</option>
+<option>Long Sleeves</option>
+<option>Cap Sleeves</option>
+<option>Detachable</option>
+</select>
+</div>
+<div className="space-y-2 md:col-span-2">
+<label className="text-[11px] uppercase tracking-widest font-semibold text-gray-500 dark:text-gray-400">Color</label>
+<div className="flex flex-wrap gap-4 mt-4">
+<label className="cursor-pointer group">
+<input checked="" className="hidden peer" name="color" type="radio"/>
+<div className="px-5 py-2 border border-gray-200 dark:border-zinc-700 peer-checked:border-primary dark:peer-checked:border-white peer-checked:bg-primary dark:peer-checked:bg-white peer-checked:text-white dark:peer-checked:text-primary transition-all text-xs uppercase tracking-widest">Ivory</div>
+</label>
+<label className="cursor-pointer group">
+<input className="hidden peer" name="color" type="radio"/>
+<div className="px-5 py-2 border border-gray-200 dark:border-zinc-700 peer-checked:border-primary dark:peer-checked:border-white peer-checked:bg-primary dark:peer-checked:bg-white peer-checked:text-white dark:peer-checked:text-primary transition-all text-xs uppercase tracking-widest">White</div>
+</label>
+<label className="cursor-pointer group">
+<input className="hidden peer" name="color" type="radio"/>
+<div className="px-5 py-2 border border-gray-200 dark:border-zinc-700 peer-checked:border-primary dark:peer-checked:border-white peer-checked:bg-primary dark:peer-checked:bg-white peer-checked:text-white dark:peer-checked:text-primary transition-all text-xs uppercase tracking-widest">Champagne</div>
+</label>
+<label className="cursor-pointer group">
+<input className="hidden peer" name="color" type="radio"/>
+<div className="px-5 py-2 border border-gray-200 dark:border-zinc-700 peer-checked:border-primary dark:peer-checked:border-white peer-checked:bg-primary dark:peer-checked:bg-white peer-checked:text-white dark:peer-checked:text-primary transition-all text-xs uppercase tracking-widest">Blush</div>
+</label>
+</div>
+</div>
+</div>
+<div className="space-y-4 pt-6">
+<div className="flex justify-between items-end">
+<label className="text-[11px] uppercase tracking-widest font-semibold text-gray-500 dark:text-gray-400">The Story</label>
+<span className="text-[10px] text-gray-400">Minimum 100 characters</span>
+</div>
+<textarea className="w-full bg-gray-50/50 dark:bg-zinc-800/50 border-gray-200 dark:border-zinc-700 focus:ring-accent focus:border-accent text-sm leading-relaxed placeholder:text-gray-400 resize-none p-6" placeholder="Describe the gown, its fit, how it felt to wear, and any special memories or details about the condition..." rows="6"></textarea>
+</div>
+</div>
+<div className="p-8 bg-gray-50 dark:bg-zinc-900/50 border-t border-gray-100 dark:border-zinc-800 flex justify-between items-center">
+<button className="flex items-center gap-2 text-sm text-gray-500 hover:text-primary dark:hover:text-white transition-colors group" type="button">
+<span className="material-symbols-outlined text-lg group-hover:-translate-x-1 transition-transform">arrow_back</span>
+                        Back
+                    </button>
+<button className="px-10 py-4 bg-primary text-white text-xs uppercase tracking-widest font-semibold hover:bg-zinc-800 transition-all shadow-lg shadow-black/5" type="submit">
+                        Save &amp; Continue
+                    </button>
+</div>
+</form>
+</div>
+</div>
+</main>
+<div className="fixed bottom-8 left-1/2 -translate-x-1/2 md:left-auto md:right-8 md:translate-x-0 hidden">
+<div className="bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 shadow-2xl rounded-lg p-4 flex items-center gap-4">
+<div className="w-10 h-10 bg-green-500/10 text-green-500 rounded-full flex items-center justify-center">
+<span className="material-symbols-outlined">done</span>
+</div>
+<div>
+<p className="text-sm font-semibold">Details Saved</p>
+<p className="text-xs text-gray-500">Draft updated successfully.</p>
+</div>
+</div>
+</div>
+
