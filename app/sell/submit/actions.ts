@@ -168,7 +168,7 @@ export async function submitListing(formData: {
       msrp: result.data.msrp ?? null,
       product_id: productId,
       images: formData.images || [],
-      status: 'approved',
+      status: 'pending_review',
     })
     .select('id')
     .single()
