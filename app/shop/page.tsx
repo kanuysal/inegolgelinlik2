@@ -91,7 +91,7 @@ function FilterDropdown({
         className={`flex items-center gap-1.5 py-1 transition-colors duration-200 ${
           isActive
             ? "text-[#1c1c1c]"
-            : "text-slate-400 hover:text-[#1c1c1c]"
+            : "text-[#1c1c1c] hover:text-[#1c1c1c]/60"
         }`}
       >
         <span className="text-[13px] font-medium uppercase tracking-[0.12em]">{activeLabel}</span>
