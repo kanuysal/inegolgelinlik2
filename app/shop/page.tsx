@@ -140,7 +140,8 @@ function FilterDropdown({
 }
 
 export default function ShopPage() {
-  const [listings, setListings] = useState<Listing[]>(mockListings);
+  const [listings, setListings] = useState<Listing[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [seller, setSeller] = useState("all");
   const [collection, setCollection] = useState("all");
@@ -152,6 +153,7 @@ export default function ShopPage() {
       if (data && data.length > 0) {
         setListings(data.map(mapDbListing));
       }
+      setLoading(false);
     });
   }, []);
 

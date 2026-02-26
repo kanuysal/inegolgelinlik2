@@ -542,23 +542,22 @@ function ProfileTab() {
         <aside className="w-full md:w-64 flex-shrink-0">
           <div className="flex flex-col items-center text-center">
             <div className="relative group">
-              <div className="w-40 h-40 rounded-full overflow-hidden border border-slate-100 p-1 mb-6">
-                <img alt="User Avatar" className="w-full h-full object-cover rounded-full" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop" />
+              <div className="w-40 h-40 rounded-full overflow-hidden border border-slate-100 p-1 mb-6 bg-slate-50">
+                {profile?.avatar_url ? (
+                  <img
+                    alt="User Avatar"
+                    className="w-full h-full object-cover rounded-full"
+                    src={profile.avatar_url}
+                  />
+                ) : (
+                  <div className="w-full h-full rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white text-5xl font-light">
+                    {(profile?.display_name || "U").charAt(0).toUpperCase()}
+                  </div>
+                )}
               </div>
             </div>
             <h2 className="text-3xl font-light mb-1 italic">{profile?.display_name || "Bridal User"}</h2>
-            <p className="text-[10px] tracking-[0.3em] uppercase text-slate-400 mb-8">Member since 2024</p>
-            <div className="w-full bg-slate-50 rounded-2xl p-6 border border-slate-100">
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-[10px] font-bold tracking-widest uppercase text-slate-900">Seller Status</span>
-                <span className="material-symbols-outlined text-accent text-lg">verified</span>
-              </div>
-              <div className="h-1 w-full bg-slate-200 rounded-full mb-3 overflow-hidden">
-                <div className="h-full bg-accent w-3/4 rounded-full"></div>
-              </div>
-              <p className="text-[11px] text-slate-500 mb-4 leading-relaxed">75% of verification completed. Link your social profile to reach Pro status.</p>
-              <button className="text-[10px] font-bold tracking-widest uppercase text-accent border-b border-accent/30 hover:border-accent transition-all pb-0.5">Complete Profile</button>
-            </div>
+            <p className="text-[10px] tracking-[0.3em] uppercase text-slate-400 mb-8">Member since {new Date(profile?.created_at || Date.now()).getFullYear()}</p>
           </div>
         </aside>
 

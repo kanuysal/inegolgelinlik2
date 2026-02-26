@@ -118,7 +118,7 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Right — Sell + Wishlist + Cart */}
+          {/* Right — Sell + Wishlist + Cart + Account */}
           <div className="flex items-center gap-4">
             <Link
               href="/consign"
@@ -137,6 +137,20 @@ export default function Navbar() {
             <Link href="/shop" className="w-6 h-6 flex items-center justify-center">
               <span className={`material-symbols-outlined text-xl cursor-pointer transition-colors duration-300 ${useLight ? "text-white" : "text-primary"}`} style={{ fontVariationSettings: "'wght' 300" }}>shopping_cart</span>
             </Link>
+            {!loading && user && (
+              <button
+                onClick={handleSignOut}
+                className="w-6 h-6 flex items-center justify-center group"
+                title="Sign Out"
+              >
+                <span className={`material-symbols-outlined text-xl transition-colors duration-300 group-hover:text-red-600 ${useLight ? "text-white" : "text-primary"}`} style={{ fontVariationSettings: "'wght' 300" }}>logout</span>
+              </button>
+            )}
+            {!loading && !user && (
+              <Link href="/auth/login" className="w-6 h-6 flex items-center justify-center">
+                <span className={`material-symbols-outlined text-xl cursor-pointer transition-colors duration-300 ${useLight ? "text-white" : "text-primary"}`} style={{ fontVariationSettings: "'wght' 300" }}>account_circle</span>
+              </Link>
+            )}
           </div>
         </div>
       </nav>
