@@ -71,8 +71,18 @@ export async function signup(formData: FormData) {
   })
 
   if (error) {
-    // Don't reveal if email is already registered
-    return { error: 'Unable to create account. Please try again.' }
+    // Provide helpful error messages while maintaining security
+    if (error.message?.includes('already registered') || error.message?.includes('already exists')) {
+      return { error: 'This email is already registered. Try logging in instead.' }
+    }
+    if (error.message?.includes('email')) {
+      return { error: 'Invalid email address. Please check and try again.' }
+    }
+    if (error.message?.includes('password')) {
+      return { error: 'Password must be at least 8 characters long.' }
+    }
+    // Generic fallback
+    return { error: 'Unable to create account. Please try again or contact support.' }
   }
 
   revalidatePath('/', 'layout')
