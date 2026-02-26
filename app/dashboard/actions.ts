@@ -131,14 +131,21 @@ export async function getMyConversations() {
     .from('conversations')
     .select(`
       *,
-      listings(title, images),
-      messages(content, sender_id, created_at, is_read)
+      listings(title, images, price),
+      messages(content, sender_id, created_at, is_read),
+      buyer:profiles!conversations_buyer_id_fkey(id, display_name, avatar_url),
+      seller:profiles!conversations_seller_id_fkey(id, display_name, avatar_url)
     `)
     .or(`buyer_id.eq.${user.id},seller_id.eq.${user.id}`)
     .order('last_message_at', { ascending: false })
 
   if (error) return []
-  return data
+
+  // Add otherPerson field for easier UI access
+  return data.map((conv: any) => ({
+    ...conv,
+    otherPerson: conv.buyer_id === user.id ? conv.seller : conv.buyer
+  }))
 }
 
 export async function getConversationMessages(conversationId: string) {

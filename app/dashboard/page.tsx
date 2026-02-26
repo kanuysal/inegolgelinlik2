@@ -427,11 +427,11 @@ function MessagesTab() {
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-start mb-1">
                     <h4 className={`text-sm tracking-tight truncate ${isActive ? 'font-semibold' : 'font-medium text-slate-600'}`}>
-                      {conv.listings?.title || "Inquiry"}
+                      {conv.otherPerson?.display_name || "User"}
                     </h4>
                   </div>
-                  <p className={`text-[11px] font-medium mb-1 truncate uppercase tracking-widest ${isActive ? 'text-accent' : 'text-slate-400'}`}>
-                    ${conv.listings?.price?.toLocaleString() || '0'}
+                  <p className={`text-[10px] font-medium mb-1 truncate text-slate-400`}>
+                    {conv.listings?.title || "Inquiry"}
                   </p>
                   <p className="text-xs text-slate-500 truncate">{lastMsg?.content || "No messages yet."}</p>
                 </div>
