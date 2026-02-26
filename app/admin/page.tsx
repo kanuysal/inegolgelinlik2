@@ -808,7 +808,8 @@ function FeaturedGownsTab() {
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-  const [form, setForm] = useState({ title: '', subtitle: '', price: '', image_url: '', link: '/shop' });
+  const [form, setForm] = useState({ title: '', subtitle: '', price: '', image_url: '', link: '/shop', listing_id: '' });
+  const [approvedListings, setApprovedListings] = useState<any[]>([]);
 
   const refresh = () =>
     getFeaturedGowns().then((res: any) => {
@@ -820,12 +821,30 @@ function FeaturedGownsTab() {
       setLoading(false);
     });
 
-  useEffect(() => { refresh(); }, []);
+  useEffect(() => {
+    refresh();
+    // Load approved listings for selection
+    getAllListings().then(res => {
+      const approved = (res.listings || []).filter((l: any) => l.status === 'approved');
+      setApprovedListings(approved);
+    });
+  }, []);
 
   const resetForm = () => {
-    setForm({ title: '', subtitle: '', price: '', image_url: '', link: '/shop' });
+    setForm({ title: '', subtitle: '', price: '', image_url: '', link: '/shop', listing_id: '' });
     setShowForm(false);
     setEditId(null);
+  };
+
+  const handleSelectListing = (listing: any) => {
+    setForm({
+      title: listing.title,
+      subtitle: `Size ${listing.size_us || '—'} • ${listing.condition}`,
+      price: `$${listing.price.toLocaleString()}`,
+      image_url: listing.images[0] || '',
+      link: `/shop/${listing.id}`,
+      listing_id: listing.id
+    });
   };
 
   const handleSave = () => {
@@ -861,6 +880,7 @@ function FeaturedGownsTab() {
       price: gown.price || '',
       image_url: gown.image_url || '',
       link: gown.link || '/shop',
+      listing_id: gown.listing_id || '',
     });
     setEditId(gown.id);
     setShowForm(true);
@@ -943,6 +963,31 @@ CREATE POLICY "Admin write" ON featured_gowns
               <span className="material-symbols-outlined text-sm">close</span>
             </button>
           </div>
+
+          {/* Listing Selector */}
+          <div className="bg-blue-50 border border-blue-200 p-4">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-blue-600 mb-2 block">
+              Select from Existing Listings
+            </label>
+            <select
+              onChange={(e) => {
+                const listing = approvedListings.find(l => l.id === e.target.value);
+                if (listing) handleSelectListing(listing);
+              }}
+              className="w-full bg-white border border-blue-300 text-sm py-2 px-3 focus:ring-accent focus:border-accent outline-none"
+            >
+              <option value="">Choose a listing...</option>
+              {approvedListings.map(listing => (
+                <option key={listing.id} value={listing.id}>
+                  {listing.title} - ${listing.price} - Size {listing.size_us || '—'}
+                </option>
+              ))}
+            </select>
+            <p className="text-xs text-blue-600 mt-2">
+              Select a listing to auto-fill the form below, or manually enter custom details
+            </p>
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block">Title</label>
