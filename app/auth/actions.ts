@@ -10,8 +10,9 @@
  */
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { loginSchema, signupSchema } from '@/lib/validators/auth'
+import { checkEmailExists, normalizeEmail } from '@/lib/email-normalization'
 
 export async function login(formData: FormData) {
   const supabase = createClient()
@@ -56,6 +57,23 @@ export async function signup(formData: FormData) {
   const result = signupSchema.safeParse(rawData)
   if (!result.success) {
     return { error: result.error.issues[0].message }
+  }
+
+  // Check for existing account with normalized email (prevents +tag bypasses)
+  const adminClient = createAdminClient()
+  const existingCheck = await checkEmailExists(result.data.email, adminClient)
+
+  if (existingCheck.exists) {
+    const normalizedInput = normalizeEmail(result.data.email)
+    const provider = existingCheck.provider === 'google' ? 'Google' : 'email/password'
+
+    return {
+      error: `An account with this email already exists (signed up with ${provider}). ${
+        normalizedInput !== result.data.email.toLowerCase()
+          ? `Note: Gmail ignores dots and +tags, so "${result.data.email}" is the same as an existing account.`
+          : ''
+      } Please try logging in instead.`
+    }
   }
 
   const { error } = await supabase.auth.signUp({
