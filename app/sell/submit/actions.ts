@@ -12,6 +12,14 @@ async function getSupabase() {
   return await createClient() as any
 }
 
+// Helper function to remove accents for search (e.g., "Élysée" → "elysee")
+function removeAccents(str: string): string {
+  return str
+    .normalize("NFD") // Decompose characters into base + diacritics
+    .replace(/[\u0300-\u036f]/g, "") // Remove diacritical marks
+    .toLowerCase();
+}
+
 export async function searchProducts(query: string) {
   try {
     const supabase = await getSupabase()
@@ -29,13 +37,13 @@ export async function searchProducts(query: string) {
     }))
 
     // Fill remaining slots from local catalog (for gowns not yet synced to DB)
-    const lowercaseQuery = query.toLowerCase()
+    const normalizedQuery = removeAccents(query)
     const dbNames = new Set(dbResults.map((p: any) => p.style_name.toLowerCase()))
     const catalogFallback = GOWN_CATALOG
       .filter(gown =>
         !dbNames.has(gown.name.toLowerCase()) &&
-        (gown.name.toLowerCase().includes(lowercaseQuery) ||
-         gown.silhouette.toLowerCase().includes(lowercaseQuery))
+        (removeAccents(gown.name).includes(normalizedQuery) ||
+         removeAccents(gown.silhouette).includes(normalizedQuery))
       )
       .map(gown => ({
         id: gown.id,

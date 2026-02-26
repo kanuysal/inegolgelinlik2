@@ -105,6 +105,20 @@ export default function SellWizardPage() {
     setSearching(false)
   }, [searchQuery])
 
+  // Real-time search: trigger search as user types (debounced)
+  useEffect(() => {
+    if (searchQuery.length < 2) {
+      setSearchResults([])
+      return
+    }
+
+    const timeoutId = setTimeout(() => {
+      handleSearch()
+    }, 300) // 300ms debounce
+
+    return () => clearTimeout(timeoutId)
+  }, [searchQuery, handleSearch])
+
   async function handleSizeChange(sizeLabel: string) {
     if (sizeLabel === 'Custom' || !sizeLabel) {
       setData(prev => ({ ...prev, size_us: sizeLabel, bust_cm: '', waist_cm: '', hips_cm: '', height_cm: '' }))
