@@ -300,6 +300,9 @@ export async function getMyNotifications() {
   const user = await requireAuth()
   const supabase = await db()
 
+  // First, cleanup notifications for deleted/expired listings
+  await cleanupExpiredNotifications(user.id, supabase)
+
   const { data } = await supabase
     .from('notifications')
     .select('*')
@@ -308,6 +311,48 @@ export async function getMyNotifications() {
     .limit(50)
 
   return data || []
+}
+
+async function cleanupExpiredNotifications(userId: string, supabase: any) {
+  try {
+    // Get all notifications for this user that reference a listing
+    const { data: notifications } = await supabase
+      .from('notifications')
+      .select('id, listing_id')
+      .eq('user_id', userId)
+      .not('listing_id', 'is', null)
+
+    if (!notifications || notifications.length === 0) return
+
+    // Get all listing IDs from notifications
+    const listingIds = Array.from(new Set(notifications.map((n: any) => n.listing_id).filter(Boolean)))
+
+    // Check which listings still exist and are approved
+    const { data: validListings } = await supabase
+      .from('listings')
+      .select('id')
+      .in('id', listingIds)
+      .eq('status', 'approved')
+
+    const validListingIds = new Set(validListings?.map((l: any) => l.id) || [])
+
+    // Find notifications for expired/deleted listings
+    const expiredNotificationIds = notifications
+      .filter((n: any) => n.listing_id && !validListingIds.has(n.listing_id))
+      .map((n: any) => n.id)
+
+    // Delete expired notifications
+    if (expiredNotificationIds.length > 0) {
+      await supabase
+        .from('notifications')
+        .delete()
+        .in('id', expiredNotificationIds)
+
+      console.log(`Cleaned up ${expiredNotificationIds.length} expired notifications`)
+    }
+  } catch (error) {
+    console.error('Error cleaning up notifications:', error)
+  }
 }
 
 export async function markNotificationRead(notificationId: string) {
