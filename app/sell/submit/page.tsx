@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -77,6 +77,70 @@ const STEPS = [
   { num: 4, label: '04 Photos' },
   { num: 5, label: '05 Price' },
 ]
+
+// Custom dropdown component (replaces native select)
+function CustomDropdown({
+  label,
+  value,
+  onChange,
+  options,
+  placeholder = 'Select...'
+}: {
+  label?: string
+  value: string
+  onChange: (value: string) => void
+  options: { value: string; label: string }[]
+  placeholder?: string
+}) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  const selectedOption = options.find(o => o.value === value)
+  const displayText = selectedOption?.label || placeholder
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="w-full bg-transparent border-0 border-b border-gray-200 py-3 px-0 focus:ring-0 focus:border-accent text-sm text-left flex justify-between items-center"
+      >
+        <span className={value ? 'text-gray-900' : 'text-gray-400'}>{displayText}</span>
+        <span className="material-symbols-outlined text-lg text-gray-400">
+          {open ? 'expand_less' : 'expand_more'}
+        </span>
+      </button>
+
+      {open && (
+        <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-xl z-50 max-h-60 overflow-auto">
+          {options.map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => {
+                onChange(opt.value)
+                setOpen(false)
+              }}
+              className={`w-full text-left px-4 py-3 text-sm hover:bg-gray-50 transition-colors ${
+                value === opt.value ? 'bg-gray-50 font-medium text-primary' : 'text-gray-700'
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
 
 export default function SellWizardPage() {
   const router = useRouter()
@@ -292,7 +356,7 @@ export default function SellWizardPage() {
             <span className="text-[10px] uppercase tracking-widest text-accent font-semibold ml-2 border-l border-gray-200 pl-3">Resale Archive</span>
           </div>
           <Link href="/" className="text-sm font-medium hover:opacity-70 transition-opacity flex items-center gap-2">
-            Save & Exit <span className="material-symbols-outlined text-sm">close</span>
+            Exit <span className="material-symbols-outlined text-sm">close</span>
           </Link>
         </div>
         <div className="max-w-7xl mx-auto px-6">
@@ -392,21 +456,31 @@ export default function SellWizardPage() {
                         <div className="grid grid-cols-2 gap-8">
                           <div className="space-y-2">
                             <label className="text-[11px] uppercase tracking-widest font-semibold text-gray-500">Category *</label>
-                            <select value={data.category} onChange={e => setData({ ...data, category: e.target.value as any })} className="w-full bg-transparent border-0 border-b border-gray-200 py-3 px-0 focus:ring-0 focus:border-accent appearance-none text-sm">
-                              <option value="bridal">Bridal Gown</option>
-                              <option value="evening">Evening Wear</option>
-                              <option value="accessories">Accessories</option>
-                            </select>
+                            <CustomDropdown
+                              value={data.category}
+                              onChange={(v) => setData({ ...data, category: v as any })}
+                              options={[
+                                { value: 'bridal', label: 'Bridal Gown' },
+                                { value: 'evening', label: 'Evening Wear' },
+                                { value: 'accessories', label: 'Accessories' }
+                              ]}
+                              placeholder="Select Category"
+                            />
                           </div>
                           <div className="space-y-2">
                             <label className="text-[11px] uppercase tracking-widest font-semibold text-gray-500">Silhouette</label>
-                            <select value={data.silhouette} onChange={e => setData({ ...data, silhouette: e.target.value })} className="w-full bg-transparent border-0 border-b border-gray-200 py-3 px-0 focus:ring-0 focus:border-accent appearance-none text-sm">
-                              <option value="">Select</option>
-                              <option value="a_line">A-Line</option>
-                              <option value="mermaid">Mermaid</option>
-                              <option value="ball_gown">Ball Gown</option>
-                              <option value="sheath">Sheath</option>
-                            </select>
+                            <CustomDropdown
+                              value={data.silhouette}
+                              onChange={(v) => setData({ ...data, silhouette: v })}
+                              options={[
+                                { value: '', label: 'Select' },
+                                { value: 'a_line', label: 'A-Line' },
+                                { value: 'mermaid', label: 'Mermaid' },
+                                { value: 'ball_gown', label: 'Ball Gown' },
+                                { value: 'sheath', label: 'Sheath' }
+                              ]}
+                              placeholder="Select Silhouette"
+                            />
                           </div>
                         </div>
                       </div>
@@ -416,10 +490,17 @@ export default function SellWizardPage() {
                       <h2 className="text-xl font-medium border-b border-gray-100 pb-2">Sizing</h2>
                       <div className="space-y-2">
                         <label className="block text-xs uppercase tracking-widest font-semibold text-gray-500">Label Size (US)</label>
-                        <select value={data.size_us} onChange={e => handleSizeChange(e.target.value)} className="w-full bg-gray-50 border-gray-200 rounded-lg py-3 text-sm focus:ring-accent">
-                          <option value="">Select Size</option>
-                          {['US 0 (EU 32)', 'US 2 (EU 34)', 'US 4 (EU 36)', 'US 6 (EU 38)', 'US 8 (EU 40)', 'US 10 (EU 42)', 'Custom'].map(s => <option key={s} value={s}>{s}</option>)}
-                        </select>
+                        <div className="bg-gray-50 border border-gray-200 rounded-lg px-4">
+                          <CustomDropdown
+                            value={data.size_us}
+                            onChange={handleSizeChange}
+                            options={[
+                              { value: '', label: 'Select Size' },
+                              ...['US 0 (EU 32)', 'US 2 (EU 34)', 'US 4 (EU 36)', 'US 6 (EU 38)', 'US 8 (EU 40)', 'US 10 (EU 42)', 'Custom'].map(s => ({ value: s, label: s }))
+                            ]}
+                            placeholder="Select Size"
+                          />
+                        </div>
                       </div>
                       <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
                         {[{ lbl: 'Bust', fld: 'bust_cm' }, { lbl: 'Waist', fld: 'waist_cm' }, { lbl: 'Hips', fld: 'hips_cm' }, { lbl: 'Height', fld: 'height_cm' }].map(m => (
