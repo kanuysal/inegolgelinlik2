@@ -18,7 +18,7 @@ export default function LoadingSpinner() {
         className="relative"
       >
         <img
-          src="/images/loading _logo.jpg"
+          src="/images/loading_logo.jpg"
           alt="Loading..."
           className="w-32 h-32 md:w-40 md:h-40 object-contain"
         />
@@ -59,7 +59,7 @@ export function InlineLoadingSpinner({ size = "md" }: { size?: "sm" | "md" | "lg
         className={sizeClasses[size]}
       >
         <img
-          src="/images/loading _logo.jpg"
+          src="/images/loading_logo.jpg"
           alt="Loading..."
           className="w-full h-full object-contain"
         />
