@@ -11,6 +11,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(req: NextRequest) {
+  // Disable this helper endpoint in production to avoid exposing
+  // an unauthenticated test surface that can trigger internal flows.
+  if (process.env.NODE_ENV === 'production') {
+    return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  }
+
   const convId = req.nextUrl.searchParams.get('conv_id')
   const message = req.nextUrl.searchParams.get('message') || 'Test reply from CS agent'
 

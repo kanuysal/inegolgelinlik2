@@ -2,6 +2,12 @@ import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/server'
 
 export async function GET() {
+  // This endpoint is only intended for local debugging of the unpublish flow.
+  // Return 404 in production so we don't expose internal health details.
+  if (process.env.NODE_ENV === 'production') {
+    return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  }
+
   try {
     // Test 1: Check if admin client can be created
     const supabase = createAdminClient()
@@ -28,9 +34,8 @@ export async function GET() {
       })
     }
 
-    // Test 3: Check environment variable
+    // Test 3: Check environment variable without leaking key material
     const hasServiceKey = !!process.env.SUPABASE_SERVICE_ROLE_KEY
-    const serviceKeyPreview = process.env.SUPABASE_SERVICE_ROLE_KEY?.substring(0, 20)
 
     return NextResponse.json({
       success: true,
@@ -38,7 +43,6 @@ export async function GET() {
         adminClientCreated: true,
         databaseConnected: true,
         serviceKeySet: hasServiceKey,
-        serviceKeyPreview,
         approvedListingsCount: listings?.length || 0,
         canQueryListings: !listError
       },
