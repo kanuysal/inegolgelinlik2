@@ -8,6 +8,14 @@ import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { mockListings, type Listing } from "@/lib/mock-listings";
 import { getApprovedListings } from "./actions";
 
+// Helper function to remove accents for search (e.g., "Élysée" → "elysee")
+function removeAccents(str: string): string {
+  return str
+    .normalize("NFD") // Decompose characters into base + diacritics
+    .replace(/[\u0300-\u036f]/g, "") // Remove diacritical marks
+    .toLowerCase();
+}
+
 function mapDbListing(row: any): Listing {
   const conditionMap: Record<string, Listing["condition"]> = {
     new_unworn: "New Never Worn",
@@ -161,11 +169,11 @@ export default function ShopPage() {
   const filtered = useMemo(() => {
     return listings.filter((l) => {
       if (search) {
-        const q = search.toLowerCase();
+        const q = removeAccents(search);
         const match =
-          l.title.toLowerCase().includes(q) ||
-          l.collection.toLowerCase().includes(q) ||
-          l.condition.toLowerCase().includes(q);
+          removeAccents(l.title).includes(q) ||
+          removeAccents(l.collection).includes(q) ||
+          removeAccents(l.condition).includes(q);
         if (!match) return false;
       }
       if (seller !== "all") {
