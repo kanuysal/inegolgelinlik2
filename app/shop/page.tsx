@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect, useRef } from "react";
 import Link from "next/link";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { mockListings, type Listing } from "@/lib/mock-listings";
 import { getApprovedListings } from "./actions";
 
@@ -177,6 +178,8 @@ export default function ShopPage() {
       return true;
     });
   }, [listings, search, seller, collection, condition, size]);
+
+  if (loading) return <LoadingSpinner />;
 
   return (
     <main className="min-h-screen flex flex-col bg-background-light text-slate-900 font-sans">
