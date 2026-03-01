@@ -95,7 +95,7 @@ export default function Navbar() {
         }`}>
 
           {/* Left — Menu + Shop */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             <button
               onClick={() => setMenuOpen(true)}
               aria-label="Open menu"
@@ -113,13 +113,13 @@ export default function Navbar() {
 
           {/* Center — Brand */}
           <div className="absolute left-1/2 -translate-x-1/2 text-center">
-            <Link href="/" className={`text-2xl font-bold tracking-tighter transition-colors duration-300 ${useLight ? "text-white" : "text-primary"}`}>
+            <Link href="/" className={`text-lg sm:text-2xl font-bold tracking-tighter transition-colors duration-300 ${useLight ? "text-white" : "text-primary"}`}>
               RE:GALIA
             </Link>
           </div>
 
           {/* Right — Sell + Wishlist + Cart + Account */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             <Link
               href="/consign"
               className={`text-sm font-medium tracking-widest uppercase transition-colors duration-300 hidden sm:block ${useLight ? "text-white" : "text-primary"}`}
@@ -144,7 +144,7 @@ export default function Navbar() {
                 </Link>
                 <button
                   onClick={handleSignOut}
-                  className="w-6 h-6 flex items-center justify-center group"
+                  className="w-6 h-6 hidden sm:flex items-center justify-center group"
                   title="Sign Out"
                 >
                   <span className={`material-symbols-outlined text-xl transition-colors duration-300 group-hover:text-red-600 ${useLight ? "text-white" : "text-primary"}`} style={{ fontVariationSettings: "'wght' 300" }}>logout</span>
