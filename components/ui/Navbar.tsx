@@ -204,8 +204,8 @@ export default function Navbar() {
               </button>
 
               {/* Main nav links */}
-              <div className="flex-grow flex flex-col justify-center px-8 lg:px-16 pt-20">
-                <nav className="space-y-6">
+              <div className="flex-grow flex flex-col justify-center px-6 sm:px-8 lg:px-16 pt-20">
+                <nav className="space-y-4 sm:space-y-6">
                   {MENU_LINKS.map((link, i) => (
                     <motion.div
                       key={link.href}
@@ -217,7 +217,7 @@ export default function Navbar() {
                       <Link
                         href={link.href}
                         onClick={() => setMenuOpen(false)}
-                        className={`block text-4xl lg:text-5xl font-bold tracking-tighter hover:pl-4 transition-all duration-500 uppercase leading-none ${
+                        className={`block text-2xl sm:text-4xl lg:text-5xl font-bold tracking-tighter hover:pl-4 transition-all duration-500 uppercase leading-none ${
                           pathname === link.href ? "text-[#1c1c1c]" : "text-[#1c1c1c]/60 hover:text-[#1c1c1c]"
                         }`}
                       >
@@ -234,7 +234,7 @@ export default function Navbar() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.5 }}
-                className="px-8 lg:px-16 pb-12"
+                className="px-6 sm:px-8 lg:px-16 pb-12"
               >
                 <div className="flex flex-wrap gap-8 border-t border-[#1c1c1c]/10 pt-8">
                   {!loading && user && isStaff && (
