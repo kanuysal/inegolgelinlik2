@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 import { checkIsStaff } from "@/app/auth/actions";
 import type { User } from "@supabase/supabase-js";
 import { useWishlist } from "@/lib/wishlist-context";
+import { getUnreadMessageCount } from "@/app/dashboard/actions";
 
 const MENU_LINKS = [
   { href: "/shop", label: "Bridal Gowns" },
@@ -24,6 +25,7 @@ export default function Navbar() {
   const [loading, setLoading] = useState(true);
   const [isStaff, setIsStaff] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
     const supabase = createClient();
@@ -60,6 +62,15 @@ export default function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Poll for unread messages when logged in
+  useEffect(() => {
+    if (!user) { setUnreadCount(0); return; }
+    const fetch = () => getUnreadMessageCount().then(setUnreadCount).catch(() => {});
+    fetch();
+    const interval = setInterval(fetch, 30000); // every 30s
+    return () => clearInterval(interval);
+  }, [user]);
 
   useEffect(() => {
     if (menuOpen) {
@@ -139,8 +150,13 @@ export default function Navbar() {
             </Link>
             {!loading && user && (
               <>
-                <Link href="/dashboard" className="w-6 h-6 flex items-center justify-center" title="My Account">
-                  <span className={`material-symbols-outlined text-xl cursor-pointer transition-colors duration-300 ${useLight ? "text-white" : "text-primary"}`} style={{ fontVariationSettings: "'wght' 300" }}>account_circle</span>
+                <Link href="/dashboard?tab=messages" className="relative w-6 h-6 flex items-center justify-center" title="Messages">
+                  <span className={`material-symbols-outlined text-xl cursor-pointer transition-colors duration-300 ${useLight ? "text-white" : "text-primary"}`} style={{ fontVariationSettings: "'wght' 300" }}>mail</span>
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center leading-none">
+                      {unreadCount > 9 ? "9+" : unreadCount}
+                    </span>
+                  )}
                 </Link>
                 <button
                   onClick={handleSignOut}

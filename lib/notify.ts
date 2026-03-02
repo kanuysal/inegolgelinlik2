@@ -50,7 +50,7 @@ export async function notifyNewMessage({
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'RE:GALIA <notifications@regalia-scroll.vercel.app>',
+        from: process.env.RESEND_FROM_EMAIL || 'RE:GALIA <onboarding@resend.dev>',
         to: user.email,
         subject: `New message about ${listingTitle} — RE:GALIA`,
         html: `

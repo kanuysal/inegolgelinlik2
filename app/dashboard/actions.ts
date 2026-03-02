@@ -257,6 +257,37 @@ export async function sendMessage(conversationId: string, content: string) {
   return { success: true }
 }
 
+// ── Unread Message Count (for navbar badge) ────────────────
+export async function getUnreadMessageCount() {
+  try {
+    const supabase = await db()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return 0
+
+    // Get all conversations this user is part of
+    const { data: conversations } = await supabase
+      .from('conversations')
+      .select('id')
+      .or(`buyer_id.eq.${user.id},seller_id.eq.${user.id}`)
+
+    if (!conversations || conversations.length === 0) return 0
+
+    const convIds = conversations.map((c: any) => c.id)
+
+    // Count unread messages not sent by this user
+    const { count } = await supabase
+      .from('messages')
+      .select('*', { count: 'exact', head: true })
+      .in('conversation_id', convIds)
+      .neq('sender_id', user.id)
+      .eq('is_read', false)
+
+    return count || 0
+  } catch {
+    return 0
+  }
+}
+
 // ── Profile ─────────────────────────────────────────────────
 export async function getMyProfile() {
   const user = await requireAuth()
