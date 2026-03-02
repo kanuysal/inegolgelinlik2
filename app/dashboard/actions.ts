@@ -126,25 +126,38 @@ export async function getMyConversations() {
   const user = await requireAuth()
   const admin = await adminDb()
 
+  // Fetch conversations with listings and messages (no profile FK join — it doesn't exist)
   const { data, error } = await admin
     .from('conversations')
     .select(`
       *,
       listings(title, images, price),
-      messages(content, sender_id, created_at, is_read),
-      buyer:profiles!conversations_buyer_id_fkey(id, display_name, avatar_url),
-      seller:profiles!conversations_seller_id_fkey(id, display_name, avatar_url)
+      messages(content, sender_id, created_at, is_read)
     `)
     .or(`buyer_id.eq.${user.id},seller_id.eq.${user.id}`)
     .order('last_message_at', { ascending: false, nullsFirst: false })
 
-  if (error) return []
+  if (error || !data) return []
+
+  // Collect all unique user IDs we need profiles for
+  const userIds = Array.from(new Set(data.flatMap((c: any) => [c.buyer_id, c.seller_id])))
+
+  // Fetch profiles separately
+  const { data: profiles } = await admin
+    .from('profiles')
+    .select('id, display_name, avatar_url')
+    .in('id', userIds)
+
+  const profileMap = new Map((profiles || []).map((p: any) => [p.id, p]))
 
   // Add otherPerson field for easier UI access
-  return data.map((conv: any) => ({
-    ...conv,
-    otherPerson: conv.buyer_id === user.id ? conv.seller : conv.buyer
-  }))
+  return data.map((conv: any) => {
+    const otherId = conv.buyer_id === user.id ? conv.seller_id : conv.buyer_id
+    return {
+      ...conv,
+      otherPerson: profileMap.get(otherId) || null,
+    }
+  })
 }
 
 export async function getConversationMessages(conversationId: string) {
