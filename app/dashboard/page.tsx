@@ -401,6 +401,8 @@ function MessagesTab() {
         setNewMsg("");
         const updated = await getConversationMessages(activeConv);
         setMessages(updated);
+      } else if (res.error) {
+        toast.error('Failed to send: ' + res.error);
       }
     });
   };

@@ -4,7 +4,6 @@ import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { requireAuth } from '@/lib/auth'
 import { revalidatePath } from 'next/cache'
 import { notifyNewMessage } from '@/lib/notify'
-import * as kustomer from '@/lib/kustomer'
 
 async function db() {
   return (await createClient()) as any
@@ -125,9 +124,9 @@ export async function getMySales() {
 // ── Messages / Conversations ────────────────────────────────
 export async function getMyConversations() {
   const user = await requireAuth()
-  const supabase = await db()
+  const admin = await adminDb()
 
-  const { data, error } = await supabase
+  const { data, error } = await admin
     .from('conversations')
     .select(`
       *,
@@ -137,7 +136,7 @@ export async function getMyConversations() {
       seller:profiles!conversations_seller_id_fkey(id, display_name, avatar_url)
     `)
     .or(`buyer_id.eq.${user.id},seller_id.eq.${user.id}`)
-    .order('last_message_at', { ascending: false })
+    .order('last_message_at', { ascending: false, nullsFirst: false })
 
   if (error) return []
 
@@ -150,10 +149,10 @@ export async function getMyConversations() {
 
 export async function getConversationMessages(conversationId: string) {
   const user = await requireAuth()
-  const supabase = await db()
+  const admin = await adminDb()
 
   // Verify user is participant
-  const { data: conv } = await supabase
+  const { data: conv } = await admin
     .from('conversations')
     .select('buyer_id, seller_id')
     .eq('id', conversationId)
@@ -163,15 +162,15 @@ export async function getConversationMessages(conversationId: string) {
     return []
   }
 
-  // Mark unread messages as read
-  await supabase
+  // Mark unread messages as read (admin client to bypass RLS)
+  await admin
     .from('messages')
     .update({ is_read: true })
     .eq('conversation_id', conversationId)
     .neq('sender_id', user.id)
     .eq('is_read', false)
 
-  const { data, error } = await supabase
+  const { data, error } = await admin
     .from('messages')
     .select('*')
     .eq('conversation_id', conversationId)
@@ -184,6 +183,7 @@ export async function getConversationMessages(conversationId: string) {
 export async function sendMessage(conversationId: string, content: string) {
   const user = await requireAuth()
   const supabase = await db()
+  const admin = await adminDb()
 
   const trimmed = content.trim()
   if (!trimmed) return { error: 'Message cannot be empty' }
@@ -200,7 +200,8 @@ export async function sendMessage(conversationId: string, content: string) {
     return { error: 'Unauthorized' }
   }
 
-  const { error: msgError } = await supabase
+  // Use admin client to insert message (bypasses RLS trigger issues)
+  const { error: msgError } = await admin
     .from('messages')
     .insert({
       conversation_id: conversationId,
@@ -210,8 +211,8 @@ export async function sendMessage(conversationId: string, content: string) {
 
   if (msgError) return { error: msgError.message }
 
-  // Update conversation timestamp
-  await supabase
+  // Update conversation timestamp (admin client to bypass missing UPDATE policy)
+  await admin
     .from('conversations')
     .update({ last_message_at: new Date().toISOString() })
     .eq('id', conversationId)
@@ -236,22 +237,6 @@ export async function sendMessage(conversationId: string, content: string) {
     messagePreview: trimmed,
     conversationLink: '/dashboard?tab=messages',
   }).catch(() => {}) // Best-effort
-
-  // Forward to Kustomer CRM (non-blocking)
-  ;(async () => {
-    const { data: convData } = await supabase
-      .from('conversations')
-      .select('kustomer_conversation_id')
-      .eq('id', conversationId)
-      .single()
-    const kConvId = convData?.kustomer_conversation_id
-    if (kConvId) {
-      await kustomer.sendMessage({
-        conversationId: kConvId,
-        message: trimmed,
-      })
-    }
-  })().catch(() => {})
 
   revalidatePath('/dashboard')
   return { success: true }

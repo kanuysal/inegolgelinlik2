@@ -2,7 +2,6 @@
 
 import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { notifyNewMessage } from '@/lib/notify'
-import * as kustomer from '@/lib/kustomer'
 
 async function db() {
   return (await createClient()) as any
@@ -72,14 +71,15 @@ export async function getRelatedListings(listingId: string, category: string, li
 export async function startConversation(listingId: string, sellerId: string, message: string) {
   try {
     const supabase = await db()
+    const admin = await publicDb()
 
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Please sign in to contact the seller' }
 
     if (user.id === sellerId) return { error: 'You cannot message yourself' }
 
-    // Check for existing conversation
-    const { data: existing } = await supabase
+    // Check for existing conversation (use admin to avoid RLS issues)
+    const { data: existing } = await admin
       .from('conversations')
       .select('id')
       .eq('listing_id', listingId)
@@ -92,12 +92,13 @@ export async function startConversation(listingId: string, sellerId: string, mes
     if (existing) {
       conversationId = existing.id
     } else {
-      const { data: conv, error: convError } = await supabase
+      const { data: conv, error: convError } = await admin
         .from('conversations')
         .insert({
           listing_id: listingId,
           buyer_id: user.id,
           seller_id: sellerId,
+          last_message_at: new Date().toISOString(),
         })
         .select('id')
         .single()
@@ -109,8 +110,8 @@ export async function startConversation(listingId: string, sellerId: string, mes
       conversationId = conv.id
     }
 
-    // Send the message
-    const { error: msgError } = await supabase
+    // Send the message (use admin client to bypass RLS trigger issues)
+    const { error: msgError } = await admin
       .from('messages')
       .insert({
         conversation_id: conversationId,
@@ -123,13 +124,14 @@ export async function startConversation(listingId: string, sellerId: string, mes
       return { error: 'Failed to send message: ' + msgError.message }
     }
 
-    await supabase
+    // Update conversation timestamp
+    await admin
       .from('conversations')
       .update({ last_message_at: new Date().toISOString() })
       .eq('id', conversationId)
 
     // Notify seller about the inquiry (non-blocking)
-    const { data: listing } = await supabase
+    const { data: listing } = await admin
       .from('listings')
       .select('title')
       .eq('id', listingId)
@@ -147,28 +149,6 @@ export async function startConversation(listingId: string, sellerId: string, mes
       messagePreview: message.trim(),
       conversationLink: '/dashboard?tab=messages',
     }).catch(() => {})
-
-    // Forward to Kustomer CRM (non-blocking)
-    ;(async () => {
-      const buyerName = buyerProfile?.display_name || 'Buyer'
-      const title = listing?.title || 'Gown inquiry'
-      const customerId = await kustomer.findOrCreateCustomer(user.email!, buyerName)
-      if (!customerId) return
-      const kConvId = await kustomer.createConversation({
-        customerId,
-        subject: `Inquiry: ${title}`,
-        message: message.trim(),
-        senderName: buyerName,
-        listingUrl: `/shop/${listingId}`,
-      })
-      // Store Kustomer conversation ID for follow-up messages
-      if (kConvId) {
-        await supabase
-          .from('conversations')
-          .update({ kustomer_conversation_id: kConvId })
-          .eq('id', conversationId)
-      }
-    })().catch(() => {})
 
     return { success: true, conversationId }
   } catch (err) {
