@@ -36,14 +36,22 @@ export async function notifyNewMessage({
 
   // 2. Send email if Resend API key is configured
   const resendKey = process.env.RESEND_API_KEY
-  if (!resendKey) return
+  if (!resendKey) {
+    console.log('[notify] No RESEND_API_KEY — skipping email')
+    return
+  }
 
   // Look up recipient email
   const { data: { user } } = await supabase.auth.admin.getUserById(recipientId)
-  if (!user?.email) return
+  if (!user?.email) {
+    console.log('[notify] No email found for recipient', recipientId)
+    return
+  }
+
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://regalia-scroll.vercel.app'
 
   try {
-    await fetch('https://api.resend.com/emails', {
+    const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${resendKey}`,
@@ -61,7 +69,7 @@ export async function notifyNewMessage({
             <div style="background: #FAF9F6; border-left: 3px solid #D4AF37; padding: 16px 20px; margin-bottom: 32px;">
               <p style="font-size: 14px; color: #333; line-height: 1.6; margin: 0;">${messagePreview.slice(0, 500)}</p>
             </div>
-            <a href="https://regalia-scroll.vercel.app${conversationLink}" style="display: inline-block; background: #1a1818; color: white; text-decoration: none; padding: 14px 32px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.3em;">
+            <a href="${siteUrl}${conversationLink}" style="display: inline-block; background: #1a1818; color: white; text-decoration: none; padding: 14px 32px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.3em;">
               View Conversation
             </a>
             <p style="font-size: 11px; color: #ccc; margin-top: 40px;">You received this because someone messaged you on RE:GALIA.</p>
@@ -69,7 +77,14 @@ export async function notifyNewMessage({
         `,
       }),
     })
-  } catch {
-    // Email sending is best-effort; don't block the message flow
+
+    if (!res.ok) {
+      const body = await res.text()
+      console.error('[notify] Resend API error:', res.status, body)
+    } else {
+      console.log('[notify] Email sent to', user.email)
+    }
+  } catch (err) {
+    console.error('[notify] Email send failed:', err)
   }
 }

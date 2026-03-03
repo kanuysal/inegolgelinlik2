@@ -358,8 +358,21 @@ function PurchasesTab() {
 }
 
 /* ══════════════════════════════════════════════════
-   MESSAGES TAB
+   MESSAGES TAB — WhatsApp-style chat
    ══════════════════════════════════════════════════ */
+
+function formatDateLabel(dateStr: string) {
+  const d = new Date(dateStr);
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const yesterday = new Date(today.getTime() - 86400000);
+  const msgDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+
+  if (msgDate.getTime() === today.getTime()) return "Today";
+  if (msgDate.getTime() === yesterday.getTime()) return "Yesterday";
+  return d.toLocaleDateString([], { weekday: "long", month: "short", day: "numeric" });
+}
+
 function MessagesTab() {
   const [conversations, setConversations] = useState<any[]>([]);
   const [activeConv, setActiveConv] = useState<string | null>(null);
@@ -386,6 +399,15 @@ function MessagesTab() {
     }
   }, [messages]);
 
+  // Poll for new messages every 5 seconds when a conversation is open
+  useEffect(() => {
+    if (!activeConv) return;
+    const interval = setInterval(() => {
+      getConversationMessages(activeConv).then(setMessages);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [activeConv]);
+
   const openConversation = (convId: string) => {
     setActiveConv(convId);
     getConversationMessages(convId).then(setMessages);
@@ -396,61 +418,88 @@ function MessagesTab() {
 
   const handleSend = () => {
     if (!activeConv || !newMsg.trim()) return;
+    const msgText = newMsg;
+    setNewMsg("");
     startTransition(async () => {
-      const res = await sendMessage(activeConv, newMsg);
+      const res = await sendMessage(activeConv, msgText);
       if (res.success) {
-        setNewMsg("");
         const updated = await getConversationMessages(activeConv);
         setMessages(updated);
+        // Refresh conversations list to update last message preview
+        getMyConversations().then(setConversations);
       } else if (res.error) {
-        toast.error('Failed to send: ' + res.error);
+        setNewMsg(msgText);
+        toast.error("Failed to send: " + res.error);
       }
     });
   };
 
   if (loading) return <LoadingSkeleton />;
 
-  const activeConvObj = conversations.find(c => c.id === activeConv);
+  const activeConvObj = conversations.find((c) => c.id === activeConv);
+
+  // Group messages by date for date separators
+  const groupedMessages: { date: string; msgs: any[] }[] = [];
+  messages.forEach((m) => {
+    const label = formatDateLabel(m.created_at);
+    const last = groupedMessages[groupedMessages.length - 1];
+    if (last && last.date === label) {
+      last.msgs.push(m);
+    } else {
+      groupedMessages.push({ date: label, msgs: [m] });
+    }
+  });
 
   return (
-    <div className="max-w-[1400px] mx-auto h-[600px] md:h-[700px] bg-white border border-slate-100 flex overflow-hidden shadow-2xl shadow-black/5 relative">
+    <div className="max-w-[1400px] mx-auto h-[600px] md:h-[700px] bg-white border border-slate-100 flex overflow-hidden shadow-2xl shadow-black/5 relative rounded-lg">
       {/* Conversations List */}
-      <aside className={`${showList ? 'flex' : 'hidden md:flex'} w-full md:w-96 border-r border-slate-100 flex-col flex-shrink-0 bg-white z-10`}>
-        <div className="p-6 md:p-8 border-b border-slate-50">
-          <h3 className="text-lg md:text-xl font-light">Messages</h3>
-          <p className="text-[10px] text-slate-400 uppercase tracking-widest mt-1">Inbox • {conversations.length} Threads</p>
+      <aside className={`${showList ? "flex" : "hidden md:flex"} w-full md:w-[360px] border-r border-slate-100 flex-col flex-shrink-0 bg-white z-10`}>
+        <div className="px-5 py-4 bg-[#f0f2f5] border-b border-slate-200 flex items-center justify-between">
+          <h3 className="text-base font-semibold text-[#1c1c1c]">Chats</h3>
+          <span className="text-xs text-slate-400">{conversations.length}</span>
         </div>
-        <div className="flex-1 overflow-y-auto custom-scrollbar">
+        <div className="flex-1 overflow-y-auto">
           {conversations.map((c) => {
             const lastMsg = c.messages?.[0];
             const isUnread = lastMsg && !lastMsg.is_read && lastMsg.sender_id === c.otherPerson?.id;
+            const isActive = activeConv === c.id;
 
             return (
               <button
                 key={c.id}
                 onClick={() => openConversation(c.id)}
-                className={`w-full p-6 text-left border-b border-slate-50 transition-all hover:bg-slate-50 group flex gap-4 ${activeConv === c.id ? 'bg-slate-50' : ''}`}
+                className={`w-full px-4 py-3 text-left border-b border-slate-100/80 transition-colors hover:bg-[#f5f6f6] flex gap-3 items-center ${isActive ? "bg-[#f0f2f5]" : ""}`}
               >
-                <div className="w-12 h-12 rounded-full bg-slate-100 flex-shrink-0 flex items-center justify-center font-display text-lg relative">
-                  {(c.otherPerson?.display_name || 'U').charAt(0).toUpperCase()}
-                  {isUnread && <span className="absolute top-0 right-0 w-3 h-3 bg-accent rounded-full border-2 border-white shadow-sm" />}
+                <div className="w-12 h-12 rounded-full bg-[#dfe5e7] flex-shrink-0 flex items-center justify-center text-white text-lg font-semibold relative"
+                  style={{ backgroundColor: isActive ? "#25D366" : "#dfe5e7", color: isActive ? "#fff" : "#fff" }}
+                >
+                  {(c.otherPerson?.display_name || "U").charAt(0).toUpperCase()}
+                  {isUnread && (
+                    <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-[#25D366] rounded-full border-2 border-white text-[9px] text-white flex items-center justify-center font-bold">
+                      !
+                    </span>
+                  )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex justify-between items-baseline mb-1">
-                    <p className={`text-sm tracking-tight truncate ${activeConv === c.id ? 'font-semibold' : 'font-medium'}`}>
-                      {c.otherPerson?.display_name || 'RE:GALIA Bride'}
+                  <div className="flex justify-between items-baseline mb-0.5">
+                    <p className={`text-[15px] truncate ${isUnread ? "font-semibold text-[#1c1c1c]" : "font-normal text-[#1c1c1c]"}`}>
+                      {c.otherPerson?.display_name || "RE:GALIA Bride"}
                     </p>
-                    {lastMsg && (
-                      <span className="text-[9px] text-slate-400 font-mono">
-                        {new Date(lastMsg.created_at).toLocaleDateString([], { month: 'short', day: 'numeric' })}
+                    <span className={`text-[11px] flex-shrink-0 ml-2 ${isUnread ? "text-[#25D366] font-medium" : "text-slate-400"}`}>
+                      {lastMsg ? new Date(lastMsg.created_at).toLocaleDateString([], { month: "short", day: "numeric" }) : ""}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    {lastMsg && lastMsg.sender_id !== c.otherPerson?.id && (
+                      <span className="material-symbols-outlined text-[14px] text-[#53bdeb] flex-shrink-0" style={{ fontVariationSettings: "'wght' 600" }}>
+                        {lastMsg.is_read ? "done_all" : "done_all"}
                       </span>
                     )}
+                    <p className={`text-[13px] truncate leading-tight ${isUnread ? "font-medium text-[#1c1c1c]" : "text-slate-500"}`}>
+                      {lastMsg?.content || "No messages yet"}
+                    </p>
                   </div>
-                  <p className="text-xs text-slate-500 truncate font-light leading-snug">
-                    {lastMsg?.content || "Starting a new conversation..."}
-                  </p>
-                  <p className="text-[10px] text-slate-400 mt-2 hidden sm:flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <span className="material-symbols-outlined text-[10px]">inventory_2</span>
+                  <p className="text-[11px] text-slate-400 mt-1 truncate">
                     {c.listings?.title}
                   </p>
                 </div>
@@ -458,84 +507,153 @@ function MessagesTab() {
             );
           })}
           {conversations.length === 0 && (
-            <div className="p-8 text-center text-slate-400 text-sm">No conversations yet.</div>
+            <div className="p-8 text-center text-slate-400 text-sm">
+              <span className="material-symbols-outlined text-4xl text-slate-200 block mb-3">chat</span>
+              No conversations yet
+            </div>
           )}
         </div>
       </aside>
 
       {/* Message View */}
-      <main className={`${!showList ? 'flex' : 'hidden md:flex'} flex-1 flex-col bg-slate-50/50 relative overflow-hidden`}>
+      <main className={`${!showList ? "flex" : "hidden md:flex"} flex-1 flex-col relative overflow-hidden`}>
         {activeConvObj ? (
           <>
-            <header className="px-6 md:px-8 py-5 bg-white border-b border-slate-100 flex items-center justify-between z-20 sticky top-0">
-              <div className="flex items-center gap-4">
-                <button onClick={() => setShowList(true)} className="md:hidden w-8 h-8 flex items-center justify-center text-slate-400 mr-2">
-                  <span className="material-symbols-outlined">arrow_back</span>
+            {/* Header */}
+            <header className="px-4 md:px-5 py-3 bg-[#f0f2f5] border-b border-slate-200 flex items-center justify-between z-20 flex-shrink-0">
+              <div className="flex items-center gap-3">
+                <button onClick={() => setShowList(true)} className="md:hidden w-8 h-8 flex items-center justify-center text-slate-500">
+                  <span className="material-symbols-outlined text-xl">arrow_back</span>
                 </button>
-                <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-sm font-display">
-                  {(activeConvObj.otherPerson?.display_name || 'U').charAt(0).toUpperCase()}
+                <div className="w-10 h-10 rounded-full bg-[#dfe5e7] flex items-center justify-center text-white text-sm font-semibold">
+                  {(activeConvObj.otherPerson?.display_name || "U").charAt(0).toUpperCase()}
                 </div>
                 <div>
-                  <h4 className="text-sm font-medium">{activeConvObj.otherPerson?.display_name || 'RE:GALIA Bride'}</h4>
-                  <p className="text-[10px] text-slate-400 uppercase tracking-widest truncate max-w-[120px] sm:max-w-none">RE: {activeConvObj.listings?.title}</p>
+                  <h4 className="text-[15px] font-semibold text-[#1c1c1c] leading-tight">
+                    {activeConvObj.otherPerson?.display_name || "RE:GALIA Bride"}
+                  </h4>
+                  <p className="text-[12px] text-slate-500 truncate max-w-[180px] sm:max-w-none">
+                    {activeConvObj.listings?.title}
+                  </p>
                 </div>
               </div>
-              <Link href={`/shop/${activeConvObj.listing_id}`} className="hidden sm:flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-primary hover:text-accent transition-colors">
-                View Listing <span className="material-symbols-outlined text-sm">open_in_new</span>
+              <Link
+                href={`/shop/${activeConvObj.listing_id}`}
+                className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-500 hover:text-[#1c1c1c] transition-colors bg-white/80 px-3 py-1.5 rounded-full"
+              >
+                <span className="material-symbols-outlined text-sm">storefront</span>
+                <span className="hidden sm:inline">View Listing</span>
               </Link>
             </header>
 
-            <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6 custom-scrollbar pb-32">
-              {messages.map((m) => {
-                const isMine = m.sender_id !== activeConvObj.otherPerson?.id;
-                return (
-                  <div key={m.id} className={`flex ${isMine ? "justify-end" : "justify-start"}`}>
-                    <div className={`max-w-[85%] md:max-w-[70%] ${isMine ? "order-1" : ""}`}>
-                      <div className={`p-4 md:p-5 shadow-sm text-sm leading-relaxed font-light ${isMine ? "bg-primary text-white" : "bg-white text-slate-900 border border-slate-100"
-                        }`}>
-                        {m.content}
-                      </div>
-                      <p className={`text-[9px] mt-2 font-mono uppercase tracking-widest ${isMine ? "text-right text-slate-400" : "text-slate-400"}`}>
-                        {new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      </p>
-                    </div>
+            {/* Chat area with wallpaper */}
+            <div
+              ref={scrollRef}
+              className="flex-1 overflow-y-auto px-4 md:px-12 lg:px-20 py-4 pb-24"
+              style={{
+                backgroundColor: "#efeae2",
+                backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4cfc6' fill-opacity='0.25'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+              }}
+            >
+              {groupedMessages.map((group, gi) => (
+                <div key={gi}>
+                  {/* Date separator */}
+                  <div className="flex justify-center my-4">
+                    <span className="bg-white/90 text-[11px] text-slate-500 px-3 py-1 rounded-lg shadow-sm font-medium">
+                      {group.date}
+                    </span>
                   </div>
-                );
-              })}
+
+                  {/* Messages */}
+                  {group.msgs.map((m, mi) => {
+                    const isMine = m.sender_id !== activeConvObj.otherPerson?.id;
+                    const isLast = mi === group.msgs.length - 1 || group.msgs[mi + 1]?.sender_id !== m.sender_id;
+                    const time = new Date(m.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+                    return (
+                      <div key={m.id} className={`flex ${isMine ? "justify-end" : "justify-start"} ${isLast ? "mb-2" : "mb-0.5"}`}>
+                        <div
+                          className={`relative max-w-[85%] md:max-w-[65%] px-3 py-2 shadow-sm text-[14.5px] leading-relaxed ${
+                            isMine
+                              ? "bg-[#d9fdd3] text-[#111b21] rounded-lg rounded-tr-none"
+                              : "bg-white text-[#111b21] rounded-lg rounded-tl-none"
+                          }`}
+                        >
+                          {/* Sender label for first message in group from other person */}
+                          {!isMine && (mi === 0 || group.msgs[mi - 1]?.sender_id !== m.sender_id) && (
+                            <p className="text-[12.5px] font-semibold text-[#1c6758] mb-0.5">
+                              {activeConvObj.otherPerson?.display_name || "Seller"}
+                            </p>
+                          )}
+
+                          {/* Message content + inline time */}
+                          <span>{m.content}</span>
+                          <span className="inline-flex items-center gap-1 float-right ml-3 mt-1 translate-y-1">
+                            <span className="text-[10.5px] text-slate-400 whitespace-nowrap">{time}</span>
+                            {isMine && (
+                              <span
+                                className="material-symbols-outlined text-[15px]"
+                                style={{ fontVariationSettings: "'wght' 600", color: m.is_read ? "#53bdeb" : "#98a3ab" }}
+                              >
+                                done_all
+                              </span>
+                            )}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
+
               {isPending && (
-                <div className="flex justify-end opacity-50">
-                  <div className="bg-primary text-white p-4 text-xs italic animate-pulse">Sending...</div>
+                <div className="flex justify-end mb-2">
+                  <div className="bg-[#d9fdd3] px-3 py-2 rounded-lg rounded-tr-none shadow-sm text-sm text-slate-400 italic flex items-center gap-2">
+                    <span className="material-symbols-outlined text-sm animate-spin">hourglass_top</span>
+                    Sending...
+                  </div>
+                </div>
+              )}
+
+              {messages.length === 0 && (
+                <div className="flex justify-center my-4">
+                  <span className="bg-[#fdf8c8] text-[12px] text-[#54656f] px-4 py-2 rounded-lg shadow-sm text-center max-w-sm leading-relaxed">
+                    Messages are end-to-end managed by RE:GALIA. Send a message to get started.
+                  </span>
                 </div>
               )}
             </div>
 
-            <footer className="p-4 md:p-6 bg-white border-t border-slate-100 absolute bottom-0 left-0 right-0 z-20">
-              <div className="max-w-[800px] mx-auto flex gap-2 md:gap-3">
+            {/* Input footer */}
+            <footer className="px-3 md:px-4 py-2.5 bg-[#f0f2f5] border-t border-slate-200 absolute bottom-0 left-0 right-0 z-20">
+              <div className="flex items-center gap-2">
                 <input
                   type="text"
-                  placeholder="Type your response..."
-                  className="flex-1 bg-slate-50 border border-slate-200 px-4 md:px-6 py-3 text-sm focus:outline-none focus:border-primary transition-all font-light"
+                  placeholder="Type a message"
+                  className="flex-1 bg-white rounded-lg px-4 py-2.5 text-[15px] focus:outline-none border-none text-[#1c1c1c] placeholder-slate-400"
                   value={newMsg}
                   onChange={(e) => setNewMsg(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handleSend()}
+                  onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSend()}
                 />
                 <button
                   onClick={handleSend}
                   disabled={isPending || !newMsg.trim()}
-                  className="bg-primary text-white px-6 md:px-8 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-accent transition-all disabled:opacity-50 shadow-xl shadow-black/5"
+                  className="w-10 h-10 rounded-full bg-[#25D366] text-white flex items-center justify-center hover:bg-[#1da855] transition-colors disabled:opacity-40 disabled:bg-slate-300 flex-shrink-0"
                 >
-                  Send
+                  <span className="material-symbols-outlined text-xl" style={{ fontVariationSettings: "'wght' 500" }}>send</span>
                 </button>
               </div>
             </footer>
           </>
         ) : (
-          <div className="flex-1 flex flex-col items-center justify-center p-12 text-center">
-            <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-white shadow-xl flex items-center justify-center mb-6">
-              <span className="material-symbols-outlined text-slate-100 text-3xl md:text-4xl">mail</span>
+          <div className="flex-1 flex flex-col items-center justify-center p-12 text-center" style={{ backgroundColor: "#f0f2f5" }}>
+            <div className="w-[200px] h-[200px] mb-6 flex items-center justify-center">
+              <span className="material-symbols-outlined text-[80px] text-slate-200">forum</span>
             </div>
-            <h3 className="text-lg md:text-xl font-light text-slate-400 mb-2">Your Conversations</h3>
-            <p className="text-sm text-slate-300 max-w-xs leading-relaxed">Select a thread from the sidebar to view messages and respond to inquiries.</p>
+            <h3 className="text-2xl font-light text-slate-600 mb-3">RE:GALIA Messages</h3>
+            <p className="text-sm text-slate-400 max-w-sm leading-relaxed">
+              Select a conversation to view your messages. Send inquiries from any listing page.
+            </p>
           </div>
         )}
       </main>
