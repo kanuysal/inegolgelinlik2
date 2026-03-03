@@ -27,6 +27,7 @@ import {
   deleteListing,
   seedTestListings,
   deleteAllTestListings,
+  getApprovedListingsForSelector,
   getFeaturedGowns,
   addFeaturedGown,
   updateFeaturedGown,
@@ -956,6 +957,7 @@ function FeaturedGownsTab() {
   const [isPending, startTransition] = useTransition();
   const [form, setForm] = useState({ title: '', subtitle: '', price: '', image_url: '', link: '/shop', listing_id: '' });
   const [approvedListings, setApprovedListings] = useState<any[]>([]);
+  const [listingSearch, setListingSearch] = useState('');
 
   const refresh = () =>
     getFeaturedGowns().then((res: any) => {
@@ -969,10 +971,9 @@ function FeaturedGownsTab() {
 
   useEffect(() => {
     refresh();
-    // Load approved listings for selection
-    getAllListings().then(res => {
-      const approved = (res.listings || []).filter((l: any) => l.status === 'approved');
-      setApprovedListings(approved);
+    // Load approved listings for the featured gown selector
+    getApprovedListingsForSelector().then(res => {
+      setApprovedListings(Array.isArray(res) ? res : []);
     });
   }, []);
 
@@ -983,11 +984,14 @@ function FeaturedGownsTab() {
   };
 
   const handleSelectListing = (listing: any) => {
+    const condMap: Record<string, string> = { new_unworn: 'New Never Worn', excellent: 'Excellent', good: 'Good' };
+    const cond = condMap[listing.condition] || listing.condition || 'Excellent';
+    const img = listing.images?.[0] || listing.products?.images?.[0] || '';
     setForm({
       title: listing.title,
-      subtitle: `Size ${listing.size_us || '—'} • ${listing.condition}`,
-      price: `$${listing.price.toLocaleString()}`,
-      image_url: listing.images[0] || '',
+      subtitle: `Size ${listing.size_us || '—'} • ${cond}`,
+      price: `$${(listing.price || 0).toLocaleString()}`,
+      image_url: img,
       link: `/shop/${listing.id}`,
       listing_id: listing.id
     });
@@ -1057,6 +1061,7 @@ function FeaturedGownsTab() {
   price text,
   image_url text,
   link text DEFAULT '/shop',
+  listing_id uuid REFERENCES listings(id) ON DELETE SET NULL,
   display_order int DEFAULT 0,
   is_active boolean DEFAULT true,
   created_at timestamptz DEFAULT now(),
@@ -1113,24 +1118,54 @@ CREATE POLICY "Admin write" ON featured_gowns
           {/* Listing Selector */}
           <div className="bg-blue-50 border border-blue-200 p-4">
             <label className="text-[10px] font-bold uppercase tracking-widest text-blue-600 mb-2 block">
-              Select from Existing Listings
+              Select from Approved Listings ({approvedListings.length})
             </label>
-            <select
-              onChange={(e) => {
-                const listing = approvedListings.find(l => l.id === e.target.value);
-                if (listing) handleSelectListing(listing);
-              }}
-              className="w-full bg-white border border-blue-300 text-sm py-2 px-3 focus:ring-accent focus:border-accent outline-none"
-            >
-              <option value="">Choose a listing...</option>
-              {approvedListings.map(listing => (
-                <option key={listing.id} value={listing.id}>
-                  {listing.title} - ${listing.price} - Size {listing.size_us || '—'}
-                </option>
-              ))}
-            </select>
-            <p className="text-xs text-blue-600 mt-2">
-              Select a listing to auto-fill the form below, or manually enter custom details
+            <input
+              value={listingSearch}
+              onChange={e => setListingSearch(e.target.value)}
+              className="w-full bg-white border border-blue-300 text-sm py-2 px-3 focus:ring-accent focus:border-accent outline-none mb-2"
+              placeholder="Search by title, size, or price..."
+            />
+            <div className="max-h-60 overflow-y-auto bg-white border border-blue-200 divide-y divide-slate-100">
+              {approvedListings
+                .filter(l => {
+                  if (!listingSearch) return true;
+                  const q = listingSearch.toLowerCase();
+                  return (
+                    l.title?.toLowerCase().includes(q) ||
+                    String(l.size_us || '').includes(q) ||
+                    String(l.price || '').includes(q) ||
+                    (l.products?.style_name || '').toLowerCase().includes(q)
+                  );
+                })
+                .slice(0, 50)
+                .map((listing: any) => (
+                  <button
+                    key={listing.id}
+                    type="button"
+                    onClick={() => { handleSelectListing(listing); setListingSearch(''); }}
+                    className={`w-full text-left px-3 py-2 flex items-center gap-3 hover:bg-blue-50 transition-colors ${form.listing_id === listing.id ? 'bg-blue-100' : ''}`}
+                  >
+                    <div className="w-10 h-12 bg-slate-100 flex-shrink-0 overflow-hidden">
+                      {listing.images?.[0] && <img src={listing.images[0]} alt="" className="w-full h-full object-cover" />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate">{listing.title}</p>
+                      <p className="text-[10px] text-slate-500">
+                        Size {listing.size_us || '—'} • ${(listing.price || 0).toLocaleString()} • {listing.products?.style_name || 'Couture'}
+                      </p>
+                    </div>
+                    {form.listing_id === listing.id && (
+                      <span className="material-symbols-outlined text-blue-600 text-sm">check_circle</span>
+                    )}
+                  </button>
+                ))}
+              {approvedListings.length === 0 && (
+                <p className="text-xs text-slate-400 p-3 text-center">No approved listings found</p>
+              )}
+            </div>
+            <p className="text-[10px] text-blue-500 mt-2">
+              Select a listing to auto-fill, or enter details manually below
             </p>
           </div>
 

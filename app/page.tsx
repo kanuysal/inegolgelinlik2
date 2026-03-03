@@ -94,7 +94,7 @@ export default function Home() {
         <div className="flex overflow-x-auto gap-6 px-6 pb-6 snap-x snap-mandatory" style={{ scrollbarWidth: "none", msOverflowStyle: "none", WebkitOverflowScrolling: "touch" }}>
           {featuredGowns.map((gown) => (
             <Link key={gown.id} href={gown.link || "/shop"} className="min-w-[300px] md:min-w-[380px] snap-center group relative overflow-hidden h-[500px] flex-shrink-0">
-              <img alt={`${gown.title} Gown`} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src={gown.image_url} />
+              <img alt={`${gown.title} Gown`} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src={thumb(gown.image_url, 800)} loading="lazy" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
               <div className="absolute bottom-0 left-0 p-6 w-full text-white">
                 <h4 className="text-2xl font-semibold mb-1">{gown.title}</h4>

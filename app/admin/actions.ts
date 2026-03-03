@@ -99,6 +99,18 @@ export async function getAllListings(statusFilter?: string) {
   return data || []
 }
 
+export async function getApprovedListingsForSelector() {
+  await requireModRole()
+  const supabase = await db()
+  const { data } = await supabase
+    .from('listings')
+    .select('id, title, price, size_us, condition, images, status, products(style_name, images)')
+    .eq('status', 'approved')
+    .order('created_at', { ascending: false })
+    .limit(500)
+  return data || []
+}
+
 export async function approveListing(listingId: string) {
   const user = await requireModRole()
   const supabase = await db()
@@ -751,6 +763,7 @@ export async function addFeaturedGown(gown: {
   price: string
   image_url: string
   link: string
+  listing_id?: string
 }) {
   await requireAdminRole()
   const supabase = await adminDb()
@@ -763,8 +776,10 @@ export async function addFeaturedGown(gown: {
 
   const maxOrder = existing?.[0]?.display_order || 0
 
+  const { listing_id, ...rest } = gown
   const { error } = await supabase.from('featured_gowns').insert({
-    ...gown,
+    ...rest,
+    ...(listing_id ? { listing_id } : {}),
     display_order: maxOrder + 1,
     is_active: true,
   })
