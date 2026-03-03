@@ -16,6 +16,7 @@ import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
 import { createClient } from "@/lib/supabase/client";
 import { useWishlist } from "@/lib/wishlist-context";
+import { thumb, fullImg } from "@/lib/image";
 
 /* ── Helpers ────────────────────────────────────── */
 
@@ -156,7 +157,7 @@ export default function ProductDetailPage() {
         setSellerId(dbRow.seller_id);
         const condMap: Record<string, Listing["condition"]> = { new_unworn: "New Never Worn", excellent: "Excellent", good: "Good" };
         const silMap: Record<string, Listing["silhouette"]> = { a_line: "A-Line", mermaid: "Mermaid", ball_gown: "Ball Gown", sheath: "Sheath", fit_and_flare: "Fit & Flare", trumpet: "Mermaid" };
-        const mainImg = dbRow.images?.[0] || "/placeholder-gown.jpg";
+        const mainImg = fullImg(dbRow.images?.[0]);
 
         const productName = dbRow.products?.style_name || dbRow.title;
         const catalogEntry = GOWN_CATALOG.find(
@@ -198,7 +199,7 @@ export default function ProductDetailPage() {
           fabric: (materials.split(",")[0]?.trim() || "Lace") as Listing["fabric"],
           color,
           imageUrl: mainImg,
-          stockImageUrl: dbRow.products?.images?.[0] || mainImg,
+          stockImageUrl: fullImg(dbRow.products?.images?.[0]) || mainImg,
           verified: true,
           featured: false,
           saves: 0,
@@ -585,7 +586,7 @@ export default function ProductDetailPage() {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
             {relatedListings.map((item: any) => {
-              const image = item.images?.[0] || "/placeholder-gown.jpg";
+              const image = thumb(item.images?.[0]);
               const conditionMap: Record<string, string> = {
                 new_unworn: "New Never Worn",
                 excellent: "Excellent",
@@ -597,6 +598,7 @@ export default function ProductDetailPage() {
                     <img
                       src={image}
                       alt={item.title}
+                      loading="lazy"
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                   </div>

@@ -6,6 +6,7 @@ import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
 import { getPublicFeaturedGowns } from "@/app/admin/actions";
 import { getApprovedListings } from "@/app/shop/actions";
+import { thumb } from "@/lib/image";
 
 const DEFAULT_FEATURED = [
   { id: '1', title: 'The Maya', subtitle: 'Size 4 • Excellent Condition', price: '$4,200', image_url: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Maya_side.jpg', link: '/shop' },
@@ -39,7 +40,7 @@ export default function Home() {
     getApprovedListings()
       .then((data) => {
         if (data && data.length > 0) {
-          setListings(data);
+          setListings(data.slice(0, 20));
         }
       })
       .catch(() => {})
@@ -135,7 +136,7 @@ export default function Home() {
         ) : listings.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-5">
               {listings.map((listing: any) => {
-                const image = listing.images?.[0] || listing.products?.images?.[0] || '/placeholder-gown.jpg';
+                const image = thumb(listing.images?.[0] || listing.products?.images?.[0]);
                 const price = listing.price;
                 const msrp = listing.msrp || listing.products?.msrp;
                 const conditionMap: Record<string, string> = {
@@ -151,6 +152,7 @@ export default function Home() {
                           alt={listing.title}
                           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                           src={image}
+                          loading="lazy"
                         />
                       </div>
                       <div className="p-2.5 md:p-3 flex flex-col flex-grow">

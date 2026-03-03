@@ -7,6 +7,7 @@ import Footer from "@/components/ui/Footer";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { mockListings, type Listing } from "@/lib/mock-listings";
 import { getApprovedListings } from "./actions";
+import { thumb } from "@/lib/image";
 
 // Helper function to remove accents for search (e.g., "Élysée" → "elysee")
 function removeAccents(str: string): string {
@@ -33,8 +34,8 @@ function mapDbListing(row: any): Listing {
     column: "Sheath",
   };
 
-  const mainImage = row.images?.[0] || "/placeholder-gown.jpg";
-  const stockImage = row.products?.images?.[0] || mainImage;
+  const mainImage = thumb(row.images?.[0]);
+  const stockImage = thumb(row.products?.images?.[0]) || mainImage;
 
   return {
     id: row.id,
@@ -290,6 +291,7 @@ export default function ShopPage() {
                     alt={listing.title}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     src={listing.imageUrl}
+                    loading="lazy"
                   />
                 </div>
                 <div className="p-2.5 md:p-3 flex flex-col flex-grow">

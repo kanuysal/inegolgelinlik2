@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import toast, { Toaster } from "react-hot-toast";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
+import { thumb } from "@/lib/image";
 import {
   getMyListings,
   deleteListing,
@@ -683,7 +684,7 @@ function WishlistTab() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
           {listings.map((listing: any) => {
-            const image = listing.images?.[0] || listing.products?.images?.[0] || "/placeholder-gown.jpg";
+            const image = thumb(listing.images?.[0] || listing.products?.images?.[0]);
             const msrp = listing.msrp || listing.products?.msrp;
             const conditionMap: Record<string, string> = {
               new_unworn: "New Never Worn",
