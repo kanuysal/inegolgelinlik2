@@ -43,21 +43,33 @@ export async function searchProducts(query: string) {
       .filter(gown =>
         !dbNames.has(gown.name.toLowerCase()) &&
         (removeAccents(gown.name).includes(normalizedQuery) ||
-         removeAccents(gown.silhouette).includes(normalizedQuery))
+          removeAccents(gown.silhouette).includes(normalizedQuery))
       )
-      .map(gown => ({
-        id: gown.id,
-        style_name: gown.name,
-        sku: null,
-        category: gown.collection === 'Evening' ? 'evening' : 'bridal',
-        silhouette: gown.silhouette,
-        train_style: null,
-        msrp: parseInt(gown.msrp_range.split('-')[1]?.replace(/[^0-9]/g, '') || '0'),
-        images: gown.images,
-        description: gown.description,
-        stockist_data: null,
-        source: 'catalog' as const,
-      }))
+      .map(gown => {
+        // Extract MSRP from range or use a collection default
+        let msrpNum = parseInt(gown.msrp_range.split('-')[1]?.replace(/[^0-9]/g, '') || '0')
+
+        // If no MSRP range, provide a reasonable default based on collection tiers
+        if (msrpNum === 0) {
+          if (gown.collection === 'Bridal Couture') msrpNum = 12000
+          else if (gown.collection === 'GALA by Galia Lahav') msrpNum = 8500
+          else if (gown.collection === 'Evening') msrpNum = 4500
+        }
+
+        return {
+          id: gown.id,
+          style_name: gown.name,
+          sku: null,
+          category: gown.collection === 'Evening' ? 'evening' : 'bridal',
+          silhouette: gown.silhouette,
+          train_style: null,
+          msrp: msrpNum || null,
+          images: gown.images,
+          description: gown.description,
+          stockist_data: null,
+          source: 'catalog' as const,
+        }
+      })
 
     return { products: [...dbResults, ...catalogFallback].slice(0, 10), error: null }
   } catch (err: any) {

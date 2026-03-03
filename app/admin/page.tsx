@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useTransition } from 'react';
+import { useState, useEffect, useTransition, useRef } from 'react';
 import Link from 'next/link';
 import {
   getAdminStats,
@@ -32,6 +32,8 @@ import {
   updateFeaturedGown,
   removeFeaturedGown,
   reorderFeaturedGown,
+  getAdminConversation,
+  adminSendMessage,
 } from './actions';
 
 type Tab = 'dashboard' | 'moderation' | 'inventory' | 'sellers' | 'transactions' | 'claims' | 'featured';
@@ -117,8 +119,10 @@ function ModerationTab() {
   const [pending, setPending] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [rejectId, setRejectId] = useState<string | null>(null);
-  const [rejectReason, setRejectReason] = useState('Other');
+  const [rejectReason, setRejectReason] = useState('Insufficient Photos (Need 2+ photos of you wearing the dress)');
   const [rejectDetails, setRejectDetails] = useState('');
+  const [chatListing, setChatListing] = useState<any | null>(null);
+  const [showQueue, setShowQueue] = useState(true);
   const [activeItem, setActiveItem] = useState<any | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -171,12 +175,12 @@ function ModerationTab() {
   }
 
   return (
-    <div className="p-8 flex gap-8">
-      {/* Sidebar List */}
-      <section className="w-1/3 space-y-4">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-medium tracking-tight">Pending Approval</h2>
-          <span className="text-[10px] text-slate-400 uppercase tracking-[0.2em]">{pending.length} Items Remaining</span>
+    <div className="flex flex-col md:flex-row h-[calc(100vh-64px)] overflow-hidden">
+      {/* Moderation Queue Sidebar */}
+      <section className={`${showQueue ? 'flex' : 'hidden'} md:flex w-full md:w-80 border-r border-slate-200 bg-white flex-col flex-shrink-0`}>
+        <div className="p-6 border-b border-slate-100 flex justify-between items-center">
+          <h2 className="text-sm font-bold tracking-[0.2em] uppercase text-slate-400">Moderation Queue</h2>
+          <span className="bg-primary text-white text-[10px] px-2 py-0.5 font-bold rounded-full">{pending.length}</span>
         </div>
 
         <div className="space-y-4 overflow-y-auto max-h-[calc(100vh-200px)] custom-scrollbar pr-2">
@@ -185,8 +189,8 @@ function ModerationTab() {
               key={listing.id}
               onClick={() => setActiveItem(listing)}
               className={`p-4 bg-white transition-all cursor-pointer ${activeItem?.id === listing.id
-                  ? 'border-l-2 border-accent shadow-sm ring-1 ring-slate-200'
-                  : 'border-l-2 border-transparent hover:border-slate-300'
+                ? 'border-l-2 border-accent shadow-sm ring-1 ring-slate-200'
+                : 'border-l-2 border-transparent hover:border-slate-300'
                 }`}
             >
               <div className="flex gap-4">
@@ -228,17 +232,25 @@ function ModerationTab() {
                   <span className="flex items-center gap-1 text-slate-500"><span className="material-symbols-outlined text-sm">category</span> {activeItem.category}</span>
                 </div>
               </div>
-              <div className="flex gap-3">
+              <div className="flex gap-2 flex-wrap sm:flex-nowrap">
                 <button
                   disabled={isPending}
-                  className="px-6 py-3 bg-red-600 text-white text-xs font-bold uppercase tracking-widest hover:bg-red-700 transition-colors disabled:opacity-50"
+                  className="flex-1 sm:flex-none px-4 py-3 border border-slate-200 text-slate-600 text-xs font-bold uppercase tracking-widest hover:bg-slate-50 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                  onClick={() => setChatListing(activeItem)}
+                >
+                  <span className="material-symbols-outlined text-sm">chat_bubble</span>
+                  <span className="hidden sm:inline">Message Bride</span>
+                </button>
+                <button
+                  disabled={isPending}
+                  className="flex-1 sm:flex-none px-6 py-3 bg-red-600 text-white text-xs font-bold uppercase tracking-widest hover:bg-red-700 transition-colors disabled:opacity-50"
                   onClick={() => setRejectId(activeItem.id)}
                 >
                   Reject
                 </button>
                 <button
                   disabled={isPending || (activeItem.images?.length || 0) < 2}
-                  className="px-8 py-3 bg-primary text-white text-xs font-bold uppercase tracking-widest hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-[2] sm:flex-none px-8 py-3 bg-primary text-white text-xs font-bold uppercase tracking-widest hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={() => handleApprove(activeItem.id)}
                   title={(activeItem.images?.length || 0) < 2 ? 'Requires at least 2 photos of the bride wearing the dress' : 'Approve this listing'}
                 >
@@ -247,16 +259,15 @@ function ModerationTab() {
               </div>
             </div>
 
-            <div className="flex-1 grid grid-cols-2 gap-px bg-slate-100">
+            <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-px bg-slate-100 overflow-y-auto">
               {/* Images */}
               <div className="bg-white p-8">
                 <div className="flex justify-between items-center mb-6">
                   <h3 className="text-xs font-bold tracking-widest uppercase text-slate-400">Imagery Verification</h3>
-                  <div className={`flex items-center gap-2 text-xs px-3 py-1 rounded-full ${
-                    (activeItem.images?.length || 0) >= 2
-                      ? 'bg-green-50 text-green-700'
-                      : 'bg-red-50 text-red-700'
-                  }`}>
+                  <div className={`flex items-center gap-2 text-xs px-3 py-1 rounded-full ${(activeItem.images?.length || 0) >= 2
+                    ? 'bg-green-50 text-green-700'
+                    : 'bg-red-50 text-red-700'
+                    }`}>
                     <span className="material-symbols-outlined text-sm">
                       {(activeItem.images?.length || 0) >= 2 ? 'check_circle' : 'warning'}
                     </span>
@@ -336,8 +347,36 @@ function ModerationTab() {
               </div>
             </div>
           </div>
-        ) : null}
+        ) : (
+          <div className="h-full flex items-center justify-center bg-white p-12 text-center">
+            <div className="max-w-sm">
+              <span className="material-symbols-outlined text-6xl text-slate-100 mb-6 block">verified_user</span>
+              <h3 className="text-xl font-light text-slate-400 mb-2">Queue Clear</h3>
+              <p className="text-sm text-slate-300 leading-relaxed">Select a submission from the queue to begin the review process.</p>
+            </div>
+          </div>
+        )}
+
+        {/* Mobile View Toggles */}
+        {activeItem && (
+          <button
+            onClick={() => setShowQueue(!showQueue)}
+            className="md:hidden fixed bottom-6 right-6 w-14 h-14 bg-primary text-white rounded-full shadow-2xl flex items-center justify-center z-[55] animate-bounce"
+          >
+            <span className="material-symbols-outlined">{showQueue ? 'visibility' : 'list'}</span>
+          </button>
+        )}
       </section>
+
+      {/* Chat Modal Integration */}
+      {chatListing && (
+        <AdminChat
+          listingId={chatListing.id}
+          sellerId={chatListing.seller_id}
+          sellerName={chatListing.profiles?.display_name || chatListing.profiles?.full_name || 'Seller'}
+          onClose={() => setChatListing(null)}
+        />
+      )}
 
       {/* Reject Modal */}
       {rejectId && (
@@ -399,6 +438,113 @@ function ModerationTab() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════
+// ADMIN CHAT COMPONENT
+// ═══════════════════════════════════════════════════════
+
+function AdminChat({ listingId, sellerId, sellerName, onClose }: { listingId: string, sellerId: string, sellerName: string, onClose: () => void }) {
+  const [conversationId, setConversationId] = useState<string | null>(null);
+  const [messages, setMessages] = useState<any[]>([]);
+  const [newMsg, setNewMsg] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [sending, setSending] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    getAdminConversation(listingId, sellerId).then(res => {
+      if (res.success && res.conversationId) {
+        setConversationId(res.conversationId);
+        // In a real app, we'd fetch messages here. 
+        // For now, let's assume we fetch them and update state.
+        import('../dashboard/actions').then(({ getConversationMessages }) => {
+          getConversationMessages(res.conversationId!).then(msgs => {
+            setMessages(msgs);
+            setLoading(false);
+          });
+        });
+      }
+    });
+  }, [listingId, sellerId]);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages]);
+
+  const handleSend = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newMsg.trim() || !conversationId || sending) return;
+
+    setSending(true);
+    const res = await adminSendMessage(conversationId, newMsg);
+    if (res.success) {
+      setNewMsg('');
+      // Refresh messages
+      const msgs = await (await import('../dashboard/actions')).getConversationMessages(conversationId);
+      setMessages(msgs);
+    }
+    setSending(false);
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] flex items-center justify-center p-0 md:p-4">
+      <div className="bg-white w-full h-full md:h-[min(600px,85vh)] md:max-w-lg shadow-2xl flex flex-col md:rounded-lg overflow-hidden">
+        <div className="p-5 md:p-6 border-b border-slate-100 flex justify-between items-center bg-primary text-white">
+          <div>
+            <h3 className="text-lg font-display">Chat with {sellerName}</h3>
+            <p className="text-[10px] uppercase tracking-widest opacity-70">Listing Inquiry / Tweaks</p>
+          </div>
+          <button onClick={onClose} className="material-symbols-outlined hover:rotate-90 transition-transform">close</button>
+        </div>
+
+        <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50">
+          {loading ? (
+            <div className="flex justify-center items-center h-full">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            </div>
+          ) : messages.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-xs text-slate-400 font-medium">No messages yet. Send a message to start the conversation.</p>
+            </div>
+          ) : (
+            messages.map((m) => (
+              <div key={m.id} className={`flex ${m.sender_id === sellerId ? 'justify-start' : 'justify-end'}`}>
+                <div className={`max-w-[80%] p-3 rounded-lg text-sm shadow-sm ${m.sender_id === sellerId ? 'bg-white text-slate-900 border border-slate-100' : 'bg-primary text-white'}`}>
+                  {m.content}
+                  <p className={`text-[9px] mt-1 opacity-50 ${m.sender_id === sellerId ? 'text-slate-400' : 'text-primary-foreground'}`}>
+                    {new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </p>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        <form onSubmit={handleSend} className="p-4 border-t border-slate-100 bg-white">
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={newMsg}
+              onChange={(e) => setNewMsg(e.target.value)}
+              placeholder="Ask for tweaks or provide feedback..."
+              className="flex-1 bg-slate-50 border border-slate-200 px-4 py-2 text-sm focus:outline-none focus:border-primary transition-colors"
+              disabled={sending}
+            />
+            <button
+              type="submit"
+              disabled={sending || !newMsg.trim()}
+              className="px-6 py-2 bg-primary text-white text-xs font-bold uppercase tracking-widest hover:bg-slate-800 transition-colors disabled:opacity-50"
+            >
+              Send
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
@@ -691,8 +837,8 @@ function UsersTab() {
                   <td className="px-6 py-4 text-xs text-slate-500">{new Date(u.created_at).toLocaleDateString()}</td>
                   <td className="px-6 py-4">
                     <span className={`text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-sm ${u.roles?.includes('admin') ? 'bg-purple-100 text-purple-700' :
-                        u.roles?.includes('moderator') ? 'bg-blue-100 text-blue-700' :
-                          'bg-slate-100 text-slate-600'
+                      u.roles?.includes('moderator') ? 'bg-blue-100 text-blue-700' :
+                        'bg-slate-100 text-slate-600'
                       }`}>
                       {u.roles?.includes('admin') ? 'Admin' : u.roles?.includes('moderator') ? 'Moderator' : 'User'}
                     </span>
@@ -904,7 +1050,7 @@ function FeaturedGownsTab() {
             Run this SQL in your Supabase Dashboard &gt; SQL Editor to create the featured_gowns table:
           </p>
           <pre className="bg-white border border-slate-200 p-4 text-xs font-mono overflow-x-auto whitespace-pre">
-{`CREATE TABLE featured_gowns (
+            {`CREATE TABLE featured_gowns (
   id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
   title text NOT NULL,
   subtitle text,
@@ -1176,6 +1322,7 @@ function LoadingSkeleton() {
 export default function AdminPage() {
   const [tab, setTab] = useState<Tab>('dashboard');
   const [authorized, setAuthorized] = useState<boolean | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     getAdminStats()
@@ -1206,7 +1353,10 @@ export default function AdminPage() {
     );
   }
 
-  const handleTab = (t: Tab) => setTab(t);
+  const handleTab = (t: Tab) => {
+    setTab(t);
+    setSidebarOpen(false);
+  };
 
   const T = {
     dashboard: 'Dashboard',
@@ -1219,15 +1369,23 @@ export default function AdminPage() {
   };
 
   return (
-    <div className="bg-slate-50 min-h-screen">
-      {/* Sidebar Layout matched from Stitch */}
-      <aside className="fixed left-0 top-0 h-full w-64 border-r border-slate-200 bg-white z-50 flex flex-col">
-        <div className="p-8">
+    <div className="bg-slate-50 min-h-screen flex flex-col md:flex-row">
+      {/* Mobile Backdrop */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[59] md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* Sidebar Layout */}
+      <aside className={`fixed md:sticky left-0 top-0 h-full w-64 border-r border-slate-200 bg-white z-[60] flex flex-col transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
+        <div className="p-8 pb-4">
           <h1 className="text-2xl font-medium tracking-widest uppercase border-b border-slate-100 pb-6 mb-8 cursor-pointer" onClick={() => window.location.href = '/'}>
             Galia Lahav
             <span className="block text-[10px] tracking-[0.3em] mt-1 text-slate-400">ADMIN CONSOLE</span>
           </h1>
-          <nav className="space-y-1">
+          <nav className="space-y-1 overflow-y-auto max-h-[calc(100vh-250px)]">
             <button onClick={() => handleTab('dashboard')} className={`w-full flex items-center gap-3 px-4 py-3 transition-all ${tab === 'dashboard' ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:bg-slate-50'}`}>
               <span className="material-symbols-outlined text-sm">dashboard</span>
               <span className="text-xs font-medium tracking-wider uppercase">Dashboard</span>
@@ -1260,7 +1418,7 @@ export default function AdminPage() {
           </nav>
         </div>
 
-        <div className="mt-auto w-full p-8 border-t border-slate-100">
+        <div className="mt-auto w-full p-8 pt-4 border-t border-slate-100">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-bold">A</div>
             <div>
@@ -1271,28 +1429,38 @@ export default function AdminPage() {
         </div>
       </aside>
 
-      <main className="ml-64 min-h-screen flex flex-col">
-        <header className="h-16 border-b border-slate-200 bg-white/80 backdrop-blur-md flex items-center justify-between px-8 sticky top-0 z-40">
-          <div className="flex items-center gap-4">
-            <span className="text-xs text-slate-400 tracking-widest uppercase">Console</span>
+      <div className="flex-1 flex flex-col min-h-screen relative">
+        <header className="h-16 border-b border-slate-200 bg-white/80 backdrop-blur-md flex items-center justify-between px-4 md:px-8 sticky top-0 z-[58]">
+          <div className="flex items-center gap-3 md:gap-4">
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="md:hidden w-8 h-8 flex items-center justify-center text-slate-500"
+            >
+              <span className="material-symbols-outlined">menu</span>
+            </button>
+            <span className="text-[10px] md:text-xs text-slate-400 tracking-widest uppercase">Console</span>
             <span className="h-4 w-px bg-slate-200"></span>
-            <span className="text-xs font-medium uppercase tracking-wider text-slate-800">{T[tab]}</span>
+            <span className="text-[10px] md:text-xs font-medium uppercase tracking-wider text-slate-800 truncate max-w-[120px] md:max-w-none">{T[tab]}</span>
           </div>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4 md:gap-6">
             <Link href="/" className="material-symbols-outlined text-slate-400 hover:text-primary transition-colors text-sm">storefront</Link>
           </div>
         </header>
 
-        <div className="flex-1">
+        <div className="flex-1 overflow-x-hidden">
           {tab === 'dashboard' && <OverviewTab />}
-          {tab === 'moderation' && <ModerationTab />}
+          <div className={tab === 'moderation' ? 'block h-full' : 'hidden h-full'}>
+            <ModerationTab />
+          </div>
           {tab === 'inventory' && <InventoryTab />}
           {tab === 'sellers' && <UsersTab />}
-          {tab === 'transactions' && <TransactionsTab mode="all" />}
+          <div className={tab === 'transactions' ? 'block' : 'hidden'}>
+            <TransactionsTab mode="all" />
+          </div>
           {tab === 'claims' && <ClaimsTab />}
           {tab === 'featured' && <FeaturedGownsTab />}
         </div>
-      </main>
+      </div>
     </div>
   );
 }

@@ -120,7 +120,9 @@ function CustomDropdown({
       </button>
 
       {open && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-xl z-50 max-h-60 overflow-y-auto" style={{ scrollbarWidth: 'thin', scrollbarColor: '#cbd5e1 #f1f5f9' }}>
+        <div
+          className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-2xl z-[100] max-h-72 overflow-y-auto overscroll-contain animate-in fade-in slide-in-from-top-2 duration-200"
+        >
           {options.map((opt) => (
             <button
               key={opt.value}
@@ -129,11 +131,13 @@ function CustomDropdown({
                 onChange(opt.value)
                 setOpen(false)
               }}
-              className={`w-full text-left px-4 py-3 text-sm hover:bg-gray-50 transition-colors ${
-                value === opt.value ? 'bg-gray-50 font-medium text-primary' : 'text-gray-700'
-              }`}
+              className={`w-full text-left px-5 py-4 text-sm hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0 ${value === opt.value ? 'bg-slate-50 font-semibold text-primary' : 'text-slate-700'
+                }`}
             >
-              {opt.label}
+              <div className="flex justify-between items-center">
+                <span>{opt.label}</span>
+                {value === opt.value && <span className="material-symbols-outlined text-sm text-primary">check</span>}
+              </div>
             </button>
           ))}
         </div>
@@ -658,11 +662,32 @@ export default function SellWizardPage() {
                   <div className="p-5 md:p-8 lg:p-12 space-y-8 md:space-y-10">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
                       <div className="space-y-2">
-                        <label className="text-[11px] uppercase tracking-widest font-semibold text-gray-500">Retail Price (MSRP)</label>
+                        <div className="flex justify-between items-center">
+                          <label className="text-[11px] uppercase tracking-widest font-semibold text-gray-500">Retail Price (MSRP)</label>
+                          {data.product_id && (
+                            <span className="text-[9px] bg-accent/10 text-accent px-2 py-0.5 rounded-full font-bold uppercase tracking-widest flex items-center gap-1">
+                              <span className="material-symbols-outlined text-[10px]">verified</span>
+                              Verified Archive
+                            </span>
+                          )}
+                        </div>
                         <div className="relative">
                           <span className="absolute left-0 top-3 text-gray-400">$</span>
-                          <input type="number" value={data.msrp} onChange={e => setData({ ...data, msrp: e.target.value })} className="w-full bg-transparent border-0 border-b border-gray-200 py-3 pl-5 focus:ring-0 focus:border-accent text-xl" placeholder="8500" />
+                          <input
+                            type="number"
+                            value={data.msrp}
+                            readOnly={!!data.product_id}
+                            onChange={e => setData({ ...data, msrp: e.target.value })}
+                            className={`w-full bg-transparent border-0 border-b border-gray-200 py-3 pl-5 focus:ring-0 focus:border-accent text-xl ${data.product_id ? 'text-gray-400 cursor-not-allowed font-medium' : ''}`}
+                            placeholder="8500"
+                          />
+                          {data.product_id && (
+                            <span className="absolute right-0 top-4 material-symbols-outlined text-gray-300 text-sm">lock</span>
+                          )}
                         </div>
+                        {data.product_id && (
+                          <p className="text-[10px] text-gray-400 italic">This is the official archival release price. High-value pieces earn higher status.</p>
+                        )}
                       </div>
                       <div className="space-y-2">
                         <label className="text-[11px] uppercase tracking-widest font-semibold text-gray-500">Your Asking Price *</label>

@@ -965,3 +965,57 @@ export async function resolveClaim(claimId: string, notes: string) {
   revalidatePath('/admin')
   return { success: true }
 }
+
+// ── Admin-Seller Messaging ──────────────────────────
+export async function getAdminConversation(listingId: string, sellerId: string) {
+  const user = await requireModRole()
+  const supabase = await db()
+
+  // Find or create a conversation between the admin and the seller for this listing
+  // We use the admin as the "buyer" in the conversation record for simplicity,
+  // since the system already has buyer/seller fields.
+  const { data: existing, error: findError } = await supabase
+    .from('conversations')
+    .select('id')
+    .eq('listing_id', listingId)
+    .eq('buyer_id', user.id) // Admin acting as buyer
+    .maybeSingle()
+
+  if (existing) {
+    return { success: true, conversationId: existing.id }
+  }
+
+  const { data: created, error } = await supabase
+    .from('conversations')
+    .insert({
+      listing_id: listingId,
+      buyer_id: user.id, // Admin
+      seller_id: sellerId,
+    })
+    .select('id')
+    .single()
+
+  if (error) return { error: error.message }
+  return { success: true, conversationId: created.id }
+}
+
+export async function adminSendMessage(conversationId: string, content: string) {
+  const user = await requireModRole()
+  const supabase = await db()
+
+  const { error } = await supabase
+    .from('messages')
+    .insert({
+      conversation_id: conversationId,
+      sender_id: user.id,
+      content: content.trim(),
+    })
+
+  if (error) return { error: error.message }
+
+  // Revalidate both admin and dashboard for the seller
+  revalidatePath('/admin')
+  revalidatePath('/dashboard')
+
+  return { success: true }
+}
