@@ -39,6 +39,8 @@ export interface Database {
           full_name: string | null
           phone: string | null
           avatar_url: string | null
+          treet_user_id: string | null
+          google_id: string | null
           created_at: string
           updated_at: string
         }
@@ -48,6 +50,8 @@ export interface Database {
           full_name?: string | null
           phone?: string | null
           avatar_url?: string | null
+          treet_user_id?: string | null
+          google_id?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -57,6 +61,8 @@ export interface Database {
           full_name?: string | null
           phone?: string | null
           avatar_url?: string | null
+          treet_user_id?: string | null
+          google_id?: string | null
           updated_at?: string
         }
       }
@@ -162,6 +168,7 @@ export interface Database {
           images: string[]
           status: ListingStatus
           rejection_reason: string | null
+          treet_listing_id: string | null
           created_at: string
           updated_at: string
         }
@@ -186,6 +193,7 @@ export interface Database {
           images?: string[]
           status?: ListingStatus
           rejection_reason?: string | null
+          treet_listing_id?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -208,6 +216,7 @@ export interface Database {
           images?: string[]
           status?: ListingStatus
           rejection_reason?: string | null
+          treet_listing_id?: string | null
           updated_at?: string
         }
       }
