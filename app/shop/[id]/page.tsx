@@ -527,43 +527,6 @@ export default function ProductDetailPage() {
                         </table>
                       </div>
                     </div>
-                    <div>
-                      <h4 className="font-sans text-[11px] uppercase tracking-[0.1em] text-[#1c1c1c]/70 font-medium mb-3">Ready-to-Wear & Evening</h4>
-                      <div className="overflow-x-auto">
-                        <table className="w-full text-xs">
-                          <thead>
-                            <tr className="border-b border-[#1c1c1c]/5">
-                              <th className="text-left py-2 pr-3 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">FR</th>
-                              <th className="text-left py-2 pr-3 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">UK</th>
-                              <th className="text-left py-2 pr-3 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">US</th>
-                              <th className="text-left py-2 pr-3 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">Bust</th>
-                              <th className="text-left py-2 pr-3 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">Waist</th>
-                              <th className="text-left py-2 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">Hips</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {[
-                              ["32", "4", "0", "82 / 32.3\"", "61 / 24\"", "89 / 35\""],
-                              ["34", "6", "2", "85 / 33.5\"", "64 / 25.2\"", "92 / 36.2\""],
-                              ["36", "8", "4", "88 / 34.6\"", "67 / 26.4\"", "95 / 37.4\""],
-                              ["38", "10", "6", "91 / 35.8\"", "70 / 27.6\"", "98 / 38.6\""],
-                              ["40", "12", "8", "95 / 37.4\"", "74 / 29.1\"", "102 / 40.2\""],
-                              ["42", "14", "10", "99 / 39\"", "78 / 30.7\"", "106 / 41.7\""],
-                              ["44", "16", "12", "103 / 40.6\"", "82 / 32.3\"", "110 / 43.3\""],
-                            ].map(([fr, uk, us, bust, waist, hips]) => (
-                              <tr key={fr} className="border-b border-[#1c1c1c]/[0.03]">
-                                <td className="py-2 pr-3 font-medium text-[#1c1c1c]/60">{fr}</td>
-                                <td className="py-2 pr-3 text-[#1c1c1c]/40">{uk}</td>
-                                <td className="py-2 pr-3 text-[#1c1c1c]/40">{us}</td>
-                                <td className="py-2 pr-3 text-[#1c1c1c]/40">{bust}</td>
-                                <td className="py-2 pr-3 text-[#1c1c1c]/40">{waist}</td>
-                                <td className="py-2 text-[#1c1c1c]/40">{hips}</td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
                   </div>
                 </AccordionSection>
                 <AccordionSection title="Shipping & Returns">
