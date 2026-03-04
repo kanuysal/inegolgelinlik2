@@ -14,13 +14,16 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.text()
 
-    // Verify webhook authenticity
+    // Verify webhook authenticity – fail closed if secret is not configured
     const secret = process.env.KUSTOMER_WEBHOOK_SECRET
-    if (secret) {
-      const signature = req.headers.get('x-kustomer-signature') || ''
-      if (!verifyWebhookSignature(body, signature, secret)) {
-        return NextResponse.json({ error: 'Invalid signature' }, { status: 401 })
-      }
+    if (!secret) {
+      console.error('[Kustomer Webhook] Missing KUSTOMER_WEBHOOK_SECRET – refusing request')
+      return NextResponse.json({ error: 'Webhook secret not configured' }, { status: 500 })
+    }
+
+    const signature = req.headers.get('x-kustomer-signature') || ''
+    if (!verifyWebhookSignature(body, signature, secret)) {
+      return NextResponse.json({ error: 'Invalid signature' }, { status: 401 })
     }
 
     const payload = JSON.parse(body)

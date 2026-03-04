@@ -14,6 +14,23 @@ import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { loginSchema, signupSchema } from '@/lib/validators/auth'
 import { checkEmailExists, normalizeEmail } from '@/lib/email-normalization'
 
+function sanitizeRedirect(raw: string | null): string {
+  if (!raw) return '/dashboard'
+
+  // Disallow absolute and protocol-relative URLs
+  if (raw.startsWith('http://') || raw.startsWith('https://') || raw.startsWith('//')) {
+    return '/dashboard'
+  }
+
+  // Only allow internal paths
+  if (!raw.startsWith('/')) {
+    return '/dashboard'
+  }
+
+  // Optionally tighten further with an allowlist if needed
+  return raw
+}
+
 export async function login(formData: FormData) {
   const supabase = createClient()
 
@@ -38,9 +55,9 @@ export async function login(formData: FormData) {
     return { error: 'Invalid email or password' }
   }
 
-  const redirectTo = formData.get('redirect') as string
+  const redirectTo = sanitizeRedirect(formData.get('redirect') as string | null)
   revalidatePath('/', 'layout')
-  redirect(redirectTo || '/dashboard')
+  redirect(redirectTo)
 }
 
 export async function signup(formData: FormData) {

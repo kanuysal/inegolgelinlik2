@@ -247,11 +247,26 @@ export default function SellWizardPage() {
       return
     }
 
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']
+    const maxSizeBytes = 5 * 1024 * 1024 // 5MB
+
     for (const file of Array.from(files)) {
       if (data.images.length >= 8) {
         setError('Maximum 8 photos allowed')
         break
       }
+
+       // Basic client-side validation before upload
+      if (!allowedTypes.includes(file.type)) {
+        setError('Only JPEG, PNG, and WebP images are allowed')
+        continue
+      }
+
+      if (file.size > maxSizeBytes) {
+        setError('Each image must be under 5MB')
+        continue
+      }
+
       const ext = file.name.split('.').pop() || 'jpg'
       const fileName = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
 

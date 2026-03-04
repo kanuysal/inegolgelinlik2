@@ -6,6 +6,15 @@
  */
 import { createAdminClient } from '@/lib/supabase/server'
 
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 /**
  * Notify a user about a new message.
  * Creates an in-app notification + sends email if RESEND_API_KEY is set.
@@ -50,6 +59,10 @@ export async function notifyNewMessage({
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://regalia-scroll.vercel.app'
 
+  const safeListingTitle = escapeHtml(listingTitle)
+  const safeSenderName = escapeHtml(senderName)
+  const safePreview = escapeHtml(messagePreview.slice(0, 500))
+
   try {
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
@@ -64,10 +77,10 @@ export async function notifyNewMessage({
         html: `
           <div style="font-family: Georgia, serif; max-width: 500px; margin: 0 auto; padding: 40px 20px;">
             <p style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.3em; color: #999; margin-bottom: 24px;">RE:GALIA — Private Message</p>
-            <h2 style="font-size: 24px; font-weight: normal; color: #1a1818; margin-bottom: 8px;">${listingTitle}</h2>
-            <p style="font-size: 14px; color: #666; margin-bottom: 24px;"><strong>${senderName}</strong> sent you a message:</p>
+            <h2 style="font-size: 24px; font-weight: normal; color: #1a1818; margin-bottom: 8px;">${safeListingTitle}</h2>
+            <p style="font-size: 14px; color: #666; margin-bottom: 24px;"><strong>${safeSenderName}</strong> sent you a message:</p>
             <div style="background: #FAF9F6; border-left: 3px solid #D4AF37; padding: 16px 20px; margin-bottom: 32px;">
-              <p style="font-size: 14px; color: #333; line-height: 1.6; margin: 0;">${messagePreview.slice(0, 500)}</p>
+              <p style="font-size: 14px; color: #333; line-height: 1.6; margin: 0;">${safePreview}</p>
             </div>
             <a href="${siteUrl}${conversationLink}" style="display: inline-block; background: #1a1818; color: white; text-decoration: none; padding: 14px 32px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.3em;">
               View Conversation

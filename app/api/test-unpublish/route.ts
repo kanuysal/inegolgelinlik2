@@ -3,13 +3,12 @@ import { createAdminClient } from '@/lib/supabase/server'
 
 export async function GET() {
   // This endpoint is only intended for local debugging of the unpublish flow.
-  // Return 404 in production so we don't expose internal health details.
-  if (process.env.NODE_ENV === 'production') {
+  // Return 404 in any non-development environment to avoid exposing internals.
+  if (process.env.NODE_ENV !== 'development') {
     return NextResponse.json({ error: 'Not found' }, { status: 404 })
   }
 
   try {
-    // Test 1: Check if admin client can be created
     const supabase = createAdminClient()
     if (!supabase) {
       return NextResponse.json({
@@ -19,22 +18,21 @@ export async function GET() {
       })
     }
 
-    // Test 2: Check if we can query listings
     const { data: listings, error: listError } = await supabase
       .from('listings')
-      .select('id, status, seller_id')
+      .select('id')
       .eq('status', 'approved')
       .limit(1)
 
     if (listError) {
+      console.error('[test-unpublish] listings query failed', listError)
       return NextResponse.json({
         success: false,
-        error: `Database query failed: ${listError.message}`,
+        error: 'Database query failed',
         step: 2
       })
     }
 
-    // Test 3: Check environment variable without leaking key material
     const hasServiceKey = !!process.env.SUPABASE_SERVICE_ROLE_KEY
 
     return NextResponse.json({
@@ -44,17 +42,15 @@ export async function GET() {
         databaseConnected: true,
         serviceKeySet: hasServiceKey,
         approvedListingsCount: listings?.length || 0,
-        canQueryListings: !listError
       },
-      message: 'All checks passed! Unpublish should work.'
+      message: 'All checks passed. Unpublish should work in this environment.',
     })
-
-  } catch (error: any) {
+  } catch (error) {
+    console.error('[test-unpublish] unexpected error', error)
     return NextResponse.json({
       success: false,
-      error: error.message,
-      stack: error.stack,
-      step: 'exception'
+      error: 'Internal test error',
+      step: 'exception',
     }, { status: 500 })
   }
 }
