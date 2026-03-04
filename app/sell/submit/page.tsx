@@ -121,7 +121,8 @@ function CustomDropdown({
 
       {open && (
         <div
-          className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-2xl z-[100] max-h-72 overflow-y-auto overscroll-contain animate-in fade-in slide-in-from-top-2 duration-200"
+          className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-2xl z-[100] max-h-72 overflow-y-scroll overscroll-contain"
+          onWheel={(e) => e.stopPropagation()}
         >
           {options.map((opt) => (
             <button
@@ -323,7 +324,13 @@ export default function SellWizardPage() {
   function canProceed(): boolean {
     switch (step) {
       case 1: return true
-      case 2: return data.title.length > 0 && data.size_us.length > 0
+      case 2: {
+        if (!data.title || !data.size_us) return false
+        if (data.size_us === 'Custom') {
+          return parseFloat(data.bust_cm) > 0 && parseFloat(data.waist_cm) > 0 && parseFloat(data.hips_cm) > 0
+        }
+        return true
+      }
       case 3: return data.condition !== ''
       case 4: return data.images.length >= 1
       case 5: return parseFloat(data.price) > 0
@@ -506,7 +513,7 @@ export default function SellWizardPage() {
                             onChange={handleSizeChange}
                             options={[
                               { value: '', label: 'Select Size' },
-                              ...['US 0 (EU 32)', 'US 2 (EU 34)', 'US 4 (EU 36)', 'US 6 (EU 38)', 'US 8 (EU 40)', 'US 10 (EU 42)', 'Custom'].map(s => ({ value: s, label: s }))
+                              ...['US 0 (EU 32)', 'US 2 (EU 34)', 'US 4 (EU 36)', 'US 6 (EU 38)', 'US 8 (EU 40)', 'US 10 (EU 42)', 'US 12 (EU 44)', 'US 14 (EU 46)', 'US 16 (EU 48)', 'Custom'].map(s => ({ value: s, label: s }))
                             ]}
                             placeholder="Select Size"
                           />
