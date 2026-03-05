@@ -10,9 +10,11 @@
  */
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { headers } from 'next/headers'
 import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { loginSchema, signupSchema } from '@/lib/validators/auth'
 import { checkEmailExists, normalizeEmail } from '@/lib/email-normalization'
+import { rateLimit } from '@/lib/rate-limit'
 
 function sanitizeRedirect(raw: string | null): string {
   if (!raw) return '/dashboard'
@@ -33,6 +35,17 @@ function sanitizeRedirect(raw: string | null): string {
 
 export async function login(formData: FormData) {
   const supabase = createClient()
+
+  // Rate limit login attempts per IP (e.g., 5 per 15 minutes)
+  const ip = headers().get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
+  const allowed = await rateLimit({
+    key: `login:${ip}`,
+    limit: 5,
+    windowSeconds: 15 * 60,
+  })
+  if (!allowed) {
+    return { error: 'Too many login attempts. Please try again later.' }
+  }
 
   const rawData = {
     email: formData.get('email') as string,
@@ -91,6 +104,17 @@ export async function signup(formData: FormData) {
           : ''
       } Please try logging in instead.`
     }
+  }
+
+  // Rate limit signups per IP (e.g., 3 per hour)
+  const ip = headers().get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
+  const allowed = await rateLimit({
+    key: `signup:${ip}`,
+    limit: 3,
+    windowSeconds: 60 * 60,
+  })
+  if (!allowed) {
+    return { error: 'Too many sign-up attempts. Please try again later.' }
   }
 
   const { error } = await supabase.auth.signUp({

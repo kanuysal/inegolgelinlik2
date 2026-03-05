@@ -6,6 +6,7 @@ import { listingSchema } from '@/lib/validators/listing'
 import { GOWN_CATALOG } from '@/lib/catalog'
 import { SIZE_DATABASE } from '@/lib/sizes'
 import { revalidatePath } from 'next/cache'
+import { rateLimit } from '@/lib/rate-limit'
 
 // Helper: get an untyped supabase client (DB types don't match runtime schema)
 async function getSupabase() {
@@ -24,11 +25,15 @@ export async function searchProducts(query: string) {
   try {
     const supabase = await getSupabase()
 
+    // Sanitize search input: escape PostgREST special characters
+    const sanitized = query.replace(/[%_\\(),."']/g, '').slice(0, 100)
+    if (!sanitized) return []
+
     // Search DB products first (has stockist-enriched data)
     const { data: dbProducts } = await supabase
       .from('products')
       .select('id, style_name, sku, category, silhouette, train_style, msrp, images, description, stockist_data')
-      .or(`style_name.ilike.%${query}%,sku.ilike.%${query}%`)
+      .or(`style_name.ilike.%${sanitized}%,sku.ilike.%${sanitized}%`)
       .limit(10)
 
     const dbResults = (dbProducts || []).map((p: any) => ({
@@ -148,6 +153,16 @@ export async function submitListing(formData: {
   const user = await requireAuth()
   const supabase = await getSupabase()
 
+  // Rate limit listing submissions per user (e.g., 10 per day)
+  const allowed = await rateLimit({
+    key: `submit-listing:${user.id}`,
+    limit: 10,
+    windowSeconds: 24 * 60 * 60,
+  })
+  if (!allowed) {
+    return { error: 'You have reached the daily limit for new listings. Please try again tomorrow.' }
+  }
+
   // Validate with Zod (including images)
   const result = listingSchema.safeParse({
     ...formData,
@@ -214,9 +229,14 @@ export async function uploadListingImage(formData: FormData) {
   const file = formData.get('file') as File
   if (!file) return { error: 'No file provided' }
 
-  // Validate file type
-  const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']
-  if (!allowedTypes.includes(file.type)) {
+  // Validate file type — map MIME to safe extension (ignore user-provided extension)
+  const mimeToExt: Record<string, string> = {
+    'image/jpeg': 'jpg',
+    'image/png': 'png',
+    'image/webp': 'webp',
+  }
+  const ext = mimeToExt[file.type]
+  if (!ext) {
     return { error: 'Only JPEG, PNG, and WebP images are allowed' }
   }
 
@@ -225,7 +245,6 @@ export async function uploadListingImage(formData: FormData) {
     return { error: 'Image must be under 5MB' }
   }
 
-  const ext = file.name.split('.').pop() || 'jpg'
   const fileName = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
 
   const { data, error } = await supabase.storage

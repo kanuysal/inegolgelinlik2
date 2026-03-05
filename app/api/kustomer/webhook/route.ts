@@ -9,10 +9,26 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/server'
 import { notifyNewMessage } from '@/lib/notify'
 import { verifyWebhookSignature } from '@/lib/kustomer'
+import { rateLimit } from '@/lib/rate-limit'
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.text()
+
+    // Basic rate limiting per client IP to reduce abuse
+    const ip =
+      // @ts-expect-error: ip is available on NextRequest in production
+      (req.ip as string | undefined) ||
+      req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+      'unknown'
+    const allowed = await rateLimit({
+      key: `kustomer-webhook:${ip}`,
+      limit: 60,
+      windowSeconds: 60,
+    })
+    if (!allowed) {
+      return NextResponse.json({ error: 'Too many webhook requests' }, { status: 429 })
+    }
 
     // Verify webhook authenticity – fail closed if secret is not configured
     const secret = process.env.KUSTOMER_WEBHOOK_SECRET
