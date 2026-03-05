@@ -78,16 +78,8 @@ export async function updateSession(request: NextRequest) {
       return NextResponse.redirect(url)
     }
 
-    // Admin route protection — defense-in-depth check via JWT metadata
-    if (user && isAdminRoute) {
-      const role = user.app_metadata?.role
-      if (role !== 'admin' && role !== 'moderator') {
-        // Redirect non-admin users; server-side layout.tsx also checks via DB
-        const url = request.nextUrl.clone()
-        url.pathname = '/dashboard'
-        return NextResponse.redirect(url)
-      }
-    }
+    // NOTE: Admin role enforcement is handled by app/admin/layout.tsx via DB query.
+    // Middleware cannot query the user_roles table, so admin checks happen server-side.
 
     // Redirect authenticated users away from auth pages
     if (user && pathname.startsWith('/auth/')) {
