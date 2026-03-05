@@ -78,6 +78,29 @@ export async function startConversation(listingId: string, sellerId: string, mes
 
     if (user.id === sellerId) return { error: 'You cannot message yourself' }
 
+    // Validate UUID format
+    const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+    if (!UUID_RE.test(listingId) || !UUID_RE.test(sellerId)) {
+      return { error: 'Invalid parameters' }
+    }
+
+    // Validate message length
+    const trimmedMessage = message.trim()
+    if (!trimmedMessage) return { error: 'Message cannot be empty' }
+    if (trimmedMessage.length > 5000) return { error: 'Message too long' }
+
+    // Verify the sellerId actually owns this listing (prevents IDOR)
+    const { data: verifiedListing } = await admin
+      .from('listings')
+      .select('seller_id')
+      .eq('id', listingId)
+      .eq('status', 'approved')
+      .single()
+
+    if (!verifiedListing || verifiedListing.seller_id !== sellerId) {
+      return { error: 'Invalid listing or seller' }
+    }
+
     // Check for existing conversation (use admin to avoid RLS issues)
     const { data: existing } = await admin
       .from('conversations')
@@ -105,7 +128,7 @@ export async function startConversation(listingId: string, sellerId: string, mes
 
       if (convError || !conv) {
         console.error('Conversation insert failed:', convError?.message, convError?.code)
-        return { error: 'Failed to create conversation: ' + (convError?.message || 'unknown') }
+        return { error: 'Failed to create conversation. Please try again.' }
       }
       conversationId = conv.id
     }
@@ -116,12 +139,12 @@ export async function startConversation(listingId: string, sellerId: string, mes
       .insert({
         conversation_id: conversationId,
         sender_id: user.id,
-        content: message.trim(),
+        content: trimmedMessage,
       })
 
     if (msgError) {
       console.error('Message insert failed:', msgError.message, msgError.code)
-      return { error: 'Failed to send message: ' + msgError.message }
+      return { error: 'Failed to send message. Please try again.' }
     }
 
     // Update conversation timestamp
@@ -146,7 +169,7 @@ export async function startConversation(listingId: string, sellerId: string, mes
       recipientId: sellerId,
       senderName: buyerProfile?.display_name || 'A buyer',
       listingTitle: listing?.title || 'your gown',
-      messagePreview: message.trim(),
+      messagePreview: trimmedMessage,
       conversationLink: '/dashboard?tab=messages',
     }).catch(() => {})
 

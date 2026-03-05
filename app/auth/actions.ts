@@ -37,7 +37,7 @@ export async function login(formData: FormData) {
   const supabase = createClient()
 
   // Rate limit login attempts per IP (e.g., 5 per 15 minutes)
-  const ip = headers().get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
+  const ip = headers().get('x-real-ip') || headers().get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
   const allowed = await rateLimit({
     key: `login:${ip}`,
     limit: 5,
@@ -89,25 +89,8 @@ export async function signup(formData: FormData) {
     return { error: result.error.issues[0].message }
   }
 
-  // Check for existing account with normalized email (prevents +tag bypasses)
-  const adminClient = createAdminClient()
-  const existingCheck = await checkEmailExists(result.data.email, adminClient)
-
-  if (existingCheck.exists) {
-    const normalizedInput = normalizeEmail(result.data.email)
-    const provider = existingCheck.provider === 'google' ? 'Google' : 'email/password'
-
-    return {
-      error: `An account with this email already exists (signed up with ${provider}). ${
-        normalizedInput !== result.data.email.toLowerCase()
-          ? `Note: Gmail ignores dots and +tags, so "${result.data.email}" is the same as an existing account.`
-          : ''
-      } Please try logging in instead.`
-    }
-  }
-
-  // Rate limit signups per IP (e.g., 3 per hour)
-  const ip = headers().get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
+  // Rate limit signups per IP BEFORE expensive DB operations
+  const ip = headers().get('x-real-ip') || headers().get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
   const allowed = await rateLimit({
     key: `signup:${ip}`,
     limit: 3,
@@ -115,6 +98,17 @@ export async function signup(formData: FormData) {
   })
   if (!allowed) {
     return { error: 'Too many sign-up attempts. Please try again later.' }
+  }
+
+  // Check for existing account with normalized email (prevents +tag bypasses)
+  const adminClient = createAdminClient()
+  const existingCheck = await checkEmailExists(result.data.email, adminClient)
+
+  if (existingCheck.exists) {
+    // Generic message to prevent email/provider enumeration
+    return {
+      error: 'Unable to create account. If you already have an account, please try logging in instead.'
+    }
   }
 
   const { error } = await supabase.auth.signUp({

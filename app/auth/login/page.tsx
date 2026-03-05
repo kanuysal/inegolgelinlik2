@@ -11,9 +11,19 @@ function LoginForm() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const searchParams = useSearchParams()
-  const message = searchParams.get('message')
   const redirectTo = searchParams.get('redirect') || '/dashboard'
-  const authError = searchParams.get('error')
+
+  // Allowlist known messages to prevent social engineering via crafted URLs
+  const knownMessages: Record<string, string> = {
+    'Check your email to confirm your account': 'Check your email to confirm your account',
+    'Password updated successfully': 'Password updated successfully',
+  }
+  const knownErrors: Record<string, string> = {
+    'Authentication failed': 'Authentication failed',
+    'Session expired': 'Session expired',
+  }
+  const message = knownMessages[searchParams.get('message') || ''] || null
+  const authError = knownErrors[searchParams.get('error') || ''] || null
 
   async function handleSubmit(formData: FormData) {
     setLoading(true)

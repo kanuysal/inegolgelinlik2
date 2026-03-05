@@ -27,7 +27,7 @@ export async function searchProducts(query: string) {
 
     // Sanitize search input: escape PostgREST special characters
     const sanitized = query.replace(/[%_\\(),."']/g, '').slice(0, 100)
-    if (!sanitized) return []
+    if (!sanitized) return { products: [], error: null }
 
     // Search DB products first (has stockist-enriched data)
     const { data: dbProducts } = await supabase
@@ -90,10 +90,13 @@ export async function searchProducts(query: string) {
 export async function getProductByName(name: string) {
   try {
     const supabase = await getSupabase()
+    // Sanitize input to prevent PostgREST wildcard injection
+    const sanitized = name.replace(/[%_\\]/g, '').slice(0, 200)
+    if (!sanitized) return { product: null }
     const { data } = await supabase
       .from('products')
       .select('id, style_name, sku, category, silhouette, train_style, msrp, images, description, stockist_data')
-      .ilike('style_name', name)
+      .ilike('style_name', sanitized)
       .limit(1)
       .single()
 
@@ -211,7 +214,7 @@ export async function submitListing(formData: {
 
   if (error) {
     console.error('Listing insert error:', error)
-    return { error: `Failed to submit listing: ${error.message}` }
+    return { error: 'Failed to submit listing. Please try again.' }
   }
 
   // Revalidate shop, home, and admin pages so new listing appears immediately

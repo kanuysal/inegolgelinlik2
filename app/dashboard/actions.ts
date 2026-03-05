@@ -73,11 +73,11 @@ export async function republishListing(listingId: string) {
   const user = await requireAuth()
   const supabase = await adminDb() // Use admin client to bypass RLS
 
-  // Change status from archived back to approved
+  // Change status from archived to pending_review (requires re-approval)
   const { error } = await supabase
     .from('listings')
     .update({
-      status: 'approved',
+      status: 'pending_review',
       updated_at: new Date().toISOString()
     })
     .eq('id', listingId)

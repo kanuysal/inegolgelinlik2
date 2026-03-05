@@ -13,8 +13,14 @@ export async function updateSession(request: NextRequest) {
       request,
     })
 
-    // Guard: if Supabase env vars aren't set, skip auth (allows site to load)
+    // Guard: if Supabase env vars aren't set, block protected routes
     if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      console.error('CRITICAL: Supabase env vars missing — blocking protected routes')
+      const { pathname } = request.nextUrl
+      const protectedRoutes = ['/dashboard', '/sell/submit', '/admin']
+      if (protectedRoutes.some((route) => pathname.startsWith(route))) {
+        return new NextResponse('Service unavailable', { status: 503 })
+      }
       return supabaseResponse
     }
 
@@ -72,9 +78,15 @@ export async function updateSession(request: NextRequest) {
       return NextResponse.redirect(url)
     }
 
-    // Admin route protection — check role via user metadata or database
+    // Admin route protection — defense-in-depth check via JWT metadata
     if (user && isAdminRoute) {
-      // We check admin role server-side in the page component for full security.
+      const role = user.app_metadata?.role
+      if (role !== 'admin' && role !== 'moderator') {
+        // Redirect non-admin users; server-side layout.tsx also checks via DB
+        const url = request.nextUrl.clone()
+        url.pathname = '/dashboard'
+        return NextResponse.redirect(url)
+      }
     }
 
     // Redirect authenticated users away from auth pages
@@ -87,8 +99,14 @@ export async function updateSession(request: NextRequest) {
     return supabaseResponse
   } catch (e) {
     console.error('Middleware crash:', e)
-    return NextResponse.next({
-      request,
-    })
+    // Fail closed: block protected routes on any middleware error
+    const { pathname } = request.nextUrl
+    const protectedRoutes = ['/dashboard', '/sell/submit', '/admin']
+    if (protectedRoutes.some((route) => pathname.startsWith(route))) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/auth/login'
+      return NextResponse.redirect(url)
+    }
+    return NextResponse.next({ request })
   }
 }

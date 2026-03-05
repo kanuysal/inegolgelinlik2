@@ -345,7 +345,13 @@ export async function uploadProductImage(productId: string, formData: FormData) 
     return { error: 'Image must be under 5MB' }
   }
 
-  const ext = file.name.split('.').pop() || 'jpg'
+  // Derive extension from validated MIME type, not user-provided filename
+  const mimeToExt: Record<string, string> = {
+    'image/jpeg': 'jpg',
+    'image/png': 'png',
+    'image/webp': 'webp',
+  }
+  const ext = mimeToExt[file.type] || 'jpg'
   const fileName = `products/${productId}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
 
   const { data, error } = await supabase.storage
@@ -420,6 +426,16 @@ export async function removeProductImage(productId: string, imageUrl: string) {
 export async function addProductImageUrl(productId: string, imageUrl: string) {
   await requireAdminRole()
   const supabase = await adminDb()
+
+  // Validate URL is a proper HTTP(S) URL
+  try {
+    const parsed = new URL(imageUrl)
+    if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
+      return { error: 'Only HTTP/HTTPS URLs are allowed' }
+    }
+  } catch {
+    return { error: 'Invalid URL' }
+  }
 
   const { data: product } = await supabase
     .from('products')
@@ -794,9 +810,16 @@ export async function updateFeaturedGown(id: string, updates: Record<string, any
   await requireAdminRole()
   const supabase = await adminDb()
 
+  // Whitelist allowed fields to prevent mass assignment
+  const allowedFields = ['title', 'subtitle', 'price', 'image_url', 'link', 'listing_id', 'is_active', 'display_order']
+  const safeUpdates: Record<string, any> = {}
+  for (const key of allowedFields) {
+    if (key in updates) safeUpdates[key] = updates[key]
+  }
+
   const { error } = await supabase
     .from('featured_gowns')
-    .update({ ...updates, updated_at: new Date().toISOString() })
+    .update({ ...safeUpdates, updated_at: new Date().toISOString() })
     .eq('id', id)
 
   if (error) return { error: error.message }

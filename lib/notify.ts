@@ -82,7 +82,7 @@ export async function notifyNewMessage({
             <div style="background: #FAF9F6; border-left: 3px solid #D4AF37; padding: 16px 20px; margin-bottom: 32px;">
               <p style="font-size: 14px; color: #333; line-height: 1.6; margin: 0;">${safePreview}</p>
             </div>
-            <a href="${siteUrl}${conversationLink}" style="display: inline-block; background: #1a1818; color: white; text-decoration: none; padding: 14px 32px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.3em;">
+            <a href="${siteUrl}${escapeHtml(conversationLink)}" style="display: inline-block; background: #1a1818; color: white; text-decoration: none; padding: 14px 32px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.3em;">
               View Conversation
             </a>
             <p style="font-size: 11px; color: #ccc; margin-top: 40px;">You received this because someone messaged you on RE:GALIA.</p>

@@ -17,8 +17,8 @@ export async function POST(req: NextRequest) {
 
     // Basic rate limiting per client IP to reduce abuse
     const ip =
-      // @ts-expect-error: ip is available on NextRequest in production
-      (req.ip as string | undefined) ||
+      req.ip ||
+      req.headers.get('x-real-ip') ||
       req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
       'unknown'
     const allowed = await rateLimit({

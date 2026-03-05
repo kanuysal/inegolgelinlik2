@@ -8,7 +8,7 @@
  * the API is unreachable, the app continues working normally.
  */
 
-import { createHmac } from 'crypto'
+import { createHmac, timingSafeEqual } from 'crypto'
 
 const KUSTOMER_BASE = 'https://api.kustomerapp.com/v1'
 
@@ -152,5 +152,6 @@ export function verifyWebhookSignature(
   secret: string,
 ): boolean {
   const expected = createHmac('sha256', secret).update(body).digest('hex')
-  return signature === expected
+  if (signature.length !== expected.length) return false
+  return timingSafeEqual(Buffer.from(signature, 'utf8'), Buffer.from(expected, 'utf8'))
 }

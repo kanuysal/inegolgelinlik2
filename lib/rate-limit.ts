@@ -16,14 +16,41 @@ if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) 
 }
 
 /**
+ * In-memory rate limit fallback (per-instance only).
+ * Used when Redis is not configured or errors out.
+ */
+const inMemoryStore = new Map<string, { count: number; expires: number }>()
+
+function inMemoryRateLimit(config: RateLimitConfig): boolean {
+  const now = Math.floor(Date.now() / 1000)
+  const windowKey = `${config.key}:${Math.floor(now / config.windowSeconds)}`
+
+  const entry = inMemoryStore.get(windowKey)
+  if (entry && entry.expires > now) {
+    entry.count++
+    return entry.count <= config.limit
+  }
+
+  // Cleanup expired entries periodically
+  if (inMemoryStore.size > 1000) {
+    inMemoryStore.forEach((v, k) => {
+      if (v.expires <= now) inMemoryStore.delete(k)
+    })
+  }
+
+  inMemoryStore.set(windowKey, { count: 1, expires: now + config.windowSeconds })
+  return true
+}
+
+/**
  * Simple fixed-window rate limiter.
  * Returns true if under limit, false if rate-limited.
- * If Redis is not configured, it behaves as a no-op (always true).
+ * Falls back to in-memory rate limiting when Redis is not configured.
  */
 export async function rateLimit(config: RateLimitConfig): Promise<boolean> {
   if (!redis) {
-    // No backing store configured; skip limiting but avoid breaking flows.
-    return true
+    console.warn('[rate-limit] Redis not configured — using in-memory fallback')
+    return inMemoryRateLimit(config)
   }
 
   const { key, limit, windowSeconds } = config
@@ -40,9 +67,7 @@ export async function rateLimit(config: RateLimitConfig): Promise<boolean> {
 
     return count <= limit
   } catch (err) {
-    console.error('[rate-limit] error', err)
-    // Fail open to avoid breaking primary flows if Redis has an issue
-    return true
+    console.error('[rate-limit] Redis error — falling back to in-memory', err)
+    return inMemoryRateLimit(config)
   }
 }
-
