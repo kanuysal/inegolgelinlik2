@@ -101,3 +101,41 @@ export const profileSchema = z.object({
 })
 
 export type ProfileInput = z.infer<typeof profileSchema>
+
+export const productSchema = z.object({
+  style_name: z
+    .string()
+    .min(1, 'Style name is required')
+    .max(300, 'Style name is too long'),
+  sku: z
+    .string()
+    .max(100, 'SKU is too long')
+    .optional()
+    .nullable(),
+  category: z.enum(['bridal', 'evening', 'accessories'], {
+    message: 'Category is required',
+  }),
+  silhouette: z
+    .string()
+    .max(100)
+    .optional()
+    .nullable(),
+  train_style: z
+    .string()
+    .max(100)
+    .optional()
+    .nullable(),
+  msrp: z
+    .number()
+    .nonnegative('MSRP must be 0 or greater')
+    .max(999999.99, 'MSRP is too high')
+    .optional()
+    .nullable(),
+  description: z
+    .string()
+    .max(5000, 'Description is too long')
+    .optional()
+    .nullable(),
+})
+
+export type ProductInput = z.infer<typeof productSchema>

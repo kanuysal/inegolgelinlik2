@@ -28,7 +28,17 @@ const nextConfig = {
           },
           {
             key: "Content-Security-Policy",
-            value: "frame-ancestors 'none';",
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+              "font-src 'self' https://fonts.gstatic.com",
+              "img-src 'self' data: blob: https://ucarecdn.com https://cdn.shopify.com https://www.galialahav.com https://images.unsplash.com https://cdn.stockist.galialahav.com https://*.supabase.co",
+              "connect-src 'self' https://*.supabase.co https://api.resend.com https://api.kustomerapp.com https://stockist.galialahav.com https://*.upstash.io",
+              "frame-ancestors 'none'",
+              "base-uri 'self'",
+              "form-action 'self'",
+            ].join("; "),
           },
         ],
       },

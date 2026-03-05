@@ -4,6 +4,8 @@ import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { requireAuth } from '@/lib/auth'
 import { revalidatePath } from 'next/cache'
 import { notifyNewMessage } from '@/lib/notify'
+import { rateLimit } from '@/lib/rate-limit'
+import { profileSchema } from '@/lib/validators/listing'
 
 async function db() {
   return (await createClient()) as any
@@ -40,7 +42,10 @@ export async function deleteListing(listingId: string) {
     .eq('seller_id', user.id)
     .in('status', ['draft', 'rejected', 'archived'])
 
-  if (error) return { error: error.message }
+  if (error) {
+    console.error('Delete listing error:', error)
+    return { error: 'Failed to delete listing. Please try again.' }
+  }
   revalidatePath('/dashboard')
   revalidatePath('/shop')
   revalidatePath('/')
@@ -62,7 +67,10 @@ export async function unpublishListing(listingId: string) {
     .eq('seller_id', user.id)
     .eq('status', 'approved')
 
-  if (error) return { error: error.message }
+  if (error) {
+    console.error('Unpublish listing error:', error)
+    return { error: 'Failed to unpublish listing. Please try again.' }
+  }
   revalidatePath('/dashboard')
   revalidatePath('/shop')
   revalidatePath('/')
@@ -84,7 +92,10 @@ export async function republishListing(listingId: string) {
     .eq('seller_id', user.id)
     .eq('status', 'archived')
 
-  if (error) return { error: error.message }
+  if (error) {
+    console.error('Republish listing error:', error)
+    return { error: 'Failed to republish listing. Please try again.' }
+  }
   revalidatePath('/dashboard')
   revalidatePath('/shop')
   revalidatePath('/')
@@ -195,6 +206,11 @@ export async function getConversationMessages(conversationId: string) {
 
 export async function sendMessage(conversationId: string, content: string) {
   const user = await requireAuth()
+
+  // Rate limit: 30 messages per minute per user
+  const allowed = await rateLimit({ key: `send-msg:${user.id}`, limit: 30, windowSeconds: 60 })
+  if (!allowed) return { error: 'Too many messages. Please slow down.' }
+
   const supabase = await db()
   const admin = await adminDb()
 
@@ -222,7 +238,10 @@ export async function sendMessage(conversationId: string, content: string) {
       content: trimmed,
     })
 
-  if (msgError) return { error: msgError.message }
+  if (msgError) {
+    console.error('Send message error:', msgError)
+    return { error: 'Failed to send message. Please try again.' }
+  }
 
   // Update conversation timestamp (admin client to bypass missing UPDATE policy)
   await admin
@@ -302,24 +321,40 @@ export async function getMyProfile() {
 
 export async function updateProfile(formData: FormData) {
   const user = await requireAuth()
+
+  // Rate limit: 10 profile updates per hour per user
+  const allowed = await rateLimit({ key: `update-profile:${user.id}`, limit: 10, windowSeconds: 3600 })
+  if (!allowed) return { error: 'Too many updates. Please try again later.' }
+
   const supabase = await db()
 
-  const updates: Record<string, any> = {}
-  const displayName = (formData.get('display_name') as string)?.trim()?.slice(0, 50)
-  const fullName = (formData.get('full_name') as string)?.trim()?.slice(0, 100)
-  const phone = (formData.get('phone') as string)?.trim()?.slice(0, 20)
+  // Validate with Zod profileSchema
+  const raw = {
+    display_name: (formData.get('display_name') as string)?.trim() || '',
+    full_name: (formData.get('full_name') as string)?.trim() || null,
+    phone: (formData.get('phone') as string)?.trim() || null,
+  }
+  const result = profileSchema.safeParse(raw)
+  if (!result.success) {
+    return { error: result.error.issues[0].message }
+  }
 
-  if (displayName !== undefined) updates.display_name = displayName || null
-  if (fullName !== undefined) updates.full_name = fullName || null
-  if (phone !== undefined) updates.phone = phone || null
-  updates.updated_at = new Date().toISOString()
+  const updates: Record<string, any> = {
+    display_name: result.data.display_name || null,
+    full_name: result.data.full_name || null,
+    phone: result.data.phone || null,
+    updated_at: new Date().toISOString(),
+  }
 
   const { error } = await supabase
     .from('profiles')
     .update(updates)
     .eq('id', user.id)
 
-  if (error) return { error: error.message }
+  if (error) {
+    console.error('Update profile error:', error)
+    return { error: 'Failed to update profile. Please try again.' }
+  }
   revalidatePath('/dashboard')
   return { success: true }
 }

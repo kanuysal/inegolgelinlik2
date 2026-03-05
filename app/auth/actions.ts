@@ -169,6 +169,13 @@ export async function checkIsStaff(): Promise<boolean> {
 }
 
 export async function signInWithGoogle() {
+  // Rate limit: 10 OAuth attempts per 15 minutes per IP
+  const ip = (await headers()).get('x-real-ip') || (await headers()).get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
+  const allowed = await rateLimit({ key: `google-oauth:${ip}`, limit: 10, windowSeconds: 15 * 60 })
+  if (!allowed) {
+    return { error: 'Too many sign-in attempts. Please try again later.' }
+  }
+
   const supabase = createClient()
 
   const { data, error } = await supabase.auth.signInWithOAuth({

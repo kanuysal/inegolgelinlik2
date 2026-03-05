@@ -38,8 +38,8 @@ export async function notifyNewMessage({
   await supabase.from('notifications').insert({
     user_id: recipientId,
     type: 'new_message',
-    title: `New message about ${listingTitle}`,
-    message: `${senderName}: ${messagePreview.slice(0, 200)}`,
+    title: `New message about ${listingTitle.replace(/[<>"'&\n\r]/g, '').slice(0, 100)}`,
+    message: `${senderName.replace(/[<>"'&\n\r]/g, '').slice(0, 50)}: ${messagePreview.replace(/[<>"'&]/g, '').slice(0, 200)}`,
     link: conversationLink,
   })
 
@@ -73,7 +73,7 @@ export async function notifyNewMessage({
       body: JSON.stringify({
         from: process.env.RESEND_FROM_EMAIL || 'RE:GALIA <onboarding@resend.dev>',
         to: user.email,
-        subject: `New message about ${listingTitle} — RE:GALIA`,
+        subject: `New message about ${listingTitle.replace(/[<>"'&\n\r]/g, '').slice(0, 100)} — RE:GALIA`,
         html: `
           <div style="font-family: Georgia, serif; max-width: 500px; margin: 0 auto; padding: 40px 20px;">
             <p style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.3em; color: #999; margin-bottom: 24px;">RE:GALIA — Private Message</p>

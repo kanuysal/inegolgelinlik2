@@ -23,6 +23,11 @@ function removeAccents(str: string): string {
 
 export async function searchProducts(query: string) {
   try {
+    // Rate limit: 30 searches per minute per query prefix
+    const searchKey = `search:${query.slice(0, 10).toLowerCase().replace(/\s/g, '')}`
+    const allowed = await rateLimit({ key: searchKey, limit: 30, windowSeconds: 60 })
+    if (!allowed) return { products: [], error: 'Too many searches. Please slow down.' }
+
     const supabase = await getSupabase()
 
     // Sanitize search input: escape PostgREST special characters

@@ -3,14 +3,43 @@
  * Adds resize/format transforms to reduce bandwidth and improve scroll performance.
  */
 
+/** Allowed image URL hostnames to prevent tracking pixels and arbitrary content */
+const ALLOWED_IMAGE_HOSTS = [
+  'ucarecdn.com',
+  'cdn.shopify.com',
+  'cdn.stockist.galialahav.com',
+  'www.galialahav.com',
+  'images.unsplash.com',
+]
+
+/** Validate image URL against allowlist. Returns placeholder for untrusted domains. */
+function validateImageUrl(url: string): string {
+  try {
+    const parsed = new URL(url)
+    if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
+      return '/placeholder-gown.jpg'
+    }
+    if (ALLOWED_IMAGE_HOSTS.some(h => parsed.hostname === h || parsed.hostname.endsWith('.' + h))) {
+      return url
+    }
+    // Allow Supabase storage URLs
+    if (parsed.hostname.endsWith('.supabase.co')) {
+      return url
+    }
+    return '/placeholder-gown.jpg'
+  } catch {
+    return '/placeholder-gown.jpg'
+  }
+}
+
 /**
  * Returns an optimized thumbnail URL for listing grid/card views.
  * For ucarecdn URLs, appends resize transforms (600px wide).
- * For other URLs, returns as-is.
+ * For other URLs, validates domain and returns as-is.
  */
 export function thumb(url: string | undefined | null, width = 600): string {
   if (!url) return '/placeholder-gown.jpg'
-  if (!url.includes('ucarecdn.com/')) return url
+  if (!url.includes('ucarecdn.com/')) return validateImageUrl(url)
 
   // Strip existing transforms and rebuild with resize
   const base = url.match(/https:\/\/ucarecdn\.com\/[a-f0-9-]{36}\//)?.[0]
@@ -25,7 +54,7 @@ export function thumb(url: string | undefined | null, width = 600): string {
  */
 export function fullImg(url: string | undefined | null): string {
   if (!url) return '/placeholder-gown.jpg'
-  if (!url.includes('ucarecdn.com/')) return url
+  if (!url.includes('ucarecdn.com/')) return validateImageUrl(url)
 
   const base = url.match(/https:\/\/ucarecdn\.com\/[a-f0-9-]{36}\//)?.[0]
   if (!base) return url

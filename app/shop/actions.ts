@@ -7,13 +7,15 @@ async function db() {
   return (await createClient()) as any
 }
 
-async function publicDb() {
-  return (await createAdminClient()) as any
+// Admin client needed: conversations/messages RLS doesn't allow cross-user inserts,
+// and public listing reads need to work without a user session (SSR/ISR).
+async function adminDb() {
+  return createAdminClient() as any
 }
 
 export async function getApprovedListings() {
   try {
-    const supabase = await publicDb()
+    const supabase = await adminDb()
 
     const { data, error } = await supabase
       .from('listings')
@@ -31,12 +33,14 @@ export async function getApprovedListings() {
 
 export async function getListingById(id: string) {
   try {
-    const supabase = await publicDb()
+    const supabase = await adminDb()
 
     const { data, error } = await supabase
       .from('listings')
       .select(`
-        *,
+        id, title, description, category, condition, listing_type,
+        size_us, bust_cm, waist_cm, hips_cm, height_cm,
+        silhouette, train_style, price, msrp, images, created_at, seller_id,
         products(style_name, sku, images, msrp, silhouette, train_style, category, description, stockist_id, stockist_data)
       `)
       .eq('id', id)
@@ -52,7 +56,7 @@ export async function getListingById(id: string) {
 
 export async function getRelatedListings(listingId: string, category: string, limit = 4) {
   try {
-    const supabase = await publicDb()
+    const supabase = await adminDb()
 
     const { data } = await supabase
       .from('listings')
@@ -71,7 +75,7 @@ export async function getRelatedListings(listingId: string, category: string, li
 export async function startConversation(listingId: string, sellerId: string, message: string) {
   try {
     const supabase = await db()
-    const admin = await publicDb()
+    const admin = await adminDb()
 
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Please sign in to contact the seller' }

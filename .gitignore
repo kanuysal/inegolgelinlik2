@@ -29,6 +29,12 @@ yarn-error.log*
 
 # one-off scripts with credentials
 /scripts/
+check-*.js
+audit-*.js
+
+# security audit docs (may contain secrets/architecture details)
+SECURITY_AUDIT.md
+AUTH_SUMMARY.md
 
 # supabase
 supabase/.temp/

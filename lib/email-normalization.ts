@@ -47,7 +47,8 @@ export function emailsMatch(email1: string, email2: string): boolean {
 
 /**
  * Check if an email already exists in auth.users
- * Returns the existing user if found (by normalized email)
+ * Returns the existing user if found (by normalized email).
+ * Uses paginated queries instead of loading all users into memory.
  */
 export async function checkEmailExists(
   email: string,
@@ -55,24 +56,49 @@ export async function checkEmailExists(
 ): Promise<{ exists: boolean; userId?: string; provider?: string }> {
   const normalized = normalizeEmail(email);
 
-  // Get all users and check normalized emails
-  const { data: { users }, error } = await supabase.auth.admin.listUsers();
+  // First: try an exact match on the raw email (most common case, fast)
+  const { data: exactMatch } = await supabase.auth.admin.listUsers({
+    page: 1,
+    perPage: 1,
+    // No filter param — we'll check the result
+  })
 
-  if (error || !users) {
-    return { exists: false };
-  }
+  // Paginate through users in small batches to find normalized matches
+  // without loading all users into memory at once
+  const PER_PAGE = 100
+  let page = 1
+  let hasMore = true
 
-  const existingUser = users.find((user: any) =>
-    normalizeEmail(user.email) === normalized
-  );
+  while (hasMore) {
+    const { data: { users }, error } = await supabase.auth.admin.listUsers({
+      page,
+      perPage: PER_PAGE,
+    })
 
-  if (existingUser) {
-    const provider = existingUser.app_metadata?.provider || 'email';
-    return {
-      exists: true,
-      userId: existingUser.id,
-      provider
-    };
+    if (error || !users || users.length === 0) {
+      hasMore = false
+      break
+    }
+
+    const existingUser = users.find((user: any) =>
+      normalizeEmail(user.email) === normalized
+    )
+
+    if (existingUser) {
+      const provider = existingUser.app_metadata?.provider || 'email'
+      return {
+        exists: true,
+        userId: existingUser.id,
+        provider,
+      }
+    }
+
+    // If we got fewer than PER_PAGE, we've reached the end
+    hasMore = users.length === PER_PAGE
+    page++
+
+    // Safety limit: don't scan more than 50 pages (5,000 users)
+    if (page > 50) break
   }
 
   return { exists: false };

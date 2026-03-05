@@ -11,11 +11,14 @@ import { notifyNewMessage } from '@/lib/notify'
 import { verifyWebhookSignature } from '@/lib/kustomer'
 import { rateLimit } from '@/lib/rate-limit'
 
+/** Strip HTML tags from webhook message content to prevent stored XSS */
+function stripHtml(str: string): string {
+  return str.replace(/<[^>]*>/g, '').trim()
+}
+
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.text()
-
-    // Basic rate limiting per client IP to reduce abuse
+    // Rate limit BEFORE reading body to prevent resource exhaustion
     const ip =
       req.ip ||
       req.headers.get('x-real-ip') ||
@@ -30,6 +33,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Too many webhook requests' }, { status: 429 })
     }
 
+    // Validate content type
+    const contentType = req.headers.get('content-type') || ''
+    if (!contentType.includes('application/json')) {
+      return NextResponse.json({ error: 'Unsupported content type' }, { status: 415 })
+    }
+
+    // Reject oversized payloads (legitimate Kustomer webhooks are < 10KB)
+    const contentLength = parseInt(req.headers.get('content-length') || '0', 10)
+    if (contentLength > 64 * 1024) {
+      return NextResponse.json({ error: 'Payload too large' }, { status: 413 })
+    }
+
+    const body = await req.text()
+    if (body.length > 64 * 1024) {
+      return NextResponse.json({ error: 'Payload too large' }, { status: 413 })
+    }
+
     // Verify webhook authenticity – fail closed if secret is not configured
     const secret = process.env.KUSTOMER_WEBHOOK_SECRET
     if (!secret) {
@@ -37,7 +57,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Webhook secret not configured' }, { status: 500 })
     }
 
-    const signature = req.headers.get('x-kustomer-signature') || ''
+    // Reject missing signatures before doing any crypto work
+    const signature = req.headers.get('x-kustomer-signature')
+    if (!signature) {
+      return NextResponse.json({ error: 'Missing signature' }, { status: 401 })
+    }
     if (!verifyWebhookSignature(body, signature, secret)) {
       return NextResponse.json({ error: 'Invalid signature' }, { status: 401 })
     }
@@ -88,12 +112,14 @@ export async function POST(req: NextRequest) {
     }
 
     // Insert the CS agent's message as the seller side
+    // Strip HTML to prevent stored XSS from webhook content
+    const sanitizedMessage = stripHtml(messageBody)
     const { error: msgError } = await supabase
       .from('messages')
       .insert({
         conversation_id: conv.id,
         sender_id: conv.seller_id,
-        content: messageBody.trim(),
+        content: sanitizedMessage,
       })
 
     if (msgError) {
@@ -112,7 +138,7 @@ export async function POST(req: NextRequest) {
       recipientId: conv.buyer_id,
       senderName: 'RE:GALIA Support',
       listingTitle: conv.listings?.title || 'your gown',
-      messagePreview: messageBody.trim(),
+      messagePreview: sanitizedMessage,
       conversationLink: '/dashboard?tab=messages',
     }).catch(() => {})
 

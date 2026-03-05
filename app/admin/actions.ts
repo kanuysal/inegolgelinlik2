@@ -3,6 +3,7 @@
 import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { requireAuth, hasRole } from '@/lib/auth'
 import { revalidatePath } from 'next/cache'
+import { productSchema } from '@/lib/validators/listing'
 
 async function db() {
   return (await createClient()) as any
@@ -121,7 +122,7 @@ export async function approveListing(listingId: string) {
     .eq('id', listingId)
     .eq('status', 'pending_review')
 
-  if (error) return { error: error.message }
+  if (error) { console.error('Admin action error:', error); return { error: 'Operation failed. Please try again.' } }
 
   // Log the action
   await supabase.from('listing_approval_log').insert({
@@ -167,7 +168,7 @@ export async function rejectListing(listingId: string, reason: string) {
     .eq('id', listingId)
     .eq('status', 'pending_review')
 
-  if (error) return { error: error.message }
+  if (error) { console.error('Admin action error:', error); return { error: 'Operation failed. Please try again.' } }
 
   await supabase.from('listing_approval_log').insert({
     listing_id: listingId,
@@ -261,17 +262,27 @@ export async function createProduct(formData: FormData) {
   await requireAdminRole()
   const supabase = await adminDb()
 
-  const { error } = await supabase.from('products').insert({
-    style_name: formData.get('style_name') as string,
-    sku: (formData.get('sku') as string) || null,
+  const raw = {
+    style_name: (formData.get('style_name') as string)?.trim() || '',
+    sku: (formData.get('sku') as string)?.trim() || null,
     category: formData.get('category') as string,
-    silhouette: (formData.get('silhouette') as string) || null,
-    train_style: (formData.get('train_style') as string) || null,
+    silhouette: (formData.get('silhouette') as string)?.trim() || null,
+    train_style: (formData.get('train_style') as string)?.trim() || null,
     msrp: formData.get('msrp') ? Number(formData.get('msrp')) : null,
-    description: (formData.get('description') as string) || null,
-  })
+    description: (formData.get('description') as string)?.trim() || null,
+  }
 
-  if (error) return { error: error.message }
+  const result = productSchema.safeParse(raw)
+  if (!result.success) {
+    return { error: result.error.issues[0].message }
+  }
+
+  const { error } = await supabase.from('products').insert(result.data)
+
+  if (error) {
+    console.error('Create product error:', error)
+    return { error: 'Failed to create product.' }
+  }
   revalidatePath('/admin')
   return { success: true }
 }
@@ -280,23 +291,30 @@ export async function updateProduct(productId: string, formData: FormData) {
   await requireAdminRole()
   const supabase = await adminDb()
 
-  const updates: Record<string, any> = {
-    style_name: formData.get('style_name') as string,
+  const raw = {
+    style_name: (formData.get('style_name') as string)?.trim() || '',
     category: formData.get('category') as string,
-    sku: (formData.get('sku') as string) || null,
-    silhouette: (formData.get('silhouette') as string) || null,
-    train_style: (formData.get('train_style') as string) || null,
+    sku: (formData.get('sku') as string)?.trim() || null,
+    silhouette: (formData.get('silhouette') as string)?.trim() || null,
+    train_style: (formData.get('train_style') as string)?.trim() || null,
     msrp: formData.get('msrp') ? Number(formData.get('msrp')) : null,
-    description: (formData.get('description') as string) || null,
-    updated_at: new Date().toISOString(),
+    description: (formData.get('description') as string)?.trim() || null,
+  }
+
+  const result = productSchema.safeParse(raw)
+  if (!result.success) {
+    return { error: result.error.issues[0].message }
   }
 
   const { error } = await supabase
     .from('products')
-    .update(updates)
+    .update({ ...result.data, updated_at: new Date().toISOString() })
     .eq('id', productId)
 
-  if (error) return { error: error.message }
+  if (error) {
+    console.error('Update product error:', error)
+    return { error: 'Failed to update product.' }
+  }
   revalidatePath('/admin')
   return { success: true }
 }
@@ -310,7 +328,10 @@ export async function deleteProduct(productId: string) {
     .delete()
     .eq('id', productId)
 
-  if (error) return { error: error.message }
+  if (error) {
+    console.error('Delete product error:', error)
+    return { error: 'Failed to delete product.' }
+  }
   revalidatePath('/admin')
   return { success: true }
 }
@@ -324,7 +345,7 @@ export async function toggleProductActive(productId: string, isActive: boolean) 
     .update({ is_active: isActive, updated_at: new Date().toISOString() })
     .eq('id', productId)
 
-  if (error) return { error: error.message }
+  if (error) { console.error('Admin action error:', error); return { error: 'Operation failed. Please try again.' } }
   revalidatePath('/admin')
   return { success: true }
 }
@@ -408,7 +429,7 @@ export async function removeProductImage(productId: string, imageUrl: string) {
     })
     .eq('id', productId)
 
-  if (error) return { error: error.message }
+  if (error) { console.error('Admin action error:', error); return { error: 'Operation failed. Please try again.' } }
 
   // Try to remove from storage (best-effort, URL might be external)
   try {
@@ -453,7 +474,7 @@ export async function addProductImageUrl(productId: string, imageUrl: string) {
     })
     .eq('id', productId)
 
-  if (error) return { error: error.message }
+  if (error) { console.error('Admin action error:', error); return { error: 'Operation failed. Please try again.' } }
   revalidatePath('/admin')
   return { success: true }
 }
@@ -509,7 +530,7 @@ export async function bulkImportCatalog() {
   for (let i = 0; i < newProducts.length; i += 50) {
     const batch = newProducts.slice(i, i + 50)
     const { error } = await supabase.from('products').insert(batch)
-    if (error) return { error: error.message, imported }
+    if (error) { console.error('Stockist import batch error:', error); return { error: 'Import failed. Please try again.', imported } }
     imported += batch.length
   }
 
@@ -800,7 +821,7 @@ export async function addFeaturedGown(gown: {
     is_active: true,
   })
 
-  if (error) return { error: error.message }
+  if (error) { console.error('Admin action error:', error); return { error: 'Operation failed. Please try again.' } }
   revalidatePath('/admin')
   revalidatePath('/')
   return { success: true }
@@ -822,7 +843,7 @@ export async function updateFeaturedGown(id: string, updates: Record<string, any
     .update({ ...safeUpdates, updated_at: new Date().toISOString() })
     .eq('id', id)
 
-  if (error) return { error: error.message }
+  if (error) { console.error('Admin action error:', error); return { error: 'Operation failed. Please try again.' } }
   revalidatePath('/admin')
   revalidatePath('/')
   return { success: true }
@@ -833,7 +854,7 @@ export async function removeFeaturedGown(id: string) {
   const supabase = await adminDb()
 
   const { error } = await supabase.from('featured_gowns').delete().eq('id', id)
-  if (error) return { error: error.message }
+  if (error) { console.error('Admin action error:', error); return { error: 'Operation failed. Please try again.' } }
   revalidatePath('/admin')
   revalidatePath('/')
   return { success: true }
@@ -877,7 +898,7 @@ export async function deleteListing(listingId: string) {
     .delete()
     .eq('id', listingId)
 
-  if (error) return { error: error.message }
+  if (error) { console.error('Admin action error:', error); return { error: 'Operation failed. Please try again.' } }
   revalidatePath('/admin')
   revalidatePath('/')
   revalidatePath('/shop')
@@ -965,7 +986,7 @@ export async function deleteAllTestListings() {
     .eq('listing_type', 'sample_sale')
     .select('id')
 
-  if (error) return { error: error.message }
+  if (error) { console.error('Admin action error:', error); return { error: 'Operation failed. Please try again.' } }
   revalidatePath('/')
   revalidatePath('/shop')
   revalidatePath('/admin')
@@ -999,7 +1020,7 @@ export async function resolveClaim(claimId: string, notes: string) {
     })
     .eq('id', claimId)
 
-  if (error) return { error: error.message }
+  if (error) { console.error('Admin action error:', error); return { error: 'Operation failed. Please try again.' } }
   revalidatePath('/admin')
   return { success: true }
 }
@@ -1033,7 +1054,7 @@ export async function getAdminConversation(listingId: string, sellerId: string) 
     .select('id')
     .single()
 
-  if (error) return { error: error.message }
+  if (error) { console.error('Admin action error:', error); return { error: 'Operation failed. Please try again.' } }
   return { success: true, conversationId: created.id }
 }
 
@@ -1049,7 +1070,7 @@ export async function adminSendMessage(conversationId: string, content: string) 
       content: content.trim(),
     })
 
-  if (error) return { error: error.message }
+  if (error) { console.error('Admin action error:', error); return { error: 'Operation failed. Please try again.' } }
 
   // Revalidate both admin and dashboard for the seller
   revalidatePath('/admin')
