@@ -17,7 +17,7 @@ export async function getApprovedListings() {
 
     const { data, error } = await supabase
       .from('listings')
-      .select('*, products(style_name, sku, images, msrp)')
+      .select('*, products(style_name, sku, images, msrp, stockist_data)')
       .eq('status', 'approved')
       .order('created_at', { ascending: false })
       .limit(500)

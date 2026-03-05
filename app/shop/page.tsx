@@ -37,10 +37,14 @@ function mapDbListing(row: any): Listing {
   const mainImage = thumb(row.images?.[0]);
   const stockImage = thumb(row.products?.images?.[0]) || mainImage;
 
+  // Map collection line: "Bridal Couture" → "Couture", "Bridal GALA" → "GALA"
+  const rawCollection = row.products?.stockist_data?.collectionLine || "";
+  const collection = rawCollection.includes("GALA") ? "GALA" : rawCollection.includes("Couture") ? "Couture" : "Couture";
+
   return {
     id: row.id,
     title: row.title,
-    collection: row.products?.style_name || row.category || "Couture",
+    collection,
     designer: "Galia Lahav",
     originalPrice: row.msrp || row.price * 1.4,
     salePrice: row.price,
@@ -181,7 +185,7 @@ export default function ShopPage() {
         if (seller === "samples" && l.listingType !== "brand_direct" && l.listingType !== "sample_sale") return false;
         if (seller === "brides" && l.listingType !== "peer_to_peer") return false;
       }
-      if (collection !== "all" && !l.collection.toLowerCase().includes(collection.toLowerCase())) return false;
+      if (collection !== "all" && l.collection !== collection) return false;
       if (condition !== "all" && l.condition.toLowerCase() !== condition.toLowerCase()) return false;
       if (size !== "all" && String(l.size) !== size) return false;
       return true;
@@ -235,8 +239,7 @@ export default function ShopPage() {
             onChange={setCollection}
             options={[
               { value: "Couture", label: "Couture" },
-              { value: "GALA", label: "Gala" },
-              { value: "Ready to Wear", label: "Ready to Wear" },
+              { value: "GALA", label: "GALA" },
             ]}
           />
 
@@ -265,6 +268,7 @@ export default function ShopPage() {
               { value: "12", label: "12" },
               { value: "14", label: "14" },
               { value: "16", label: "16" },
+              { value: "Custom", label: "Custom" },
             ]}
           />
 
