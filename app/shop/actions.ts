@@ -177,6 +177,41 @@ export async function startConversation(listingId: string, sellerId: string, mes
       conversationLink: '/dashboard?tab=messages',
     }).catch(() => {})
 
+    // Forward Brand Direct inquiries to Kustomer CRM (best-effort)
+    try {
+      const { data: listingDetail } = await admin
+        .from('listings')
+        .select('listing_type')
+        .eq('id', listingId)
+        .single()
+
+      if (listingDetail?.listing_type === 'brand_direct') {
+        const { findOrCreateCustomer, createConversation: kustomerCreateConv } = await import('@/lib/kustomer')
+        const kustomerId = await findOrCreateCustomer(
+          user.email || '',
+          buyerProfile?.display_name || undefined
+        )
+        if (kustomerId) {
+          const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://regalia-scroll.vercel.app'
+          const kustomerConvId = await kustomerCreateConv({
+            customerId: kustomerId,
+            subject: `Inquiry: ${listing?.title || 'Brand Direct Gown'}`,
+            message: trimmedMessage,
+            senderName: buyerProfile?.display_name || 'RE:GALIA Bride',
+            listingUrl: `${siteUrl}/shop/${listingId}`,
+          })
+          if (kustomerConvId) {
+            await admin
+              .from('conversations')
+              .update({ kustomer_conversation_id: kustomerConvId })
+              .eq('id', conversationId)
+          }
+        }
+      }
+    } catch (e) {
+      console.error('[Kustomer] Brand Direct inquiry forward failed (non-blocking):', e)
+    }
+
     return { success: true, conversationId }
   } catch (err) {
     console.error('startConversation threw:', err)

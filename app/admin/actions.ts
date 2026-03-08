@@ -1250,3 +1250,157 @@ export async function adminSendMessage(conversationId: string, content: string) 
 
   return { success: true }
 }
+
+// ── Brand Direct Messages ──────────────────────────
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+export async function getBrandDirectConversations() {
+  await requireModRole()
+  const supabase = await adminDb()
+
+  const { data: conversations, error } = await supabase
+    .from('conversations')
+    .select(`
+      id,
+      listing_id,
+      buyer_id,
+      seller_id,
+      last_message_at,
+      created_at,
+      kustomer_conversation_id,
+      listings!inner(id, title, images, listing_type, price),
+      messages(id, content, sender_id, is_read, created_at)
+    `)
+    .eq('listings.listing_type', 'brand_direct')
+    .order('last_message_at', { ascending: false, nullsFirst: false })
+    .limit(200)
+
+  if (error || !conversations) {
+    console.error('getBrandDirectConversations error:', error)
+    return []
+  }
+
+  // Fetch buyer profiles
+  const buyerIds = Array.from(new Set(conversations.map((c: any) => c.buyer_id)))
+  const { data: profiles } = buyerIds.length > 0
+    ? await supabase.from('profiles').select('id, display_name, full_name, avatar_url').in('id', buyerIds)
+    : { data: [] }
+
+  const profileMap = new Map((profiles || []).map((p: any) => [p.id, p]))
+
+  return conversations.map((conv: any) => {
+    const unreadCount = (conv.messages || []).filter(
+      (m: any) => m.sender_id === conv.buyer_id && !m.is_read
+    ).length
+
+    const sortedMsgs = (conv.messages || []).sort(
+      (a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    )
+
+    return {
+      ...conv,
+      buyer: profileMap.get(conv.buyer_id) || null,
+      unreadCount,
+      lastMessage: sortedMsgs[0] || null,
+    }
+  })
+}
+
+export async function getBrandDirectMessages(conversationId: string) {
+  await requireModRole()
+  const supabase = await adminDb()
+
+  if (!UUID_RE.test(conversationId)) return []
+
+  // Verify conversation belongs to a brand_direct listing
+  const { data: conv } = await supabase
+    .from('conversations')
+    .select('id, buyer_id, listings!inner(listing_type)')
+    .eq('id', conversationId)
+    .eq('listings.listing_type', 'brand_direct')
+    .single()
+
+  if (!conv) return []
+
+  // Mark buyer messages as read
+  await supabase
+    .from('messages')
+    .update({ is_read: true })
+    .eq('conversation_id', conversationId)
+    .eq('sender_id', (conv as any).buyer_id)
+    .eq('is_read', false)
+
+  const { data: messages } = await supabase
+    .from('messages')
+    .select('*')
+    .eq('conversation_id', conversationId)
+    .order('created_at', { ascending: true })
+
+  return messages || []
+}
+
+export async function adminReplyBrandDirect(conversationId: string, content: string) {
+  await requireAdminRole()
+  const supabase = await adminDb()
+
+  const trimmed = content.trim()
+  if (!trimmed || trimmed.length > 5000) return { error: 'Message must be 1-5000 characters' }
+  if (!UUID_RE.test(conversationId)) return { error: 'Invalid conversation' }
+
+  // Verify conversation is brand_direct and get context
+  const { data: conv } = await supabase
+    .from('conversations')
+    .select('id, buyer_id, seller_id, kustomer_conversation_id, listings!inner(title, listing_type)')
+    .eq('id', conversationId)
+    .eq('listings.listing_type', 'brand_direct')
+    .single()
+
+  if (!conv) return { error: 'Conversation not found or not Brand Direct' }
+
+  // Insert as seller_id so buyer sees it on the "seller" side
+  const { error: msgError } = await supabase
+    .from('messages')
+    .insert({
+      conversation_id: conv.id,
+      sender_id: conv.seller_id,
+      content: trimmed,
+    })
+
+  if (msgError) {
+    console.error('adminReplyBrandDirect error:', msgError)
+    return { error: 'Failed to send message' }
+  }
+
+  await supabase
+    .from('conversations')
+    .update({ last_message_at: new Date().toISOString() })
+    .eq('id', conv.id)
+
+  // Notify the buyer
+  const { notifyNewMessage } = await import('@/lib/notify')
+  notifyNewMessage({
+    recipientId: conv.buyer_id,
+    senderName: 'Galia Lahav',
+    listingTitle: (conv as any).listings?.title || 'your gown',
+    messagePreview: trimmed,
+    conversationLink: '/dashboard?tab=messages',
+  }).catch(() => {})
+
+  // Forward to Kustomer if linked (best-effort)
+  if ((conv as any).kustomer_conversation_id) {
+    try {
+      const { sendMessage: kustomerSend } = await import('@/lib/kustomer')
+      await kustomerSend({
+        conversationId: (conv as any).kustomer_conversation_id,
+        message: trimmed,
+        direction: 'out',
+      })
+    } catch (e) {
+      console.error('[Kustomer] Forward failed (non-blocking):', e)
+    }
+  }
+
+  revalidatePath('/admin')
+  revalidatePath('/dashboard')
+  return { success: true }
+}

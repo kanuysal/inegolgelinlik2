@@ -39,9 +39,12 @@ import {
   reorderFeaturedGown,
   getAdminConversation,
   adminSendMessage,
+  getBrandDirectConversations,
+  getBrandDirectMessages,
+  adminReplyBrandDirect,
 } from './actions';
 
-type Tab = 'dashboard' | 'moderation' | 'brand_direct' | 'inventory' | 'sellers' | 'transactions' | 'claims' | 'featured';
+type Tab = 'dashboard' | 'moderation' | 'brand_direct' | 'brand_messages' | 'inventory' | 'sellers' | 'transactions' | 'claims' | 'featured';
 
 // ═══════════════════════════════════════════════════════
 // OVERVIEW TAB (Dashboard)
@@ -896,6 +899,304 @@ function BrandDirectTab() {
 }
 
 // ═══════════════════════════════════════════════════════
+// BRAND DIRECT MESSAGES TAB
+// ═══════════════════════════════════════════════════════
+function BrandDirectMessagesTab() {
+  const [conversations, setConversations] = useState<any[]>([]);
+  const [activeConv, setActiveConv] = useState<string | null>(null);
+  const [messages, setMessages] = useState<any[]>([]);
+  const [newMsg, setNewMsg] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [showList, setShowList] = useState(true);
+  const [isPending, startTransition] = useTransition();
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    getBrandDirectConversations().then((d) => {
+      setConversations(d);
+      if (d.length > 0 && window.innerWidth > 768) {
+        openConversation(d[0].id);
+      }
+      setLoading(false);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+  }, [messages]);
+
+  useEffect(() => {
+    if (!activeConv) return;
+    const interval = setInterval(() => {
+      getBrandDirectMessages(activeConv).then(setMessages);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [activeConv]);
+
+  const openConversation = (convId: string) => {
+    setActiveConv(convId);
+    getBrandDirectMessages(convId).then(setMessages);
+    if (window.innerWidth <= 768) setShowList(false);
+  };
+
+  const handleSend = () => {
+    if (!activeConv || !newMsg.trim()) return;
+    const msgText = newMsg;
+    setNewMsg('');
+    startTransition(async () => {
+      const res = await adminReplyBrandDirect(activeConv, msgText);
+      if (res.success) {
+        const updated = await getBrandDirectMessages(activeConv);
+        setMessages(updated);
+        getBrandDirectConversations().then(setConversations);
+      } else if (res.error) {
+        setNewMsg(msgText);
+      }
+    });
+  };
+
+  if (loading) return <LoadingSkeleton />;
+
+  const activeConvObj = conversations.find((c: any) => c.id === activeConv);
+
+  function formatDateLabel(dateStr: string) {
+    const d = new Date(dateStr);
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const yesterday = new Date(today.getTime() - 86400000);
+    const msgDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    if (msgDate.getTime() === today.getTime()) return 'Today';
+    if (msgDate.getTime() === yesterday.getTime()) return 'Yesterday';
+    return d.toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' });
+  }
+
+  const groupedMessages: { date: string; msgs: any[] }[] = [];
+  messages.forEach((m) => {
+    const label = formatDateLabel(m.created_at);
+    const last = groupedMessages[groupedMessages.length - 1];
+    if (last && last.date === label) last.msgs.push(m);
+    else groupedMessages.push({ date: label, msgs: [m] });
+  });
+
+  const totalUnread = conversations.reduce((sum: number, c: any) => sum + (c.unreadCount || 0), 0);
+
+  return (
+    <div className="p-4 md:p-8">
+      <div className="flex items-center justify-between bg-white p-4 border border-slate-200 mb-6">
+        <div>
+          <h2 className="text-lg font-medium tracking-tight">Brand Direct Messages</h2>
+          <p className="text-[10px] text-slate-400 uppercase tracking-widest mt-1">
+            Buyer inquiries for official Galia Lahav listings
+            {totalUnread > 0 && (
+              <span className="ml-2 bg-red-500 text-white text-[9px] px-2 py-0.5 rounded-full font-bold">
+                {totalUnread} unread
+              </span>
+            )}
+          </p>
+        </div>
+      </div>
+
+      {conversations.length === 0 ? (
+        <div className="text-center py-20 bg-white border border-slate-200">
+          <span className="material-symbols-outlined text-4xl text-slate-300 mb-2 block">chat_bubble_outline</span>
+          <p className="text-sm text-slate-500 font-medium tracking-wide">No Brand Direct Inquiries Yet</p>
+          <p className="text-xs text-slate-400 mt-2">When brides inquire about Brand Direct listings, conversations appear here</p>
+        </div>
+      ) : (
+        <div className="h-[600px] md:h-[700px] bg-[#faf8f5] border border-[#e8e0d4] flex overflow-hidden shadow-2xl shadow-black/8 relative">
+          {/* Conversation List */}
+          <aside className={`${showList ? 'flex' : 'hidden md:flex'} w-full md:w-[360px] border-r border-[#e8e0d4] flex-col flex-shrink-0 bg-[#faf8f5] z-10`}>
+            <div className="px-5 py-4 bg-[#1c1c1c] border-b border-[#333] flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <img src="/images/SYMBOL_BLACK.png" alt="" className="w-5 h-5 invert opacity-80" />
+                <h3 className="text-[13px] font-medium text-white/90 uppercase tracking-[0.15em]">Brand Direct</h3>
+              </div>
+              <span className="text-[10px] text-white/40 tracking-wider">{conversations.length}</span>
+            </div>
+            <div className="flex-1 overflow-y-auto">
+              {conversations.map((c: any) => {
+                const isActive = activeConv === c.id;
+                const isUnread = c.unreadCount > 0;
+                return (
+                  <button
+                    key={c.id}
+                    onClick={() => openConversation(c.id)}
+                    className={`w-full px-4 py-3.5 text-left border-b border-[#e8e0d4]/60 transition-all duration-200 flex gap-3 items-center ${isActive ? 'bg-[#f0ebe3]' : 'hover:bg-[#f5f0ea]'}`}
+                  >
+                    <div
+                      className="w-11 h-11 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-serif tracking-wide relative border"
+                      style={{ backgroundColor: isActive ? '#1c1c1c' : '#e8e0d4', color: isActive ? '#faf8f5' : '#8a7e6d', borderColor: isActive ? '#1c1c1c' : '#d4c9b8' }}
+                    >
+                      {(c.buyer?.display_name || c.buyer?.full_name || 'B').charAt(0).toUpperCase()}
+                      {isUnread && (
+                        <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#1c1c1c] rounded-full border-2 border-[#faf8f5] flex items-center justify-center">
+                          <span className="w-1.5 h-1.5 bg-[#c9a96e] rounded-full" />
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex justify-between items-baseline mb-0.5">
+                        <p className={`text-[14px] truncate font-serif ${isUnread ? 'font-semibold text-[#1c1c1c]' : 'font-normal text-[#4a4a4a]'}`}>
+                          {c.buyer?.display_name || c.buyer?.full_name || 'RE:GALIA Bride'}
+                        </p>
+                        <span className={`text-[10px] flex-shrink-0 ml-2 uppercase tracking-wider ${isUnread ? 'text-[#c9a96e] font-medium' : 'text-[#b5a898]'}`}>
+                          {c.lastMessage ? new Date(c.lastMessage.created_at).toLocaleDateString([], { month: 'short', day: 'numeric' }) : ''}
+                        </span>
+                      </div>
+                      <p className={`text-[12px] truncate leading-tight ${isUnread ? 'font-medium text-[#4a4a4a]' : 'text-[#a09585]'}`}>
+                        {c.lastMessage?.content || 'No messages yet'}
+                      </p>
+                      <p className="text-[10px] text-[#b5a898] mt-1 truncate italic">
+                        {c.listings?.title}{c.listings?.price ? ` — $${c.listings.price.toLocaleString()}` : ''}
+                      </p>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </aside>
+
+          {/* Chat View */}
+          <main className={`${!showList ? 'flex' : 'hidden md:flex'} flex-1 flex-col relative overflow-hidden`}>
+            {activeConvObj ? (
+              <>
+                <header className="px-4 md:px-5 py-3 bg-[#1c1c1c] border-b border-[#333] flex items-center justify-between z-20 flex-shrink-0">
+                  <div className="flex items-center gap-3">
+                    <button onClick={() => setShowList(true)} className="md:hidden w-8 h-8 flex items-center justify-center text-white/60">
+                      <span className="material-symbols-outlined text-xl">arrow_back</span>
+                    </button>
+                    <div className="w-9 h-9 rounded-full bg-[#c9a96e]/20 border border-[#c9a96e]/40 flex items-center justify-center text-[#c9a96e] text-sm font-serif">
+                      {(activeConvObj.buyer?.display_name || 'B').charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <h4 className="text-[14px] font-medium text-white/90 leading-tight font-serif tracking-wide">
+                        {activeConvObj.buyer?.display_name || activeConvObj.buyer?.full_name || 'RE:GALIA Bride'}
+                      </h4>
+                      <p className="text-[11px] text-white/40 truncate max-w-[180px] sm:max-w-none italic">
+                        {activeConvObj.listings?.title}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {activeConvObj.kustomer_conversation_id && (
+                      <span className="text-[9px] text-[#c9a96e]/60 uppercase tracking-wider border border-[#c9a96e]/20 px-2 py-1">CRM Linked</span>
+                    )}
+                  </div>
+                </header>
+
+                <div
+                  ref={scrollRef}
+                  className="flex-1 overflow-y-auto px-4 md:px-12 lg:px-20 py-4 pb-24 relative"
+                  style={{
+                    backgroundColor: '#f5f0ea',
+                    backgroundImage: 'url("/images/SYMBOL_BLACK.png")',
+                    backgroundRepeat: 'repeat',
+                    backgroundSize: '80px 80px',
+                    backgroundPosition: 'center',
+                    backgroundBlendMode: 'soft-light',
+                  }}
+                >
+                  <div className="absolute inset-0 bg-[#f5f0ea]/[0.92] pointer-events-none" />
+
+                  {groupedMessages.map((group, gi) => (
+                    <div key={gi} className="relative z-10">
+                      <div className="flex justify-center my-5">
+                        <span className="bg-[#1c1c1c]/80 backdrop-blur-sm text-[10px] text-white/70 px-4 py-1.5 uppercase tracking-[0.2em] font-medium">
+                          {group.date}
+                        </span>
+                      </div>
+                      {group.msgs.map((m: any, mi: number) => {
+                        const isBuyer = m.sender_id === activeConvObj.buyer_id;
+                        const isLast = mi === group.msgs.length - 1 || group.msgs[mi + 1]?.sender_id !== m.sender_id;
+                        const time = new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                        return (
+                          <div key={m.id} className={`flex ${isBuyer ? 'justify-start' : 'justify-end'} ${isLast ? 'mb-2.5' : 'mb-0.5'}`}>
+                            <div className={`relative max-w-[85%] md:max-w-[65%] px-3.5 py-2.5 text-[14px] leading-relaxed ${
+                              isBuyer
+                                ? 'bg-white text-[#1c1c1c] rounded-2xl rounded-bl-sm shadow-sm border border-[#e8e0d4]'
+                                : 'bg-[#1c1c1c] text-white/90 rounded-2xl rounded-br-sm shadow-md'
+                            }`}>
+                              {isBuyer && (mi === 0 || group.msgs[mi - 1]?.sender_id !== m.sender_id) && (
+                                <p className="text-[11px] font-medium text-[#c9a96e] mb-0.5 uppercase tracking-wider">
+                                  {activeConvObj.buyer?.display_name || 'Bride'}
+                                </p>
+                              )}
+                              {!isBuyer && (mi === 0 || group.msgs[mi - 1]?.sender_id !== m.sender_id) && (
+                                <p className="text-[11px] font-medium text-[#c9a96e] mb-0.5 uppercase tracking-wider">Galia Lahav</p>
+                              )}
+                              <span className="font-serif">{m.content}</span>
+                              <span className="inline-flex items-center gap-1 float-right ml-3 mt-1 translate-y-1">
+                                <span className={`text-[10px] whitespace-nowrap ${isBuyer ? 'text-[#b5a898]' : 'text-white/40'}`}>{time}</span>
+                                {!isBuyer && (
+                                  <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'wght' 600", color: m.is_read ? '#c9a96e' : 'rgba(255,255,255,0.3)' }}>
+                                    done_all
+                                  </span>
+                                )}
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ))}
+
+                  {isPending && (
+                    <div className="flex justify-end mb-2 relative z-10">
+                      <div className="bg-[#1c1c1c]/80 px-3.5 py-2.5 rounded-2xl rounded-br-sm shadow-md text-sm text-white/40 italic flex items-center gap-2">
+                        <span className="material-symbols-outlined text-sm animate-spin text-[#c9a96e]">hourglass_top</span>
+                        Sending...
+                      </div>
+                    </div>
+                  )}
+
+                  {messages.length === 0 && (
+                    <div className="flex flex-col items-center justify-center my-12 relative z-10">
+                      <img src="/images/SYMBOL_BLACK.png" alt="" className="w-16 h-16 opacity-10 mb-4" />
+                      <span className="bg-[#1c1c1c]/80 backdrop-blur-sm text-[11px] text-white/60 px-5 py-2.5 text-center max-w-sm leading-relaxed tracking-wide">
+                        No messages in this conversation yet.
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                <footer className="px-3 md:px-4 py-3 bg-[#1c1c1c] border-t border-[#333] absolute bottom-0 left-0 right-0 z-20">
+                  <div className="flex items-center gap-2.5">
+                    <input
+                      type="text"
+                      placeholder="Reply as Galia Lahav..."
+                      className="flex-1 bg-white/10 rounded-none border border-white/10 px-4 py-2.5 text-[14px] focus:outline-none focus:border-[#c9a96e]/50 text-white placeholder-white/30 font-serif transition-colors"
+                      value={newMsg}
+                      onChange={(e) => setNewMsg(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
+                    />
+                    <button
+                      onClick={handleSend}
+                      disabled={isPending || !newMsg.trim()}
+                      className="w-10 h-10 flex items-center justify-center bg-[#c9a96e] text-[#1c1c1c] hover:bg-[#d4b87a] transition-colors disabled:opacity-30 disabled:bg-white/10 disabled:text-white/20 flex-shrink-0"
+                    >
+                      <span className="material-symbols-outlined text-lg" style={{ fontVariationSettings: "'wght' 500" }}>send</span>
+                    </button>
+                  </div>
+                </footer>
+              </>
+            ) : (
+              <div className="flex-1 flex flex-col items-center justify-center p-12 text-center" style={{ backgroundColor: '#f5f0ea' }}>
+                <img src="/images/SYMBOL_BLACK.png" alt="RE:GALIA" className="w-24 h-24 opacity-10 mb-8" />
+                <h3 className="text-2xl font-serif font-normal text-[#1c1c1c]/70 mb-3 tracking-wide">Brand Direct Inbox</h3>
+                <div className="w-12 h-px bg-[#c9a96e]/40 mb-4" />
+                <p className="text-[12px] text-[#8a7e6d] max-w-xs leading-relaxed tracking-wide">
+                  Select a conversation to view and respond as Galia Lahav
+                </p>
+              </div>
+            )}
+          </main>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════
 // TRANSACTIONS & LISTINGS TAB (Combined visually)
 // ═══════════════════════════════════════════════════════
 function TransactionsTab({ mode }: { mode: 'all' | 'transactions' }) {
@@ -1742,6 +2043,7 @@ export default function AdminPage() {
     dashboard: 'Dashboard',
     moderation: 'Moderation Queue',
     brand_direct: 'Brand Direct',
+    brand_messages: 'Brand Messages',
     inventory: 'Inventory Catalog',
     sellers: 'Sellers & Users',
     transactions: 'All Transactions',
@@ -1778,6 +2080,10 @@ export default function AdminPage() {
             <button onClick={() => handleTab('brand_direct')} className={`w-full flex items-center gap-3 px-4 py-3 transition-all ${tab === 'brand_direct' ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:bg-slate-50'}`}>
               <span className="material-symbols-outlined text-sm">verified</span>
               <span className="text-xs font-medium tracking-wider uppercase">Brand Direct</span>
+            </button>
+            <button onClick={() => handleTab('brand_messages')} className={`w-full flex items-center gap-3 px-4 py-3 transition-all ${tab === 'brand_messages' ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:bg-slate-50'}`}>
+              <span className="material-symbols-outlined text-sm">chat</span>
+              <span className="text-xs font-medium tracking-wider uppercase">Messages</span>
             </button>
             <button onClick={() => handleTab('inventory')} className={`w-full flex items-center gap-3 px-4 py-3 transition-all ${tab === 'inventory' ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:bg-slate-50'}`}>
               <span className="material-symbols-outlined text-sm">inventory_2</span>
@@ -1838,6 +2144,7 @@ export default function AdminPage() {
             <ModerationTab />
           </div>
           {tab === 'brand_direct' && <BrandDirectTab />}
+          {tab === 'brand_messages' && <BrandDirectMessagesTab />}
           {tab === 'inventory' && <InventoryTab />}
           {tab === 'sellers' && <UsersTab />}
           <div className={tab === 'transactions' ? 'block' : 'hidden'}>
