@@ -28,6 +28,10 @@ import {
   seedTestListings,
   deleteAllTestListings,
   getApprovedListingsForSelector,
+  getBrandDirectListings,
+  createBrandDirectListing,
+  updateBrandDirectListing,
+  toggleBrandDirectStatus,
   getFeaturedGowns,
   addFeaturedGown,
   updateFeaturedGown,
@@ -37,7 +41,7 @@ import {
   adminSendMessage,
 } from './actions';
 
-type Tab = 'dashboard' | 'moderation' | 'inventory' | 'sellers' | 'transactions' | 'claims' | 'featured';
+type Tab = 'dashboard' | 'moderation' | 'brand_direct' | 'inventory' | 'sellers' | 'transactions' | 'claims' | 'featured';
 
 // ═══════════════════════════════════════════════════════
 // OVERVIEW TAB (Dashboard)
@@ -546,6 +550,347 @@ function AdminChat({ listingId, sellerId, sellerName, onClose }: { listingId: st
           </div>
         </form>
       </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════
+// BRAND DIRECT TAB
+// ═══════════════════════════════════════════════════════
+function BrandDirectTab() {
+  const [listings, setListings] = useState<any[]>([]);
+  const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [editId, setEditId] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+  const [msg, setMsg] = useState('');
+  const [productSearch, setProductSearch] = useState('');
+  const [form, setForm] = useState({
+    title: '', description: '', category: 'bridal', condition: 'new_unworn',
+    size_us: '', price: '', msrp: '', silhouette: '', train_style: '',
+    product_id: '', images: '' as string,
+  });
+
+  const refresh = () => {
+    setLoading(true);
+    Promise.all([getBrandDirectListings(), getProducts()]).then(([l, p]) => {
+      setListings(l);
+      setProducts(p);
+      setLoading(false);
+    });
+  };
+
+  useEffect(() => { refresh(); }, []);
+
+  const resetForm = () => {
+    setForm({ title: '', description: '', category: 'bridal', condition: 'new_unworn', size_us: '', price: '', msrp: '', silhouette: '', train_style: '', product_id: '', images: '' });
+    setShowForm(false);
+    setEditId(null);
+    setMsg('');
+  };
+
+  const handleSelectProduct = (product: any) => {
+    const imgs = product.images?.length > 0 ? JSON.stringify(product.images) : '';
+    setForm(f => ({
+      ...f,
+      title: product.style_name,
+      description: product.description || '',
+      category: product.category || 'bridal',
+      silhouette: product.silhouette || '',
+      train_style: product.train_style || '',
+      msrp: product.msrp ? String(product.msrp) : '',
+      product_id: product.id,
+      images: imgs,
+    }));
+  };
+
+  const handleSave = () => {
+    const fd = new FormData();
+    Object.entries(form).forEach(([k, v]) => fd.set(k, v));
+    // Ensure images is JSON array
+    if (form.images && !form.images.startsWith('[')) {
+      fd.set('images', JSON.stringify([form.images]));
+    }
+
+    startTransition(async () => {
+      let res;
+      if (editId) {
+        res = await updateBrandDirectListing(editId, fd);
+      } else {
+        res = await createBrandDirectListing(fd);
+      }
+      if (res.error) {
+        setMsg('Error: ' + res.error);
+      } else {
+        setMsg(editId ? 'Listing updated!' : 'Listing created!');
+        resetForm();
+        refresh();
+      }
+    });
+  };
+
+  const handleEdit = (listing: any) => {
+    setForm({
+      title: listing.title || '',
+      description: listing.description || '',
+      category: listing.category || 'bridal',
+      condition: listing.condition || 'new_unworn',
+      size_us: listing.size_us || '',
+      price: String(listing.price || ''),
+      msrp: listing.msrp ? String(listing.msrp) : '',
+      silhouette: listing.silhouette || '',
+      train_style: listing.train_style || '',
+      product_id: listing.product_id || '',
+      images: listing.images ? JSON.stringify(listing.images) : '',
+    });
+    setEditId(listing.id);
+    setShowForm(true);
+    setMsg('');
+  };
+
+  const handleToggle = (listing: any) => {
+    const newStatus = listing.status === 'approved' ? 'archived' : 'approved';
+    startTransition(async () => {
+      await toggleBrandDirectStatus(listing.id, newStatus);
+      refresh();
+    });
+  };
+
+  const handleDelete = (id: string) => {
+    if (!confirm('Delete this Brand Direct listing permanently?')) return;
+    startTransition(async () => {
+      await deleteListing(id);
+      refresh();
+    });
+  };
+
+  if (loading) return <div className="p-8"><LoadingSkeleton /></div>;
+
+  const parsedImages = (() => {
+    try { return JSON.parse(form.images || '[]'); } catch { return []; }
+  })();
+
+  return (
+    <div className="p-8 space-y-8">
+      {/* Header */}
+      <div className="flex items-center justify-between bg-white p-4 border border-slate-200">
+        <div>
+          <h2 className="text-lg font-medium tracking-tight">Brand Direct Listings</h2>
+          <p className="text-[10px] text-slate-400 uppercase tracking-widest mt-1">
+            Official Galia Lahav inventory • {listings.length} listings
+          </p>
+        </div>
+        <button
+          onClick={() => { resetForm(); setShowForm(true); }}
+          className="px-6 py-3 bg-primary text-white text-[10px] font-bold uppercase tracking-widest hover:bg-slate-800 transition-colors flex items-center gap-2"
+        >
+          <span className="material-symbols-outlined text-sm">add</span>
+          New Listing
+        </button>
+      </div>
+
+      {msg && (
+        <div className={`p-3 text-sm ${msg.startsWith('Error') ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}`}>
+          {msg}
+        </div>
+      )}
+
+      {/* Create/Edit Form */}
+      {showForm && (
+        <div className="bg-white border border-slate-200 p-6 space-y-4">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-sm font-medium tracking-tight">{editId ? 'Edit Brand Direct Listing' : 'Create Brand Direct Listing'}</h3>
+            <button onClick={resetForm} className="text-slate-400 hover:text-slate-600">
+              <span className="material-symbols-outlined text-sm">close</span>
+            </button>
+          </div>
+
+          {/* Product Selector */}
+          {!editId && (
+            <div className="bg-blue-50 border border-blue-200 p-4">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-blue-600 mb-2 block">
+                Link to Product Catalog ({products.length} products)
+              </label>
+              <input
+                value={productSearch}
+                onChange={e => setProductSearch(e.target.value)}
+                className="w-full bg-white border border-blue-300 text-sm py-2 px-3 focus:ring-accent focus:border-accent outline-none mb-2"
+                placeholder="Search by style name..."
+              />
+              <div className="max-h-48 overflow-y-auto bg-white border border-blue-200 divide-y divide-slate-100">
+                {products
+                  .filter(p => !productSearch || p.style_name.toLowerCase().includes(productSearch.toLowerCase()))
+                  .slice(0, 30)
+                  .map((product: any) => (
+                    <button
+                      key={product.id}
+                      type="button"
+                      onClick={() => { handleSelectProduct(product); setProductSearch(''); }}
+                      className={`w-full text-left px-3 py-2 flex items-center gap-3 hover:bg-blue-50 transition-colors ${form.product_id === product.id ? 'bg-blue-100' : ''}`}
+                    >
+                      <div className="w-8 h-10 bg-slate-100 flex-shrink-0 overflow-hidden">
+                        {product.images?.[0] && <img src={product.images[0]} alt="" className="w-full h-full object-cover" />}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">{product.style_name}</p>
+                        <p className="text-[10px] text-slate-500">{product.category} • {product.sku || 'No SKU'}</p>
+                      </div>
+                      {form.product_id === product.id && (
+                        <span className="material-symbols-outlined text-blue-600 text-sm">check_circle</span>
+                      )}
+                    </button>
+                  ))}
+              </div>
+              <p className="text-[10px] text-blue-500 mt-2">Select a product to auto-fill details, or enter manually below</p>
+            </div>
+          )}
+
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="col-span-2">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block">Title *</label>
+              <input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} className="w-full bg-slate-50 border border-slate-200 text-sm py-2 px-3 outline-none focus:border-accent" placeholder="The Maya" />
+            </div>
+            <div>
+              <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block">Size US</label>
+              <input value={form.size_us} onChange={e => setForm(f => ({ ...f, size_us: e.target.value }))} className="w-full bg-slate-50 border border-slate-200 text-sm py-2 px-3 outline-none focus:border-accent" placeholder="4" />
+            </div>
+            <div>
+              <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block">Price *</label>
+              <input type="number" value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))} className="w-full bg-slate-50 border border-slate-200 text-sm py-2 px-3 outline-none focus:border-accent" placeholder="5000" />
+            </div>
+            <div>
+              <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block">MSRP</label>
+              <input type="number" value={form.msrp} onChange={e => setForm(f => ({ ...f, msrp: e.target.value }))} className="w-full bg-slate-50 border border-slate-200 text-sm py-2 px-3 outline-none focus:border-accent" placeholder="12000" />
+            </div>
+            <div>
+              <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block">Category</label>
+              <select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))} className="w-full bg-slate-50 border border-slate-200 text-sm py-2 px-3 outline-none focus:border-accent">
+                <option value="bridal">Bridal</option>
+                <option value="evening">Evening</option>
+                <option value="accessories">Accessories</option>
+              </select>
+            </div>
+            <div>
+              <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block">Condition</label>
+              <select value={form.condition} onChange={e => setForm(f => ({ ...f, condition: e.target.value }))} className="w-full bg-slate-50 border border-slate-200 text-sm py-2 px-3 outline-none focus:border-accent">
+                <option value="new_unworn">New / Unworn</option>
+                <option value="excellent">Excellent</option>
+                <option value="good">Good</option>
+              </select>
+            </div>
+            <div>
+              <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block">Silhouette</label>
+              <select value={form.silhouette} onChange={e => setForm(f => ({ ...f, silhouette: e.target.value }))} className="w-full bg-slate-50 border border-slate-200 text-sm py-2 px-3 outline-none focus:border-accent">
+                <option value="">—</option>
+                <option value="a_line">A-Line</option>
+                <option value="ball_gown">Ball Gown</option>
+                <option value="mermaid">Mermaid</option>
+                <option value="trumpet">Trumpet</option>
+                <option value="sheath">Sheath</option>
+                <option value="fit_and_flare">Fit & Flare</option>
+              </select>
+            </div>
+            <div>
+              <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block">Train Style</label>
+              <select value={form.train_style} onChange={e => setForm(f => ({ ...f, train_style: e.target.value }))} className="w-full bg-slate-50 border border-slate-200 text-sm py-2 px-3 outline-none focus:border-accent">
+                <option value="">—</option>
+                <option value="none">None</option>
+                <option value="sweep">Sweep</option>
+                <option value="court">Court</option>
+                <option value="chapel">Chapel</option>
+                <option value="cathedral">Cathedral</option>
+                <option value="royal">Royal</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block">Description</label>
+            <textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} className="w-full bg-slate-50 border border-slate-200 text-sm p-3 outline-none focus:border-accent" rows={3} placeholder="Describe this gown..." />
+          </div>
+
+          <div>
+            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 block">Images (JSON array of URLs)</label>
+            <textarea value={form.images} onChange={e => setForm(f => ({ ...f, images: e.target.value }))} className="w-full bg-slate-50 border border-slate-200 text-sm p-3 outline-none focus:border-accent font-mono text-xs" rows={2} placeholder='["https://cdn.shopify.com/..."]' />
+          </div>
+
+          {parsedImages.length > 0 && (
+            <div className="flex gap-2 overflow-x-auto">
+              {parsedImages.slice(0, 5).map((img: string, i: number) => (
+                <div key={i} className="w-16 h-20 bg-slate-100 flex-shrink-0 overflow-hidden">
+                  <img src={img} alt="" className="w-full h-full object-cover" />
+                </div>
+              ))}
+              {parsedImages.length > 5 && <p className="text-xs text-slate-400 self-center">+{parsedImages.length - 5} more</p>}
+            </div>
+          )}
+
+          <div className="flex gap-3 pt-2">
+            <button
+              disabled={isPending || !form.title || !form.price}
+              onClick={handleSave}
+              className="px-6 py-3 bg-primary text-white text-[10px] font-bold uppercase tracking-widest hover:bg-slate-800 transition-colors disabled:opacity-50"
+            >
+              {isPending ? 'Saving...' : editId ? 'Update Listing' : 'Create Listing'}
+            </button>
+            <button onClick={resetForm} className="px-6 py-3 border border-slate-200 text-[10px] font-bold uppercase tracking-widest hover:bg-slate-50">Cancel</button>
+          </div>
+        </div>
+      )}
+
+      {/* Listings Grid */}
+      {listings.length === 0 && !showForm ? (
+        <div className="text-center py-20 bg-white border border-slate-200">
+          <span className="material-symbols-outlined text-4xl text-slate-300 mb-2">verified</span>
+          <p className="text-sm text-slate-500 font-medium tracking-wide">No Brand Direct Listings Yet</p>
+          <p className="text-xs text-slate-400 mt-2">Create listings to sell directly from Galia Lahav</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {listings.map((listing: any) => (
+            <div key={listing.id} className={`bg-white border border-slate-200 overflow-hidden transition-opacity ${listing.status !== 'approved' ? 'opacity-50' : ''}`}>
+              <div className="aspect-[3/4] bg-slate-100 relative overflow-hidden">
+                {listing.images?.[0] ? (
+                  <img src={listing.images[0]} alt={listing.title} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-slate-300">No Image</div>
+                )}
+                <div className="absolute top-2 left-2">
+                  <span className="bg-[#1c1c1c] text-white text-[8px] px-2 py-0.5 font-bold uppercase tracking-wider flex items-center gap-1">
+                    <span className="material-symbols-outlined text-[10px]">verified</span>
+                    Brand Direct
+                  </span>
+                </div>
+                <div className="absolute top-2 right-2">
+                  <span className={`text-[8px] px-2 py-0.5 font-bold uppercase tracking-wider ${listing.status === 'approved' ? 'bg-emerald-500 text-white' : 'bg-slate-400 text-white'}`}>
+                    {listing.status === 'approved' ? 'Live' : 'Hidden'}
+                  </span>
+                </div>
+              </div>
+              <div className="p-3 space-y-2">
+                <p className="font-serif text-base truncate">{listing.title}</p>
+                <div className="flex justify-between items-center text-xs">
+                  <span className="font-mono font-medium">${listing.price?.toLocaleString()}</span>
+                  <span className="text-slate-400">Size {listing.size_us || '—'}</span>
+                </div>
+                {listing.products?.style_name && (
+                  <p className="text-[10px] text-slate-400 truncate">Catalog: {listing.products.style_name}</p>
+                )}
+                <div className="flex gap-1.5 pt-1">
+                  <button disabled={isPending} onClick={() => handleEdit(listing)} className="flex-1 py-1.5 border border-slate-200 text-[9px] font-bold uppercase tracking-widest hover:bg-slate-50 transition-colors disabled:opacity-50">Edit</button>
+                  <button disabled={isPending} onClick={() => handleToggle(listing)} className={`flex-1 py-1.5 text-[9px] font-bold uppercase tracking-widest transition-colors disabled:opacity-50 ${listing.status === 'approved' ? 'border border-amber-200 text-amber-600 hover:bg-amber-50' : 'border border-emerald-200 text-emerald-600 hover:bg-emerald-50'}`}>
+                    {listing.status === 'approved' ? 'Hide' : 'Show'}
+                  </button>
+                  <button disabled={isPending} onClick={() => handleDelete(listing.id)} className="w-8 flex items-center justify-center border border-red-200 hover:bg-red-50 transition-colors disabled:opacity-50">
+                    <span className="material-symbols-outlined text-sm text-red-500">delete</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -1393,9 +1738,10 @@ export default function AdminPage() {
     setSidebarOpen(false);
   };
 
-  const T = {
+  const T: Record<Tab, string> = {
     dashboard: 'Dashboard',
     moderation: 'Moderation Queue',
+    brand_direct: 'Brand Direct',
     inventory: 'Inventory Catalog',
     sellers: 'Sellers & Users',
     transactions: 'All Transactions',
@@ -1428,6 +1774,10 @@ export default function AdminPage() {
             <button onClick={() => handleTab('moderation')} className={`w-full flex items-center gap-3 px-4 py-3 transition-all ${tab === 'moderation' ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:bg-slate-50'}`}>
               <span className="material-symbols-outlined text-sm">verified_user</span>
               <span className="text-xs font-medium tracking-wider uppercase">Moderation</span>
+            </button>
+            <button onClick={() => handleTab('brand_direct')} className={`w-full flex items-center gap-3 px-4 py-3 transition-all ${tab === 'brand_direct' ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:bg-slate-50'}`}>
+              <span className="material-symbols-outlined text-sm">verified</span>
+              <span className="text-xs font-medium tracking-wider uppercase">Brand Direct</span>
             </button>
             <button onClick={() => handleTab('inventory')} className={`w-full flex items-center gap-3 px-4 py-3 transition-all ${tab === 'inventory' ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:bg-slate-50'}`}>
               <span className="material-symbols-outlined text-sm">inventory_2</span>
@@ -1487,6 +1837,7 @@ export default function AdminPage() {
           <div className={tab === 'moderation' ? 'block h-full' : 'hidden h-full'}>
             <ModerationTab />
           </div>
+          {tab === 'brand_direct' && <BrandDirectTab />}
           {tab === 'inventory' && <InventoryTab />}
           {tab === 'sellers' && <UsersTab />}
           <div className={tab === 'transactions' ? 'block' : 'hidden'}>

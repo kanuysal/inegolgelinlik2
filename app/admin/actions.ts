@@ -888,6 +888,151 @@ export async function reorderFeaturedGown(id: string, direction: 'up' | 'down') 
   return { success: true }
 }
 
+// ── Brand Direct Listings ────────────────────────────
+export async function getBrandDirectListings() {
+  await requireModRole()
+  const supabase = await adminDb()
+
+  const { data, error } = await supabase
+    .from('listings')
+    .select('*, products(style_name, sku, images, msrp)')
+    .eq('listing_type', 'brand_direct')
+    .order('created_at', { ascending: false })
+    .limit(200)
+
+  if (error) {
+    console.error('getBrandDirectListings error:', error)
+    return []
+  }
+  return data || []
+}
+
+export async function createBrandDirectListing(formData: FormData) {
+  const user = await requireAdminRole()
+  const supabase = await adminDb()
+
+  const title = (formData.get('title') as string)?.trim()
+  const description = (formData.get('description') as string)?.trim() || null
+  const category = (formData.get('category') as string) || 'bridal'
+  const condition = (formData.get('condition') as string) || 'new_unworn'
+  const sizeUs = (formData.get('size_us') as string)?.trim() || null
+  const price = Number(formData.get('price'))
+  const msrp = formData.get('msrp') ? Number(formData.get('msrp')) : null
+  const silhouette = (formData.get('silhouette') as string)?.trim() || null
+  const trainStyle = (formData.get('train_style') as string)?.trim() || null
+  const productId = (formData.get('product_id') as string)?.trim() || null
+  const imagesRaw = formData.get('images') as string
+  let images: string[] = []
+  try { images = JSON.parse(imagesRaw || '[]') } catch { images = [] }
+
+  if (!title) return { error: 'Title is required' }
+  if (!price || price <= 0) return { error: 'Price must be greater than 0' }
+  if (images.length === 0) return { error: 'At least one image is required' }
+
+  const { data, error } = await supabase
+    .from('listings')
+    .insert({
+      seller_id: user.id,
+      title,
+      description,
+      category,
+      condition,
+      listing_type: 'brand_direct',
+      size_us: sizeUs,
+      price,
+      msrp,
+      silhouette,
+      train_style: trainStyle,
+      product_id: productId,
+      images,
+      status: 'approved',
+    })
+    .select('id')
+    .single()
+
+  if (error) {
+    console.error('Create brand direct listing error:', error)
+    return { error: 'Failed to create listing.' }
+  }
+
+  revalidatePath('/admin')
+  revalidatePath('/shop')
+  revalidatePath('/')
+  return { success: true, id: data.id }
+}
+
+export async function updateBrandDirectListing(listingId: string, formData: FormData) {
+  await requireAdminRole()
+  const supabase = await adminDb()
+
+  const title = (formData.get('title') as string)?.trim()
+  const description = (formData.get('description') as string)?.trim() || null
+  const category = (formData.get('category') as string) || 'bridal'
+  const condition = (formData.get('condition') as string) || 'new_unworn'
+  const sizeUs = (formData.get('size_us') as string)?.trim() || null
+  const price = Number(formData.get('price'))
+  const msrp = formData.get('msrp') ? Number(formData.get('msrp')) : null
+  const silhouette = (formData.get('silhouette') as string)?.trim() || null
+  const trainStyle = (formData.get('train_style') as string)?.trim() || null
+  const productId = (formData.get('product_id') as string)?.trim() || null
+  const imagesRaw = formData.get('images') as string
+  let images: string[] = []
+  try { images = JSON.parse(imagesRaw || '[]') } catch { images = [] }
+
+  if (!title) return { error: 'Title is required' }
+  if (!price || price <= 0) return { error: 'Price must be greater than 0' }
+
+  const { error } = await supabase
+    .from('listings')
+    .update({
+      title,
+      description,
+      category,
+      condition,
+      size_us: sizeUs,
+      price,
+      msrp,
+      silhouette,
+      train_style: trainStyle,
+      product_id: productId,
+      ...(images.length > 0 ? { images } : {}),
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', listingId)
+    .eq('listing_type', 'brand_direct')
+
+  if (error) {
+    console.error('Update brand direct listing error:', error)
+    return { error: 'Failed to update listing.' }
+  }
+
+  revalidatePath('/admin')
+  revalidatePath('/shop')
+  revalidatePath('/')
+  return { success: true }
+}
+
+export async function toggleBrandDirectStatus(listingId: string, status: 'approved' | 'archived') {
+  await requireAdminRole()
+  const supabase = await adminDb()
+
+  const { error } = await supabase
+    .from('listings')
+    .update({ status, updated_at: new Date().toISOString() })
+    .eq('id', listingId)
+    .eq('listing_type', 'brand_direct')
+
+  if (error) {
+    console.error('Toggle brand direct status error:', error)
+    return { error: 'Failed to update status.' }
+  }
+
+  revalidatePath('/admin')
+  revalidatePath('/shop')
+  revalidatePath('/')
+  return { success: true }
+}
+
 // ── Delete Listing ──────────────────────────────────
 export async function deleteListing(listingId: string) {
   await requireAdminRole()
@@ -1060,19 +1205,46 @@ export async function getAdminConversation(listingId: string, sellerId: string) 
 
 export async function adminSendMessage(conversationId: string, content: string) {
   const user = await requireModRole()
-  const supabase = await db()
+  const admin = await adminDb()
 
-  const { error } = await supabase
+  const trimmed = content.trim()
+  if (!trimmed) return { error: 'Message cannot be empty' }
+
+  const { error } = await admin
     .from('messages')
     .insert({
       conversation_id: conversationId,
       sender_id: user.id,
-      content: content.trim(),
+      content: trimmed,
     })
 
   if (error) { console.error('Admin action error:', error); return { error: 'Operation failed. Please try again.' } }
 
-  // Revalidate both admin and dashboard for the seller
+  // Update conversation timestamp
+  await admin
+    .from('conversations')
+    .update({ last_message_at: new Date().toISOString() })
+    .eq('id', conversationId)
+
+  // Send email notification to the other participant
+  const { data: conv } = await admin
+    .from('conversations')
+    .select('buyer_id, seller_id, listings(title)')
+    .eq('id', conversationId)
+    .single()
+
+  if (conv) {
+    const recipientId = conv.buyer_id === user.id ? conv.seller_id : conv.buyer_id
+    const { notifyNewMessage } = await import('@/lib/notify')
+    notifyNewMessage({
+      recipientId,
+      senderName: 'Galia Lahav',
+      listingTitle: conv.listings?.title || 'your gown',
+      messagePreview: trimmed,
+      conversationLink: '/dashboard?tab=messages',
+    }).catch(() => {})
+  }
+
   revalidatePath('/admin')
   revalidatePath('/dashboard')
 

@@ -148,6 +148,11 @@ export default function ProductDetailPage() {
   const [inquiryMsg, setInquiryMsg] = useState("");
   const [inquirySending, setInquirySending] = useState(false);
   const [inquiryError, setInquiryError] = useState<string | null>(null);
+  const [showOffer, setShowOffer] = useState(false);
+  const [offerAmount, setOfferAmount] = useState("");
+  const [offerNote, setOfferNote] = useState("");
+  const [offerSending, setOfferSending] = useState(false);
+  const [offerError, setOfferError] = useState<string | null>(null);
   const [relatedListings, setRelatedListings] = useState<any[]>([]);
 
   useEffect(() => {
@@ -268,6 +273,49 @@ export default function ProductDetailPage() {
     }
   };
 
+  const handleOffer = async () => {
+    const amount = Number(offerAmount);
+    if (!amount || amount <= 0) {
+      setOfferError("Please enter a valid offer amount.");
+      return;
+    }
+    if (!sellerId) {
+      setOfferError("Unable to contact seller. Please try again later.");
+      return;
+    }
+    setOfferSending(true);
+    setOfferError(null);
+
+    try {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setOfferSending(false);
+        router.push(`/auth/login?redirect=/shop/${params.id}`);
+        return;
+      }
+
+      const offerMessage = `💰 Offer: $${amount.toLocaleString()}\n\nI'd like to offer $${amount.toLocaleString()} for this gown.${offerNote.trim() ? `\n\n${offerNote.trim()}` : ""}`;
+
+      const result = await startConversation(params.id as string, sellerId, offerMessage);
+      setOfferSending(false);
+
+      if (result.error) {
+        setOfferError(result.error);
+        return;
+      }
+
+      setShowOffer(false);
+      setOfferAmount("");
+      setOfferNote("");
+      router.push("/dashboard?tab=messages");
+    } catch (err) {
+      setOfferSending(false);
+      setOfferError("Failed to send offer. Please try again.");
+      console.error("Offer error:", err);
+    }
+  };
+
   if (!listing) return null;
 
   const images = allImages.length > 0 ? allImages : [listing.imageUrl, listing.stockImageUrl];
@@ -347,9 +395,12 @@ export default function ProductDetailPage() {
                   {listing.collection}
                 </p>
               </div>
-              <h1 className="font-serif text-5xl md:text-7xl leading-none tracking-[-0.02em] mb-8 italic font-light">
+              <h1 className="font-serif text-5xl md:text-7xl leading-none tracking-[-0.02em] mb-6 italic font-light">
                 {listing.title}
               </h1>
+              <div className="mb-8">
+                <SellerBadge type={listing.listingType} />
+              </div>
 
               <div className="flex items-baseline gap-6 mb-12">
                 <span className="font-sans text-3xl tracking-tight">
@@ -389,24 +440,32 @@ export default function ProductDetailPage() {
                 })}
               </div>
 
-              <div className="mb-16 flex gap-3">
-                <button
-                  onClick={() => setShowInquiry(true)}
-                  className="flex-1 py-5 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-[#333] transition-all duration-300"
-                >
-                  Inquire Now
-                </button>
-                <button
-                  onClick={() => toggleWish(listing.id)}
-                  className={`w-14 flex items-center justify-center border transition-all duration-300 ${isWished(listing.id) ? "border-red-200 bg-red-50" : "border-[#1c1c1c]/10 hover:border-[#1c1c1c]/30"}`}
-                  aria-label={isWished(listing.id) ? "Remove from wishlist" : "Add to wishlist"}
-                >
-                  <span
-                    className={`material-symbols-outlined text-xl ${isWished(listing.id) ? "text-red-500" : "text-[#1c1c1c]/30"}`}
-                    style={isWished(listing.id) ? { fontVariationSettings: "'FILL' 1" } : {}}
+              <div className="mb-16 space-y-3">
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setShowInquiry(true)}
+                    className="flex-1 py-5 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-[#333] transition-all duration-300"
                   >
-                    favorite
-                  </span>
+                    Inquire Now
+                  </button>
+                  <button
+                    onClick={() => toggleWish(listing.id)}
+                    className={`w-14 flex items-center justify-center border transition-all duration-300 ${isWished(listing.id) ? "border-red-200 bg-red-50" : "border-[#1c1c1c]/10 hover:border-[#1c1c1c]/30"}`}
+                    aria-label={isWished(listing.id) ? "Remove from wishlist" : "Add to wishlist"}
+                  >
+                    <span
+                      className={`material-symbols-outlined text-xl ${isWished(listing.id) ? "text-red-500" : "text-[#1c1c1c]/30"}`}
+                      style={isWished(listing.id) ? { fontVariationSettings: "'FILL' 1" } : {}}
+                    >
+                      favorite
+                    </span>
+                  </button>
+                </div>
+                <button
+                  onClick={() => setShowOffer(true)}
+                  className="w-full py-4 border border-[#1c1c1c]/10 text-[#1c1c1c] font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:border-[#1c1c1c]/30 hover:bg-[#1c1c1c]/[0.02] transition-all duration-300"
+                >
+                  Make an Offer
                 </button>
               </div>
 
@@ -463,6 +522,84 @@ export default function ProductDetailPage() {
                         className="w-full py-4 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-[#333] transition-all disabled:opacity-30"
                       >
                         {inquirySending ? "Sending..." : "Send Message"}
+                      </button>
+                    </motion.div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Offer Modal */}
+              <AnimatePresence>
+                {showOffer && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="fixed inset-0 z-50 flex items-center justify-center px-6"
+                  >
+                    <div className="absolute inset-0 bg-[#1c1c1c]/60 backdrop-blur-sm" onClick={() => setShowOffer(false)} />
+                    <motion.div
+                      initial={{ opacity: 0, y: 20, scale: 0.97 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 20, scale: 0.97 }}
+                      className="relative bg-white w-full max-w-lg p-10 shadow-2xl"
+                    >
+                      <button
+                        onClick={() => setShowOffer(false)}
+                        className="absolute top-6 right-6 text-[#1c1c1c]/20 hover:text-[#1c1c1c] transition-colors"
+                      >
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                      </button>
+
+                      <p className="font-sans text-[11px] font-light uppercase tracking-[0.15em] text-[#1c1c1c]/40 mb-3">
+                        Make an Offer
+                      </p>
+                      <h3 className="font-serif text-3xl text-[#1c1c1c] mb-2 italic tracking-tight font-light">
+                        {listing.title}
+                      </h3>
+                      <p className="font-sans text-xs text-[#1c1c1c]/30 mb-2 font-light">
+                        Listed at {fmt(listing.salePrice)}
+                      </p>
+                      <p className="font-sans text-xs text-[#1c1c1c]/30 mb-8 font-light">
+                        Your offer will be sent as a private message to the seller.
+                      </p>
+
+                      {offerError && (
+                        <div className="mb-4 p-3 border border-red-500/20 bg-red-500/5 text-red-500 text-sm text-center">
+                          {offerError}
+                        </div>
+                      )}
+
+                      <div className="mb-4">
+                        <label className="font-sans text-[10px] font-light uppercase tracking-[0.15em] text-[#1c1c1c]/40 block mb-2">
+                          Your Offer (USD)
+                        </label>
+                        <div className="relative">
+                          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#1c1c1c]/30 font-sans text-lg">$</span>
+                          <input
+                            type="number"
+                            value={offerAmount}
+                            onChange={(e) => setOfferAmount(e.target.value)}
+                            placeholder="0"
+                            className="w-full pl-9 pr-4 py-4 border border-[#1c1c1c]/10 bg-white text-[#1c1c1c] font-sans text-2xl font-light focus:outline-none focus:border-[#1c1c1c]/30 transition-colors"
+                          />
+                        </div>
+                      </div>
+
+                      <textarea
+                        value={offerNote}
+                        onChange={(e) => setOfferNote(e.target.value)}
+                        placeholder="Add a note to the seller (optional)"
+                        rows={3}
+                        className="w-full px-4 py-3 border border-[#1c1c1c]/10 bg-white text-[#1c1c1c] placeholder:text-[#1c1c1c]/20 font-sans text-sm font-light focus:outline-none focus:border-[#1c1c1c]/30 transition-colors resize-none mb-6"
+                      />
+
+                      <button
+                        onClick={handleOffer}
+                        disabled={!offerAmount || offerSending}
+                        className="w-full py-4 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-[#333] transition-all disabled:opacity-30"
+                      >
+                        {offerSending ? "Sending..." : `Send Offer${offerAmount ? ` — $${Number(offerAmount).toLocaleString()}` : ""}`}
                       </button>
                     </motion.div>
                   </motion.div>

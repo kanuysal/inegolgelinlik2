@@ -228,7 +228,7 @@ export default function ShopPage() {
             value={seller}
             onChange={setSeller}
             options={[
-              { value: "samples", label: "Vendor Name" },
+              { value: "samples", label: "Galia Lahav" },
               { value: "brides", label: "GL Brides" },
             ]}
           />
@@ -297,6 +297,15 @@ export default function ShopPage() {
                     src={listing.imageUrl}
                     loading="lazy"
                   />
+                  {listing.listingType === "brand_direct" && (
+                    <div className="absolute top-2 left-2 flex items-center gap-1 bg-[#1c1c1c]/90 backdrop-blur-sm text-white px-2 py-1">
+                      <svg viewBox="0 0 24 24" fill="none" className="w-3 h-3 flex-shrink-0">
+                        <path d="M12 2L14.09 4.26L17 3.64L17.18 6.57L19.82 8.07L18.56 10.74L20 13.14L17.72 14.72L17.5 17.66L14.58 17.95L12.73 20.39L10.27 18.76L7.27 19.5L6.27 16.73L3.53 15.32L4.63 12.56L3.27 10L5.57 8.45L5.82 5.51L8.74 5.27L10.64 2.87L12 2Z" fill="white"/>
+                        <path d="M9 12L11 14L15 10" stroke="#1c1c1c" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      <span className="text-[8px] font-bold uppercase tracking-[0.1em]">Galia Lahav</span>
+                    </div>
+                  )}
                 </div>
                 <div className="p-2.5 md:p-3 flex flex-col flex-grow">
                   <div className="mb-1.5">

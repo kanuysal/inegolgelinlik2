@@ -50,6 +50,11 @@ export async function notifyNewMessage({
     return
   }
 
+  const fromEmail = process.env.RESEND_FROM_EMAIL
+  if (!fromEmail) {
+    console.warn('[notify] RESEND_FROM_EMAIL not set — emails will only reach the Resend account owner (test mode). Set RESEND_FROM_EMAIL to a verified sender to send emails to all users.')
+  }
+
   // Look up recipient email
   const { data: { user } } = await supabase.auth.admin.getUserById(recipientId)
   if (!user?.email) {
@@ -71,7 +76,7 @@ export async function notifyNewMessage({
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: process.env.RESEND_FROM_EMAIL || 'RE:GALIA <onboarding@resend.dev>',
+        from: fromEmail || 'RE:GALIA <onboarding@resend.dev>',
         to: user.email,
         subject: `New message about ${listingTitle.replace(/[<>"'&\n\r]/g, '').slice(0, 100)} — RE:GALIA`,
         html: `
