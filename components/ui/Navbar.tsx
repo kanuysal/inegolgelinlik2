@@ -146,7 +146,7 @@ export default function Navbar() {
               )}
             </Link>
             <Link href="/shop" className="w-6 h-6 flex items-center justify-center">
-              <span className={`material-symbols-outlined text-xl cursor-pointer transition-colors duration-300 ${useLight ? "text-white" : "text-primary"}`} style={{ fontVariationSettings: "'wght' 300" }}>shopping_cart</span>
+              <span className={`material-symbols-outlined text-xl cursor-pointer transition-colors duration-300 ${useLight ? "text-white" : "text-primary"}`} style={{ fontVariationSettings: "'wght' 300" }}>favorite_border</span>
             </Link>
             {!loading && user && (
               <>
