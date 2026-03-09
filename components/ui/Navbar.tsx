@@ -145,9 +145,6 @@ export default function Navbar() {
                 </span>
               )}
             </Link>
-            <Link href="/shop" className="w-6 h-6 flex items-center justify-center">
-              <span className={`material-symbols-outlined text-xl cursor-pointer transition-colors duration-300 ${useLight ? "text-white" : "text-primary"}`} style={{ fontVariationSettings: "'wght' 300" }}>favorite_border</span>
-            </Link>
             {!loading && user && (
               <>
                 <Link href="/dashboard?tab=messages" className="relative w-6 h-6 flex items-center justify-center" title="Messages">
