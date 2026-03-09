@@ -37,7 +37,8 @@ export async function login(formData: FormData) {
   const supabase = createClient()
 
   // Rate limit login attempts per IP (e.g., 5 per 15 minutes)
-  const ip = headers().get('x-real-ip') || headers().get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
+  const headersList = await headers()
+  const ip = headersList.get('x-real-ip') || headersList.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
   const allowed = await rateLimit({
     key: `login:${ip}`,
     limit: 5,
@@ -90,7 +91,8 @@ export async function signup(formData: FormData) {
   }
 
   // Rate limit signups per IP BEFORE expensive DB operations
-  const ip = headers().get('x-real-ip') || headers().get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
+  const headersList = await headers()
+  const ip = headersList.get('x-real-ip') || headersList.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
   const allowed = await rateLimit({
     key: `signup:${ip}`,
     limit: 3,
