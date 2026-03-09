@@ -34,7 +34,7 @@ function sanitizeRedirect(raw: string | null): string {
 }
 
 export async function login(formData: FormData) {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   // Rate limit login attempts per IP (e.g., 5 per 15 minutes)
   const headersList = await headers()
@@ -75,7 +75,7 @@ export async function login(formData: FormData) {
 }
 
 export async function signup(formData: FormData) {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const rawData = {
     email: formData.get('email') as string,
@@ -145,7 +145,7 @@ export async function signup(formData: FormData) {
 }
 
 export async function signOut() {
-  const supabase = createClient()
+  const supabase = await createClient()
   await supabase.auth.signOut()
   revalidatePath('/', 'layout')
   redirect('/')
@@ -156,7 +156,7 @@ export async function signOut() {
  * Uses admin client to bypass RLS on user_roles table.
  */
 export async function checkIsStaff(): Promise<boolean> {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return false
 
@@ -178,7 +178,7 @@ export async function signInWithGoogle() {
     return { error: 'Too many sign-in attempts. Please try again later.' }
   }
 
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
