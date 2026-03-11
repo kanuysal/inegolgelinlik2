@@ -372,12 +372,12 @@ export default function ProductDetailPage() {
               </div>
 
               {/* Thumbnails */}
-              <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide">
+              <div className="flex gap-3 overflow-x-auto pt-1 pb-4 scrollbar-hide">
                 {images.map((img, i) => (
                   <button
                     key={i}
                     onClick={() => setActiveImage(i)}
-                    className={`relative flex-shrink-0 w-24 aspect-[3/4] overflow-hidden border-2 transition-all duration-300 ${activeImage === i ? "border-[#1c1c1c] scale-105" : "border-transparent opacity-40"
+                    className={`relative flex-shrink-0 w-24 aspect-[3/4] overflow-hidden border-2 transition-all duration-300 ${activeImage === i ? "border-[#1c1c1c]" : "border-transparent opacity-40"
                       }`}
                   >
                     <Image src={img} alt="Thumbnail" fill className="object-cover" />

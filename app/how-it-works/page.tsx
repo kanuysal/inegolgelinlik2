@@ -1,12 +1,7 @@
 "use client";
 
-import { useRef, useState } from "react";
-import {
-  motion,
-  useScroll,
-  useTransform,
-  AnimatePresence,
-} from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import Navbar from "@/components/ui/Navbar";
@@ -167,43 +162,20 @@ function JourneyStep({
   index: number;
   isLast: boolean;
 }) {
-  const sectionRef = useRef<HTMLDivElement>(null);
   const isEven = index % 2 === 0;
-
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"],
-  });
-
-  // Image parallax & reveal
-  const imageY = useTransform(scrollYProgress, [0, 0.5, 1], [80, 0, -80]);
-  const imageScale = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0.9, 1, 1, 0.95]);
-  const imageOpacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
-
-  // Text reveal
-  const textY = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [60, 0, 0, -40]);
-  const textOpacity = useTransform(scrollYProgress, [0, 0.25, 0.75, 1], [0, 1, 1, 0]);
-
-  // Number reveal
-  const numOpacity = useTransform(scrollYProgress, [0, 0.15, 0.8, 1], [0, 0.06, 0.06, 0]);
-
-  // Accent line
-  const lineScaleX = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0, 1, 1, 0]);
 
   return (
     <section
-      ref={sectionRef}
       className={`relative min-h-screen flex items-center ${!isLast ? "mb-0" : ""}`}
     >
       {/* Giant background number */}
-      <motion.div
-        style={{ opacity: numOpacity }}
-        className={`absolute top-1/2 -translate-y-1/2 font-serif text-[20vw] md:text-[28vw] leading-none text-[#1c1c1c] select-none pointer-events-none ${
+      <div
+        className={`absolute top-1/2 -translate-y-1/2 font-serif text-[20vw] md:text-[28vw] leading-none text-[#1c1c1c] opacity-[0.06] select-none pointer-events-none ${
           isEven ? "right-0 md:right-10" : "left-0 md:left-10"
         }`}
       >
         {step.num}
-      </motion.div>
+      </div>
 
       <div className="max-w-[90rem] mx-auto w-full px-6 md:px-16 py-24 md:py-32 relative z-10">
         <div
@@ -213,7 +185,10 @@ function JourneyStep({
         >
           {/* Image side */}
           <motion.div
-            style={{ y: imageY, scale: imageScale, opacity: imageOpacity }}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
             className="relative aspect-[3/4] overflow-hidden md:[direction:ltr]"
           >
             <Image
@@ -229,15 +204,15 @@ function JourneyStep({
 
           {/* Text side */}
           <motion.div
-            style={{ y: textY, opacity: textOpacity }}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.15 }}
             className="flex flex-col justify-center md:[direction:ltr]"
           >
             {/* Accent label */}
             <div className="flex items-center gap-4 mb-8">
-              <motion.div
-                style={{ scaleX: lineScaleX }}
-                className="h-[1px] w-12 bg-[#1c1c1c]/20 origin-left"
-              />
+              <div className="h-[1px] w-12 bg-[#1c1c1c]/20" />
               <span className="font-sans text-[10px] font-light uppercase tracking-[0.3em] text-[#1c1c1c]/30">
                 {step.accent}
               </span>
@@ -277,54 +252,37 @@ function JourneyStep({
    ═══════════════════════════════════════════ */
 
 function HeroWordReveal() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"],
-  });
-
   const words = ["Your", "journey", "to", "couture,", "perfected."];
 
   return (
-    <div ref={containerRef} className="relative min-h-[200vh]">
-      <div className="sticky top-0 h-screen flex items-center justify-center">
-        <div className="text-center px-6">
-          <motion.p
-            style={{ opacity: useTransform(scrollYProgress, [0, 0.1], [1, 0]) }}
-            className="font-sans text-[10px] font-light uppercase tracking-[0.5em] text-[#1c1c1c]/30 mb-10"
-          >
-            The RE:GALIA Journey
-          </motion.p>
-          <div className="flex flex-wrap justify-center gap-x-[0.35em]">
-            {words.map((word, i) => {
-              const start = 0.1 + i * 0.12;
-              const end = start + 0.15;
-              return (
-                <motion.span
-                  key={i}
-                  style={{
-                    opacity: useTransform(scrollYProgress, [start, end], [0.08, 1]),
-                    y: useTransform(scrollYProgress, [start, end], [30, 0]),
-                  }}
-                  className={`font-serif text-5xl md:text-7xl lg:text-[6rem] font-light tracking-[-0.03em] text-[#1c1c1c] leading-none ${
-                    word === "couture," ? "italic" : ""
-                  } ${word === "perfected." ? "italic" : ""}`}
-                >
-                  {word}
-                </motion.span>
-              );
-            })}
-          </div>
-          <motion.p
-            style={{
-              opacity: useTransform(scrollYProgress, [0.7, 0.85], [0, 1]),
-              y: useTransform(scrollYProgress, [0.7, 0.85], [20, 0]),
-            }}
-            className="font-sans text-[15px] text-[#1c1c1c]/35 tracking-wide max-w-lg mx-auto leading-relaxed mt-10 font-light"
-          >
-            A curated experience built on trust, authentication, and the signature Galia Lahav standard.
-          </motion.p>
+    <div className="relative h-screen flex items-center justify-center">
+      <div className="text-center px-6">
+        <p className="font-sans text-[10px] font-light uppercase tracking-[0.5em] text-[#1c1c1c]/30 mb-10">
+          The RE:GALIA Journey
+        </p>
+        <div className="flex flex-wrap justify-center gap-x-[0.35em]">
+          {words.map((word, i) => (
+            <motion.span
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 + i * 0.12 }}
+              className={`font-serif text-5xl md:text-7xl lg:text-[6rem] font-light tracking-[-0.03em] text-[#1c1c1c] leading-none ${
+                word === "couture," || word === "perfected." ? "italic" : ""
+              }`}
+            >
+              {word}
+            </motion.span>
+          ))}
         </div>
+        <motion.p
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 1.2 }}
+          className="font-sans text-[15px] text-[#1c1c1c]/35 tracking-wide max-w-lg mx-auto leading-relaxed mt-10 font-light"
+        >
+          A curated experience built on trust, authentication, and the signature Galia Lahav standard.
+        </motion.p>
       </div>
     </div>
   );

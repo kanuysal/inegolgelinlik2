@@ -388,9 +388,11 @@ export default function SellWizardPage() {
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           {/* Mobile: show step number only, Desktop: full labels */}
           <div className="flex justify-between text-[9px] md:text-[11px] uppercase tracking-[0.15em] md:tracking-[0.2em] font-medium text-gray-400 py-2 md:py-3 overflow-x-auto no-scrollbar gap-1 md:gap-0">
-            {STEPS.map((s, idx) => (
-              <span key={s.num} className={`flex items-center gap-1 md:gap-2 shrink-0 px-1 ${step === s.num ? 'text-primary border-b-2 border-primary pb-1' : step > s.num ? 'text-primary' : ''}`}>
-                {step > s.num && <span className="material-symbols-outlined text-[12px] md:text-[14px]">check_circle</span>}
+            {STEPS.map((s) => (
+              <span key={s.num} className={`flex items-center gap-1 md:gap-2 shrink-0 px-1 ${step === s.num ? 'text-primary' : step > s.num ? 'text-primary' : ''}`}>
+                <span className={`w-4 h-4 md:w-5 md:h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${step === s.num ? 'border-primary' : step > s.num ? 'border-primary bg-primary' : 'border-gray-300'}`}>
+                  {step > s.num && <span className="material-symbols-outlined text-white text-[10px] md:text-[12px]">check</span>}
+                </span>
                 <span className="hidden sm:inline">{s.label}</span>
                 <span className="sm:hidden">{s.label.split(' ')[0]}</span>
               </span>
@@ -575,23 +577,26 @@ export default function SellWizardPage() {
                       { v: 'new_unworn', title: 'Pristine & Unworn', sub: 'Collector Quality', desc: 'Never worn, no alterations. Original tags attached. Stored in a climate-controlled environment.' },
                       { v: 'excellent', title: 'Excellent', sub: 'Worn Once', desc: 'Worn for a wedding or event. Professionally dry-cleaned immediately after use. No visible stains.' },
                       { v: 'good', title: 'Good', sub: 'Minor Wear', desc: 'Previously worn with minor wear. Includes deep dry cleaning. Any remaining minor imperfections must be disclosed.' }
-                    ].map(c => (
-                      <label key={c.v} className="relative block cursor-pointer group">
-                        <input type="radio" name="condition" checked={data.condition === c.v} onChange={() => setData({ ...data, condition: c.v as any })} className="sr-only peer" />
-                        <div className="p-4 md:p-6 border-2 border-gray-100 rounded-lg transition-all hover:border-accent peer-checked:border-primary">
-                          <div className="flex justify-between items-start mb-2">
-                            <div>
-                              <h3 className="text-base md:text-lg font-semibold tracking-tight">{c.title}</h3>
-                              <p className="text-[10px] md:text-xs uppercase tracking-widest text-accent font-medium mt-1">{c.sub}</p>
+                    ].map(c => {
+                      const isSelected = data.condition === c.v
+                      return (
+                        <label key={c.v} className="relative block cursor-pointer group">
+                          <input type="radio" name="condition" checked={isSelected} onChange={() => setData({ ...data, condition: c.v as any })} className="sr-only" />
+                          <div className={`p-4 md:p-6 border-2 rounded-lg transition-all hover:border-accent ${isSelected ? 'border-primary' : 'border-gray-100'}`}>
+                            <div className="flex justify-between items-start mb-2">
+                              <div>
+                                <h3 className="text-base md:text-lg font-semibold tracking-tight">{c.title}</h3>
+                                <p className="text-[10px] md:text-xs uppercase tracking-widest text-accent font-medium mt-1">{c.sub}</p>
+                              </div>
+                              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ml-2 transition-colors ${isSelected ? 'border-primary' : 'border-gray-300'}`}>
+                                <div className={`w-2.5 h-2.5 rounded-full transition-colors ${isSelected ? 'bg-primary' : 'bg-transparent'}`}></div>
+                              </div>
                             </div>
-                            <div className="w-5 h-5 rounded-full border border-gray-300 flex items-center justify-center shrink-0 ml-2 peer-checked:bg-primary">
-                              <div className="w-2.5 h-2.5 rounded-full bg-primary opacity-0 peer-checked:opacity-100 transition-opacity"></div>
-                            </div>
+                            <p className="text-xs md:text-sm text-gray-500 mt-2">{c.desc}</p>
                           </div>
-                          <p className="text-xs md:text-sm text-gray-500 mt-2">{c.desc}</p>
-                        </div>
-                      </label>
-                    ))}
+                        </label>
+                      )
+                    })}
                   </div>
                   <div className="p-4 md:p-8 bg-gray-50 border-t border-gray-100 flex justify-between">
                     <button onClick={() => setStep(2)} className="text-sm text-gray-500 hover:text-primary font-medium">Back</button>

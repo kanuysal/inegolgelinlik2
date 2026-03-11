@@ -227,8 +227,8 @@ export default function Home() {
               <h3 className="text-3xl md:text-4xl font-medium mb-6 leading-tight text-gray-900 font-serif">
                 New arrivals, authentication tips, and bridal inspiration — find it in our newsletter.
               </h3>
-              <form className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
-                <input className="bg-white border-0 px-6 py-3 text-sm focus:ring-2 focus:ring-gray-400 w-full shadow-sm text-gray-900 placeholder-gray-400" placeholder="name@email.com" type="email" />
+              <form className="flex w-full max-w-md">
+                <input className="bg-white border-0 px-6 py-3 text-sm focus:ring-2 focus:ring-gray-400 flex-1 min-w-0 shadow-sm text-gray-900 placeholder-gray-400" placeholder="name@email.com" type="email" />
                 <button className="bg-[#1c1c1c] text-white px-8 py-3 text-sm font-medium hover:bg-[#1c1c1c]/90 transition shadow-lg flex items-center justify-center gap-2 group whitespace-nowrap" type="submit">
                   Register
                   <span className="material-symbols-outlined text-xs group-hover:translate-x-1 transition-transform" style={{ fontVariationSettings: "'wght' 200" }}>arrow_forward</span>

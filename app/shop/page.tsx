@@ -206,10 +206,10 @@ export default function ShopPage() {
         </p>
       </div>
 
-      {/* ── Filters bar — sticks under navbar on scroll, matches navbar width ── */}
-      <div className="sticky top-[76px] z-30 flex justify-center px-4">
-        <div className="max-w-5xl w-full px-6 flex flex-wrap items-center gap-4 py-3 bg-white backdrop-blur-xl shadow-[0_1px_3px_rgba(0,0,0,0.1)] border-b border-slate-100" style={{ fontFamily: "'Lelo', serif" }}>
-          {/* Search */}
+      {/* ── Filters bar — sticks under navbar on desktop only ── */}
+      <div className="md:sticky md:top-[76px] z-30 flex justify-center px-4">
+        <div className="max-w-5xl w-full px-6 flex flex-wrap items-center justify-between gap-4 py-3 bg-white backdrop-blur-xl md:shadow-[0_1px_3px_rgba(0,0,0,0.1)] md:border-b border-slate-100" style={{ fontFamily: "'Lelo', serif" }}>
+          {/* Search — left */}
           <div className="relative">
             <span className="material-symbols-outlined absolute left-0 top-1/2 -translate-y-1/2 text-[#1c1c1c]/40 text-lg">
               search
@@ -223,64 +223,67 @@ export default function ShopPage() {
             />
           </div>
 
-          <FilterDropdown
-            label="Sellers"
-            value={seller}
-            onChange={setSeller}
-            options={[
-              { value: "samples", label: "Galia Lahav" },
-              { value: "brides", label: "GL Brides" },
-            ]}
-          />
+          {/* Filters — right */}
+          <div className="flex flex-wrap items-center gap-4">
+            <FilterDropdown
+              label="Sellers"
+              value={seller}
+              onChange={setSeller}
+              options={[
+                { value: "samples", label: "Galia Lahav" },
+                { value: "brides", label: "GL Brides" },
+              ]}
+            />
 
-          <FilterDropdown
-            label="Collections"
-            value={collection}
-            onChange={setCollection}
-            options={[
-              { value: "Couture", label: "Couture" },
-              { value: "GALA", label: "GALA" },
-            ]}
-          />
+            <FilterDropdown
+              label="Collections"
+              value={collection}
+              onChange={setCollection}
+              options={[
+                { value: "Couture", label: "Couture" },
+                { value: "GALA", label: "GALA" },
+              ]}
+            />
 
-          <FilterDropdown
-            label="Condition"
-            value={condition}
-            onChange={setCondition}
-            options={[
-              { value: "New Never Worn", label: "New with Tags" },
-              { value: "Excellent", label: "Excellent" },
-              { value: "Good", label: "Good" },
-            ]}
-          />
+            <FilterDropdown
+              label="Condition"
+              value={condition}
+              onChange={setCondition}
+              options={[
+                { value: "New Never Worn", label: "New with Tags" },
+                { value: "Excellent", label: "Excellent" },
+                { value: "Good", label: "Good" },
+              ]}
+            />
 
-          <FilterDropdown
-            label="Sizes"
-            value={size}
-            onChange={setSize}
-            options={[
-              { value: "0", label: "0" },
-              { value: "2", label: "2" },
-              { value: "4", label: "4" },
-              { value: "6", label: "6" },
-              { value: "8", label: "8" },
-              { value: "10", label: "10" },
-              { value: "12", label: "12" },
-              { value: "14", label: "14" },
-              { value: "16", label: "16" },
-              { value: "Custom", label: "Custom" },
-            ]}
-          />
+            <FilterDropdown
+              label="Sizes"
+              value={size}
+              onChange={setSize}
+              options={[
+                { value: "0", label: "0" },
+                { value: "2", label: "2" },
+                { value: "4", label: "4" },
+                { value: "6", label: "6" },
+                { value: "8", label: "8" },
+                { value: "10", label: "10" },
+                { value: "12", label: "12" },
+                { value: "14", label: "14" },
+                { value: "16", label: "16" },
+                { value: "Custom", label: "Custom" },
+              ]}
+            />
 
-          {/* Reset */}
-          {(search || seller !== "all" || collection !== "all" || condition !== "all" || size !== "all") && (
-            <button
-              onClick={() => { setSearch(""); setSeller("all"); setCollection("all"); setCondition("all"); setSize("all"); }}
-              className="text-[10px] uppercase tracking-widest text-[#1c1c1c]/60 hover:text-[#1c1c1c] transition-colors ml-auto"
-            >
-              Clear
-            </button>
-          )}
+            {/* Reset */}
+            {(search || seller !== "all" || collection !== "all" || condition !== "all" || size !== "all") && (
+              <button
+                onClick={() => { setSearch(""); setSeller("all"); setCollection("all"); setCondition("all"); setSize("all"); }}
+                className="text-[10px] uppercase tracking-widest text-[#1c1c1c]/60 hover:text-[#1c1c1c] transition-colors"
+              >
+                Clear
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
