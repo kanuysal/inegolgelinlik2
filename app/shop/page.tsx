@@ -34,8 +34,9 @@ function mapDbListing(row: any): Listing {
     column: "Sheath",
   };
 
-  const mainImage = thumb(row.images?.[0]);
-  const stockImage = thumb(row.products?.images?.[0]) || mainImage;
+  // Prefer stock (Galia Lahav) photo as the primary image shown to buyers
+  const stockImage = thumb(row.products?.images?.[0]);
+  const mainImage = stockImage || thumb(row.images?.[0]);
 
   // Map collection line: "Bridal Couture" → "Couture", "Bridal GALA" → "GALA"
   const rawCollection = row.products?.stockist_data?.collectionLine || "";

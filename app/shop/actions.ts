@@ -60,7 +60,7 @@ export async function getRelatedListings(listingId: string, category: string, li
 
     const { data } = await supabase
       .from('listings')
-      .select('id, title, price, msrp, images, category, condition, size_us')
+      .select('id, title, price, msrp, images, category, condition, size_us, products(images)')
       .eq('status', 'approved')
       .eq('category', category)
       .neq('id', listingId)

@@ -179,7 +179,8 @@ export default function ProductDetailPage() {
 
         const listingImages = (dbRow.images || []).filter((u: string) => u && u.startsWith('http'));
         const productImages = (dbRow.products?.images || []).filter((u: string) => u && u.startsWith('http'));
-        const uniqueImages = Array.from(new Set([...listingImages, ...productImages]));
+        // Stock photos (Galia Lahav) first, then bride's photos after
+        const uniqueImages = Array.from(new Set([...productImages, ...listingImages]));
         const imgs = uniqueImages.length > 0 ? uniqueImages : [mainImg];
         setAllImages(imgs);
 
@@ -686,7 +687,7 @@ export default function ProductDetailPage() {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
             {relatedListings.map((item: any) => {
-              const image = thumb(item.images?.[0]);
+              const image = thumb(item.products?.images?.[0] || item.images?.[0]);
               const conditionMap: Record<string, string> = {
                 new_unworn: "New Never Worn",
                 excellent: "Excellent",

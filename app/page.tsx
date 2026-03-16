@@ -136,7 +136,7 @@ export default function Home() {
         ) : listings.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-5">
               {listings.map((listing: any) => {
-                const image = thumb(listing.images?.[0] || listing.products?.images?.[0]);
+                const image = thumb(listing.products?.images?.[0] || listing.images?.[0]);
                 const price = listing.price;
                 const msrp = listing.msrp || listing.products?.msrp;
                 const conditionMap: Record<string, string> = {
