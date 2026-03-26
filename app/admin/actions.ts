@@ -1033,6 +1033,125 @@ export async function toggleBrandDirectStatus(listingId: string, status: 'approv
   return { success: true }
 }
 
+// ── Admin Listing Editing ────────────────────────────
+export async function adminUpdateListing(listingId: string, fields: {
+  title?: string
+  description?: string | null
+  price?: number
+  size_us?: string | null
+  condition?: string
+  listing_type?: string
+  silhouette?: string | null
+  train_style?: string | null
+  msrp?: number | null
+  order_number?: string | null
+}) {
+  await requireAdminRole()
+  const supabase = await adminDb()
+
+  if (!UUID_RE.test(listingId)) return { error: 'Invalid listing ID' }
+
+  const allowedFields = ['title', 'description', 'price', 'size_us', 'condition', 'listing_type', 'silhouette', 'train_style', 'msrp', 'order_number']
+  const updates: Record<string, any> = {}
+  for (const key of allowedFields) {
+    if (key in fields) updates[key] = (fields as any)[key]
+  }
+
+  if (Object.keys(updates).length === 0) return { error: 'No fields to update' }
+
+  if (updates.title !== undefined && (!updates.title || updates.title.trim().length === 0)) {
+    return { error: 'Title cannot be empty' }
+  }
+  if (updates.price !== undefined && (typeof updates.price !== 'number' || updates.price <= 0)) {
+    return { error: 'Price must be greater than 0' }
+  }
+
+  updates.updated_at = new Date().toISOString()
+
+  const { error } = await supabase
+    .from('listings')
+    .update(updates)
+    .eq('id', listingId)
+
+  if (error) {
+    console.error('adminUpdateListing error:', error)
+    return { error: 'Failed to update listing.' }
+  }
+
+  revalidatePath('/admin')
+  revalidatePath('/shop')
+  revalidatePath('/')
+  return { success: true }
+}
+
+// ── Blast Email ──────────────────────────────────────
+export async function sendBlastEmail(subject: string, htmlContent: string) {
+  await requireAdminRole()
+
+  if (!subject?.trim()) return { error: 'Subject is required' }
+  if (!htmlContent?.trim()) return { error: 'Email content is required' }
+  if (subject.length > 200) return { error: 'Subject too long' }
+  if (htmlContent.length > 50000) return { error: 'Content too long' }
+
+  const resendKey = process.env.RESEND_API_KEY
+  if (!resendKey) return { error: 'RESEND_API_KEY not configured' }
+
+  const fromEmail = process.env.RESEND_FROM_EMAIL || 'RE:GALIA <onboarding@resend.dev>'
+
+  // Fetch all user emails
+  const supabase = await adminDb()
+  const { data: { users }, error: usersError } = await supabase.auth.admin.listUsers({ perPage: 1000 })
+
+  if (usersError || !users) {
+    console.error('sendBlastEmail: failed to list users', usersError)
+    return { error: 'Failed to fetch user list' }
+  }
+
+  const emails = users
+    .map((u: any) => u.email)
+    .filter((e: string | undefined): e is string => !!e)
+
+  if (emails.length === 0) return { error: 'No users found' }
+
+  let sent = 0
+  let failed = 0
+
+  // Send in batches of 10 with 1-second delay
+  for (let i = 0; i < emails.length; i += 10) {
+    const batch = emails.slice(i, i + 10)
+
+    const results = await Promise.allSettled(
+      batch.map((email: string) =>
+        fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${resendKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            from: fromEmail,
+            to: email,
+            subject: subject.trim(),
+            html: htmlContent,
+          }),
+        })
+      )
+    )
+
+    for (const r of results) {
+      if (r.status === 'fulfilled' && r.value.ok) sent++
+      else failed++
+    }
+
+    // Rate limiting delay between batches
+    if (i + 10 < emails.length) {
+      await new Promise(resolve => setTimeout(resolve, 1000))
+    }
+  }
+
+  return { success: true, sent, failed, total: emails.length }
+}
+
 // ── Delete Listing ──────────────────────────────────
 export async function deleteListing(listingId: string) {
   await requireAdminRole()

@@ -87,17 +87,28 @@ function AccordionSection({
 function SellerBadge({ type }: { type: ListingType }) {
   if (type === "brand_direct") {
     return (
-      <div className="flex items-center gap-2 px-3 py-1.5 bg-[#1c1c1c]/5 border border-[#1c1c1c]/10">
-        <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5 flex-shrink-0">
-          <path
-            d="M12 2L14.09 4.26L17 3.64L17.18 6.57L19.82 8.07L18.56 10.74L20 13.14L17.72 14.72L17.5 17.66L14.58 17.95L12.73 20.39L10.27 18.76L7.27 19.5L6.27 16.73L3.53 15.32L4.63 12.56L3.27 10L5.57 8.45L5.82 5.51L8.74 5.27L10.64 2.87L12 2Z"
-            fill="#1c1c1c"
-          />
-          <path d="M9 12L11 14L15 10" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-        <span className="font-sans text-[10px] uppercase tracking-[0.1em] text-[#1c1c1c]/70 font-light">
-          Sold by Galia Lahav
-        </span>
+      <div className="flex flex-col gap-1.5">
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-[#1c1c1c]/5 border border-[#1c1c1c]/10">
+          <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5 flex-shrink-0">
+            <path
+              d="M12 2L14.09 4.26L17 3.64L17.18 6.57L19.82 8.07L18.56 10.74L20 13.14L17.72 14.72L17.5 17.66L14.58 17.95L12.73 20.39L10.27 18.76L7.27 19.5L6.27 16.73L3.53 15.32L4.63 12.56L3.27 10L5.57 8.45L5.82 5.51L8.74 5.27L10.64 2.87L12 2Z"
+              fill="#1c1c1c"
+            />
+            <path d="M9 12L11 14L15 10" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          <span className="font-sans text-[10px] uppercase tracking-[0.1em] text-[#1c1c1c]/70 font-light">
+            Sold by Galia Lahav
+          </span>
+        </div>
+        <div className="flex items-center gap-1.5 px-3 py-1 text-[#1c1c1c]/40">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-3 h-3 flex-shrink-0">
+            <path d="M9 14l-4-4 4-4" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M5 10h11a4 4 0 0 1 0 8h-1" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          <span className="font-sans text-[9px] uppercase tracking-[0.1em] font-light">
+            Returns Accepted
+          </span>
+        </div>
       </div>
     );
   }
@@ -669,8 +680,18 @@ export default function ProductDetailPage() {
                 </AccordionSection>
                 <AccordionSection title="Shipping & Returns">
                   <div className="space-y-4 font-sans text-sm text-[#1c1c1c] leading-relaxed font-light">
-                    <p>Worldwide white-glove shipping insured for full value.</p>
-                    <p>14-day archival return window included with our authenticity guarantee.</p>
+                    {listing.listingType === "brand_direct" ? (
+                      <>
+                        <p>Returns accepted within 5 days of receiving the item. A $200 return fee applies per item.</p>
+                        <p>Shipping arrangements are coordinated directly by Galia Lahav.</p>
+                      </>
+                    ) : (
+                      <>
+                        <p>Returns are at the discretion of buyer and seller. RE:GALIA does not facilitate returns for peer-to-peer listings.</p>
+                        <p>Shipping and payment are arranged directly between buyer and seller.</p>
+                      </>
+                    )}
+                    <p className="text-[#1c1c1c]/30 text-xs mt-4">All transactions between buyers and sellers are conducted independently. RE:GALIA facilitates the marketplace but does not take responsibility for communications, payments, or disputes between parties.</p>
                   </div>
                 </AccordionSection>
               </div>

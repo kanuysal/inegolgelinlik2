@@ -156,6 +156,7 @@ export async function submitListing(formData: {
   price: number
   msrp?: number | null
   product_id?: string | null
+  order_number?: string | null
   images: string[]
 }) {
   const user = await requireAuth()
@@ -175,6 +176,7 @@ export async function submitListing(formData: {
   const result = listingSchema.safeParse({
     ...formData,
     listing_type: 'peer_to_peer',
+    order_number: formData.order_number || undefined,
     images: formData.images || [],
   })
 
@@ -211,6 +213,7 @@ export async function submitListing(formData: {
       price: result.data.price,
       msrp: result.data.msrp ?? null,
       product_id: productId,
+      order_number: result.data.order_number || null,
       images: formData.images || [],
       status: 'pending_review',
     })

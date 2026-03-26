@@ -40,6 +40,7 @@ type WizardData = {
   height_cm: string
   silhouette: string
   train_style: string
+  order_number: string
   stock_images: string[]
   condition: '' | 'new_unworn' | 'excellent' | 'good'
   images: UploadedImage[]
@@ -62,6 +63,7 @@ const INITIAL_DATA: WizardData = {
   height_cm: '',
   silhouette: '',
   train_style: '',
+  order_number: '',
   stock_images: [],
   condition: '',
   images: [],
@@ -323,6 +325,7 @@ export default function SellWizardPage() {
       price: parseFloat(data.price),
       msrp: data.msrp ? parseFloat(data.msrp) : null,
       product_id: data.product_id,
+      order_number: data.order_number || null,
       images: data.images.map((img) => img.url),
     })
 
@@ -552,6 +555,26 @@ export default function SellWizardPage() {
                     <div className="space-y-4 md:space-y-6 pt-6 border-t border-gray-100">
                       <label className="text-[11px] uppercase tracking-widest font-semibold text-gray-500">The Story / Description</label>
                       <textarea value={data.description} onChange={e => setData({ ...data, description: e.target.value })} className="w-full bg-gray-50 border-gray-200 focus:ring-accent rounded text-sm p-3 md:p-4 placeholder:text-gray-400" placeholder="Describe the gown, its fit, how it felt to wear, and any special memories..." rows={4}></textarea>
+                    </div>
+
+                    <div className="space-y-2 pt-6 border-t border-gray-100">
+                      <div className="flex items-center gap-2">
+                        <label className="text-[11px] uppercase tracking-widest font-semibold text-gray-500">Order Number</label>
+                        <div className="relative group">
+                          <span className="material-symbols-outlined text-gray-400 text-sm cursor-help">help</span>
+                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 bg-[#1c1c1c] text-white text-xs rounded-lg px-4 py-3 leading-relaxed opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 pointer-events-none">
+                            You can find your order number on your order confirmation from your store or on the inner label of your dress.
+                            <div className="absolute top-full left-1/2 -translate-x-1/2 w-2 h-2 bg-[#1c1c1c] rotate-45 -mt-1"></div>
+                          </div>
+                        </div>
+                      </div>
+                      <input
+                        value={data.order_number}
+                        onChange={e => setData({ ...data, order_number: e.target.value })}
+                        className="w-full bg-transparent border-0 border-b border-gray-200 py-3 px-0 focus:ring-0 focus:border-accent text-sm"
+                        placeholder="e.g. GL-2024-00123"
+                        maxLength={100}
+                      />
                     </div>
 
                   </div>

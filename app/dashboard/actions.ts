@@ -218,10 +218,10 @@ export async function sendMessage(conversationId: string, content: string) {
   if (!trimmed) return { error: 'Message cannot be empty' }
   if (trimmed.length > 5000) return { error: 'Message too long' }
 
-  // Verify participant
-  const { data: conv } = await supabase
+  // Verify participant (also fetch kustomer_conversation_id for CRM forwarding)
+  const { data: conv } = await admin
     .from('conversations')
-    .select('buyer_id, seller_id')
+    .select('buyer_id, seller_id, kustomer_conversation_id')
     .eq('id', conversationId)
     .single()
 
@@ -269,6 +269,20 @@ export async function sendMessage(conversationId: string, content: string) {
     messagePreview: trimmed,
     conversationLink: '/dashboard?tab=messages',
   }).catch(() => {}) // Best-effort
+
+  // Forward to Kustomer CRM if conversation is linked (best-effort)
+  if (conv.kustomer_conversation_id) {
+    try {
+      const { sendMessage: kustomerSend } = await import('@/lib/kustomer')
+      await kustomerSend({
+        conversationId: conv.kustomer_conversation_id,
+        message: trimmed,
+        direction: user.id === conv.seller_id ? 'out' : 'in',
+      })
+    } catch (e) {
+      console.error('[Kustomer] Message forward failed (non-blocking):', e)
+    }
+  }
 
   revalidatePath('/dashboard')
   return { success: true }

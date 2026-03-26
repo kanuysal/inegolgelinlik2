@@ -42,9 +42,11 @@ import {
   getBrandDirectConversations,
   getBrandDirectMessages,
   adminReplyBrandDirect,
+  adminUpdateListing,
+  sendBlastEmail,
 } from './actions';
 
-type Tab = 'dashboard' | 'moderation' | 'brand_direct' | 'brand_messages' | 'inventory' | 'sellers' | 'transactions' | 'claims' | 'featured';
+type Tab = 'dashboard' | 'moderation' | 'brand_direct' | 'brand_messages' | 'inventory' | 'sellers' | 'transactions' | 'claims' | 'featured' | 'all_listings' | 'blast_email';
 
 // ═══════════════════════════════════════════════════════
 // OVERVIEW TAB (Dashboard)
@@ -1998,6 +2000,289 @@ function LoadingSkeleton() {
 
 
 // ═══════════════════════════════════════════════════════
+// ALL LISTINGS EDIT TAB
+// ═══════════════════════════════════════════════════════
+function AllListingsEditTab() {
+  const [listings, setListings] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [editId, setEditId] = useState<string | null>(null);
+  const [editFields, setEditFields] = useState<Record<string, any>>({});
+  const [saving, setSaving] = useState(false);
+  const [msg, setMsg] = useState('');
+
+  const load = () => {
+    setLoading(true);
+    getAllListings(statusFilter).then(d => { setListings(d); setLoading(false); });
+  };
+
+  useEffect(() => { load(); }, [statusFilter]);
+
+  const startEdit = (listing: any) => {
+    setEditId(listing.id);
+    setEditFields({
+      title: listing.title || '',
+      description: listing.description || '',
+      price: listing.price || 0,
+      msrp: listing.msrp || '',
+      size_us: listing.size_us || '',
+      condition: listing.condition || 'excellent',
+      listing_type: listing.listing_type || 'peer_to_peer',
+      silhouette: listing.silhouette || '',
+      order_number: listing.order_number || '',
+    });
+    setMsg('');
+  };
+
+  const saveEdit = async () => {
+    if (!editId) return;
+    setSaving(true);
+    setMsg('');
+    const fields = {
+      ...editFields,
+      price: Number(editFields.price) || 0,
+      msrp: editFields.msrp ? Number(editFields.msrp) : null,
+    };
+    const res = await adminUpdateListing(editId, fields);
+    setSaving(false);
+    if (res.error) {
+      setMsg(res.error);
+    } else {
+      setMsg('Saved');
+      setEditId(null);
+      load();
+    }
+  };
+
+  if (loading) return <div className="p-8"><LoadingSkeleton /></div>;
+
+  return (
+    <div className="p-6 md:p-8 space-y-6">
+      <div className="flex items-center justify-between flex-wrap gap-4">
+        <h2 className="text-lg font-medium tracking-tight">All Listings — Edit</h2>
+        <select
+          value={statusFilter}
+          onChange={e => setStatusFilter(e.target.value)}
+          className="text-xs border border-slate-200 px-3 py-2 bg-white"
+        >
+          <option value="all">All Statuses</option>
+          <option value="approved">Approved</option>
+          <option value="pending_review">Pending</option>
+          <option value="rejected">Rejected</option>
+          <option value="archived">Archived</option>
+        </select>
+      </div>
+
+      {msg && <p className={`text-sm ${msg === 'Saved' ? 'text-emerald-600' : 'text-red-600'}`}>{msg}</p>}
+
+      <div className="space-y-2">
+        {listings.map(listing => (
+          <div key={listing.id} className="bg-white border border-slate-200 p-4">
+            {editId === listing.id ? (
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-[10px] uppercase tracking-widest font-semibold text-slate-400 block mb-1">Title / Header</label>
+                    <input value={editFields.title} onChange={e => setEditFields({ ...editFields, title: e.target.value })} className="w-full border border-slate-200 px-3 py-2 text-sm" placeholder="e.g. Splendid | Sample" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-[10px] uppercase tracking-widest font-semibold text-slate-400 block mb-1">Price ($)</label>
+                      <input type="number" value={editFields.price} onChange={e => setEditFields({ ...editFields, price: e.target.value })} className="w-full border border-slate-200 px-3 py-2 text-sm" />
+                    </div>
+                    <div>
+                      <label className="text-[10px] uppercase tracking-widest font-semibold text-slate-400 block mb-1">MSRP ($)</label>
+                      <input type="number" value={editFields.msrp} onChange={e => setEditFields({ ...editFields, msrp: e.target.value })} className="w-full border border-slate-200 px-3 py-2 text-sm" />
+                    </div>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <div>
+                    <label className="text-[10px] uppercase tracking-widest font-semibold text-slate-400 block mb-1">Size</label>
+                    <input value={editFields.size_us} onChange={e => setEditFields({ ...editFields, size_us: e.target.value })} className="w-full border border-slate-200 px-3 py-2 text-sm" />
+                  </div>
+                  <div>
+                    <label className="text-[10px] uppercase tracking-widest font-semibold text-slate-400 block mb-1">Condition</label>
+                    <select value={editFields.condition} onChange={e => setEditFields({ ...editFields, condition: e.target.value })} className="w-full border border-slate-200 px-3 py-2 text-sm">
+                      <option value="new_unworn">New Never Worn</option>
+                      <option value="excellent">Excellent</option>
+                      <option value="good">Good</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-[10px] uppercase tracking-widest font-semibold text-slate-400 block mb-1">Type</label>
+                    <select value={editFields.listing_type} onChange={e => setEditFields({ ...editFields, listing_type: e.target.value })} className="w-full border border-slate-200 px-3 py-2 text-sm">
+                      <option value="peer_to_peer">Peer to Peer</option>
+                      <option value="sample_sale">Sample Sale</option>
+                      <option value="brand_direct">Brand Direct</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-[10px] uppercase tracking-widest font-semibold text-slate-400 block mb-1">Order #</label>
+                    <input value={editFields.order_number} onChange={e => setEditFields({ ...editFields, order_number: e.target.value })} className="w-full border border-slate-200 px-3 py-2 text-sm" />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-[10px] uppercase tracking-widest font-semibold text-slate-400 block mb-1">Description</label>
+                  <textarea value={editFields.description} onChange={e => setEditFields({ ...editFields, description: e.target.value })} className="w-full border border-slate-200 px-3 py-2 text-sm" rows={3} />
+                </div>
+                <div className="flex gap-3">
+                  <button onClick={saveEdit} disabled={saving} className="px-5 py-2 bg-primary text-white text-[10px] uppercase tracking-widest font-bold hover:bg-slate-800 disabled:opacity-50">
+                    {saving ? 'Saving...' : 'Save Changes'}
+                  </button>
+                  <button onClick={() => setEditId(null)} className="px-5 py-2 border border-slate-200 text-[10px] uppercase tracking-widest font-bold text-slate-500 hover:bg-slate-50">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-16 bg-slate-100 flex-shrink-0 overflow-hidden">
+                  {listing.images?.[0] && <img src={listing.images[0]} alt="" className="w-full h-full object-cover" />}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-medium truncate">{listing.title}</p>
+                    <span className={`text-[9px] px-1.5 py-0.5 font-bold uppercase tracking-wider ${
+                      listing.status === 'approved' ? 'bg-emerald-50 text-emerald-600' :
+                      listing.status === 'pending_review' ? 'bg-amber-50 text-amber-600' :
+                      'bg-slate-100 text-slate-500'
+                    }`}>{listing.status}</span>
+                    <span className="text-[9px] px-1.5 py-0.5 bg-slate-100 text-slate-400 uppercase tracking-wider">{listing.listing_type}</span>
+                  </div>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    ${listing.price?.toLocaleString()} · Size {listing.size_us || '—'} · {listing.condition}
+                    {listing.order_number && <> · Order: {listing.order_number}</>}
+                  </p>
+                </div>
+                <button onClick={() => startEdit(listing)} className="px-4 py-2 border border-slate-200 text-[10px] uppercase tracking-widest font-bold text-slate-500 hover:bg-slate-50 flex-shrink-0">
+                  Edit
+                </button>
+              </div>
+            )}
+          </div>
+        ))}
+        {listings.length === 0 && (
+          <p className="text-center text-slate-400 py-12">No listings found</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════
+// BLAST EMAIL TAB
+// ═══════════════════════════════════════════════════════
+function BlastEmailTab() {
+  const [subject, setSubject] = useState('');
+  const [body, setBody] = useState('');
+  const [sending, setSending] = useState(false);
+  const [result, setResult] = useState<{ sent?: number; failed?: number; error?: string } | null>(null);
+  const [showPreview, setShowPreview] = useState(false);
+  const [confirmed, setConfirmed] = useState(false);
+
+  const defaultTemplate = `<div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 40px 20px;">
+  <p style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.3em; color: #999; margin-bottom: 24px;">RE:GALIA</p>
+  <h2 style="font-size: 28px; font-weight: normal; color: #1a1818; margin-bottom: 16px;">Exciting News from RE:GALIA</h2>
+  <p style="font-size: 15px; color: #555; line-height: 1.8; margin-bottom: 24px;">
+    We're thrilled to share some exciting updates with you. Our marketplace continues to grow with new features designed to enhance your experience.
+  </p>
+  <p style="font-size: 15px; color: #555; line-height: 1.8; margin-bottom: 32px;">
+    Visit the marketplace to explore new arrivals and discover your perfect gown.
+  </p>
+  <a href="https://regalia-scroll.vercel.app/shop" style="display: inline-block; background: #1a1818; color: white; text-decoration: none; padding: 14px 32px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.3em;">
+    Browse the Collection
+  </a>
+  <p style="font-size: 11px; color: #ccc; margin-top: 40px;">You received this because you have an account on RE:GALIA.</p>
+</div>`;
+
+  const handleSend = async () => {
+    if (!confirmed) return;
+    setSending(true);
+    setResult(null);
+    const res = await sendBlastEmail(subject, body || defaultTemplate);
+    setSending(false);
+    setResult(res);
+    setConfirmed(false);
+  };
+
+  return (
+    <div className="p-6 md:p-8 space-y-6 max-w-4xl">
+      <h2 className="text-lg font-medium tracking-tight">Email Blast</h2>
+      <p className="text-sm text-slate-500">Send a one-time email to all registered users.</p>
+
+      {result && (
+        <div className={`p-4 border text-sm ${result.error ? 'border-red-200 bg-red-50 text-red-700' : 'border-emerald-200 bg-emerald-50 text-emerald-700'}`}>
+          {result.error || `Sent to ${result.sent} users (${result.failed} failed)`}
+        </div>
+      )}
+
+      <div className="space-y-4">
+        <div>
+          <label className="text-[10px] uppercase tracking-widest font-semibold text-slate-400 block mb-1">Subject</label>
+          <input
+            value={subject}
+            onChange={e => setSubject(e.target.value)}
+            className="w-full border border-slate-200 px-3 py-2 text-sm"
+            placeholder="e.g. New Features on RE:GALIA"
+          />
+        </div>
+        <div>
+          <label className="text-[10px] uppercase tracking-widest font-semibold text-slate-400 block mb-1">HTML Body</label>
+          <textarea
+            value={body}
+            onChange={e => setBody(e.target.value)}
+            className="w-full border border-slate-200 px-3 py-2 text-sm font-mono"
+            rows={12}
+            placeholder="Leave empty to use the default template..."
+          />
+        </div>
+        <div className="flex items-center gap-4 flex-wrap">
+          <button
+            onClick={() => setBody(defaultTemplate)}
+            className="px-4 py-2 border border-slate-200 text-[10px] uppercase tracking-widest font-bold text-slate-500 hover:bg-slate-50"
+          >
+            Load Template
+          </button>
+          <button
+            onClick={() => setShowPreview(!showPreview)}
+            className="px-4 py-2 border border-slate-200 text-[10px] uppercase tracking-widest font-bold text-slate-500 hover:bg-slate-50"
+          >
+            {showPreview ? 'Hide Preview' : 'Preview'}
+          </button>
+        </div>
+
+        {showPreview && (
+          <div className="border border-slate-200 p-6 bg-white">
+            <p className="text-[10px] uppercase tracking-widest text-slate-400 mb-3">Preview</p>
+            <div dangerouslySetInnerHTML={{ __html: body || defaultTemplate }} />
+          </div>
+        )}
+
+        <div className="border-t border-slate-200 pt-6 space-y-4">
+          <label className="flex items-center gap-2 text-sm text-slate-600">
+            <input
+              type="checkbox"
+              checked={confirmed}
+              onChange={e => setConfirmed(e.target.checked)}
+              className="accent-primary"
+            />
+            I confirm I want to send this email to all users
+          </label>
+          <button
+            onClick={handleSend}
+            disabled={!subject.trim() || !confirmed || sending}
+            className="px-6 py-3 bg-primary text-white text-[10px] uppercase tracking-widest font-bold hover:bg-slate-800 disabled:opacity-50 transition-all"
+          >
+            {sending ? 'Sending...' : 'Send to All Users'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════
 // MAIN PAGE LAYOUT
 // ═══════════════════════════════════════════════════════
 export default function AdminPage() {
@@ -2048,7 +2333,9 @@ export default function AdminPage() {
     sellers: 'Sellers & Users',
     transactions: 'All Transactions',
     claims: 'Dispute Claims',
-    featured: 'Featured Gowns'
+    featured: 'Featured Gowns',
+    all_listings: 'All Listings',
+    blast_email: 'Email Blast',
   };
 
   return (
@@ -2101,10 +2388,18 @@ export default function AdminPage() {
               <span className="material-symbols-outlined text-sm">shield</span>
               <span className="text-xs font-medium tracking-wider uppercase">Claims</span>
             </button>
+            <button onClick={() => handleTab('all_listings')} className={`w-full flex items-center gap-3 px-4 py-3 transition-all ${tab === 'all_listings' ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:bg-slate-50'}`}>
+              <span className="material-symbols-outlined text-sm">edit_note</span>
+              <span className="text-xs font-medium tracking-wider uppercase">Edit Listings</span>
+            </button>
             <div className="h-px bg-slate-100 my-2"></div>
             <button onClick={() => handleTab('featured')} className={`w-full flex items-center gap-3 px-4 py-3 transition-all ${tab === 'featured' ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:bg-slate-50'}`}>
               <span className="material-symbols-outlined text-sm">star</span>
               <span className="text-xs font-medium tracking-wider uppercase">Featured</span>
+            </button>
+            <button onClick={() => handleTab('blast_email')} className={`w-full flex items-center gap-3 px-4 py-3 transition-all ${tab === 'blast_email' ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:bg-slate-50'}`}>
+              <span className="material-symbols-outlined text-sm">campaign</span>
+              <span className="text-xs font-medium tracking-wider uppercase">Email Blast</span>
             </button>
           </nav>
         </div>
@@ -2152,6 +2447,8 @@ export default function AdminPage() {
           </div>
           {tab === 'claims' && <ClaimsTab />}
           {tab === 'featured' && <FeaturedGownsTab />}
+          {tab === 'all_listings' && <AllListingsEditTab />}
+          {tab === 'blast_email' && <BlastEmailTab />}
         </div>
       </div>
     </div>

@@ -67,6 +67,11 @@ export const listingSchema = z.object({
     .max(999999.99, 'MSRP is too high')
     .optional()
     .nullable(),
+  order_number: z
+    .string()
+    .max(100, 'Order number is too long')
+    .optional()
+    .nullable(),
   product_id: z.string().optional().nullable(),
   images: z
     .array(z.string().url('Each image must be a valid URL'))

@@ -33,20 +33,20 @@ const JOURNEY_STEPS = [
   {
     num: "03",
     title: "Purchase",
-    subtitle: "With Security",
-    desc: "Transaction security is paramount. Your payment is held in escrow until you confirm the gown's arrival and your absolute satisfaction with every detail.",
+    subtitle: "With Confidence",
+    desc: "Connect directly with the seller through our secure messaging platform. Once you agree on terms, payment and shipping are arranged between you and the seller.",
     image: "/images/hiw/poodle.jpg",
     imageAlt: "Galia Lahav lace mermaid gown",
-    accent: "Protected & Verified",
+    accent: "Direct & Transparent",
   },
   {
     num: "04",
     title: "Receive",
     subtitle: "Your Moment",
-    desc: "Your couture arrives via insured white-glove courier with full tracking. A 14-day protection window allows you to inspect every detail at your leisure.",
+    desc: "For brand-direct purchases, returns are accepted within 5 days with a $200 fee. For peer-to-peer purchases, returns are at the discretion of buyer and seller.",
     image: "/images/hiw/veil.jpg",
     imageAlt: "Galia Lahav bridal gown with cathedral veil",
-    accent: "White-Glove Delivery",
+    accent: "Your Gown Arrives",
   },
 ];
 
@@ -82,10 +82,10 @@ const SELLING_STEPS = [
     num: "04",
     title: "Complete",
     subtitle: "The Handover",
-    desc: "We provide insured logistics and manage secure payment processing. You receive payment promptly upon buyer confirmation — seamless from start to finish.",
+    desc: "Once both parties agree on terms, the transaction is completed directly between buyer and seller. RE:GALIA facilitates the connection and authentication — logistics and payment are arranged between the parties.",
     image: "/images/hiw/staircase.jpg",
     imageAlt: "Galia Lahav satin gown on elegant staircase",
-    accent: "Secure & Swift",
+    accent: "Seamless & Direct",
   },
 ];
 
@@ -104,8 +104,8 @@ const TRUST_FEATURES = [
     ),
   },
   {
-    title: "Escrow Protection",
-    desc: "Funds are held securely and only released when the buyer is satisfied, protecting both parties in every transaction.",
+    title: "Secure Messaging",
+    desc: "Communicate directly with buyers and sellers through our secure platform. Every interaction is protected and private.",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-7 h-7">
         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
@@ -113,14 +113,12 @@ const TRUST_FEATURES = [
     ),
   },
   {
-    title: "White-Glove Logistics",
-    desc: "Insured, tracked, and handled with the care couture deserves. We manage the entire journey from door to door.",
+    title: "Brand-Direct Returns",
+    desc: "Galia Lahav brand-direct purchases include a 5-day return window. Peer-to-peer returns are arranged between buyer and seller.",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-7 h-7">
-        <rect x="1" y="3" width="15" height="13" />
-        <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
-        <circle cx="5.5" cy="18.5" r="2.5" />
-        <circle cx="18.5" cy="18.5" r="2.5" />
+        <path d="M9 14l-4-4 4-4" />
+        <path d="M5 10h11a4 4 0 0 1 0 8h-1" />
       </svg>
     ),
   },
@@ -137,7 +135,7 @@ const FAQS = [
   },
   {
     q: "Can I try the gown before purchasing?",
-    a: "Due to the nature of online resale, in-person try-ons are not available. However, our 14-day return policy gives you time to receive and inspect the gown. We recommend checking measurements carefully and communicating with sellers for additional details.",
+    a: "Due to the nature of online resale, in-person try-ons are not available. For brand-direct purchases, returns are accepted within 5 days (a $200 return fee applies). For peer-to-peer listings, returns are at the discretion of buyer and seller. We recommend checking measurements carefully and communicating with sellers for additional details.",
   },
   {
     q: "How long does selling take?",
