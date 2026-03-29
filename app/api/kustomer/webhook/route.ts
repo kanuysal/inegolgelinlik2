@@ -48,16 +48,19 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Payload too large' }, { status: 413 })
     }
 
-    // Verify webhook authenticity via shared secret header.
-    // Kustomer doesn't sign webhooks with HMAC — instead we use a custom
-    // header (x-webhook-secret) configured in Kustomer's webhook settings.
+    // Verify webhook authenticity via secret token in URL query param,
+    // custom header, or Bearer token (whichever Kustomer sends).
     const secret = process.env.KUSTOMER_WEBHOOK_SECRET
     if (!secret) {
       console.error('[Kustomer Webhook] Missing KUSTOMER_WEBHOOK_SECRET – refusing request')
       return NextResponse.json({ error: 'Webhook secret not configured' }, { status: 500 })
     }
 
-    const token = req.headers.get('x-webhook-secret') || req.headers.get('authorization')?.replace('Bearer ', '')
+    const url = new URL(req.url)
+    const token =
+      url.searchParams.get('token') ||
+      req.headers.get('x-webhook-secret') ||
+      req.headers.get('authorization')?.replace('Bearer ', '')
     if (token !== secret) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
