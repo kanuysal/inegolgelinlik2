@@ -1637,7 +1637,7 @@ function FeaturedGownsTab() {
   const handleSelectListing = (listing: any) => {
     const condMap: Record<string, string> = { new_unworn: 'New Never Worn', excellent: 'Excellent', good: 'Good' };
     const cond = condMap[listing.condition] || listing.condition || 'Excellent';
-    const img = listing.images?.[0] || listing.products?.images?.[0] || '';
+    const img = listing.products?.images?.[0] || listing.images?.[0] || '';
     setForm({
       title: listing.title,
       subtitle: `Size ${listing.size_us || '—'} • ${cond}`,
@@ -1798,7 +1798,7 @@ CREATE POLICY "Admin write" ON featured_gowns
                     className={`w-full text-left px-3 py-2 flex items-center gap-3 hover:bg-blue-50 transition-colors ${form.listing_id === listing.id ? 'bg-blue-100' : ''}`}
                   >
                     <div className="w-10 h-12 bg-slate-100 flex-shrink-0 overflow-hidden">
-                      {listing.images?.[0] && <img src={listing.images[0]} alt="" className="w-full h-full object-cover" />}
+                      {(listing.products?.images?.[0] || listing.images?.[0]) && <img src={listing.products?.images?.[0] || listing.images?.[0]} alt="" className="w-full h-full object-cover" />}
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium truncate">{listing.title}</p>
