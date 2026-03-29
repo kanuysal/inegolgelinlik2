@@ -1379,7 +1379,10 @@ export async function adminSendMessage(conversationId: string, content: string) 
         // Lazy-create Kustomer conversation for this admin↔seller thread
         const { data: { user: recipientUser } } = await admin.auth.admin.getUserById(recipientId)
         if (recipientUser?.email) {
-          const kustomerId = await findOrCreateCustomer(recipientUser.email, recipientUser.user_metadata?.display_name || undefined)
+          // Kustomer customer = the recipient (with their display name)
+          const { data: recipientProfile } = await admin.from('profiles').select('display_name').eq('id', recipientId).single()
+          const recipientName = recipientProfile?.display_name || recipientUser.user_metadata?.display_name || recipientUser.email.split('@')[0]
+          const kustomerId = await findOrCreateCustomer(recipientUser.email, recipientName)
           if (kustomerId) {
             const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://regalia-scroll.vercel.app'
             const kustomerConvId = await kustomerCreateConv({
@@ -1546,7 +1549,7 @@ export async function adminReplyBrandDirect(conversationId: string, content: str
 
   // Forward to Kustomer (best-effort) — lazy-create if not yet linked
   try {
-    const { findOrCreateCustomer, createConversation: kustomerCreateConv, sendMessage: kustomerSend } = await import('@/lib/kustomer')
+    // Using static import from top of file
 
     let kustomerConvId = (conv as any).kustomer_conversation_id
 
@@ -1554,7 +1557,10 @@ export async function adminReplyBrandDirect(conversationId: string, content: str
     if (!kustomerConvId) {
       const { data: { user: buyerUser } } = await supabase.auth.admin.getUserById(conv.buyer_id)
       if (buyerUser?.email) {
-        const kustomerId = await findOrCreateCustomer(buyerUser.email, buyerUser.user_metadata?.display_name || undefined)
+        // Kustomer customer = the buyer (with buyer's name)
+        const { data: buyerProfile } = await supabase.from('profiles').select('display_name').eq('id', conv.buyer_id).single()
+        const buyerName = buyerProfile?.display_name || buyerUser?.user_metadata?.display_name || buyerUser.email.split('@')[0]
+        const kustomerId = await findOrCreateCustomer(buyerUser.email, buyerName)
         if (kustomerId) {
           const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://regalia-scroll.vercel.app'
           kustomerConvId = await kustomerCreateConv({

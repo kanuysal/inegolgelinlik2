@@ -2,6 +2,7 @@
 
 import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { notifyNewMessage } from '@/lib/notify'
+import { findOrCreateCustomer, createConversation as kustomerCreateConv } from '@/lib/kustomer'
 
 async function db() {
   return (await createClient()) as any
@@ -179,7 +180,7 @@ export async function startConversation(listingId: string, sellerId: string, mes
 
     // Forward ALL inquiries to Kustomer CRM (best-effort)
     try {
-      const { findOrCreateCustomer, createConversation: kustomerCreateConv } = await import('@/lib/kustomer')
+      // Using static import from top of file
       const kustomerId = await findOrCreateCustomer(
         user.email || '',
         buyerProfile?.display_name || undefined

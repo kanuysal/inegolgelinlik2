@@ -277,9 +277,13 @@ export async function sendMessage(conversationId: string, content: string) {
 
     // Lazy-link old conversations that don't have a Kustomer conversation yet
     if (!kustomerConvId) {
-      const buyerEmail = (await admin.auth.admin.getUserById(conv.buyer_id)).data?.user?.email
+      const buyerUser = (await admin.auth.admin.getUserById(conv.buyer_id)).data?.user
+      const buyerEmail = buyerUser?.email
       if (buyerEmail) {
-        const kustomerId = await findOrCreateCustomer(buyerEmail, senderProfile?.display_name || undefined)
+        // Kustomer customer = the buyer (with buyer's name, not sender's)
+        const { data: buyerProfile } = await admin.from('profiles').select('display_name').eq('id', conv.buyer_id).single()
+        const buyerName = buyerProfile?.display_name || buyerUser?.user_metadata?.display_name || buyerEmail.split('@')[0]
+        const kustomerId = await findOrCreateCustomer(buyerEmail, buyerName)
         if (kustomerId) {
           const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://regalia-scroll.vercel.app'
           kustomerConvId = await kustomerCreateConv({
