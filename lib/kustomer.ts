@@ -56,16 +56,12 @@ export async function findOrCreateCustomer(email: string, name?: string): Promis
   }
   console.log(`[Kustomer] findOrCreateCustomer for ${email}`)
 
-  // Search by email
-  const search = await kustomerFetch(`/customers/search`, {
-    method: 'POST',
-    body: JSON.stringify({
-      and: [{ emails: { value: email } }],
-    }),
-  })
-
-  const existing = search?.data?.[0]
-  if (existing) return existing.id
+  // Look up by email using the direct endpoint
+  const lookup = await kustomerFetch(`/customers/email=${encodeURIComponent(email)}`)
+  if (lookup?.data?.id) {
+    console.log(`[Kustomer] Found existing customer ${lookup.data.id}`)
+    return lookup.data.id
+  }
 
   // Create new customer
   const created = await kustomerFetch('/customers', {
@@ -76,7 +72,12 @@ export async function findOrCreateCustomer(email: string, name?: string): Promis
     }),
   })
 
-  return created?.data?.id || null
+  if (created?.data?.id) return created.data.id
+
+  // Handle race condition: if create failed with 409 duplicate, look up again
+  console.log('[Kustomer] Create failed — retrying lookup')
+  const retry = await kustomerFetch(`/customers/email=${encodeURIComponent(email)}`)
+  return retry?.data?.id || null
 }
 
 /**
