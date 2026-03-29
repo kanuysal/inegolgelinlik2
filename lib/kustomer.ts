@@ -19,14 +19,9 @@ function getApiKey(): string | undefined {
 
 async function kustomerFetch(path: string, options: RequestInit = {}) {
   const apiKey = getApiKey()
-  if (!apiKey) {
-    console.warn('[Kustomer] KUSTOMER_API_KEY is not set — skipping')
-    return null
-  }
-  const url = `${KUSTOMER_BASE}${path}`
-  console.log(`[Kustomer] ${options.method || 'GET'} ${url} (key: ${apiKey.slice(0, 6)}…)`)
+  if (!apiKey) return null
 
-  const res = await fetch(url, {
+  const res = await fetch(`${KUSTOMER_BASE}${path}`, {
     ...options,
     headers: {
       'Authorization': `Bearer ${apiKey}`,
@@ -37,31 +32,22 @@ async function kustomerFetch(path: string, options: RequestInit = {}) {
 
   if (!res.ok) {
     const text = await res.text().catch(() => '')
-    console.error(`[Kustomer] ${options.method || 'GET'} ${url} failed: ${res.status} ${text}`)
+    console.error(`[Kustomer] ${options.method || 'GET'} ${path} failed: ${res.status} ${text}`)
     return null
   }
 
-  const json = await res.json()
-  console.log(`[Kustomer] ${options.method || 'GET'} ${path} → OK`)
-  return json
+  return res.json()
 }
 
 /**
  * Find a Kustomer customer by email, or create one if not found.
  */
 export async function findOrCreateCustomer(email: string, name?: string): Promise<string | null> {
-  if (!getApiKey()) {
-    console.warn('[Kustomer] findOrCreateCustomer skipped — no API key')
-    return null
-  }
-  console.log(`[Kustomer] findOrCreateCustomer for ${email}`)
+  if (!getApiKey()) return null
 
   // Look up by email using the direct endpoint
   const lookup = await kustomerFetch(`/customers/email=${encodeURIComponent(email)}`)
-  if (lookup?.data?.id) {
-    console.log(`[Kustomer] Found existing customer ${lookup.data.id}`)
-    return lookup.data.id
-  }
+  if (lookup?.data?.id) return lookup.data.id
 
   // Create new customer
   const created = await kustomerFetch('/customers', {
@@ -75,7 +61,6 @@ export async function findOrCreateCustomer(email: string, name?: string): Promis
   if (created?.data?.id) return created.data.id
 
   // Handle race condition: if create failed with 409 duplicate, look up again
-  console.log('[Kustomer] Create failed — retrying lookup')
   const retry = await kustomerFetch(`/customers/email=${encodeURIComponent(email)}`)
   return retry?.data?.id || null
 }
@@ -98,7 +83,6 @@ export async function createConversation({
   listingUrl?: string
 }): Promise<string | null> {
   if (!getApiKey()) return null
-  console.log(`[Kustomer] createConversation for customer ${customerId}: ${subject}`)
 
   // Step 1: Create the conversation (no inline message — Kustomer rejects extra fields)
   const convBody: Record<string, any> = {

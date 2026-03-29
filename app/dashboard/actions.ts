@@ -274,7 +274,6 @@ export async function sendMessage(conversationId: string, content: string) {
   // Forward to Kustomer CRM (best-effort) — lazy-create if not yet linked
   try {
     let kustomerConvId = conv.kustomer_conversation_id
-    console.log('[Kustomer] Forwarding for conversation', conversationId, '| kustomer_id:', kustomerConvId || '(none)')
 
     // Lazy-link old conversations that don't have a Kustomer conversation yet
     if (!kustomerConvId) {
