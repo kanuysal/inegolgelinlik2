@@ -1543,18 +1543,46 @@ export async function adminReplyBrandDirect(conversationId: string, content: str
     conversationLink: '/dashboard?tab=messages',
   }).catch(() => {})
 
-  // Forward to Kustomer if linked (best-effort)
-  if ((conv as any).kustomer_conversation_id) {
-    try {
-      const { sendMessage: kustomerSend } = await import('@/lib/kustomer')
+  // Forward to Kustomer (best-effort) — lazy-create if not yet linked
+  try {
+    const { findOrCreateCustomer, createConversation: kustomerCreateConv, sendMessage: kustomerSend } = await import('@/lib/kustomer')
+
+    let kustomerConvId = (conv as any).kustomer_conversation_id
+
+    // Lazy-link old conversations that don't have a Kustomer conversation yet
+    if (!kustomerConvId) {
+      const { data: { user: buyerUser } } = await supabase.auth.admin.getUserById(conv.buyer_id)
+      if (buyerUser?.email) {
+        const kustomerId = await findOrCreateCustomer(buyerUser.email, buyerUser.user_metadata?.display_name || undefined)
+        if (kustomerId) {
+          const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://regalia-scroll.vercel.app'
+          kustomerConvId = await kustomerCreateConv({
+            customerId: kustomerId,
+            subject: `Brand Direct: ${(conv as any).listings?.title || 'Gown Inquiry'}`,
+            message: trimmed,
+            senderName: 'Galia Lahav',
+            listingUrl: `${siteUrl}/shop`,
+          })
+          if (kustomerConvId) {
+            await supabase
+              .from('conversations')
+              .update({ kustomer_conversation_id: kustomerConvId })
+              .eq('id', conv.id)
+          }
+        }
+      }
+    }
+
+    // Forward the message if linked
+    if (kustomerConvId) {
       await kustomerSend({
-        conversationId: (conv as any).kustomer_conversation_id,
+        conversationId: kustomerConvId,
         message: trimmed,
         direction: 'out',
       })
-    } catch (e) {
-      console.error('[Kustomer] Forward failed (non-blocking):', e)
     }
+  } catch (e) {
+    console.error('[Kustomer] Forward failed (non-blocking):', e)
   }
 
   revalidatePath('/admin')

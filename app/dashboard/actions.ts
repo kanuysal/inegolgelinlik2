@@ -270,18 +270,46 @@ export async function sendMessage(conversationId: string, content: string) {
     conversationLink: '/dashboard?tab=messages',
   }).catch(() => {}) // Best-effort
 
-  // Forward to Kustomer CRM if conversation is linked (best-effort)
-  if (conv.kustomer_conversation_id) {
-    try {
-      const { sendMessage: kustomerSend } = await import('@/lib/kustomer')
+  // Forward to Kustomer CRM (best-effort) — lazy-create if not yet linked
+  try {
+    const { findOrCreateCustomer, createConversation: kustomerCreateConv, sendMessage: kustomerSend } = await import('@/lib/kustomer')
+
+    let kustomerConvId = conv.kustomer_conversation_id
+
+    // Lazy-link old conversations that don't have a Kustomer conversation yet
+    if (!kustomerConvId) {
+      const buyerEmail = (await admin.auth.admin.getUserById(conv.buyer_id)).data?.user?.email
+      if (buyerEmail) {
+        const kustomerId = await findOrCreateCustomer(buyerEmail, senderProfile?.display_name || undefined)
+        if (kustomerId) {
+          const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://regalia-scroll.vercel.app'
+          kustomerConvId = await kustomerCreateConv({
+            customerId: kustomerId,
+            subject: `Inquiry: ${listing?.listings?.title || 'Gown'}`,
+            message: trimmed,
+            senderName: senderProfile?.display_name || 'RE:GALIA User',
+            listingUrl: `${siteUrl}/dashboard?tab=messages`,
+          })
+          if (kustomerConvId) {
+            await admin
+              .from('conversations')
+              .update({ kustomer_conversation_id: kustomerConvId })
+              .eq('id', conversationId)
+          }
+        }
+      }
+    }
+
+    // Forward the message if linked
+    if (kustomerConvId) {
       await kustomerSend({
-        conversationId: conv.kustomer_conversation_id,
+        conversationId: kustomerConvId,
         message: trimmed,
         direction: user.id === conv.seller_id ? 'out' : 'in',
       })
-    } catch (e) {
-      console.error('[Kustomer] Message forward failed (non-blocking):', e)
     }
+  } catch (e) {
+    console.error('[Kustomer] Message forward failed (non-blocking):', e)
   }
 
   revalidatePath('/dashboard')
