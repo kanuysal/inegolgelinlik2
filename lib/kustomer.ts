@@ -127,6 +127,8 @@ export async function sendMessage({
     method: 'POST',
     body: JSON.stringify({
       direction,
+      channel: 'chat',
+      app: 'custom',
       preview: message.slice(0, 200),
     }),
   })
