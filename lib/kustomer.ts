@@ -45,7 +45,16 @@ export async function findOrCreateCustomer(email: string, name?: string): Promis
 
   // Look up by email using the direct endpoint
   const lookup = await kustomerFetch(`/customers/email=${encodeURIComponent(email)}`)
-  if (lookup?.data?.id) return lookup.data.id
+  if (lookup?.data?.id) {
+    // Update the customer name if we have one and it differs
+    if (name && lookup.data.attributes?.name !== name) {
+      await kustomerFetch(`/customers/${lookup.data.id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ name }),
+      })
+    }
+    return lookup.data.id
+  }
 
   // Create new customer
   const created = await kustomerFetch('/customers', {
