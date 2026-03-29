@@ -19,7 +19,7 @@ const DEFAULT_FEATURED = [
 ];
 
 export default function Home() {
-  const [featuredGowns, setFeaturedGowns] = useState(DEFAULT_FEATURED);
+  const [featuredGowns, setFeaturedGowns] = useState<any[] | null>(null);
   const [listings, setListings] = useState<any[]>([]);
   const [listingsLoading, setListingsLoading] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -33,11 +33,13 @@ export default function Home() {
   };
 
   useEffect(() => {
-    getPublicFeaturedGowns().then((data) => {
-      if (data && data.length > 0) {
-        setFeaturedGowns(data);
-      }
-    });
+    getPublicFeaturedGowns()
+      .then((data) => {
+        setFeaturedGowns(data && data.length > 0 ? data : DEFAULT_FEATURED);
+      })
+      .catch(() => {
+        setFeaturedGowns(DEFAULT_FEATURED);
+      });
     getApprovedListings()
       .then((data) => {
         if (data && data.length > 0) {
@@ -92,19 +94,23 @@ export default function Home() {
             View All
           </Link>
         </div>
-        <div className="flex overflow-x-auto gap-6 px-6 pb-6 snap-x snap-mandatory" style={{ scrollbarWidth: "none", msOverflowStyle: "none", WebkitOverflowScrolling: "touch" }}>
-          {featuredGowns.map((gown) => (
-            <Link key={gown.id} href={gown.link || "/shop"} className="min-w-[300px] md:min-w-[380px] snap-center group relative overflow-hidden h-[500px] flex-shrink-0">
-              <img alt={`${gown.title} Gown`} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src={thumb(gown.image_url, 800)} loading="lazy" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
-              <div className="absolute bottom-0 left-0 p-6 w-full text-white">
-                <h4 className="text-2xl font-semibold mb-1">{gown.title}</h4>
-                {gown.subtitle && <p className="text-sm opacity-80 mb-4">{gown.subtitle}</p>}
-                {gown.price && <span className="font-medium">{gown.price}</span>}
-              </div>
-            </Link>
-          ))}
-        </div>
+        {featuredGowns ? (
+          <div className="flex overflow-x-auto gap-6 px-6 pb-6 snap-x snap-mandatory" style={{ scrollbarWidth: "none", msOverflowStyle: "none", WebkitOverflowScrolling: "touch" }}>
+            {featuredGowns.map((gown) => (
+              <Link key={gown.id} href={gown.link || "/shop"} className="min-w-[300px] md:min-w-[380px] snap-center group relative overflow-hidden h-[500px] flex-shrink-0">
+                <img alt={`${gown.title} Gown`} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src={thumb(gown.image_url, 800)} loading="lazy" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
+                <div className="absolute bottom-0 left-0 p-6 w-full text-white">
+                  <h4 className="text-2xl font-semibold mb-1">{gown.title}</h4>
+                  {gown.subtitle && <p className="text-sm opacity-80 mb-4">{gown.subtitle}</p>}
+                  {gown.price && <span className="font-medium">{gown.price}</span>}
+                </div>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <InlineLoadingSpinner size="lg" />
+        )}
       </section>
 
       {/* ── Marketplace — Scrollable Grid ── */}
