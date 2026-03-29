@@ -99,17 +99,9 @@ export async function createConversation({
   if (!getApiKey()) return null
   console.log(`[Kustomer] createConversation for customer ${customerId}: ${subject}`)
 
-  const body: Record<string, any> = {
+  // Step 1: Create the conversation (no inline message — Kustomer rejects extra fields)
+  const convBody: Record<string, any> = {
     name: subject,
-    message: {
-      direction: 'in',
-      channel: 'chat',
-      preview: message.slice(0, 200),
-      meta: {
-        subject,
-        body: message,
-      },
-    },
     custom: {
       ...(listingUrl && { listingUrlStr: listingUrl }),
       ...(senderName && { senderNameStr: senderName }),
@@ -120,10 +112,16 @@ export async function createConversation({
 
   const result = await kustomerFetch(`/customers/${customerId}/conversations`, {
     method: 'POST',
-    body: JSON.stringify(body),
+    body: JSON.stringify(convBody),
   })
 
-  return result?.data?.id || null
+  const convId = result?.data?.id
+  if (!convId) return null
+
+  // Step 2: Send the first message separately
+  await sendMessage({ conversationId: convId, message, direction: 'in' })
+
+  return convId
 }
 
 /**
@@ -144,11 +142,7 @@ export async function sendMessage({
     method: 'POST',
     body: JSON.stringify({
       direction,
-      channel: 'chat',
       preview: message.slice(0, 200),
-      meta: {
-        body: message,
-      },
     }),
   })
 
