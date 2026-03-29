@@ -8,8 +8,6 @@
  * the API is unreachable, the app continues working normally.
  */
 
-import { createHmac, timingSafeEqual } from 'crypto'
-
 // US: api.kustomerapp.com | EU: api.prod2.kustomerapp.com
 const KUSTOMER_BASE = process.env.KUSTOMER_API_BASE || 'https://api.kustomerapp.com/v1'
 
@@ -134,18 +132,4 @@ export async function sendMessage({
   })
 
   return result !== null
-}
-
-/**
- * Verify a Kustomer webhook signature.
- * Kustomer signs webhooks with HMAC-SHA256 using the shared secret.
- */
-export function verifyWebhookSignature(
-  body: string,
-  signature: string,
-  secret: string,
-): boolean {
-  const expected = createHmac('sha256', secret).update(body).digest('hex')
-  if (signature.length !== expected.length) return false
-  return timingSafeEqual(Buffer.from(signature, 'utf8'), Buffer.from(expected, 'utf8'))
 }

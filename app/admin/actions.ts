@@ -4,6 +4,7 @@ import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { requireAuth, hasRole } from '@/lib/auth'
 import { revalidatePath } from 'next/cache'
 import { productSchema } from '@/lib/validators/listing'
+import { notifyNewMessage } from '@/lib/notify'
 import { findOrCreateCustomer, createConversation as kustomerCreateConv, sendMessage as kustomerSend } from '@/lib/kustomer'
 
 async function db() {
@@ -1355,7 +1356,6 @@ export async function adminSendMessage(conversationId: string, content: string) 
 
   if (conv) {
     const recipientId = conv.buyer_id === user.id ? conv.seller_id : conv.buyer_id
-    const { notifyNewMessage } = await import('@/lib/notify')
     notifyNewMessage({
       recipientId,
       senderName: 'Galia Lahav',
