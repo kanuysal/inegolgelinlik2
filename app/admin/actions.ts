@@ -1348,7 +1348,7 @@ export async function adminSendMessage(conversationId: string, content: string) 
   // Send email notification to the other participant
   const { data: conv } = await admin
     .from('conversations')
-    .select('buyer_id, seller_id, listings(title)')
+    .select('buyer_id, seller_id, kustomer_conversation_id, listings(title, id)')
     .eq('id', conversationId)
     .single()
 
@@ -1362,6 +1362,44 @@ export async function adminSendMessage(conversationId: string, content: string) 
       messagePreview: trimmed,
       conversationLink: '/dashboard?tab=messages',
     }).catch(() => {})
+
+    // Forward to Kustomer CRM (best-effort, non-blocking)
+    try {
+      const { findOrCreateCustomer, createConversation: kustomerCreateConv, sendMessage: kustomerSend } = await import('@/lib/kustomer')
+
+      if (conv.kustomer_conversation_id) {
+        // Conversation already linked — just forward the message
+        await kustomerSend({
+          conversationId: conv.kustomer_conversation_id,
+          message: trimmed,
+          direction: 'out',
+        })
+      } else {
+        // Lazy-create Kustomer conversation for this admin↔seller thread
+        const { data: { user: recipientUser } } = await admin.auth.admin.getUserById(recipientId)
+        if (recipientUser?.email) {
+          const kustomerId = await findOrCreateCustomer(recipientUser.email, recipientUser.user_metadata?.display_name || undefined)
+          if (kustomerId) {
+            const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://regalia-scroll.vercel.app'
+            const kustomerConvId = await kustomerCreateConv({
+              customerId: kustomerId,
+              subject: `Admin: ${conv.listings?.title || 'Gown Inquiry'}`,
+              message: trimmed,
+              senderName: 'Galia Lahav Admin',
+              listingUrl: conv.listings?.id ? `${siteUrl}/shop/${conv.listings.id}` : undefined,
+            })
+            if (kustomerConvId) {
+              await admin
+                .from('conversations')
+                .update({ kustomer_conversation_id: kustomerConvId })
+                .eq('id', conversationId)
+            }
+          }
+        }
+      }
+    } catch (e) {
+      console.error('[Kustomer] Admin message forward failed (non-blocking):', e)
+    }
   }
 
   revalidatePath('/admin')
