@@ -4,6 +4,7 @@ import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { requireAuth, hasRole } from '@/lib/auth'
 import { revalidatePath } from 'next/cache'
 import { productSchema } from '@/lib/validators/listing'
+import { findOrCreateCustomer, createConversation as kustomerCreateConv, sendMessage as kustomerSend } from '@/lib/kustomer'
 
 async function db() {
   return (await createClient()) as any
@@ -1365,7 +1366,7 @@ export async function adminSendMessage(conversationId: string, content: string) 
 
     // Forward to Kustomer CRM (best-effort, non-blocking)
     try {
-      const { findOrCreateCustomer, createConversation: kustomerCreateConv, sendMessage: kustomerSend } = await import('@/lib/kustomer')
+      // Using static import from top of file
 
       if (conv.kustomer_conversation_id) {
         // Conversation already linked — just forward the message

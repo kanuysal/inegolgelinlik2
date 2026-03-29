@@ -5,6 +5,7 @@ import { requireAuth } from '@/lib/auth'
 import { revalidatePath } from 'next/cache'
 import { notifyNewMessage } from '@/lib/notify'
 import { rateLimit } from '@/lib/rate-limit'
+import { findOrCreateCustomer, createConversation as kustomerCreateConv, sendMessage as kustomerSend } from '@/lib/kustomer'
 import { profileSchema } from '@/lib/validators/listing'
 
 async function db() {
@@ -271,14 +272,9 @@ export async function sendMessage(conversationId: string, content: string) {
   }).catch(() => {}) // Best-effort
 
   // Forward to Kustomer CRM (best-effort) — lazy-create if not yet linked
-  console.log('[Kustomer] === Starting CRM forwarding for conversation', conversationId, '===')
   try {
-    const kustomerLib = await import('@/lib/kustomer')
-    console.log('[Kustomer] Module imported OK')
-    const { findOrCreateCustomer, createConversation: kustomerCreateConv, sendMessage: kustomerSend } = kustomerLib
-
     let kustomerConvId = conv.kustomer_conversation_id
-    console.log('[Kustomer] Current kustomer_conversation_id:', kustomerConvId || '(none — will lazy-create)')
+    console.log('[Kustomer] Forwarding for conversation', conversationId, '| kustomer_id:', kustomerConvId || '(none)')
 
     // Lazy-link old conversations that don't have a Kustomer conversation yet
     if (!kustomerConvId) {
