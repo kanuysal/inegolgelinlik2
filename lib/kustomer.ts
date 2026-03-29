@@ -10,7 +10,8 @@
 
 import { createHmac, timingSafeEqual } from 'crypto'
 
-const KUSTOMER_BASE = 'https://api.kustomerapp.com/v1'
+// US: api.kustomerapp.com | EU: api.prod2.kustomerapp.com
+const KUSTOMER_BASE = process.env.KUSTOMER_API_BASE || 'https://api.kustomerapp.com/v1'
 
 function getApiKey(): string | undefined {
   return process.env.KUSTOMER_API_KEY
@@ -22,9 +23,10 @@ async function kustomerFetch(path: string, options: RequestInit = {}) {
     console.warn('[Kustomer] KUSTOMER_API_KEY is not set — skipping')
     return null
   }
-  console.log(`[Kustomer] ${options.method || 'GET'} ${path}`)
+  const url = `${KUSTOMER_BASE}${path}`
+  console.log(`[Kustomer] ${options.method || 'GET'} ${url} (key: ${apiKey.slice(0, 6)}…)`)
 
-  const res = await fetch(`${KUSTOMER_BASE}${path}`, {
+  const res = await fetch(url, {
     ...options,
     headers: {
       'Authorization': `Bearer ${apiKey}`,
@@ -35,11 +37,13 @@ async function kustomerFetch(path: string, options: RequestInit = {}) {
 
   if (!res.ok) {
     const text = await res.text().catch(() => '')
-    console.error(`[Kustomer] ${options.method || 'GET'} ${path} failed: ${res.status} ${text}`)
+    console.error(`[Kustomer] ${options.method || 'GET'} ${url} failed: ${res.status} ${text}`)
     return null
   }
 
-  return res.json()
+  const json = await res.json()
+  console.log(`[Kustomer] ${options.method || 'GET'} ${path} → OK`)
+  return json
 }
 
 /**
