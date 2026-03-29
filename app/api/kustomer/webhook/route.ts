@@ -8,7 +8,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/server'
 import { notifyNewMessage } from '@/lib/notify'
-import { verifyWebhookSignature } from '@/lib/kustomer'
 import { rateLimit } from '@/lib/rate-limit'
 
 /** Strip HTML tags from webhook message content to prevent stored XSS */
@@ -49,20 +48,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Payload too large' }, { status: 413 })
     }
 
-    // Verify webhook authenticity – fail closed if secret is not configured
+    // Verify webhook authenticity via shared secret header.
+    // Kustomer doesn't sign webhooks with HMAC — instead we use a custom
+    // header (x-webhook-secret) configured in Kustomer's webhook settings.
     const secret = process.env.KUSTOMER_WEBHOOK_SECRET
     if (!secret) {
       console.error('[Kustomer Webhook] Missing KUSTOMER_WEBHOOK_SECRET – refusing request')
       return NextResponse.json({ error: 'Webhook secret not configured' }, { status: 500 })
     }
 
-    // Reject missing signatures before doing any crypto work
-    const signature = req.headers.get('x-kustomer-signature')
-    if (!signature) {
-      return NextResponse.json({ error: 'Missing signature' }, { status: 401 })
-    }
-    if (!verifyWebhookSignature(body, signature, secret)) {
-      return NextResponse.json({ error: 'Invalid signature' }, { status: 401 })
+    const token = req.headers.get('x-webhook-secret') || req.headers.get('authorization')?.replace('Bearer ', '')
+    if (token !== secret) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const payload = JSON.parse(body)
