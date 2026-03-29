@@ -18,7 +18,11 @@ function getApiKey(): string | undefined {
 
 async function kustomerFetch(path: string, options: RequestInit = {}) {
   const apiKey = getApiKey()
-  if (!apiKey) return null
+  if (!apiKey) {
+    console.warn('[Kustomer] KUSTOMER_API_KEY is not set — skipping')
+    return null
+  }
+  console.log(`[Kustomer] ${options.method || 'GET'} ${path}`)
 
   const res = await fetch(`${KUSTOMER_BASE}${path}`, {
     ...options,
@@ -42,7 +46,11 @@ async function kustomerFetch(path: string, options: RequestInit = {}) {
  * Find a Kustomer customer by email, or create one if not found.
  */
 export async function findOrCreateCustomer(email: string, name?: string): Promise<string | null> {
-  if (!getApiKey()) return null
+  if (!getApiKey()) {
+    console.warn('[Kustomer] findOrCreateCustomer skipped — no API key')
+    return null
+  }
+  console.log(`[Kustomer] findOrCreateCustomer for ${email}`)
 
   // Search by email
   const search = await kustomerFetch(`/customers/search`, {
@@ -85,6 +93,7 @@ export async function createConversation({
   listingUrl?: string
 }): Promise<string | null> {
   if (!getApiKey()) return null
+  console.log(`[Kustomer] createConversation for customer ${customerId}: ${subject}`)
 
   const body: Record<string, any> = {
     name: subject,
