@@ -217,7 +217,7 @@ function JourneyStep({
             </div>
 
             {/* Step number */}
-            <span className="font-sans text-[11px] font-light uppercase tracking-[0.2em] text-[#1c1c1c]/20 mb-4">
+            <span className="font-sans text-[11px] font-light uppercase tracking-[0.2em] text-[#1c1c1c]/30 mb-4">
               Step {step.num}
             </span>
 
@@ -437,7 +437,7 @@ export default function HowItWorksPage() {
             viewport={{ once: true }}
             className="text-center mb-20"
           >
-            <p className="font-sans text-[10px] font-light uppercase tracking-[0.4em] text-[#1c1c1c]/25 mb-6">
+            <p className="font-sans text-[10px] font-light uppercase tracking-[0.4em] text-[#1c1c1c]/30 mb-6">
               Common Questions
             </p>
             <h2 className="font-serif text-4xl md:text-6xl font-light text-[#1c1c1c] tracking-[-0.02em] leading-none">

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useTransition, useRef } from 'react';
 import Link from 'next/link';
+import { InlineLoadingSpinner } from '@/components/ui/LoadingSpinner';
 import {
   getAdminStats,
   getPendingListings,
@@ -571,6 +572,7 @@ function BrandDirectTab() {
   const [isPending, startTransition] = useTransition();
   const [msg, setMsg] = useState('');
   const [productSearch, setProductSearch] = useState('');
+  const formRef = useRef<HTMLDivElement>(null);
   const [form, setForm] = useState({
     title: '', description: '', category: 'bridal', condition: 'new_unworn',
     size_us: '', price: '', msrp: '', silhouette: '', train_style: '',
@@ -652,6 +654,7 @@ function BrandDirectTab() {
     setEditId(listing.id);
     setShowForm(true);
     setMsg('');
+    setTimeout(() => formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
   };
 
   const handleToggle = (listing: any) => {
@@ -703,7 +706,7 @@ function BrandDirectTab() {
 
       {/* Create/Edit Form */}
       {showForm && (
-        <div className="bg-white border border-slate-200 p-6 space-y-4">
+        <div ref={formRef} className="bg-white border border-slate-200 p-6 space-y-4">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-medium tracking-tight">{editId ? 'Edit Brand Direct Listing' : 'Create Brand Direct Listing'}</h3>
             <button onClick={resetForm} className="text-slate-400 hover:text-slate-600">
@@ -1990,12 +1993,7 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 function LoadingSkeleton() {
-  return (
-    <div className="space-y-4">
-      <div className="h-32 bg-slate-100 animate-pulse rounded" />
-      <div className="h-32 bg-slate-100 animate-pulse rounded" />
-    </div>
-  );
+  return <InlineLoadingSpinner size="md" />;
 }
 
 
@@ -2299,7 +2297,7 @@ export default function AdminPage() {
   if (authorized === null) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="animate-pulse font-sans text-slate-400 tracking-widest uppercase text-sm">Verifying access...</div>
+        <InlineLoadingSpinner size="lg" />
       </div>
     );
   }

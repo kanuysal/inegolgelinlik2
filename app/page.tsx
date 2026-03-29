@@ -7,6 +7,7 @@ import Footer from "@/components/ui/Footer";
 import { getPublicFeaturedGowns } from "@/app/admin/actions";
 import { getApprovedListings } from "@/app/shop/actions";
 import { thumb } from "@/lib/image";
+import { InlineLoadingSpinner } from "@/components/ui/LoadingSpinner";
 
 const DEFAULT_FEATURED = [
   { id: '1', title: 'The Maya', subtitle: 'Size 4 • Excellent Condition', price: '$4,200', image_url: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Maya_side.jpg', link: '/shop' },
@@ -121,18 +122,7 @@ export default function Home() {
         </div>
 
         {listingsLoading ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-5">
-            {Array.from({ length: 10 }).map((_, i) => (
-              <div key={i} className="animate-pulse">
-                <div className="aspect-[3/4] bg-slate-200"></div>
-                <div className="p-3 space-y-2">
-                  <div className="h-4 bg-slate-200 rounded w-3/4"></div>
-                  <div className="h-3 bg-slate-100 rounded w-1/2"></div>
-                  <div className="h-4 bg-slate-200 rounded w-1/3 mt-3"></div>
-                </div>
-              </div>
-            ))}
-          </div>
+          <InlineLoadingSpinner size="lg" />
         ) : listings.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-5">
               {listings.map((listing: any) => {
@@ -215,6 +205,7 @@ export default function Home() {
       <section className="relative py-32 px-6 overflow-hidden">
         <div className="absolute inset-0">
           <img alt="Bridal background" className="w-full h-full object-cover" src="/images/hiw/banner.jpg" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-black/10" />
         </div>
         <div className="relative z-10 max-w-4xl mx-auto text-center text-white">
           <h2 className="text-4xl md:text-6xl font-serif font-light leading-tight mb-8">

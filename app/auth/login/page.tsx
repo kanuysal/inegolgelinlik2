@@ -136,7 +136,7 @@ function LoginForm() {
 
             <div className="flex items-center my-10">
               <div className="flex-1 h-[1px] bg-[#1c1c1c]/5" />
-              <span className="px-6 font-sans text-[9px] font-light text-[#1c1c1c]/20 uppercase tracking-[0.15em]">or</span>
+              <span className="px-6 font-sans text-[9px] font-light text-[#1c1c1c]/30 uppercase tracking-[0.15em]">or</span>
               <div className="flex-1 h-[1px] bg-[#1c1c1c]/5" />
             </div>
 
@@ -169,7 +169,7 @@ export default function LoginPage() {
     <Suspense
       fallback={
         <div className="min-h-screen bg-white flex items-center justify-center">
-          <div className="font-sans text-[11px] font-light text-[#1c1c1c]/20 uppercase tracking-[0.15em]">
+          <div className="font-sans text-[11px] font-light text-[#1c1c1c]/30 uppercase tracking-[0.15em]">
             Loading...
           </div>
         </div>

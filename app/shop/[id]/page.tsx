@@ -307,7 +307,7 @@ export default function ProductDetailPage() {
         return;
       }
 
-      const offerMessage = `💰 Offer: $${amount.toLocaleString()}\n\nI'd like to offer $${amount.toLocaleString()} for this gown.${offerNote.trim() ? `\n\n${offerNote.trim()}` : ""}`;
+      const offerMessage = `Offer: $${amount.toLocaleString()}\n\nI'd like to offer $${amount.toLocaleString()} for this gown.${offerNote.trim() ? `\n\n${offerNote.trim()}` : ""}`;
 
       const result = await startConversation(params.id as string, sellerId, offerMessage);
       setOfferSending(false);
@@ -419,7 +419,7 @@ export default function ProductDetailPage() {
                   {fmt(listing.salePrice)}
                 </span>
                 {listing.originalPrice > listing.salePrice && (
-                  <span className="font-sans text-xl text-[#1c1c1c]/20 line-through">
+                  <span className="font-sans text-xl text-[#1c1c1c]/30 line-through">
                     {fmt(listing.originalPrice)}
                   </span>
                 )}
@@ -445,7 +445,7 @@ export default function ProductDetailPage() {
                   const isEmphasized = ["Size", "Silhouette", "Condition"].includes(label);
                   return (
                     <div key={label}>
-                      <span className={`font-sans font-light uppercase tracking-[0.15em] text-[#1c1c1c]/25 block mb-2 ${isEmphasized ? "text-xs" : "text-[10px]"}`}>{label}</span>
+                      <span className={`font-sans font-light uppercase tracking-[0.15em] text-[#1c1c1c]/30 block mb-2 ${isEmphasized ? "text-xs" : "text-[10px]"}`}>{label}</span>
                       <span className={`font-sans text-[#1c1c1c] ${isEmphasized ? "text-lg font-medium" : "text-base text-[#1c1c1c]/70 font-light"}`}>{value}</span>
                     </div>
                   );
@@ -630,7 +630,7 @@ export default function ProductDetailPage() {
                   <div className="grid grid-cols-2 gap-6">
                     {Object.entries(listing.measurements).map(([key, val]) => (
                       <div key={key}>
-                        <span className="font-sans text-[10px] font-light uppercase tracking-[0.1em] text-[#1c1c1c]/25 block mb-1 capitalize">{key}</span>
+                        <span className="font-sans text-[10px] font-light uppercase tracking-[0.1em] text-[#1c1c1c]/30 block mb-1 capitalize">{key}</span>
                         <span className="font-sans text-base font-light">{val}</span>
                       </div>
                     ))}

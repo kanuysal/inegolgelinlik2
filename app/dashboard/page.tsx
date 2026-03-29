@@ -8,6 +8,7 @@ import toast, { Toaster } from "react-hot-toast";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
 import { thumb } from "@/lib/image";
+import { InlineLoadingSpinner } from "@/components/ui/LoadingSpinner";
 import {
   getMyListings,
   deleteListing,
@@ -30,21 +31,7 @@ type Tab = "listings" | "purchases" | "messages" | "wishlist" | "profile";
 
 /* ── Loading Skeleton ── */
 function LoadingSkeleton() {
-  return (
-    <div className="space-y-4 p-8">
-      {[1, 2, 3].map((i) => (
-        <div key={i} className="border border-slate-100 p-6 animate-pulse">
-          <div className="flex gap-5">
-            <div className="w-20 h-24 bg-slate-100" />
-            <div className="flex-1 space-y-3">
-              <div className="h-4 bg-slate-100 w-1/3" />
-              <div className="h-3 bg-slate-100 w-1/2" />
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
+  return <InlineLoadingSpinner size="md" />;
 }
 
 /* ══════════════════════════════════════════════════
@@ -273,7 +260,9 @@ function PurchasesTab() {
                     {order.listings?.images?.[0] ? (
                       <img src={order.listings.images[0]} alt="" className="w-full h-full object-cover opacity-80" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-slate-300">👗</div>
+                      <div className="w-full h-full flex items-center justify-center text-slate-300">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="w-8 h-8"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 0 1-8 0" /></svg>
+                      </div>
                     )}
                   </div>
                   <div className="flex-1 w-full">
@@ -325,7 +314,9 @@ function PurchasesTab() {
                     {order.listings?.images?.[0] ? (
                       <img src={order.listings.images[0]} alt="" className="w-full h-full object-cover opacity-80" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-slate-300">👗</div>
+                      <div className="w-full h-full flex items-center justify-center text-slate-300">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="w-8 h-8"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 0 1-8 0" /></svg>
+                      </div>
                     )}
                   </div>
                   <div className="flex-1 w-full">

@@ -136,7 +136,7 @@ export default function SignupPage() {
 
             <div className="flex items-center my-8">
               <div className="flex-1 h-[1px] bg-[#1c1c1c]/5" />
-              <span className="px-6 font-sans text-[9px] font-light text-[#1c1c1c]/20 uppercase tracking-[0.15em]">or</span>
+              <span className="px-6 font-sans text-[9px] font-light text-[#1c1c1c]/30 uppercase tracking-[0.15em]">or</span>
               <div className="flex-1 h-[1px] bg-[#1c1c1c]/5" />
             </div>
 
@@ -159,7 +159,7 @@ export default function SignupPage() {
             Already registered? <Link href="/auth/login" className="text-[#1c1c1c]/60 hover:text-[#1c1c1c] transition-colors ml-2">Sign In</Link>
           </p>
 
-          <p className="text-center font-sans text-[9px] text-[#1c1c1c]/20 mt-12 tracking-widest leading-relaxed uppercase max-w-xs mx-auto font-light">
+          <p className="text-center font-sans text-[9px] text-[#1c1c1c]/30 mt-12 tracking-widest leading-relaxed uppercase max-w-xs mx-auto font-light">
             By joining, you agree to our <span className="text-[#1c1c1c]/40">Terms</span> and <span className="text-[#1c1c1c]/40">Privacy Policy</span>
           </p>
         </motion.div>

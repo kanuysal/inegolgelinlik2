@@ -29,7 +29,7 @@ export default function SmoothScroll({
     }
 
     return (
-        <ReactLenis root ref={lenisRef} options={{ lerp: 0.1, duration: 1.5, smoothWheel: true }}>
+        <ReactLenis root ref={lenisRef} options={{ lerp: 0.12, duration: 0.8, smoothWheel: true, wheelMultiplier: 1.2 }}>
             {children}
         </ReactLenis>
     );
