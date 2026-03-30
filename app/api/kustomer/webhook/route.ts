@@ -106,8 +106,8 @@ export async function POST(req: NextRequest) {
       .single()
 
     if (convError || !conv) {
-      console.error('[Kustomer Webhook] Conversation not found for:', kustomerConvId)
-      return NextResponse.json({ error: 'Conversation not found' }, { status: 404 })
+      // Return 200 to acknowledge receipt — prevents Kustomer from retrying endlessly
+      return NextResponse.json({ ok: true, skipped: 'conversation not linked' })
     }
 
     // Insert the CS agent's message as the seller side
