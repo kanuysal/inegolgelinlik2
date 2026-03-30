@@ -36,7 +36,7 @@ function mapDbListing(row: any): Listing {
 
   // Prefer stock (Galia Lahav) photo as the primary image shown to buyers
   const stockImage = thumb(row.products?.images?.[0]);
-  const mainImage = stockImage || thumb(row.images?.[0]);
+  const mainImage = stockImage || thumb(row.images?.[0]) || "/placeholder-gown.jpg";
 
   // Map collection line: "Bridal Couture" → "Couture", "Bridal GALA" → "GALA"
   const rawCollection = row.products?.stockist_data?.collectionLine || "";
@@ -162,6 +162,7 @@ export default function ShopPage() {
   const [collection, setCollection] = useState("all");
   const [condition, setCondition] = useState("all");
   const [size, setSize] = useState("all");
+  const [price, setPrice] = useState("all");
 
   useEffect(() => {
     getApprovedListings().then((data) => {
@@ -189,9 +190,16 @@ export default function ShopPage() {
       if (collection !== "all" && l.collection !== collection) return false;
       if (condition !== "all" && l.condition.toLowerCase() !== condition.toLowerCase()) return false;
       if (size !== "all" && String(l.size) !== size) return false;
+      if (price !== "all") {
+        const p = l.salePrice;
+        if (price === "under2k" && p >= 2000) return false;
+        if (price === "2k-5k" && (p < 2000 || p >= 5000)) return false;
+        if (price === "5k-10k" && (p < 5000 || p >= 10000)) return false;
+        if (price === "over10k" && p < 10000) return false;
+      }
       return true;
     });
-  }, [listings, search, seller, collection, condition, size]);
+  }, [listings, search, seller, collection, condition, size, price]);
 
   if (loading) return <LoadingSpinner />;
 
@@ -201,10 +209,7 @@ export default function ShopPage() {
 
       {/* ── Header ── */}
       <div className="px-4 md:px-8 pt-28 max-w-[1600px] mx-auto mb-8 text-center">
-        <h2 className="text-5xl font-normal tracking-tight mb-4 font-serif text-[#1c1c1c]">Bridal Gowns</h2>
-        <p className="text-[11px] text-[#1c1c1c]/60 uppercase tracking-[0.4em]">
-          {filtered.length} {filtered.length === 1 ? "gown" : "gowns"} available
-        </p>
+        <h2 className="text-5xl font-normal tracking-tight font-serif text-[#1c1c1c]">Bridal Gowns</h2>
       </div>
 
       {/* ── Filters bar — sticks under navbar on desktop only ── */}
@@ -258,6 +263,18 @@ export default function ShopPage() {
             />
 
             <FilterDropdown
+              label="Price"
+              value={price}
+              onChange={setPrice}
+              options={[
+                { value: "under2k", label: "Under $2,000" },
+                { value: "2k-5k", label: "$2,000–$5,000" },
+                { value: "5k-10k", label: "$5,000–$10,000" },
+                { value: "over10k", label: "Over $10,000" },
+              ]}
+            />
+
+            <FilterDropdown
               label="Sizes"
               value={size}
               onChange={setSize}
@@ -276,9 +293,9 @@ export default function ShopPage() {
             />
 
             {/* Reset */}
-            {(search || seller !== "all" || collection !== "all" || condition !== "all" || size !== "all") && (
+            {(search || seller !== "all" || collection !== "all" || condition !== "all" || size !== "all" || price !== "all") && (
               <button
-                onClick={() => { setSearch(""); setSeller("all"); setCollection("all"); setCondition("all"); setSize("all"); }}
+                onClick={() => { setSearch(""); setSeller("all"); setCollection("all"); setCondition("all"); setSize("all"); setPrice("all"); }}
                 className="text-[10px] uppercase tracking-widest text-[#1c1c1c]/60 hover:text-[#1c1c1c] transition-colors"
               >
                 Clear
@@ -314,7 +331,7 @@ export default function ShopPage() {
                 <div className="p-2.5 md:p-3 flex flex-col flex-grow">
                   <div className="mb-1.5">
                     <div className="flex justify-between items-start mb-0.5">
-                      <h3 className="text-xl md:text-2xl font-normal tracking-tight font-serif text-[#1c1c1c]">{listing.title}</h3>
+                      <h3 className="text-lg md:text-xl font-normal tracking-tight font-serif text-[#1c1c1c]">{listing.title}</h3>
                       <span className="text-xs md:text-sm font-bold text-[#1c1c1c]/60 uppercase tracking-tighter flex-shrink-0 ml-2">
                         SIZE {listing.size}
                       </span>
@@ -329,7 +346,7 @@ export default function ShopPage() {
                         ${listing.salePrice.toLocaleString()}
                       </p>
                       {listing.originalPrice > listing.salePrice && (
-                        <p className="text-xs md:text-sm text-[#1c1c1c]/30 line-through">
+                        <p className="text-xs md:text-sm text-[#1c1c1c]/50 line-through">
                           ${listing.originalPrice.toLocaleString()}
                         </p>
                       )}

@@ -325,7 +325,7 @@ export default function SellWizardPage() {
       price: parseFloat(data.price),
       msrp: data.msrp ? parseFloat(data.msrp) : null,
       product_id: data.product_id,
-      order_number: data.order_number || null,
+      order_number: data.order_number,
       images: data.images.map((img) => img.url),
     })
 
@@ -559,7 +559,7 @@ export default function SellWizardPage() {
 
                     <div className="space-y-2 pt-6 border-t border-gray-100">
                       <div className="flex items-center gap-2">
-                        <label className="text-[11px] uppercase tracking-widest font-semibold text-gray-500">Order Number</label>
+                        <label className="text-[11px] uppercase tracking-widest font-semibold text-gray-500">Order Number <span className="text-red-500">*</span></label>
                         <div className="relative group">
                           <span className="material-symbols-outlined text-gray-400 text-sm cursor-help">help</span>
                           <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 bg-[#1c1c1c] text-white text-xs rounded-lg px-4 py-3 leading-relaxed opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 pointer-events-none">
@@ -574,6 +574,7 @@ export default function SellWizardPage() {
                         className="w-full bg-transparent border-0 border-b border-gray-200 py-3 px-0 focus:ring-0 focus:border-accent text-sm"
                         placeholder="e.g. GL-2024-00123"
                         maxLength={100}
+                        required
                       />
                     </div>
 

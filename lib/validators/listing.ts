@@ -69,9 +69,8 @@ export const listingSchema = z.object({
     .nullable(),
   order_number: z
     .string()
-    .max(100, 'Order number is too long')
-    .optional()
-    .nullable(),
+    .min(1, 'Order number is required')
+    .max(100, 'Order number is too long'),
   product_id: z.string().optional().nullable(),
   images: z
     .array(z.string().url('Each image must be a valid URL'))

@@ -47,7 +47,7 @@ import {
   sendBlastEmail,
 } from './actions';
 
-type Tab = 'dashboard' | 'moderation' | 'brand_direct' | 'brand_messages' | 'inventory' | 'sellers' | 'transactions' | 'claims' | 'featured' | 'all_listings' | 'blast_email';
+type Tab = 'dashboard' | 'moderation' | 'brand_direct' | 'brand_messages' | 'inventory' | 'sellers' | 'transactions' | 'featured' | 'blast_email';
 
 // ═══════════════════════════════════════════════════════
 // OVERVIEW TAB (Dashboard)
@@ -136,11 +136,31 @@ function ModerationTab() {
   const [showQueue, setShowQueue] = useState(true);
   const [activeItem, setActiveItem] = useState<any | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [editMode, setEditMode] = useState(false);
+  const [editFields, setEditFields] = useState({ title: '', price: '', size_us: '', condition: '', order_number: '', description: '' });
+  const [editSaving, setEditSaving] = useState(false);
+  const [editSuccess, setEditSuccess] = useState(false);
+
+  const populateEditFields = (item: any) => {
+    setEditFields({
+      title: item.title || '',
+      price: item.price?.toString() || '',
+      size_us: item.size_us || '',
+      condition: item.condition || 'excellent',
+      order_number: item.order_number || '',
+      description: item.description || '',
+    });
+    setEditMode(false);
+    setEditSuccess(false);
+  };
 
   useEffect(() => {
     getPendingListings().then(d => {
       setPending(d);
-      if (d.length > 0) setActiveItem(d[0]);
+      if (d.length > 0) {
+        setActiveItem(d[0]);
+        populateEditFields(d[0]);
+      }
       setLoading(false);
     });
   }, []);
@@ -198,7 +218,7 @@ function ModerationTab() {
           {pending.map(listing => (
             <div
               key={listing.id}
-              onClick={() => setActiveItem(listing)}
+              onClick={() => { setActiveItem(listing); populateEditFields(listing); }}
               className={`p-4 bg-white transition-all cursor-pointer ${activeItem?.id === listing.id
                 ? 'border-l-2 border-accent shadow-sm ring-1 ring-slate-200'
                 : 'border-l-2 border-transparent hover:border-slate-300'
@@ -319,29 +339,103 @@ function ModerationTab() {
                 )}
               </div>
 
-              {/* Specs & Seller Info */}
+              {/* Specs & Edit Form */}
               <div className="bg-white p-8 space-y-8 overflow-y-auto">
-                <div>
-                  <h3 className="text-xs font-bold tracking-widest uppercase mb-4 text-slate-400">Specifications</h3>
+                <div className="flex justify-between items-center">
+                  <h3 className="text-xs font-bold tracking-widest uppercase text-slate-400">
+                    {editMode ? 'Edit Listing' : 'Specifications'}
+                  </h3>
+                  <button
+                    onClick={() => { setEditMode(!editMode); setEditSuccess(false); }}
+                    className="text-[10px] font-bold uppercase tracking-widest text-accent hover:text-primary transition-colors"
+                  >
+                    {editMode ? 'Cancel' : 'Edit'}
+                  </button>
+                </div>
+
+                {editMode ? (
+                  <div className="space-y-4">
+                    <div>
+                      <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block mb-1">Title</label>
+                      <input type="text" value={editFields.title} onChange={e => setEditFields({...editFields, title: e.target.value})} className="w-full bg-slate-50 border border-slate-200 text-sm py-2 px-3 focus:ring-accent focus:border-accent" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block mb-1">Price ($)</label>
+                        <input type="number" value={editFields.price} onChange={e => setEditFields({...editFields, price: e.target.value})} className="w-full bg-slate-50 border border-slate-200 text-sm py-2 px-3 focus:ring-accent focus:border-accent" />
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block mb-1">Size (US)</label>
+                        <input type="text" value={editFields.size_us} onChange={e => setEditFields({...editFields, size_us: e.target.value})} className="w-full bg-slate-50 border border-slate-200 text-sm py-2 px-3 focus:ring-accent focus:border-accent" />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block mb-1">Condition</label>
+                        <select value={editFields.condition} onChange={e => setEditFields({...editFields, condition: e.target.value})} className="w-full bg-slate-50 border border-slate-200 text-sm py-2 px-3 focus:ring-accent focus:border-accent">
+                          <option value="new_unworn">New / Unworn</option>
+                          <option value="excellent">Excellent</option>
+                          <option value="good">Good</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block mb-1">Order Number</label>
+                        <input type="text" value={editFields.order_number} onChange={e => setEditFields({...editFields, order_number: e.target.value})} className="w-full bg-slate-50 border border-slate-200 text-sm py-2 px-3 focus:ring-accent focus:border-accent" />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block mb-1">Description</label>
+                      <textarea value={editFields.description} onChange={e => setEditFields({...editFields, description: e.target.value})} rows={4} className="w-full bg-slate-50 border border-slate-200 text-sm py-2 px-3 focus:ring-accent focus:border-accent resize-none" />
+                    </div>
+                    {editSuccess && (
+                      <div className="p-3 bg-green-50 border border-green-200 text-green-700 text-xs font-medium">Changes saved successfully.</div>
+                    )}
+                    <button
+                      disabled={editSaving}
+                      onClick={async () => {
+                        setEditSaving(true);
+                        setEditSuccess(false);
+                        const res = await adminUpdateListing(activeItem.id, {
+                          title: editFields.title,
+                          price: Number(editFields.price),
+                          size_us: editFields.size_us,
+                          condition: editFields.condition,
+                          order_number: editFields.order_number || null,
+                          description: editFields.description || null,
+                        });
+                        setEditSaving(false);
+                        if (res.success) {
+                          setEditSuccess(true);
+                          const updated = { ...activeItem, ...editFields, price: Number(editFields.price) };
+                          setActiveItem(updated);
+                          setPending(prev => prev.map(p => p.id === activeItem.id ? updated : p));
+                        }
+                      }}
+                      className="w-full py-3 bg-primary text-white text-xs font-bold uppercase tracking-widest hover:bg-slate-800 transition-colors disabled:opacity-50"
+                    >
+                      {editSaving ? 'Saving...' : 'Save Changes'}
+                    </button>
+                  </div>
+                ) : (
                   <div className="grid grid-cols-2 gap-y-4">
                     <div className="border-b border-slate-100 pb-2">
-                      <p className="text-[10px] uppercase text-slate-400 mb-1">Color Options</p>
-                      <p className="text-sm font-medium">{activeItem.color_options || '—'}</p>
-                    </div>
-                    <div className="border-b border-slate-100 pb-2">
                       <p className="text-[10px] uppercase text-slate-400 mb-1">Condition</p>
-                      <p className="text-sm font-medium">{activeItem.condition || '—'}</p>
+                      <p className="text-sm font-medium capitalize">{activeItem.condition?.replace('_', ' ') || '—'}</p>
                     </div>
                     <div className="border-b border-slate-100 pb-2">
-                      <p className="text-[10px] uppercase text-slate-400 mb-1">Year Purchased</p>
-                      <p className="text-sm font-medium">{activeItem.year_purchased || '—'}</p>
+                      <p className="text-[10px] uppercase text-slate-400 mb-1">Size</p>
+                      <p className="text-sm font-medium">{activeItem.size_us || '—'}</p>
+                    </div>
+                    <div className="border-b border-slate-100 pb-2">
+                      <p className="text-[10px] uppercase text-slate-400 mb-1">Order Number</p>
+                      <p className="text-sm font-medium">{activeItem.order_number || '—'}</p>
                     </div>
                     <div className="border-b border-slate-100 pb-2">
                       <p className="text-[10px] uppercase text-slate-400 mb-1">Status</p>
                       <p className="text-sm font-medium capitalize">{activeItem.status?.replace('_', ' ') || '—'}</p>
                     </div>
                   </div>
-                </div>
+                )}
 
                 <div>
                   <h3 className="text-xs font-bold tracking-widest uppercase mb-4 text-slate-400">Seller Information</h3>
@@ -2330,9 +2424,7 @@ export default function AdminPage() {
     inventory: 'Inventory Catalog',
     sellers: 'Sellers & Users',
     transactions: 'All Transactions',
-    claims: 'Dispute Claims',
     featured: 'Featured Gowns',
-    all_listings: 'All Listings',
     blast_email: 'Email Blast',
   };
 
@@ -2381,14 +2473,6 @@ export default function AdminPage() {
             <button onClick={() => handleTab('transactions')} className={`w-full flex items-center gap-3 px-4 py-3 transition-all ${tab === 'transactions' ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:bg-slate-50'}`}>
               <span className="material-symbols-outlined text-sm">payments</span>
               <span className="text-xs font-medium tracking-wider uppercase">Transactions</span>
-            </button>
-            <button onClick={() => handleTab('claims')} className={`w-full flex items-center gap-3 px-4 py-3 transition-all ${tab === 'claims' ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:bg-slate-50'}`}>
-              <span className="material-symbols-outlined text-sm">shield</span>
-              <span className="text-xs font-medium tracking-wider uppercase">Claims</span>
-            </button>
-            <button onClick={() => handleTab('all_listings')} className={`w-full flex items-center gap-3 px-4 py-3 transition-all ${tab === 'all_listings' ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:bg-slate-50'}`}>
-              <span className="material-symbols-outlined text-sm">edit_note</span>
-              <span className="text-xs font-medium tracking-wider uppercase">Edit Listings</span>
             </button>
             <div className="h-px bg-slate-100 my-2"></div>
             <button onClick={() => handleTab('featured')} className={`w-full flex items-center gap-3 px-4 py-3 transition-all ${tab === 'featured' ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:bg-slate-50'}`}>
@@ -2443,9 +2527,7 @@ export default function AdminPage() {
           <div className={tab === 'transactions' ? 'block' : 'hidden'}>
             <TransactionsTab mode="all" />
           </div>
-          {tab === 'claims' && <ClaimsTab />}
           {tab === 'featured' && <FeaturedGownsTab />}
-          {tab === 'all_listings' && <AllListingsEditTab />}
           {tab === 'blast_email' && <BlastEmailTab />}
         </div>
       </div>

@@ -58,7 +58,7 @@ function AccordionSection({
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between py-6 text-left group"
       >
-        <span className="font-sans text-[12px] uppercase tracking-[0.1em] font-light text-[#1c1c1c]/40 group-hover:text-[#1c1c1c] transition-colors">{title}</span>
+        <span className="font-sans text-[12px] uppercase tracking-[0.1em] font-light text-[#1c1c1c]/55 group-hover:text-[#1c1c1c] transition-colors">{title}</span>
         <motion.span
           animate={{ rotate: open ? 45 : 0 }}
           transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
@@ -341,7 +341,7 @@ export default function ProductDetailPage() {
 
           {/* ──── LEFT: STICKY MEDIA COLUMN ──── */}
           <div className="w-full lg:w-[55%]">
-            <div className="lg:sticky lg:top-32 space-y-6">
+            <div className="lg:sticky lg:top-32 lg:self-start space-y-6">
               <div className="group relative aspect-[3/4] overflow-hidden bg-[#efefef] border border-[#1c1c1c]/10">
                 <motion.div
                   key={activeImage}
@@ -419,7 +419,7 @@ export default function ProductDetailPage() {
                   {fmt(listing.salePrice)}
                 </span>
                 {listing.originalPrice > listing.salePrice && (
-                  <span className="font-sans text-xl text-[#1c1c1c]/30 line-through">
+                  <span className="font-sans text-xl text-[#1c1c1c]/50 line-through">
                     {fmt(listing.originalPrice)}
                   </span>
                 )}
@@ -439,13 +439,12 @@ export default function ProductDetailPage() {
                   ...(stockistData?.back?.length ? [["Back", stockistData.back.join(", ")]] : []),
                   ...(stockistData?.style?.length ? [["Style", stockistData.style.join(", ")]] : []),
                   ...(stockistData?.collectionLine ? [["Collection", `${stockistData.collectionLine} — ${stockistData.collection}`]] : []),
-                  ...(stockistData?.modelNumber ? [["Model", stockistData.modelNumber]] : []),
                   ...(stockistData?.retailPrice ? [["Retail Price", fmt(stockistData.retailPrice.amount)]] : []),
                 ].filter(([, value]) => value && value !== "—").map(([label, value]) => {
                   const isEmphasized = ["Size", "Silhouette", "Condition"].includes(label);
                   return (
                     <div key={label}>
-                      <span className={`font-sans font-light uppercase tracking-[0.15em] text-[#1c1c1c]/30 block mb-2 ${isEmphasized ? "text-xs" : "text-[10px]"}`}>{label}</span>
+                      <span className={`font-sans font-light uppercase tracking-[0.15em] text-[#1c1c1c]/50 block mb-2 ${isEmphasized ? "text-xs" : "text-[10px]"}`}>{label}</span>
                       <span className={`font-sans text-[#1c1c1c] ${isEmphasized ? "text-lg font-medium" : "text-base text-[#1c1c1c]/70 font-light"}`}>{value}</span>
                     </div>
                   );
@@ -630,7 +629,7 @@ export default function ProductDetailPage() {
                   <div className="grid grid-cols-2 gap-6">
                     {Object.entries(listing.measurements).map(([key, val]) => (
                       <div key={key}>
-                        <span className="font-sans text-[10px] font-light uppercase tracking-[0.1em] text-[#1c1c1c]/30 block mb-1 capitalize">{key}</span>
+                        <span className="font-sans text-[10px] font-light uppercase tracking-[0.1em] text-[#1c1c1c]/50 block mb-1 capitalize">{key}</span>
                         <span className="font-sans text-base font-light">{val}</span>
                       </div>
                     ))}
@@ -681,17 +680,11 @@ export default function ProductDetailPage() {
                 <AccordionSection title="Shipping & Returns">
                   <div className="space-y-4 font-sans text-sm text-[#1c1c1c] leading-relaxed font-light">
                     {listing.listingType === "brand_direct" ? (
-                      <>
-                        <p>Returns accepted within 5 days of receiving the item. A $200 return fee applies per item.</p>
-                        <p>Shipping arrangements are coordinated directly by Galia Lahav.</p>
-                      </>
+                      <p>Returns for brand-direct items are accepted, subject to a $200 fee for domestic orders and $300 international. Exchanges for brand-direct items are accepted subject to a $100 fee for domestic orders and $200 international. Return and exchange requests must be submitted within 5 days of receiving the item.</p>
                     ) : (
-                      <>
-                        <p>Returns are at the discretion of buyer and seller. RE:GALIA does not facilitate returns for peer-to-peer listings.</p>
-                        <p>Shipping and payment are arranged directly between buyer and seller.</p>
-                      </>
+                      <p>Returns for bride-to-bride listings are entirely at the discretion of the buyer and seller. Regalia does not take responsibility for these transactions, and both parties should proceed as they see fit.</p>
                     )}
-                    <p className="text-[#1c1c1c]/30 text-xs mt-4">All transactions between buyers and sellers are conducted independently. RE:GALIA facilitates the marketplace but does not take responsibility for communications, payments, or disputes between parties.</p>
+                    <p className="text-[#1c1c1c]/50 text-xs mt-4">All transactions between buyers and sellers are conducted independently. RE:GALIA facilitates the marketplace but does not take responsibility for communications, payments, or disputes between parties.</p>
                   </div>
                 </AccordionSection>
               </div>
@@ -703,8 +696,7 @@ export default function ProductDetailPage() {
       {/* ── Similar Styles ── */}
       {relatedListings.length > 0 && (
         <section className="max-w-[1400px] mx-auto px-6 py-20">
-          <h2 className="font-serif text-3xl md:text-4xl font-light text-[#1c1c1c] mb-2">Similar Styles</h2>
-          <p className="text-sm text-[#1c1c1c]/40 mb-10">From the same collection</p>
+          <h2 className="font-serif text-3xl md:text-4xl font-light text-[#1c1c1c] mb-10">You May Also Like</h2>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
             {relatedListings.map((item: any) => {
