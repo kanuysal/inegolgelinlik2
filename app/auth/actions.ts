@@ -36,15 +36,15 @@ function sanitizeRedirect(raw: string | null): string {
 export async function login(formData: FormData) {
   const supabase = await createClient()
 
-  // Rate limit login attempts per IP (e.g., 5 per 15 minutes)
+  // H8: Rate limit by both IP and email to prevent bypass via header spoofing
   const headersList = await headers()
   const ip = headersList.get('x-real-ip') || headersList.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
-  const allowed = await rateLimit({
+  const ipAllowed = await rateLimit({
     key: `login:${ip}`,
-    limit: 5,
+    limit: 10,
     windowSeconds: 15 * 60,
   })
-  if (!allowed) {
+  if (!ipAllowed) {
     return { error: 'Too many login attempts. Please try again later.' }
   }
 
@@ -57,6 +57,16 @@ export async function login(formData: FormData) {
   const result = loginSchema.safeParse(rawData)
   if (!result.success) {
     return { error: result.error.issues[0].message }
+  }
+
+  // Per-email rate limiting as primary brute-force control (H8)
+  const emailAllowed = await rateLimit({
+    key: `login-email:${result.data.email.toLowerCase()}`,
+    limit: 5,
+    windowSeconds: 15 * 60,
+  })
+  if (!emailAllowed) {
+    return { error: 'Too many login attempts for this account. Please try again later.' }
   }
 
   const { error } = await supabase.auth.signInWithPassword({
@@ -95,11 +105,21 @@ export async function signup(formData: FormData) {
   const ip = headersList.get('x-real-ip') || headersList.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
   const allowed = await rateLimit({
     key: `signup:${ip}`,
-    limit: 3,
+    limit: 5,
     windowSeconds: 60 * 60,
   })
   if (!allowed) {
     return { error: 'Too many sign-up attempts. Please try again later.' }
+  }
+
+  // H8: Per-email rate limiting as additional control
+  const emailAllowed = await rateLimit({
+    key: `signup-email:${result.data.email.toLowerCase()}`,
+    limit: 3,
+    windowSeconds: 60 * 60,
+  })
+  if (!emailAllowed) {
+    return { error: 'Too many sign-up attempts for this email. Please try again later.' }
   }
 
   // Check for existing account with normalized email (prevents +tag bypasses)

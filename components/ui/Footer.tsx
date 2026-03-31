@@ -76,7 +76,8 @@ export default function Footer() {
                 { href: "/how-it-works", label: "About RE:GALIA" },
                 { href: "/how-it-works#authenticity", label: "Authenticity Promise" },
                 { href: "/how-it-works#buyer-protection", label: "Buyer Protection" },
-                { href: "mailto:hello@regalia.com", label: "Contact Us" },
+                { href: "/company/return-policy", label: "Return Policy" },
+                { href: "mailto:regalia@galialahav.com", label: "Contact Us" },
               ].map((link) => (
                 <li key={link.label}>
                   <Link

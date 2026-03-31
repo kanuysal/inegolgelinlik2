@@ -59,11 +59,11 @@ function AccordionSection({
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between py-6 text-left group"
       >
-        <span className="font-sans text-[12px] uppercase tracking-[0.1em] font-light text-[#1c1c1c]/55 group-hover:text-[#1c1c1c] transition-colors">{title}</span>
+        <span className="font-sans text-[12px] uppercase tracking-[0.1em] font-light text-[#1c1c1c] group-hover:text-[#1c1c1c] transition-colors">{title}</span>
         <motion.span
           animate={{ rotate: open ? 45 : 0 }}
           transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-          className="text-[#1c1c1c]/20 text-xl leading-none"
+          className="text-[#1c1c1c]/40 text-xl leading-none"
         >
           +
         </motion.span>
@@ -89,7 +89,7 @@ function SellerBadge({ type }: { type: ListingType }) {
   if (type === "brand_direct") {
     return (
       <div className="flex flex-col gap-1.5">
-        <div className="flex items-center gap-2 px-3 py-1.5 bg-[#1c1c1c]/5 border border-[#1c1c1c]/10">
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-[#1c1c1c]">
           <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5 flex-shrink-0">
             <path
               d="M12 2L14.09 4.26L17 3.64L17.18 6.57L19.82 8.07L18.56 10.74L20 13.14L17.72 14.72L17.5 17.66L14.58 17.95L12.73 20.39L10.27 18.76L7.27 19.5L6.27 16.73L3.53 15.32L4.63 12.56L3.27 10L5.57 8.45L5.82 5.51L8.74 5.27L10.64 2.87L12 2Z"
@@ -97,11 +97,11 @@ function SellerBadge({ type }: { type: ListingType }) {
             />
             <path d="M9 12L11 14L15 10" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          <span className="font-sans text-[10px] uppercase tracking-[0.1em] text-[#1c1c1c]/70 font-light">
+          <span className="font-sans text-[10px] uppercase tracking-[0.1em] text-[#1c1c1c] font-light">
             Sold by Galia Lahav
           </span>
         </div>
-        <div className="flex items-center gap-1.5 px-3 py-1 text-[#1c1c1c]/40">
+        <div className="flex items-center gap-1.5 px-3 py-1 text-[#1c1c1c]">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-3 h-3 flex-shrink-0">
             <path d="M9 14l-4-4 4-4" strokeLinecap="round" strokeLinejoin="round" />
             <path d="M5 10h11a4 4 0 0 1 0 8h-1" strokeLinecap="round" strokeLinejoin="round" />
@@ -114,14 +114,14 @@ function SellerBadge({ type }: { type: ListingType }) {
     );
   }
   return (
-    <div className="flex items-center gap-2 px-3 py-1.5 bg-[#1c1c1c]/[0.03] border border-[#1c1c1c]/5">
-      <svg viewBox="0 0 24 24" fill="none" className="w-3 h-3 flex-shrink-0 text-[#1c1c1c]/30">
+    <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-[#1c1c1c]">
+      <svg viewBox="0 0 24 24" fill="none" className="w-3 h-3 flex-shrink-0 text-[#1c1c1c]">
         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
         <circle cx="9" cy="7" r="4" stroke="currentColor" strokeWidth="1.5" />
         <path d="M23 21v-2a4 4 0 0 0-3-3.87" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
         <path d="M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
       </svg>
-      <span className="font-sans text-[10px] uppercase tracking-[0.1em] text-[#1c1c1c]/40 font-light">
+      <span className="font-sans text-[10px] uppercase tracking-[0.1em] text-[#1c1c1c] font-light">
         {type === "sample_sale" ? "Sample Sale" : "Bride to Bride"}
       </span>
     </div>
@@ -361,11 +361,11 @@ export default function ProductDetailPage() {
       <Navbar />
 
       <div className="max-w-[1400px] mx-auto px-6 pt-32 lg:pt-48">
-        <div className="flex flex-col lg:flex-row gap-20">
+        <div className="flex flex-col lg:flex-row gap-20 lg:items-start">
 
           {/* ──── LEFT: STICKY MEDIA COLUMN ──── */}
           <div className="w-full lg:w-[55%]">
-            <div className="lg:sticky lg:top-32 lg:self-start space-y-6">
+            <div className="lg:sticky lg:top-28 space-y-6">
               <div className="group relative aspect-[3/4] overflow-hidden bg-[#efefef] border border-[#1c1c1c]/10">
                 <motion.div
                   key={activeImage}
@@ -428,7 +428,7 @@ export default function ProductDetailPage() {
           <div className="w-full lg:w-[45%] lg:pt-10">
             <div className="max-w-xl">
               <div className="flex items-center gap-4 mb-4">
-                <p className="font-sans text-sm font-medium uppercase tracking-[0.15em] text-[#1c1c1c]">
+                <p className="font-sans text-sm font-medium uppercase tracking-[0.15em] text-[#333]">
                   {listing.collection}
                 </p>
               </div>
@@ -444,7 +444,7 @@ export default function ProductDetailPage() {
                   {fmt(listing.salePrice)}
                 </span>
                 {listing.originalPrice > listing.salePrice && (
-                  <span className="font-sans text-xl text-[#1c1c1c]/50 line-through">
+                  <span className="font-sans text-xl text-[#777] line-through">
                     {fmt(listing.originalPrice)}
                   </span>
                 )}
@@ -469,8 +469,8 @@ export default function ProductDetailPage() {
                   const isEmphasized = ["Size", "Silhouette", "Condition"].includes(label);
                   return (
                     <div key={label}>
-                      <span className={`font-sans font-light uppercase tracking-[0.15em] text-[#1c1c1c]/50 block mb-2 ${isEmphasized ? "text-xs" : "text-[10px]"}`}>{label}</span>
-                      <span className={`font-sans text-[#1c1c1c] ${isEmphasized ? "text-lg font-medium" : "text-base text-[#1c1c1c]/70 font-light"}`}>{value}</span>
+                      <span className={`font-sans font-light uppercase tracking-[0.15em] text-[#555] block mb-2 ${isEmphasized ? "text-xs" : "text-[10px]"}`}>{label}</span>
+                      <span className={`font-sans text-[#1c1c1c] ${isEmphasized ? "text-lg font-medium" : "text-base font-light"}`}>{value}</span>
                     </div>
                   );
                 })}
@@ -494,7 +494,7 @@ export default function ProductDetailPage() {
                         aria-label={isWished(listing.id) ? "Remove from wishlist" : "Add to wishlist"}
                       >
                         <span
-                          className={`material-symbols-outlined text-xl ${isWished(listing.id) ? "text-red-500" : "text-[#1c1c1c]/30"}`}
+                          className={`material-symbols-outlined text-xl ${isWished(listing.id) ? "text-red-500" : "text-[#1c1c1c]/45"}`}
                           style={isWished(listing.id) ? { fontVariationSettings: "'FILL' 1" } : {}}
                         >
                           favorite
@@ -529,7 +529,7 @@ export default function ProductDetailPage() {
                         aria-label={isWished(listing.id) ? "Remove from wishlist" : "Add to wishlist"}
                       >
                         <span
-                          className={`material-symbols-outlined text-xl ${isWished(listing.id) ? "text-red-500" : "text-[#1c1c1c]/30"}`}
+                          className={`material-symbols-outlined text-xl ${isWished(listing.id) ? "text-red-500" : "text-[#1c1c1c]/45"}`}
                           style={isWished(listing.id) ? { fontVariationSettings: "'FILL' 1" } : {}}
                         >
                           favorite
@@ -564,18 +564,18 @@ export default function ProductDetailPage() {
                     >
                       <button
                         onClick={() => setShowInquiry(false)}
-                        className="absolute top-6 right-6 text-[#1c1c1c]/20 hover:text-[#1c1c1c] transition-colors"
+                        className="absolute top-6 right-6 text-[#1c1c1c]/40 hover:text-[#1c1c1c] transition-colors"
                       >
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                       </button>
 
-                      <p className="font-sans text-[11px] font-light uppercase tracking-[0.15em] text-[#1c1c1c]/40 mb-3">
+                      <p className="font-sans text-[11px] font-light uppercase tracking-[0.15em] text-[#1c1c1c] mb-3">
                         Private Inquiry
                       </p>
                       <h3 className="font-serif text-3xl text-[#1c1c1c] mb-2 italic tracking-tight font-light">
                         {listing.title}
                       </h3>
-                      <p className="font-sans text-xs text-[#1c1c1c]/30 mb-8 font-light">
+                      <p className="font-sans text-xs text-[#333] mb-8 font-light">
                         Your message will be sent directly to the seller. No contact info is shared.
                       </p>
 
@@ -623,21 +623,21 @@ export default function ProductDetailPage() {
                     >
                       <button
                         onClick={() => setShowOffer(false)}
-                        className="absolute top-6 right-6 text-[#1c1c1c]/20 hover:text-[#1c1c1c] transition-colors"
+                        className="absolute top-6 right-6 text-[#1c1c1c]/40 hover:text-[#1c1c1c] transition-colors"
                       >
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                       </button>
 
-                      <p className="font-sans text-[11px] font-light uppercase tracking-[0.15em] text-[#1c1c1c]/40 mb-3">
+                      <p className="font-sans text-[11px] font-light uppercase tracking-[0.15em] text-[#1c1c1c] mb-3">
                         Make an Offer
                       </p>
                       <h3 className="font-serif text-3xl text-[#1c1c1c] mb-2 italic tracking-tight font-light">
                         {listing.title}
                       </h3>
-                      <p className="font-sans text-xs text-[#1c1c1c]/30 mb-2 font-light">
+                      <p className="font-sans text-xs text-[#1c1c1c] mb-2 font-light">
                         Listed at {fmt(listing.salePrice)}
                       </p>
-                      <p className="font-sans text-xs text-[#1c1c1c]/30 mb-8 font-light">
+                      <p className="font-sans text-xs text-[#333] mb-8 font-light">
                         Your offer will be sent as a private message to the seller.
                       </p>
 
@@ -648,11 +648,11 @@ export default function ProductDetailPage() {
                       )}
 
                       <div className="mb-4">
-                        <label className="font-sans text-[10px] font-light uppercase tracking-[0.15em] text-[#1c1c1c]/40 block mb-2">
+                        <label className="font-sans text-[10px] font-light uppercase tracking-[0.15em] text-[#1c1c1c] block mb-2">
                           Your Offer (USD)
                         </label>
                         <div className="relative">
-                          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#1c1c1c]/30 font-sans text-lg">$</span>
+                          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#1c1c1c] font-sans text-lg">$</span>
                           <input
                             type="number"
                             value={offerAmount}
@@ -695,7 +695,7 @@ export default function ProductDetailPage() {
                   <div className="grid grid-cols-2 gap-6">
                     {Object.entries(listing.measurements).map(([key, val]) => (
                       <div key={key}>
-                        <span className="font-sans text-[10px] font-light uppercase tracking-[0.1em] text-[#1c1c1c]/50 block mb-1 capitalize">{key}</span>
+                        <span className="font-sans text-[10px] font-light uppercase tracking-[0.1em] text-[#555] block mb-1 capitalize">{key}</span>
                         <span className="font-sans text-base font-light">{val}</span>
                       </div>
                     ))}
@@ -709,11 +709,11 @@ export default function ProductDetailPage() {
                         <table className="w-full text-xs">
                           <thead>
                             <tr className="border-b border-[#1c1c1c]/5">
-                              <th className="text-left py-2 pr-3 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">Size</th>
-                              <th className="text-left py-2 pr-3 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">Cup</th>
-                              <th className="text-left py-2 pr-3 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">Bust</th>
-                              <th className="text-left py-2 pr-3 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">Waist</th>
-                              <th className="text-left py-2 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">Hips</th>
+                              <th className="text-left py-2 pr-3 text-[10px] uppercase tracking-wider text-[#1c1c1c]/50 font-medium">Size</th>
+                              <th className="text-left py-2 pr-3 text-[10px] uppercase tracking-wider text-[#1c1c1c]/50 font-medium">Cup</th>
+                              <th className="text-left py-2 pr-3 text-[10px] uppercase tracking-wider text-[#1c1c1c]/50 font-medium">Bust</th>
+                              <th className="text-left py-2 pr-3 text-[10px] uppercase tracking-wider text-[#1c1c1c]/50 font-medium">Waist</th>
+                              <th className="text-left py-2 text-[10px] uppercase tracking-wider text-[#1c1c1c]/50 font-medium">Hips</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -730,11 +730,11 @@ export default function ProductDetailPage() {
                               ["52", "H", "120 / 47\"", "98 / 39\"", "130 / 51\""],
                             ].map(([size, cup, bust, waist, hips]) => (
                               <tr key={size} className="border-b border-[#1c1c1c]/[0.03]">
-                                <td className="py-2 pr-3 font-medium text-[#1c1c1c]/60">{size}</td>
-                                <td className="py-2 pr-3 text-[#1c1c1c]/40">{cup}</td>
-                                <td className="py-2 pr-3 text-[#1c1c1c]/40">{bust}</td>
-                                <td className="py-2 pr-3 text-[#1c1c1c]/40">{waist}</td>
-                                <td className="py-2 text-[#1c1c1c]/40">{hips}</td>
+                                <td className="py-2 pr-3 font-medium text-[#1c1c1c]/70">{size}</td>
+                                <td className="py-2 pr-3 text-[#1c1c1c]/60">{cup}</td>
+                                <td className="py-2 pr-3 text-[#1c1c1c]/60">{bust}</td>
+                                <td className="py-2 pr-3 text-[#1c1c1c]/60">{waist}</td>
+                                <td className="py-2 text-[#1c1c1c]/60">{hips}</td>
                               </tr>
                             ))}
                           </tbody>
@@ -746,11 +746,14 @@ export default function ProductDetailPage() {
                 <AccordionSection title="Shipping & Returns">
                   <div className="space-y-4 font-sans text-sm text-[#1c1c1c] leading-relaxed font-light">
                     {listing.listingType === "brand_direct" ? (
-                      <p>Returns for brand-direct items are accepted, subject to a $200 fee for domestic orders and $300 international. Exchanges for brand-direct items are accepted subject to a $100 fee for domestic orders and $200 international. Return and exchange requests must be submitted within 5 days of receiving the item.</p>
+                      <>
+                        <p>Returns for brand-direct items are accepted, subject to a $200 fee for domestic orders and $300 international. Exchanges for brand-direct items are accepted subject to a $100 fee for domestic orders and $200 international. Return and exchange requests must be submitted within 5 days of receiving the item.</p>
+                        <p className="mt-2"><Link href="/company/return-policy" className="text-[#1c1c1c] underline underline-offset-4 decoration-[#1c1c1c]/20 hover:decoration-[#1c1c1c]/60 transition-colors text-sm">View full return policy</Link></p>
+                      </>
                     ) : (
                       <p>Returns for bride-to-bride listings are entirely at the discretion of the buyer and seller. Regalia does not take responsibility for these transactions, and both parties should proceed as they see fit.</p>
                     )}
-                    <p className="text-[#1c1c1c]/50 text-xs mt-4">All transactions between buyers and sellers are conducted independently. RE:GALIA facilitates the marketplace but does not take responsibility for communications, payments, or disputes between parties.</p>
+                    <p className="text-[#555] text-xs mt-4">All transactions between buyers and sellers are conducted independently. RE:GALIA facilitates the marketplace but does not take responsibility for communications, payments, or disputes between parties.</p>
                   </div>
                 </AccordionSection>
               </div>
@@ -784,13 +787,13 @@ export default function ProductDetailPage() {
                     />
                   </div>
                   <h3 className="font-serif text-base font-normal mb-1">{item.title}</h3>
-                  <p className="text-xs text-slate-400 uppercase tracking-wider mb-2">
+                  <p className="text-xs text-[#555] uppercase tracking-wider mb-2">
                     {conditionMap[item.condition] || "Excellent"}
                   </p>
                   <div className="flex items-baseline gap-2">
                     <p className="text-sm font-bold">${item.price?.toLocaleString()}</p>
                     {item.msrp && item.msrp > item.price && (
-                      <p className="text-xs text-slate-300 line-through">${item.msrp.toLocaleString()}</p>
+                      <p className="text-xs text-[#777] line-through">${item.msrp.toLocaleString()}</p>
                     )}
                   </div>
                 </Link>

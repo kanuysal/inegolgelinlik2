@@ -52,7 +52,8 @@ export async function notifyNewMessage({
 
   const fromEmail = process.env.RESEND_FROM_EMAIL
   if (!fromEmail) {
-    console.warn('[notify] RESEND_FROM_EMAIL not set — emails will only reach the Resend account owner (test mode). Set RESEND_FROM_EMAIL to a verified sender to send emails to all users.')
+    console.error('[notify] RESEND_FROM_EMAIL not configured — skipping email send')
+    return
   }
 
   // Look up recipient email
@@ -76,7 +77,7 @@ export async function notifyNewMessage({
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: fromEmail || 'RE:GALIA <onboarding@resend.dev>',
+        from: fromEmail,
         to: user.email,
         subject: `New message about ${listingTitle.replace(/[<>"'&\n\r]/g, '').slice(0, 100)} — RE:GALIA`,
         html: `

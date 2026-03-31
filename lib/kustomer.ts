@@ -8,10 +8,14 @@
  * the API is unreachable, the app continues working normally.
  */
 
-// US: api.kustomerapp.com | EU: api.prod2.kustomerapp.com
-const KUSTOMER_BASE = process.env.KUSTOMER_API_BASE || 'https://api.kustomerapp.com/v1'
+// Kustomer API base must be explicitly configured (GL uses prod2 pod)
+const KUSTOMER_BASE = process.env.KUSTOMER_API_BASE
+if (process.env.KUSTOMER_API_KEY && !KUSTOMER_BASE) {
+  console.error('[Kustomer] KUSTOMER_API_BASE not set — Kustomer integration disabled. Set to https://galia-lahav.api.kustomerapp.com/v1 for production.')
+}
 
 function getApiKey(): string | undefined {
+  if (!KUSTOMER_BASE) return undefined
   return process.env.KUSTOMER_API_KEY
 }
 
@@ -30,7 +34,7 @@ async function kustomerFetch(path: string, options: RequestInit = {}) {
 
   if (!res.ok) {
     const text = await res.text().catch(() => '')
-    console.error(`[Kustomer] ${options.method || 'GET'} ${path} failed: ${res.status} ${text}`)
+    console.error(`[Kustomer] ${options.method || 'GET'} ${path} failed: ${res.status}`)
     return null
   }
 

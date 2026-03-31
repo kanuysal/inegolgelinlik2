@@ -105,6 +105,13 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     return
   }
 
+  // M2: Validate UUID format from metadata
+  const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+  if (!UUID_RE.test(orderId) || !UUID_RE.test(listingId)) {
+    console.error('[stripe-webhook] Invalid UUID in metadata:', { orderId, listingId })
+    return
+  }
+
   // Extract shipping details from collected_information
   const shippingDetails = (session as any).collected_information?.shipping_details
     || (session as any).shipping_details

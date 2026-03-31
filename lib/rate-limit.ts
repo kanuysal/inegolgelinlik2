@@ -67,7 +67,7 @@ export async function rateLimit(config: RateLimitConfig): Promise<boolean> {
 
     return count <= limit
   } catch (err) {
-    console.error('[rate-limit] Redis error — falling back to in-memory', err)
-    return inMemoryRateLimit(config)
+    console.error('[rate-limit] Redis error — rejecting request (fail-closed)', err)
+    return false
   }
 }

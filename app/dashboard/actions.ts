@@ -103,6 +103,31 @@ export async function republishListing(listingId: string) {
   return { success: true }
 }
 
+export async function markListingAsSold(listingId: string) {
+  const user = await requireAuth()
+  const supabase = await adminDb() // Use admin client to bypass RLS
+
+  // Only allow marking approved listings as sold (seller must own it)
+  const { error } = await supabase
+    .from('listings')
+    .update({
+      status: 'sold',
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', listingId)
+    .eq('seller_id', user.id)
+    .eq('status', 'approved')
+
+  if (error) {
+    console.error('Mark as sold error:', error)
+    return { error: 'Failed to mark listing as sold. Please try again.' }
+  }
+  revalidatePath('/dashboard')
+  revalidatePath('/shop')
+  revalidatePath('/')
+  return { success: true }
+}
+
 // ── My Purchases (Orders as buyer) ──────────────────────────
 export async function getMyPurchases() {
   const user = await requireAuth()
@@ -322,9 +347,8 @@ export async function sendMessage(conversationId: string, content: string) {
 // ── Unread Message Count (for navbar badge) ────────────────
 export async function getUnreadMessageCount() {
   try {
+    const user = await requireAuth()
     const supabase = await db()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return 0
 
     // Get all conversations this user is part of
     const { data: conversations } = await supabase

@@ -14,6 +14,7 @@ import {
   deleteListing,
   unpublishListing,
   republishListing,
+  markListingAsSold,
   getMyPurchases,
   getMySales,
   getMyConversations,
@@ -97,6 +98,21 @@ function ListingsTab() {
     });
   };
 
+  const handleMarkAsSold = (id: string) => {
+    if (!confirm("Mark this gown as sold? This will remove it from the shop.")) return;
+    startTransition(async () => {
+      const res = await markListingAsSold(id);
+      if (res.success) {
+        setListings((prev) =>
+          prev.map((l) => (l.id === id ? { ...l, status: 'sold' } : l))
+        );
+        toast.success('Listing marked as sold!');
+      } else if (res.error) {
+        toast.error('Error: ' + res.error);
+      }
+    });
+  };
+
   if (loading) return <LoadingSkeleton />;
 
   return (
@@ -119,6 +135,7 @@ function ListingsTab() {
               <img alt={listing.title} className="listing-image w-full h-full object-cover transition-transform duration-700" src={listing.images?.[0] || 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Lorena_-_Studio_-_Ai.jpg'} />
               <div className="absolute top-3 left-3 md:top-4 md:left-4">
                 <span className={`border px-3 py-1 text-[8px] md:text-[9px] font-bold uppercase tracking-widest rounded-full backdrop-blur-sm ${listing.status === 'approved' ? 'bg-green-500 text-white border-green-500' :
+                  listing.status === 'sold' ? 'bg-primary text-white border-primary' :
                   listing.status === 'archived' ? 'bg-gray-500 text-white border-gray-500' :
                     listing.status === 'pending_review' ? 'bg-amber-500 text-white border-amber-500' :
                       listing.status === 'rejected' ? 'bg-red-500 text-white border-red-500' :
@@ -126,6 +143,7 @@ function ListingsTab() {
                   }`}>
                   {listing.status === 'pending_review' ? 'PENDING' :
                     listing.status === 'archived' ? 'ARCHIVED' :
+                      listing.status === 'sold' ? 'SOLD' :
                       listing.status || 'DRAFT'}
                 </span>
               </div>
@@ -166,13 +184,22 @@ function ListingsTab() {
                     </button>
                   )}
                   {listing.status === "approved" && (
-                    <button
-                      onClick={() => handleUnpublish(listing.id)}
-                      disabled={isPending}
-                      className="text-amber-600 text-[9px] font-bold uppercase tracking-widest hover:text-amber-800 transition-colors disabled:opacity-50"
-                    >
-                      Unpublish
-                    </button>
+                    <>
+                      <button
+                        onClick={() => handleMarkAsSold(listing.id)}
+                        disabled={isPending}
+                        className="text-primary text-[9px] font-bold uppercase tracking-widest hover:text-accent transition-colors disabled:opacity-50"
+                      >
+                        Mark as Sold
+                      </button>
+                      <button
+                        onClick={() => handleUnpublish(listing.id)}
+                        disabled={isPending}
+                        className="text-amber-600 text-[9px] font-bold uppercase tracking-widest hover:text-amber-800 transition-colors disabled:opacity-50"
+                      >
+                        Unpublish
+                      </button>
+                    </>
                   )}
                   {listing.status === "archived" && (
                     <>

@@ -102,6 +102,10 @@ export async function adminRefundOrder(orderId: string, reason: string) {
   const isAdmin = await hasRole(user.id, 'admin')
   if (!isAdmin) return { error: 'Unauthorized' }
 
+  // H5: Rate limit admin financial operations (10 per hour)
+  const allowed = await rateLimit({ key: `admin-refund:${user.id}`, limit: 10, windowSeconds: 3600 })
+  if (!allowed) return { error: 'Too many refund operations. Please wait.' }
+
   const admin = adminDb()
 
   const { data: order } = await admin
@@ -157,6 +161,10 @@ export async function adminMarkPayoutComplete(orderId: string) {
   const user = await requireAuth()
   const isAdmin = await hasRole(user.id, 'admin')
   if (!isAdmin) return { error: 'Unauthorized' }
+
+  // H5: Rate limit admin financial operations (10 per hour)
+  const payoutAllowed = await rateLimit({ key: `admin-payout:${user.id}`, limit: 10, windowSeconds: 3600 })
+  if (!payoutAllowed) return { error: 'Too many payout operations. Please wait.' }
 
   const admin = adminDb()
 

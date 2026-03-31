@@ -52,7 +52,12 @@ export async function createCheckoutSession(listingId: string) {
     if (listing.listing_type !== 'brand_direct') return { error: 'Online checkout is only available for Galia Lahav direct listings' }
     if (listing.seller_id === user.id) return { error: 'You cannot purchase your own listing' }
 
-    // 4. Check for existing pending orders on this listing
+    // M5: Validate price is within expected range ($50-$50,000)
+    if (typeof listing.price !== 'number' || listing.price < 50 || listing.price > 50000) {
+      return { error: 'Listing price is outside the allowed range' }
+    }
+
+    // 4. Check for existing pending orders on this listing (M3: idempotency)
     const { data: existingOrder } = await admin
       .from('orders')
       .select('id, status')

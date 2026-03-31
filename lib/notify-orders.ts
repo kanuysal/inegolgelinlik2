@@ -29,6 +29,10 @@ async function sendEmail(recipientId: string, subject: string, html: string) {
   if (!user?.email) return
 
   const fromEmail = process.env.RESEND_FROM_EMAIL
+  if (!fromEmail) {
+    console.error('[notify-orders] RESEND_FROM_EMAIL not configured — skipping email send')
+    return
+  }
 
   try {
     const res = await fetch('https://api.resend.com/emails', {
@@ -38,7 +42,7 @@ async function sendEmail(recipientId: string, subject: string, html: string) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: fromEmail || 'RE:GALIA <onboarding@resend.dev>',
+        from: fromEmail,
         to: user.email,
         subject,
         html,

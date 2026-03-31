@@ -6,6 +6,23 @@ import { revalidatePath } from 'next/cache'
 import { productSchema } from '@/lib/validators/listing'
 import { notifyNewMessage } from '@/lib/notify'
 import { findOrCreateCustomer, createConversation as kustomerCreateConv, sendMessage as kustomerSend } from '@/lib/kustomer'
+import { rateLimit } from '@/lib/rate-limit'
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+/** Basic HTML sanitization for email content — strips script tags, event handlers, and dangerous protocols */
+function sanitizeHtml(html: string): string {
+  return html
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
+    .replace(/<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi, '')
+    .replace(/<embed[^>]*>/gi, '')
+    .replace(/<link[^>]*>/gi, '')
+    .replace(/\bon\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
+    .replace(/javascript\s*:/gi, '')
+    .replace(/vbscript\s*:/gi, '')
+    .replace(/data\s*:[^,]*;base64/gi, '')
+}
 
 async function db() {
   return (await createClient()) as any
@@ -1048,10 +1065,19 @@ export async function adminUpdateListing(listingId: string, fields: {
   msrp?: number | null
   order_number?: string | null
 }) {
-  await requireAdminRole()
+  const user = await requireAdminRole()
   const supabase = await adminDb()
 
   if (!UUID_RE.test(listingId)) return { error: 'Invalid listing ID' }
+
+  // Verify listing exists before updating
+  const { data: existingListing } = await supabase
+    .from('listings')
+    .select('id, status')
+    .eq('id', listingId)
+    .single()
+
+  if (!existingListing) return { error: 'Listing not found' }
 
   const allowedFields = ['title', 'description', 'price', 'size_us', 'condition', 'listing_type', 'silhouette', 'train_style', 'msrp', 'order_number']
   const updates: Record<string, any> = {}
@@ -1080,6 +1106,14 @@ export async function adminUpdateListing(listingId: string, fields: {
     return { error: 'Failed to update listing.' }
   }
 
+  // Audit log for admin modifications (C4)
+  await supabase.from('listing_approval_log').insert({
+    listing_id: listingId,
+    admin_id: user.id,
+    action: 'admin_edit',
+    reason: `Fields updated: ${Object.keys(updates).filter(k => k !== 'updated_at').join(', ')}`,
+  }).catch((e: any) => console.error('[audit] Failed to log admin edit:', e))
+
   revalidatePath('/admin')
   revalidatePath('/shop')
   revalidatePath('/')
@@ -1098,7 +1132,11 @@ export async function sendBlastEmail(subject: string, htmlContent: string) {
   const resendKey = process.env.RESEND_API_KEY
   if (!resendKey) return { error: 'RESEND_API_KEY not configured' }
 
-  const fromEmail = process.env.RESEND_FROM_EMAIL || 'RE:GALIA <onboarding@resend.dev>'
+  const fromEmail = process.env.RESEND_FROM_EMAIL
+  if (!fromEmail) return { error: 'RESEND_FROM_EMAIL not configured — cannot send blast emails without a verified sender' }
+
+  // Sanitize HTML content to prevent stored XSS (C3)
+  const safeHtml = sanitizeHtml(htmlContent)
 
   // Fetch all user emails
   const supabase = await adminDb()
@@ -1134,7 +1172,7 @@ export async function sendBlastEmail(subject: string, htmlContent: string) {
             from: fromEmail,
             to: email,
             subject: subject.trim(),
-            html: htmlContent,
+            html: safeHtml,
           }),
         })
       )
@@ -1295,6 +1333,20 @@ export async function resolveClaim(claimId: string, notes: string) {
 export async function getAdminConversation(listingId: string, sellerId: string) {
   const user = await requireModRole()
   const supabase = await db()
+  const admin = await adminDb()
+
+  // M7: Verify sellerId actually owns this listing
+  if (!UUID_RE.test(listingId) || !UUID_RE.test(sellerId)) {
+    return { error: 'Invalid parameters' }
+  }
+  const { data: verifiedListing } = await admin
+    .from('listings')
+    .select('seller_id')
+    .eq('id', listingId)
+    .single()
+  if (!verifiedListing || verifiedListing.seller_id !== sellerId) {
+    return { error: 'Seller does not own this listing' }
+  }
 
   // Find or create a conversation between the admin and the seller for this listing
   // We use the admin as the "buyer" in the conversation record for simplicity,
@@ -1328,8 +1380,23 @@ export async function adminSendMessage(conversationId: string, content: string) 
   const user = await requireModRole()
   const admin = await adminDb()
 
+  if (!UUID_RE.test(conversationId)) return { error: 'Invalid conversation ID' }
+
   const trimmed = content.trim()
   if (!trimmed) return { error: 'Message cannot be empty' }
+  if (trimmed.length > 5000) return { error: 'Message too long' }
+
+  // H6: Verify the moderator is a participant in this conversation
+  const { data: convCheck } = await admin
+    .from('conversations')
+    .select('id, buyer_id, seller_id')
+    .eq('id', conversationId)
+    .single()
+
+  if (!convCheck) return { error: 'Conversation not found' }
+  if (convCheck.buyer_id !== user.id && convCheck.seller_id !== user.id) {
+    return { error: 'You are not a participant in this conversation' }
+  }
 
   const { error } = await admin
     .from('messages')
@@ -1413,7 +1480,6 @@ export async function adminSendMessage(conversationId: string, content: string) 
 }
 
 // ── Brand Direct Messages ──────────────────────────
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 export async function getBrandDirectConversations() {
   await requireModRole()

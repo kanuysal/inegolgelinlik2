@@ -10,9 +10,14 @@ import { createAdminClient } from '@/lib/supabase/server'
 import { notifyNewMessage } from '@/lib/notify'
 import { rateLimit } from '@/lib/rate-limit'
 
-/** Strip HTML tags from webhook message content to prevent stored XSS */
+/** Strip HTML tags and dangerous protocols from webhook message content to prevent stored XSS */
 function stripHtml(str: string): string {
-  return str.replace(/<[^>]*>/g, '').trim()
+  return str
+    .replace(/<[^>]*>/g, '')
+    .replace(/javascript:/gi, '')
+    .replace(/data:/gi, '')
+    .replace(/vbscript:/gi, '')
+    .trim()
 }
 
 export async function POST(req: NextRequest) {
@@ -56,12 +61,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Webhook secret not configured' }, { status: 500 })
     }
 
-    const url = new URL(req.url)
+    // Only accept token from headers — never from URL params (prevents leaking in logs/referrer)
     const token =
-      url.searchParams.get('token') ||
       req.headers.get('x-webhook-secret') ||
       req.headers.get('authorization')?.replace('Bearer ', '')
-    if (token !== secret) {
+    if (!token || token !== secret) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -111,8 +115,8 @@ export async function POST(req: NextRequest) {
     }
 
     // Insert the CS agent's message as the seller side
-    // Strip HTML to prevent stored XSS from webhook content
-    const sanitizedMessage = stripHtml(messageBody)
+    // Strip HTML to prevent stored XSS from webhook content + truncate to 5000 chars (M1)
+    const sanitizedMessage = stripHtml(messageBody).slice(0, 5000)
     const { error: msgError } = await supabase
       .from('messages')
       .insert({

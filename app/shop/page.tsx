@@ -122,9 +122,6 @@ function FilterDropdown({
 
       {open && (
         <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 min-w-[200px] bg-white/95 backdrop-blur-xl border border-[#1c1c1c]/8 shadow-[0_12px_40px_rgba(0,0,0,0.12)] z-50 py-2">
-          <div className="px-5 pt-2 pb-2.5 border-b border-[#1c1c1c]/5 mb-1">
-            <span className="text-[10px] font-light uppercase tracking-[0.2em] text-[#1c1c1c]/30">{label}</span>
-          </div>
           <button
             onClick={() => { onChange("all"); setOpen(false); }}
             className={`w-full text-left px-5 py-3 text-sm tracking-wide transition-all duration-200 font-serif ${
@@ -223,7 +220,7 @@ export default function ShopPage() {
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-7 pr-4 py-1.5 text-xs bg-transparent border-b border-slate-200 focus:border-[#1c1c1c] focus:ring-0 placeholder:text-[#1c1c1c]/40 text-[#1c1c1c] uppercase tracking-widest font-medium outline-none transition-colors w-40"
+              className="pl-7 pr-4 py-1.5 text-xs bg-transparent border-b border-[#1c1c1c]/10 focus:border-[#1c1c1c]/40 focus:ring-0 placeholder:text-[#1c1c1c]/40 text-[#1c1c1c] uppercase tracking-widest font-medium outline-none transition-colors w-40"
               placeholder="Search..."
               type="text"
             />
@@ -296,7 +293,7 @@ export default function ShopPage() {
             {(search || seller !== "all" || collection !== "all" || condition !== "all" || size !== "all" || price !== "all") && (
               <button
                 onClick={() => { setSearch(""); setSeller("all"); setCollection("all"); setCondition("all"); setSize("all"); setPrice("all"); }}
-                className="text-[10px] uppercase tracking-widest text-[#1c1c1c]/60 hover:text-[#1c1c1c] transition-colors"
+                className="text-[13px] font-medium uppercase tracking-[0.12em] text-[#1c1c1c]/60 hover:text-[#1c1c1c] transition-colors"
               >
                 Clear
               </button>
@@ -331,7 +328,7 @@ export default function ShopPage() {
                 </div>
                 <div className="p-2.5 md:p-3 flex flex-col flex-grow">
                   <div className="mb-1.5">
-                    <div className="flex justify-between items-start mb-0.5">
+                    <div className="flex justify-between items-baseline mb-0.5">
                       <h3 className="text-lg md:text-xl font-normal tracking-tight font-serif text-[#1c1c1c]">{listing.title}</h3>
                       <span className="text-xs md:text-sm font-bold text-[#1c1c1c]/60 uppercase tracking-tighter flex-shrink-0 ml-2">
                         SIZE {listing.size}
