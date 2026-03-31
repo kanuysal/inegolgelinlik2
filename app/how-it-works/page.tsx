@@ -71,8 +71,8 @@ const SELLING_STEPS = [
   },
   {
     num: "03",
-    title: "Complete",
-    subtitle: "The Handover",
+    title: "Showcase",
+    subtitle: "To The World",
     desc: "Once both parties agree on terms, the transaction is completed directly between buyer and seller. RE:GALIA facilitates the connection and authentication \u2014 logistics and payment are arranged between the parties.",
     image: "/images/hiw/staircase.jpg",
     imageAlt: "Galia Lahav satin gown on elegant staircase",
@@ -202,13 +202,13 @@ function JourneyStep({
             {/* Accent label */}
             <div className="flex items-center gap-4 mb-8">
               <div className="h-[1px] w-12 bg-[#1c1c1c]/20" />
-              <span className="font-sans text-[10px] font-light uppercase tracking-[0.3em] text-[#1c1c1c]/60">
+              <span className="font-sans text-[10px] font-light uppercase tracking-[0.3em] text-[#555]">
                 {step.accent}
               </span>
             </div>
 
             {/* Step number */}
-            <span className="font-sans text-[11px] font-light uppercase tracking-[0.2em] text-[#1c1c1c]/60 mb-4">
+            <span className="font-sans text-[11px] font-light uppercase tracking-[0.2em] text-[#555] mb-4">
               Step {step.num}
             </span>
 
@@ -216,12 +216,12 @@ function JourneyStep({
             <h2 className="font-serif text-5xl md:text-7xl lg:text-8xl font-light text-[#1c1c1c] tracking-[-0.03em] leading-[0.9] mb-2">
               {step.title}
             </h2>
-            <h3 className="font-serif text-4xl md:text-5xl lg:text-6xl font-light italic text-[#1c1c1c]/70 tracking-[-0.02em] leading-[0.95] mb-10">
+            <h3 className="font-serif text-4xl md:text-5xl lg:text-6xl font-light italic text-[#333] tracking-[-0.02em] leading-[0.95] mb-10">
               {step.subtitle}
             </h3>
 
             {/* Description */}
-            <p className="font-sans text-[15px] md:text-[16px] text-[#1c1c1c]/75 leading-[1.8] font-light max-w-md">
+            <p className="font-sans text-[15px] md:text-[16px] text-[#333] leading-[1.8] font-light max-w-md">
               {step.desc}
             </p>
           </motion.div>
@@ -261,8 +261,8 @@ export default function HowItWorksPage() {
                   onClick={() => setActiveTab(key)}
                   className={`pb-6 font-sans text-[12px] font-light uppercase tracking-[0.2em] transition-all relative ${
                     activeTab === key
-                      ? "text-[#1c1c1c]"
-                      : "text-[#1c1c1c]/40 hover:text-[#1c1c1c]/70"
+                      ? "text-[#1c1c1c] font-medium"
+                      : "text-[#555] hover:text-[#1c1c1c]"
                   }`}
                 >
                   {tab === "Buying" ? "For Brides" : "For Sellers"}
@@ -330,46 +330,6 @@ export default function HowItWorksPage() {
               )}
             </div>
           </motion.div>
-        </div>
-      </section>
-
-      {/* ── Trust Section ── */}
-      <section className="py-32 md:py-44 bg-[#1c1c1c] px-6">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-24"
-          >
-            <p className="font-sans text-[10px] font-light uppercase tracking-[0.4em] text-white/50 mb-6">
-              The RE:GALIA Standard
-            </p>
-            <h2 className="font-serif text-4xl md:text-7xl font-light text-white tracking-[-0.02em] leading-none">
-              Built on Trust
-            </h2>
-          </motion.div>
-          <div className="grid md:grid-cols-3 gap-[1px] bg-white/5">
-            {TRUST_FEATURES.map((feature, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.15 }}
-                className="p-14 md:p-16 text-center flex flex-col items-center bg-[#1c1c1c]"
-              >
-                <div className="text-white/50 mb-10">{feature.icon}</div>
-                <h3 className="font-serif text-2xl text-white mb-6 tracking-[-0.02em] font-light">
-                  {feature.title}
-                </h3>
-                <p className="font-sans text-[13px] text-white/60 leading-relaxed font-light max-w-xs">
-                  {feature.desc}
-                </p>
-              </motion.div>
-            ))}
-          </div>
         </div>
       </section>
 
