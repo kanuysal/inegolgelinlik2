@@ -20,6 +20,7 @@ export type ListingCondition = 'new_unworn' | 'excellent' | 'good'
 export type ListingType = 'peer_to_peer' | 'sample_sale' | 'brand_direct'
 export type OrderStatus = 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'completed' | 'cancelled' | 'refunded'
 export type ClaimStatus = 'open' | 'under_review' | 'resolved' | 'dismissed'
+export type PayoutStatus = 'pending' | 'scheduled' | 'paid' | 'failed'
 export type NotificationType = 'listing_approved' | 'listing_rejected' | 'new_message' | 'order_update' | 'system'
 export type ApprovalAction = 'approved' | 'rejected'
 export type GownCategory = 'bridal' | 'evening' | 'accessories'
@@ -237,6 +238,14 @@ export interface Database {
           seller_payout: number
           shipping_address: Json | null
           tracking_number: string | null
+          stripe_checkout_session_id: string | null
+          stripe_payment_intent_id: string | null
+          stripe_charge_id: string | null
+          paid_at: string | null
+          refunded_at: string | null
+          refund_reason: string | null
+          payout_status: PayoutStatus
+          payout_completed_at: string | null
           created_at: string
           updated_at: string
         }
@@ -252,6 +261,14 @@ export interface Database {
           seller_payout: number
           shipping_address?: Json | null
           tracking_number?: string | null
+          stripe_checkout_session_id?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_charge_id?: string | null
+          paid_at?: string | null
+          refunded_at?: string | null
+          refund_reason?: string | null
+          payout_status?: PayoutStatus
+          payout_completed_at?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -259,6 +276,14 @@ export interface Database {
           status?: OrderStatus
           shipping_address?: Json | null
           tracking_number?: string | null
+          stripe_checkout_session_id?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_charge_id?: string | null
+          paid_at?: string | null
+          refunded_at?: string | null
+          refund_reason?: string | null
+          payout_status?: PayoutStatus
+          payout_completed_at?: string | null
           updated_at?: string
         }
       }
@@ -381,6 +406,27 @@ export interface Database {
       }
 
       // =====================================================================
+      // STRIPE_WEBHOOK_EVENTS — Idempotency tracking for Stripe webhooks
+      // =====================================================================
+      stripe_webhook_events: {
+        Row: {
+          id: string
+          stripe_event_id: string
+          event_type: string
+          processed_at: string
+          payload: Json | null
+        }
+        Insert: {
+          id?: string
+          stripe_event_id: string
+          event_type: string
+          processed_at?: string
+          payload?: Json | null
+        }
+        Update: {}
+      }
+
+      // =====================================================================
       // LISTING_APPROVAL_LOG — Admin audit trail
       // =====================================================================
       listing_approval_log: {
@@ -428,6 +474,7 @@ export interface Database {
       gown_category: GownCategory
       silhouette: Silhouette
       train_style: TrainStyle
+      payout_status: PayoutStatus
     }
   }
 }
@@ -441,6 +488,12 @@ export type Conversation = Database['public']['Tables']['conversations']['Row']
 export type Message = Database['public']['Tables']['messages']['Row']
 export type Notification = Database['public']['Tables']['notifications']['Row']
 export type ListingApprovalLog = Database['public']['Tables']['listing_approval_log']['Row']
+export type StripeWebhookEvent = Database['public']['Tables']['stripe_webhook_events']['Row']
+
+// Order with listing details (for dashboard views)
+export type OrderWithListing = Order & {
+  listings: Pick<Listing, 'title' | 'images' | 'category'> | null
+}
 
 // Join types (for queries with relations)
 export type ListingWithSeller = Listing & { profiles: Profile }
