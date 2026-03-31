@@ -251,6 +251,16 @@ export async function uploadListingImage(formData: FormData) {
     return { error: 'Only JPEG, PNG, and WebP images are allowed' }
   }
 
+  // M4: Validate file magic bytes (not just MIME header)
+  const buffer = await file.arrayBuffer()
+  const bytes = new Uint8Array(buffer.slice(0, 12))
+  const isJpeg = bytes[0] === 0xFF && bytes[1] === 0xD8 && bytes[2] === 0xFF
+  const isPng = bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4E && bytes[3] === 0x47
+  const isWebp = bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46 && bytes[8] === 0x57 && bytes[9] === 0x45 && bytes[10] === 0x42 && bytes[11] === 0x50
+  if (!isJpeg && !isPng && !isWebp) {
+    return { error: 'File content does not match an allowed image format' }
+  }
+
   // Validate file size (5MB)
   if (file.size > 5 * 1024 * 1024) {
     return { error: 'Image must be under 5MB' }

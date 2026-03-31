@@ -347,9 +347,8 @@ export async function sendMessage(conversationId: string, content: string) {
 // ── Unread Message Count (for navbar badge) ────────────────
 export async function getUnreadMessageCount() {
   try {
+    const user = await requireAuth()
     const supabase = await db()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return 0
 
     // Get all conversations this user is part of
     const { data: conversations } = await supabase

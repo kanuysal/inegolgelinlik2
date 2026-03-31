@@ -3,6 +3,7 @@
 import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { notifyNewMessage } from '@/lib/notify'
 import { findOrCreateCustomer, createConversation as kustomerCreateConv } from '@/lib/kustomer'
+import { rateLimit } from '@/lib/rate-limit'
 
 async function db() {
   return (await createClient()) as any
@@ -16,6 +17,10 @@ async function adminDb() {
 
 export async function getApprovedListings() {
   try {
+    // M8: Rate limit public browse to prevent catalog scraping (200 per minute per session)
+    const browseAllowed = await rateLimit({ key: `browse:public`, limit: 200, windowSeconds: 60 })
+    if (!browseAllowed) return null
+
     const supabase = await adminDb()
 
     const { data, error } = await supabase
@@ -80,6 +85,10 @@ export async function startConversation(listingId: string, sellerId: string, mes
 
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Please sign in to contact the seller' }
+
+    // H4: Rate limit conversation creation (10 per minute per user)
+    const allowed = await rateLimit({ key: `start-conv:${user.id}`, limit: 10, windowSeconds: 60 })
+    if (!allowed) return { error: 'Too many messages. Please wait a moment.' }
 
     if (user.id === sellerId) return { error: 'You cannot message yourself' }
 

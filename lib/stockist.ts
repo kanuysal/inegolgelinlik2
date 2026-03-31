@@ -113,6 +113,11 @@ function parseLoginPage(html: string): { csrf: string; version: string } {
 const STOCKIST_BASE = 'https://stockist.galialahav.com'
 const DRESS_TYPES = new Set(['wedding_dress', 'evening_dress'])
 
+// L5: Validate stockist credentials are configured at import time
+if (!process.env.STOCKIST_USERNAME || !process.env.STOCKIST_PASSWORD) {
+  console.warn('[stockist] STOCKIST_USERNAME or STOCKIST_PASSWORD not set — product sync will fail')
+}
+
 /**
  * Authenticate with the stockist and return session cookies.
  */

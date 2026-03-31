@@ -11,17 +11,31 @@
  */
 import Stripe from 'stripe'
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  console.warn('[stripe] STRIPE_SECRET_KEY is not set — payment features will fail')
+// H3: Lazy Stripe initialization — throws at usage time if key is missing
+let _stripe: Stripe | null = null
+
+function getStripe(): Stripe {
+  if (!_stripe) {
+    if (!process.env.STRIPE_SECRET_KEY) {
+      throw new Error('[stripe] STRIPE_SECRET_KEY is not set — cannot process payments. Set this env var.')
+    }
+    _stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2026-03-25.dahlia',
+      typescript: true,
+      appInfo: {
+        name: 'RE:GALIA',
+        version: '1.0.0',
+        url: 'https://regalia-scroll.vercel.app',
+      },
+    })
+  }
+  return _stripe
 }
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2026-03-25.dahlia',
-  typescript: true,
-  appInfo: {
-    name: 'RE:GALIA',
-    version: '1.0.0',
-    url: 'https://regalia-scroll.vercel.app',
+/** Stripe client — throws if STRIPE_SECRET_KEY is not configured */
+export const stripe = new Proxy({} as Stripe, {
+  get(_target, prop) {
+    return (getStripe() as any)[prop]
   },
 })
 
