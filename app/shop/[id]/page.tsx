@@ -11,12 +11,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { mockListings, type Listing, type ListingType } from "@/lib/mock-listings";
 import { getListingById, startConversation, getRelatedListings } from "../actions";
+import { createCheckoutSession } from "../checkout-actions";
 import { GOWN_CATALOG } from "@/lib/catalog";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
 import { createClient } from "@/lib/supabase/client";
 import { useWishlist } from "@/lib/wishlist-context";
-import { thumb, fullImg } from "@/lib/image";
+import { thumb, fullImg, PLACEHOLDER_IMG } from "@/lib/image";
 
 /* ── Helpers ────────────────────────────────────── */
 
@@ -58,7 +59,7 @@ function AccordionSection({
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between py-6 text-left group"
       >
-        <span className="font-sans text-[12px] uppercase tracking-[0.1em] font-light text-[#1c1c1c]/40 group-hover:text-[#1c1c1c] transition-colors">{title}</span>
+        <span className="font-sans text-[12px] uppercase tracking-[0.1em] font-light text-[#1c1c1c]/55 group-hover:text-[#1c1c1c] transition-colors">{title}</span>
         <motion.span
           animate={{ rotate: open ? 45 : 0 }}
           transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
@@ -87,17 +88,28 @@ function AccordionSection({
 function SellerBadge({ type }: { type: ListingType }) {
   if (type === "brand_direct") {
     return (
-      <div className="flex items-center gap-2 px-3 py-1.5 bg-[#1c1c1c]/5 border border-[#1c1c1c]/10">
-        <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5 flex-shrink-0">
-          <path
-            d="M12 2L14.09 4.26L17 3.64L17.18 6.57L19.82 8.07L18.56 10.74L20 13.14L17.72 14.72L17.5 17.66L14.58 17.95L12.73 20.39L10.27 18.76L7.27 19.5L6.27 16.73L3.53 15.32L4.63 12.56L3.27 10L5.57 8.45L5.82 5.51L8.74 5.27L10.64 2.87L12 2Z"
-            fill="#1c1c1c"
-          />
-          <path d="M9 12L11 14L15 10" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-        <span className="font-sans text-[10px] uppercase tracking-[0.1em] text-[#1c1c1c]/70 font-light">
-          Sold by Galia Lahav
-        </span>
+      <div className="flex flex-col gap-1.5">
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-[#1c1c1c]/5 border border-[#1c1c1c]/10">
+          <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5 flex-shrink-0">
+            <path
+              d="M12 2L14.09 4.26L17 3.64L17.18 6.57L19.82 8.07L18.56 10.74L20 13.14L17.72 14.72L17.5 17.66L14.58 17.95L12.73 20.39L10.27 18.76L7.27 19.5L6.27 16.73L3.53 15.32L4.63 12.56L3.27 10L5.57 8.45L5.82 5.51L8.74 5.27L10.64 2.87L12 2Z"
+              fill="#1c1c1c"
+            />
+            <path d="M9 12L11 14L15 10" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          <span className="font-sans text-[10px] uppercase tracking-[0.1em] text-[#1c1c1c]/70 font-light">
+            Sold by Galia Lahav
+          </span>
+        </div>
+        <div className="flex items-center gap-1.5 px-3 py-1 text-[#1c1c1c]/40">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-3 h-3 flex-shrink-0">
+            <path d="M9 14l-4-4 4-4" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M5 10h11a4 4 0 0 1 0 8h-1" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          <span className="font-sans text-[9px] uppercase tracking-[0.1em] font-light">
+            Returns Accepted
+          </span>
+        </div>
       </div>
     );
   }
@@ -154,6 +166,8 @@ export default function ProductDetailPage() {
   const [offerSending, setOfferSending] = useState(false);
   const [offerError, setOfferError] = useState<string | null>(null);
   const [relatedListings, setRelatedListings] = useState<any[]>([]);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   useEffect(() => {
     const id = params.id as string;
@@ -179,7 +193,8 @@ export default function ProductDetailPage() {
 
         const listingImages = (dbRow.images || []).filter((u: string) => u && u.startsWith('http'));
         const productImages = (dbRow.products?.images || []).filter((u: string) => u && u.startsWith('http'));
-        const uniqueImages = Array.from(new Set([...listingImages, ...productImages]));
+        // Stock photos (Galia Lahav) first, then bride's photos after
+        const uniqueImages = Array.from(new Set([...productImages, ...listingImages]));
         const imgs = uniqueImages.length > 0 ? uniqueImages : [mainImg];
         setAllImages(imgs);
 
@@ -295,7 +310,7 @@ export default function ProductDetailPage() {
         return;
       }
 
-      const offerMessage = `💰 Offer: $${amount.toLocaleString()}\n\nI'd like to offer $${amount.toLocaleString()} for this gown.${offerNote.trim() ? `\n\n${offerNote.trim()}` : ""}`;
+      const offerMessage = `Offer: $${amount.toLocaleString()}\n\nI'd like to offer $${amount.toLocaleString()} for this gown.${offerNote.trim() ? `\n\n${offerNote.trim()}` : ""}`;
 
       const result = await startConversation(params.id as string, sellerId, offerMessage);
       setOfferSending(false);
@@ -316,6 +331,27 @@ export default function ProductDetailPage() {
     }
   };
 
+  /* ── Stripe Checkout ─────────────────────────── */
+  const handleCheckout = async () => {
+    if (!listing) return;
+    setCheckoutLoading(true);
+    setCheckoutError(null);
+    try {
+      const result = await createCheckoutSession(listing.id);
+      if (result.error) {
+        setCheckoutError(result.error);
+        setCheckoutLoading(false);
+        return;
+      }
+      if (result.url) {
+        window.location.href = result.url;
+      }
+    } catch (err) {
+      setCheckoutError("Something went wrong. Please try again.");
+      setCheckoutLoading(false);
+    }
+  };
+
   if (!listing) return null;
 
   const images = allImages.length > 0 ? allImages : [listing.imageUrl, listing.stockImageUrl];
@@ -329,7 +365,7 @@ export default function ProductDetailPage() {
 
           {/* ──── LEFT: STICKY MEDIA COLUMN ──── */}
           <div className="w-full lg:w-[55%]">
-            <div className="lg:sticky lg:top-32 space-y-6">
+            <div className="lg:sticky lg:top-32 lg:self-start space-y-6">
               <div className="group relative aspect-[3/4] overflow-hidden bg-[#efefef] border border-[#1c1c1c]/10">
                 <motion.div
                   key={activeImage}
@@ -344,6 +380,7 @@ export default function ProductDetailPage() {
                     fill
                     className="object-cover"
                     priority
+                    onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_IMG; }}
                   />
                 </motion.div>
                 {/* Navigation arrows */}
@@ -372,15 +409,15 @@ export default function ProductDetailPage() {
               </div>
 
               {/* Thumbnails */}
-              <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide">
+              <div className="flex gap-3 overflow-x-auto pt-1 pb-4 scrollbar-hide">
                 {images.map((img, i) => (
                   <button
                     key={i}
                     onClick={() => setActiveImage(i)}
-                    className={`relative flex-shrink-0 w-24 aspect-[3/4] overflow-hidden border-2 transition-all duration-300 ${activeImage === i ? "border-[#1c1c1c] scale-105" : "border-transparent opacity-40"
+                    className={`relative flex-shrink-0 w-24 aspect-[3/4] overflow-hidden border-2 transition-all duration-300 ${activeImage === i ? "border-[#1c1c1c]" : "border-transparent opacity-40"
                       }`}
                   >
-                    <Image src={img} alt="Thumbnail" fill className="object-cover" />
+                    <Image src={img} alt="Thumbnail" fill className="object-cover" onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_IMG; }} />
                   </button>
                 ))}
               </div>
@@ -407,7 +444,7 @@ export default function ProductDetailPage() {
                   {fmt(listing.salePrice)}
                 </span>
                 {listing.originalPrice > listing.salePrice && (
-                  <span className="font-sans text-xl text-[#1c1c1c]/20 line-through">
+                  <span className="font-sans text-xl text-[#1c1c1c]/50 line-through">
                     {fmt(listing.originalPrice)}
                   </span>
                 )}
@@ -427,13 +464,12 @@ export default function ProductDetailPage() {
                   ...(stockistData?.back?.length ? [["Back", stockistData.back.join(", ")]] : []),
                   ...(stockistData?.style?.length ? [["Style", stockistData.style.join(", ")]] : []),
                   ...(stockistData?.collectionLine ? [["Collection", `${stockistData.collectionLine} — ${stockistData.collection}`]] : []),
-                  ...(stockistData?.modelNumber ? [["Model", stockistData.modelNumber]] : []),
                   ...(stockistData?.retailPrice ? [["Retail Price", fmt(stockistData.retailPrice.amount)]] : []),
                 ].filter(([, value]) => value && value !== "—").map(([label, value]) => {
                   const isEmphasized = ["Size", "Silhouette", "Condition"].includes(label);
                   return (
                     <div key={label}>
-                      <span className={`font-sans font-light uppercase tracking-[0.15em] text-[#1c1c1c]/25 block mb-2 ${isEmphasized ? "text-xs" : "text-[10px]"}`}>{label}</span>
+                      <span className={`font-sans font-light uppercase tracking-[0.15em] text-[#1c1c1c]/50 block mb-2 ${isEmphasized ? "text-xs" : "text-[10px]"}`}>{label}</span>
                       <span className={`font-sans text-[#1c1c1c] ${isEmphasized ? "text-lg font-medium" : "text-base text-[#1c1c1c]/70 font-light"}`}>{value}</span>
                     </div>
                   );
@@ -441,32 +477,73 @@ export default function ProductDetailPage() {
               </div>
 
               <div className="mb-16 space-y-3">
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => setShowInquiry(true)}
-                    className="flex-1 py-5 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-[#333] transition-all duration-300"
-                  >
-                    Inquire Now
-                  </button>
-                  <button
-                    onClick={() => toggleWish(listing.id)}
-                    className={`w-14 flex items-center justify-center border transition-all duration-300 ${isWished(listing.id) ? "border-red-200 bg-red-50" : "border-[#1c1c1c]/10 hover:border-[#1c1c1c]/30"}`}
-                    aria-label={isWished(listing.id) ? "Remove from wishlist" : "Add to wishlist"}
-                  >
-                    <span
-                      className={`material-symbols-outlined text-xl ${isWished(listing.id) ? "text-red-500" : "text-[#1c1c1c]/30"}`}
-                      style={isWished(listing.id) ? { fontVariationSettings: "'FILL' 1" } : {}}
+                {/* Buy Now — brand_direct only */}
+                {listing.listingType === "brand_direct" && (
+                  <>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={handleCheckout}
+                        disabled={checkoutLoading}
+                        className="flex-1 py-5 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-[#333] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {checkoutLoading ? "Redirecting to Checkout…" : "Buy Now"}
+                      </button>
+                      <button
+                        onClick={() => toggleWish(listing.id)}
+                        className={`w-14 flex items-center justify-center border transition-all duration-300 ${isWished(listing.id) ? "border-red-200 bg-red-50" : "border-[#1c1c1c]/10 hover:border-[#1c1c1c]/30"}`}
+                        aria-label={isWished(listing.id) ? "Remove from wishlist" : "Add to wishlist"}
+                      >
+                        <span
+                          className={`material-symbols-outlined text-xl ${isWished(listing.id) ? "text-red-500" : "text-[#1c1c1c]/30"}`}
+                          style={isWished(listing.id) ? { fontVariationSettings: "'FILL' 1" } : {}}
+                        >
+                          favorite
+                        </span>
+                      </button>
+                    </div>
+                    {checkoutError && (
+                      <p className="text-red-600 text-xs font-sans">{checkoutError}</p>
+                    )}
+                    <button
+                      onClick={() => setShowInquiry(true)}
+                      className="w-full py-4 border border-[#1c1c1c]/10 text-[#1c1c1c] font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:border-[#1c1c1c]/30 hover:bg-[#1c1c1c]/[0.02] transition-all duration-300"
                     >
-                      favorite
-                    </span>
-                  </button>
-                </div>
-                <button
-                  onClick={() => setShowOffer(true)}
-                  className="w-full py-4 border border-[#1c1c1c]/10 text-[#1c1c1c] font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:border-[#1c1c1c]/30 hover:bg-[#1c1c1c]/[0.02] transition-all duration-300"
-                >
-                  Make an Offer
-                </button>
+                      Inquire First
+                    </button>
+                  </>
+                )}
+
+                {/* Inquire + Offer — peer-to-peer / sample_sale */}
+                {listing.listingType !== "brand_direct" && (
+                  <>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => setShowInquiry(true)}
+                        className="flex-1 py-5 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-[#333] transition-all duration-300"
+                      >
+                        Inquire Now
+                      </button>
+                      <button
+                        onClick={() => toggleWish(listing.id)}
+                        className={`w-14 flex items-center justify-center border transition-all duration-300 ${isWished(listing.id) ? "border-red-200 bg-red-50" : "border-[#1c1c1c]/10 hover:border-[#1c1c1c]/30"}`}
+                        aria-label={isWished(listing.id) ? "Remove from wishlist" : "Add to wishlist"}
+                      >
+                        <span
+                          className={`material-symbols-outlined text-xl ${isWished(listing.id) ? "text-red-500" : "text-[#1c1c1c]/30"}`}
+                          style={isWished(listing.id) ? { fontVariationSettings: "'FILL' 1" } : {}}
+                        >
+                          favorite
+                        </span>
+                      </button>
+                    </div>
+                    <button
+                      onClick={() => setShowOffer(true)}
+                      className="w-full py-4 border border-[#1c1c1c]/10 text-[#1c1c1c] font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:border-[#1c1c1c]/30 hover:bg-[#1c1c1c]/[0.02] transition-all duration-300"
+                    >
+                      Make an Offer
+                    </button>
+                  </>
+                )}
               </div>
 
               {/* Inquiry Modal */}
@@ -618,7 +695,7 @@ export default function ProductDetailPage() {
                   <div className="grid grid-cols-2 gap-6">
                     {Object.entries(listing.measurements).map(([key, val]) => (
                       <div key={key}>
-                        <span className="font-sans text-[10px] font-light uppercase tracking-[0.1em] text-[#1c1c1c]/25 block mb-1 capitalize">{key}</span>
+                        <span className="font-sans text-[10px] font-light uppercase tracking-[0.1em] text-[#1c1c1c]/50 block mb-1 capitalize">{key}</span>
                         <span className="font-sans text-base font-light">{val}</span>
                       </div>
                     ))}
@@ -668,8 +745,12 @@ export default function ProductDetailPage() {
                 </AccordionSection>
                 <AccordionSection title="Shipping & Returns">
                   <div className="space-y-4 font-sans text-sm text-[#1c1c1c] leading-relaxed font-light">
-                    <p>Worldwide white-glove shipping insured for full value.</p>
-                    <p>14-day archival return window included with our authenticity guarantee.</p>
+                    {listing.listingType === "brand_direct" ? (
+                      <p>Returns for brand-direct items are accepted, subject to a $200 fee for domestic orders and $300 international. Exchanges for brand-direct items are accepted subject to a $100 fee for domestic orders and $200 international. Return and exchange requests must be submitted within 5 days of receiving the item.</p>
+                    ) : (
+                      <p>Returns for bride-to-bride listings are entirely at the discretion of the buyer and seller. Regalia does not take responsibility for these transactions, and both parties should proceed as they see fit.</p>
+                    )}
+                    <p className="text-[#1c1c1c]/50 text-xs mt-4">All transactions between buyers and sellers are conducted independently. RE:GALIA facilitates the marketplace but does not take responsibility for communications, payments, or disputes between parties.</p>
                   </div>
                 </AccordionSection>
               </div>
@@ -681,12 +762,11 @@ export default function ProductDetailPage() {
       {/* ── Similar Styles ── */}
       {relatedListings.length > 0 && (
         <section className="max-w-[1400px] mx-auto px-6 py-20">
-          <h2 className="font-serif text-3xl md:text-4xl font-light text-[#1c1c1c] mb-2">Similar Styles</h2>
-          <p className="text-sm text-[#1c1c1c]/40 mb-10">From the same collection</p>
+          <h2 className="font-serif text-3xl md:text-4xl font-light text-[#1c1c1c] mb-10">You May Also Like</h2>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
             {relatedListings.map((item: any) => {
-              const image = thumb(item.images?.[0]);
+              const image = thumb(item.products?.images?.[0] || item.images?.[0]);
               const conditionMap: Record<string, string> = {
                 new_unworn: "New Never Worn",
                 excellent: "Excellent",
@@ -700,6 +780,7 @@ export default function ProductDetailPage() {
                       alt={item.title}
                       loading="lazy"
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_IMG; }}
                     />
                   </div>
                   <h3 className="font-serif text-base font-normal mb-1">{item.title}</h3>

@@ -4,6 +4,8 @@ import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { requireAuth, hasRole } from '@/lib/auth'
 import { revalidatePath } from 'next/cache'
 import { productSchema } from '@/lib/validators/listing'
+import { notifyNewMessage } from '@/lib/notify'
+import { findOrCreateCustomer, createConversation as kustomerCreateConv, sendMessage as kustomerSend } from '@/lib/kustomer'
 
 async function db() {
   return (await createClient()) as any
@@ -1033,6 +1035,125 @@ export async function toggleBrandDirectStatus(listingId: string, status: 'approv
   return { success: true }
 }
 
+// ── Admin Listing Editing ────────────────────────────
+export async function adminUpdateListing(listingId: string, fields: {
+  title?: string
+  description?: string | null
+  price?: number
+  size_us?: string | null
+  condition?: string
+  listing_type?: string
+  silhouette?: string | null
+  train_style?: string | null
+  msrp?: number | null
+  order_number?: string | null
+}) {
+  await requireAdminRole()
+  const supabase = await adminDb()
+
+  if (!UUID_RE.test(listingId)) return { error: 'Invalid listing ID' }
+
+  const allowedFields = ['title', 'description', 'price', 'size_us', 'condition', 'listing_type', 'silhouette', 'train_style', 'msrp', 'order_number']
+  const updates: Record<string, any> = {}
+  for (const key of allowedFields) {
+    if (key in fields) updates[key] = (fields as any)[key]
+  }
+
+  if (Object.keys(updates).length === 0) return { error: 'No fields to update' }
+
+  if (updates.title !== undefined && (!updates.title || updates.title.trim().length === 0)) {
+    return { error: 'Title cannot be empty' }
+  }
+  if (updates.price !== undefined && (typeof updates.price !== 'number' || updates.price <= 0)) {
+    return { error: 'Price must be greater than 0' }
+  }
+
+  updates.updated_at = new Date().toISOString()
+
+  const { error } = await supabase
+    .from('listings')
+    .update(updates)
+    .eq('id', listingId)
+
+  if (error) {
+    console.error('adminUpdateListing error:', error)
+    return { error: 'Failed to update listing.' }
+  }
+
+  revalidatePath('/admin')
+  revalidatePath('/shop')
+  revalidatePath('/')
+  return { success: true }
+}
+
+// ── Blast Email ──────────────────────────────────────
+export async function sendBlastEmail(subject: string, htmlContent: string) {
+  await requireAdminRole()
+
+  if (!subject?.trim()) return { error: 'Subject is required' }
+  if (!htmlContent?.trim()) return { error: 'Email content is required' }
+  if (subject.length > 200) return { error: 'Subject too long' }
+  if (htmlContent.length > 50000) return { error: 'Content too long' }
+
+  const resendKey = process.env.RESEND_API_KEY
+  if (!resendKey) return { error: 'RESEND_API_KEY not configured' }
+
+  const fromEmail = process.env.RESEND_FROM_EMAIL || 'RE:GALIA <onboarding@resend.dev>'
+
+  // Fetch all user emails
+  const supabase = await adminDb()
+  const { data: { users }, error: usersError } = await supabase.auth.admin.listUsers({ perPage: 1000 })
+
+  if (usersError || !users) {
+    console.error('sendBlastEmail: failed to list users', usersError)
+    return { error: 'Failed to fetch user list' }
+  }
+
+  const emails = users
+    .map((u: any) => u.email)
+    .filter((e: string | undefined): e is string => !!e)
+
+  if (emails.length === 0) return { error: 'No users found' }
+
+  let sent = 0
+  let failed = 0
+
+  // Send in batches of 10 with 1-second delay
+  for (let i = 0; i < emails.length; i += 10) {
+    const batch = emails.slice(i, i + 10)
+
+    const results = await Promise.allSettled(
+      batch.map((email: string) =>
+        fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${resendKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            from: fromEmail,
+            to: email,
+            subject: subject.trim(),
+            html: htmlContent,
+          }),
+        })
+      )
+    )
+
+    for (const r of results) {
+      if (r.status === 'fulfilled' && r.value.ok) sent++
+      else failed++
+    }
+
+    // Rate limiting delay between batches
+    if (i + 10 < emails.length) {
+      await new Promise(resolve => setTimeout(resolve, 1000))
+    }
+  }
+
+  return { success: true, sent, failed, total: emails.length }
+}
+
 // ── Delete Listing ──────────────────────────────────
 export async function deleteListing(listingId: string) {
   await requireAdminRole()
@@ -1229,13 +1350,12 @@ export async function adminSendMessage(conversationId: string, content: string) 
   // Send email notification to the other participant
   const { data: conv } = await admin
     .from('conversations')
-    .select('buyer_id, seller_id, listings(title)')
+    .select('buyer_id, seller_id, kustomer_conversation_id, listings(title, id)')
     .eq('id', conversationId)
     .single()
 
   if (conv) {
     const recipientId = conv.buyer_id === user.id ? conv.seller_id : conv.buyer_id
-    const { notifyNewMessage } = await import('@/lib/notify')
     notifyNewMessage({
       recipientId,
       senderName: 'Galia Lahav',
@@ -1243,6 +1363,47 @@ export async function adminSendMessage(conversationId: string, content: string) 
       messagePreview: trimmed,
       conversationLink: '/dashboard?tab=messages',
     }).catch(() => {})
+
+    // Forward to Kustomer CRM (best-effort, non-blocking)
+    try {
+      // Using static import from top of file
+
+      if (conv.kustomer_conversation_id) {
+        // Conversation already linked — just forward the message
+        await kustomerSend({
+          conversationId: conv.kustomer_conversation_id,
+          message: trimmed,
+          direction: 'out',
+        })
+      } else {
+        // Lazy-create Kustomer conversation for this admin↔seller thread
+        const { data: { user: recipientUser } } = await admin.auth.admin.getUserById(recipientId)
+        if (recipientUser?.email) {
+          // Kustomer customer = the recipient (with their display name)
+          const { data: recipientProfile } = await admin.from('profiles').select('display_name').eq('id', recipientId).single()
+          const recipientName = recipientProfile?.display_name || recipientUser.user_metadata?.display_name || recipientUser.email.split('@')[0]
+          const kustomerId = await findOrCreateCustomer(recipientUser.email, recipientName)
+          if (kustomerId) {
+            const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://regalia-scroll.vercel.app'
+            const kustomerConvId = await kustomerCreateConv({
+              customerId: kustomerId,
+              subject: `Admin: ${conv.listings?.title || 'Gown Inquiry'}`,
+              message: trimmed,
+              senderName: 'Galia Lahav Admin',
+              listingUrl: conv.listings?.id ? `${siteUrl}/shop/${conv.listings.id}` : undefined,
+            })
+            if (kustomerConvId) {
+              await admin
+                .from('conversations')
+                .update({ kustomer_conversation_id: kustomerConvId })
+                .eq('id', conversationId)
+            }
+          }
+        }
+      }
+    } catch (e) {
+      console.error('[Kustomer] Admin message forward failed (non-blocking):', e)
+    }
   }
 
   revalidatePath('/admin')
@@ -1386,18 +1547,49 @@ export async function adminReplyBrandDirect(conversationId: string, content: str
     conversationLink: '/dashboard?tab=messages',
   }).catch(() => {})
 
-  // Forward to Kustomer if linked (best-effort)
-  if ((conv as any).kustomer_conversation_id) {
-    try {
-      const { sendMessage: kustomerSend } = await import('@/lib/kustomer')
+  // Forward to Kustomer (best-effort) — lazy-create if not yet linked
+  try {
+    // Using static import from top of file
+
+    let kustomerConvId = (conv as any).kustomer_conversation_id
+
+    // Lazy-link old conversations that don't have a Kustomer conversation yet
+    if (!kustomerConvId) {
+      const { data: { user: buyerUser } } = await supabase.auth.admin.getUserById(conv.buyer_id)
+      if (buyerUser?.email) {
+        // Kustomer customer = the buyer (with buyer's name)
+        const { data: buyerProfile } = await supabase.from('profiles').select('display_name').eq('id', conv.buyer_id).single()
+        const buyerName = buyerProfile?.display_name || buyerUser?.user_metadata?.display_name || buyerUser.email.split('@')[0]
+        const kustomerId = await findOrCreateCustomer(buyerUser.email, buyerName)
+        if (kustomerId) {
+          const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://regalia-scroll.vercel.app'
+          kustomerConvId = await kustomerCreateConv({
+            customerId: kustomerId,
+            subject: `Brand Direct: ${(conv as any).listings?.title || 'Gown Inquiry'}`,
+            message: trimmed,
+            senderName: 'Galia Lahav',
+            listingUrl: `${siteUrl}/shop`,
+          })
+          if (kustomerConvId) {
+            await supabase
+              .from('conversations')
+              .update({ kustomer_conversation_id: kustomerConvId })
+              .eq('id', conv.id)
+          }
+        }
+      }
+    }
+
+    // Forward the message if linked
+    if (kustomerConvId) {
       await kustomerSend({
-        conversationId: (conv as any).kustomer_conversation_id,
+        conversationId: kustomerConvId,
         message: trimmed,
         direction: 'out',
       })
-    } catch (e) {
-      console.error('[Kustomer] Forward failed (non-blocking):', e)
     }
+  } catch (e) {
+    console.error('[Kustomer] Forward failed (non-blocking):', e)
   }
 
   revalidatePath('/admin')

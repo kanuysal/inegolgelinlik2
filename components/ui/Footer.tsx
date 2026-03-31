@@ -92,6 +92,15 @@ export default function Footer() {
         </div>
       </div>
 
+      {/* Disclaimer */}
+      <div className="border-t border-[#1c1c1c]/5">
+        <div className="max-w-[85rem] mx-auto px-6 md:px-16 py-6">
+          <p className="font-sans text-[11px] text-[#1c1c1c]/30 font-light leading-relaxed text-center max-w-3xl mx-auto">
+            All transactions between buyers and sellers are conducted independently. RE:GALIA facilitates the marketplace but does not take responsibility for communications, payments, or disputes between parties.
+          </p>
+        </div>
+      </div>
+
       {/* Bottom bar */}
       <div className="border-t border-[#1c1c1c]/5">
         <div className="max-w-[85rem] mx-auto px-6 md:px-16 py-8 flex flex-col md:flex-row justify-between items-center gap-6">

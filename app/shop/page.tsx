@@ -7,7 +7,7 @@ import Footer from "@/components/ui/Footer";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { mockListings, type Listing } from "@/lib/mock-listings";
 import { getApprovedListings } from "./actions";
-import { thumb } from "@/lib/image";
+import { thumb, PLACEHOLDER_IMG } from "@/lib/image";
 
 // Helper function to remove accents for search (e.g., "Élysée" → "elysee")
 function removeAccents(str: string): string {
@@ -34,8 +34,9 @@ function mapDbListing(row: any): Listing {
     column: "Sheath",
   };
 
-  const mainImage = thumb(row.images?.[0]);
-  const stockImage = thumb(row.products?.images?.[0]) || mainImage;
+  // Prefer stock (Galia Lahav) photo as the primary image shown to buyers
+  const stockImage = thumb(row.products?.images?.[0]);
+  const mainImage = stockImage || thumb(row.images?.[0]) || PLACEHOLDER_IMG;
 
   // Map collection line: "Bridal Couture" → "Couture", "Bridal GALA" → "GALA"
   const rawCollection = row.products?.stockist_data?.collectionLine || "";
@@ -161,6 +162,7 @@ export default function ShopPage() {
   const [collection, setCollection] = useState("all");
   const [condition, setCondition] = useState("all");
   const [size, setSize] = useState("all");
+  const [price, setPrice] = useState("all");
 
   useEffect(() => {
     getApprovedListings().then((data) => {
@@ -188,9 +190,16 @@ export default function ShopPage() {
       if (collection !== "all" && l.collection !== collection) return false;
       if (condition !== "all" && l.condition.toLowerCase() !== condition.toLowerCase()) return false;
       if (size !== "all" && String(l.size) !== size) return false;
+      if (price !== "all") {
+        const p = l.salePrice;
+        if (price === "under2k" && p >= 2000) return false;
+        if (price === "2k-5k" && (p < 2000 || p >= 5000)) return false;
+        if (price === "5k-10k" && (p < 5000 || p >= 10000)) return false;
+        if (price === "over10k" && p < 10000) return false;
+      }
       return true;
     });
-  }, [listings, search, seller, collection, condition, size]);
+  }, [listings, search, seller, collection, condition, size, price]);
 
   if (loading) return <LoadingSpinner />;
 
@@ -200,16 +209,13 @@ export default function ShopPage() {
 
       {/* ── Header ── */}
       <div className="px-4 md:px-8 pt-28 max-w-[1600px] mx-auto mb-8 text-center">
-        <h2 className="text-5xl font-normal tracking-tight mb-4 font-serif text-[#1c1c1c]">Bridal Gowns</h2>
-        <p className="text-[11px] text-[#1c1c1c]/60 uppercase tracking-[0.4em]">
-          {filtered.length} {filtered.length === 1 ? "gown" : "gowns"} available
-        </p>
+        <h2 className="text-5xl font-normal tracking-tight font-serif text-[#1c1c1c]">Bridal Gowns</h2>
       </div>
 
-      {/* ── Filters bar — sticks under navbar on scroll, matches navbar width ── */}
-      <div className="sticky top-[76px] z-30 flex justify-center px-4">
-        <div className="max-w-5xl w-full px-6 flex flex-wrap items-center gap-4 py-3 bg-white backdrop-blur-xl shadow-[0_1px_3px_rgba(0,0,0,0.1)] border-b border-slate-100" style={{ fontFamily: "'Lelo', serif" }}>
-          {/* Search */}
+      {/* ── Filters bar — sticks under navbar on desktop only ── */}
+      <div className="md:sticky md:top-[76px] z-30 flex justify-center px-4">
+        <div className="max-w-5xl w-full px-6 flex flex-wrap items-center justify-between gap-4 py-3 bg-white backdrop-blur-xl md:shadow-[0_1px_3px_rgba(0,0,0,0.1)] md:border-b border-slate-100" style={{ fontFamily: "'Lelo', serif" }}>
+          {/* Search — left */}
           <div className="relative">
             <span className="material-symbols-outlined absolute left-0 top-1/2 -translate-y-1/2 text-[#1c1c1c]/40 text-lg">
               search
@@ -223,64 +229,79 @@ export default function ShopPage() {
             />
           </div>
 
-          <FilterDropdown
-            label="Sellers"
-            value={seller}
-            onChange={setSeller}
-            options={[
-              { value: "samples", label: "Galia Lahav" },
-              { value: "brides", label: "GL Brides" },
-            ]}
-          />
+          {/* Filters — right */}
+          <div className="flex flex-wrap items-center gap-4">
+            <FilterDropdown
+              label="Sellers"
+              value={seller}
+              onChange={setSeller}
+              options={[
+                { value: "samples", label: "Galia Lahav" },
+                { value: "brides", label: "GL Brides" },
+              ]}
+            />
 
-          <FilterDropdown
-            label="Collections"
-            value={collection}
-            onChange={setCollection}
-            options={[
-              { value: "Couture", label: "Couture" },
-              { value: "GALA", label: "GALA" },
-            ]}
-          />
+            <FilterDropdown
+              label="Collections"
+              value={collection}
+              onChange={setCollection}
+              options={[
+                { value: "Couture", label: "Couture" },
+                { value: "GALA", label: "GALA" },
+              ]}
+            />
 
-          <FilterDropdown
-            label="Condition"
-            value={condition}
-            onChange={setCondition}
-            options={[
-              { value: "New Never Worn", label: "New with Tags" },
-              { value: "Excellent", label: "Excellent" },
-              { value: "Good", label: "Good" },
-            ]}
-          />
+            <FilterDropdown
+              label="Condition"
+              value={condition}
+              onChange={setCondition}
+              options={[
+                { value: "New Never Worn", label: "New with Tags" },
+                { value: "Excellent", label: "Excellent" },
+                { value: "Good", label: "Good" },
+              ]}
+            />
 
-          <FilterDropdown
-            label="Sizes"
-            value={size}
-            onChange={setSize}
-            options={[
-              { value: "0", label: "0" },
-              { value: "2", label: "2" },
-              { value: "4", label: "4" },
-              { value: "6", label: "6" },
-              { value: "8", label: "8" },
-              { value: "10", label: "10" },
-              { value: "12", label: "12" },
-              { value: "14", label: "14" },
-              { value: "16", label: "16" },
-              { value: "Custom", label: "Custom" },
-            ]}
-          />
+            <FilterDropdown
+              label="Price"
+              value={price}
+              onChange={setPrice}
+              options={[
+                { value: "under2k", label: "Under $2,000" },
+                { value: "2k-5k", label: "$2,000–$5,000" },
+                { value: "5k-10k", label: "$5,000–$10,000" },
+                { value: "over10k", label: "Over $10,000" },
+              ]}
+            />
 
-          {/* Reset */}
-          {(search || seller !== "all" || collection !== "all" || condition !== "all" || size !== "all") && (
-            <button
-              onClick={() => { setSearch(""); setSeller("all"); setCollection("all"); setCondition("all"); setSize("all"); }}
-              className="text-[10px] uppercase tracking-widest text-[#1c1c1c]/60 hover:text-[#1c1c1c] transition-colors ml-auto"
-            >
-              Clear
-            </button>
-          )}
+            <FilterDropdown
+              label="Sizes"
+              value={size}
+              onChange={setSize}
+              options={[
+                { value: "0", label: "0" },
+                { value: "2", label: "2" },
+                { value: "4", label: "4" },
+                { value: "6", label: "6" },
+                { value: "8", label: "8" },
+                { value: "10", label: "10" },
+                { value: "12", label: "12" },
+                { value: "14", label: "14" },
+                { value: "16", label: "16" },
+                { value: "Custom", label: "Custom" },
+              ]}
+            />
+
+            {/* Reset */}
+            {(search || seller !== "all" || collection !== "all" || condition !== "all" || size !== "all" || price !== "all") && (
+              <button
+                onClick={() => { setSearch(""); setSeller("all"); setCollection("all"); setCondition("all"); setSize("all"); setPrice("all"); }}
+                className="text-[10px] uppercase tracking-widest text-[#1c1c1c]/60 hover:text-[#1c1c1c] transition-colors"
+              >
+                Clear
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -296,6 +317,7 @@ export default function ShopPage() {
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     src={listing.imageUrl}
                     loading="lazy"
+                    onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_IMG; }}
                   />
                   {listing.listingType === "brand_direct" && (
                     <div className="absolute top-2 left-2 flex items-center gap-1 bg-[#1c1c1c]/90 backdrop-blur-sm text-white px-2 py-1">
@@ -310,7 +332,7 @@ export default function ShopPage() {
                 <div className="p-2.5 md:p-3 flex flex-col flex-grow">
                   <div className="mb-1.5">
                     <div className="flex justify-between items-start mb-0.5">
-                      <h3 className="text-xl md:text-2xl font-normal tracking-tight font-serif text-[#1c1c1c]">{listing.title}</h3>
+                      <h3 className="text-lg md:text-xl font-normal tracking-tight font-serif text-[#1c1c1c]">{listing.title}</h3>
                       <span className="text-xs md:text-sm font-bold text-[#1c1c1c]/60 uppercase tracking-tighter flex-shrink-0 ml-2">
                         SIZE {listing.size}
                       </span>
@@ -325,7 +347,7 @@ export default function ShopPage() {
                         ${listing.salePrice.toLocaleString()}
                       </p>
                       {listing.originalPrice > listing.salePrice && (
-                        <p className="text-xs md:text-sm text-[#1c1c1c]/30 line-through">
+                        <p className="text-xs md:text-sm text-[#1c1c1c]/50 line-through">
                           ${listing.originalPrice.toLocaleString()}
                         </p>
                       )}

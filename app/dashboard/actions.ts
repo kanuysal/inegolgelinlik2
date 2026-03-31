@@ -5,6 +5,7 @@ import { requireAuth } from '@/lib/auth'
 import { revalidatePath } from 'next/cache'
 import { notifyNewMessage } from '@/lib/notify'
 import { rateLimit } from '@/lib/rate-limit'
+import { findOrCreateCustomer, createConversation as kustomerCreateConv, sendMessage as kustomerSend } from '@/lib/kustomer'
 import { profileSchema } from '@/lib/validators/listing'
 
 async function db() {
@@ -218,10 +219,10 @@ export async function sendMessage(conversationId: string, content: string) {
   if (!trimmed) return { error: 'Message cannot be empty' }
   if (trimmed.length > 5000) return { error: 'Message too long' }
 
-  // Verify participant
-  const { data: conv } = await supabase
+  // Verify participant (also fetch kustomer_conversation_id for CRM forwarding)
+  const { data: conv } = await admin
     .from('conversations')
-    .select('buyer_id, seller_id')
+    .select('buyer_id, seller_id, kustomer_conversation_id')
     .eq('id', conversationId)
     .single()
 
@@ -269,6 +270,50 @@ export async function sendMessage(conversationId: string, content: string) {
     messagePreview: trimmed,
     conversationLink: '/dashboard?tab=messages',
   }).catch(() => {}) // Best-effort
+
+  // Forward to Kustomer CRM (best-effort) — lazy-create if not yet linked
+  try {
+    let kustomerConvId = conv.kustomer_conversation_id
+
+    // Lazy-link old conversations that don't have a Kustomer conversation yet
+    if (!kustomerConvId) {
+      const buyerUser = (await admin.auth.admin.getUserById(conv.buyer_id)).data?.user
+      const buyerEmail = buyerUser?.email
+      if (buyerEmail) {
+        // Kustomer customer = the buyer (with buyer's name, not sender's)
+        const { data: buyerProfile } = await admin.from('profiles').select('display_name').eq('id', conv.buyer_id).single()
+        const buyerName = buyerProfile?.display_name || buyerUser?.user_metadata?.display_name || buyerEmail.split('@')[0]
+        const kustomerId = await findOrCreateCustomer(buyerEmail, buyerName)
+        if (kustomerId) {
+          const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://regalia-scroll.vercel.app'
+          kustomerConvId = await kustomerCreateConv({
+            customerId: kustomerId,
+            subject: `Inquiry: ${listing?.listings?.title || 'Gown'}`,
+            message: trimmed,
+            senderName: senderProfile?.display_name || 'RE:GALIA User',
+            listingUrl: `${siteUrl}/dashboard?tab=messages`,
+          })
+          if (kustomerConvId) {
+            await admin
+              .from('conversations')
+              .update({ kustomer_conversation_id: kustomerConvId })
+              .eq('id', conversationId)
+          }
+        }
+      }
+    }
+
+    // Forward the message if linked
+    if (kustomerConvId) {
+      await kustomerSend({
+        conversationId: kustomerConvId,
+        message: trimmed,
+        direction: user.id === conv.seller_id ? 'out' : 'in',
+      })
+    }
+  } catch (e) {
+    console.error('[Kustomer] Message forward failed (non-blocking):', e)
+  }
 
   revalidatePath('/dashboard')
   return { success: true }

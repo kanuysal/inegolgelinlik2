@@ -48,3 +48,4 @@ regalia-scroll/
 ---
 
 © 2026 Galia Lahav. All rights reserved.
+# RE:GALIA - Galia Lahav Organization

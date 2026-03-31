@@ -40,6 +40,7 @@ type WizardData = {
   height_cm: string
   silhouette: string
   train_style: string
+  order_number: string
   stock_images: string[]
   condition: '' | 'new_unworn' | 'excellent' | 'good'
   images: UploadedImage[]
@@ -62,6 +63,7 @@ const INITIAL_DATA: WizardData = {
   height_cm: '',
   silhouette: '',
   train_style: '',
+  order_number: '',
   stock_images: [],
   condition: '',
   images: [],
@@ -323,6 +325,7 @@ export default function SellWizardPage() {
       price: parseFloat(data.price),
       msrp: data.msrp ? parseFloat(data.msrp) : null,
       product_id: data.product_id,
+      order_number: data.order_number,
       images: data.images.map((img) => img.url),
     })
 
@@ -388,9 +391,11 @@ export default function SellWizardPage() {
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           {/* Mobile: show step number only, Desktop: full labels */}
           <div className="flex justify-between text-[9px] md:text-[11px] uppercase tracking-[0.15em] md:tracking-[0.2em] font-medium text-gray-400 py-2 md:py-3 overflow-x-auto no-scrollbar gap-1 md:gap-0">
-            {STEPS.map((s, idx) => (
-              <span key={s.num} className={`flex items-center gap-1 md:gap-2 shrink-0 px-1 ${step === s.num ? 'text-primary border-b-2 border-primary pb-1' : step > s.num ? 'text-primary' : ''}`}>
-                {step > s.num && <span className="material-symbols-outlined text-[12px] md:text-[14px]">check_circle</span>}
+            {STEPS.map((s) => (
+              <span key={s.num} className={`flex items-center gap-1 md:gap-2 shrink-0 px-1 ${step === s.num ? 'text-primary' : step > s.num ? 'text-primary' : ''}`}>
+                <span className={`w-4 h-4 md:w-5 md:h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${step === s.num ? 'border-primary' : step > s.num ? 'border-primary bg-primary' : 'border-gray-300'}`}>
+                  {step > s.num && <span className="material-symbols-outlined text-white text-[10px] md:text-[12px]">check</span>}
+                </span>
                 <span className="hidden sm:inline">{s.label}</span>
                 <span className="sm:hidden">{s.label.split(' ')[0]}</span>
               </span>
@@ -552,6 +557,27 @@ export default function SellWizardPage() {
                       <textarea value={data.description} onChange={e => setData({ ...data, description: e.target.value })} className="w-full bg-gray-50 border-gray-200 focus:ring-accent rounded text-sm p-3 md:p-4 placeholder:text-gray-400" placeholder="Describe the gown, its fit, how it felt to wear, and any special memories..." rows={4}></textarea>
                     </div>
 
+                    <div className="space-y-2 pt-6 border-t border-gray-100">
+                      <div className="flex items-center gap-2">
+                        <label className="text-[11px] uppercase tracking-widest font-semibold text-gray-500">Order Number <span className="text-red-500">*</span></label>
+                        <div className="relative group">
+                          <span className="material-symbols-outlined text-gray-400 text-sm cursor-help">help</span>
+                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 bg-[#1c1c1c] text-white text-xs rounded-lg px-4 py-3 leading-relaxed opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 pointer-events-none">
+                            You can find your order number on your order confirmation from your store or on the inner label of your dress.
+                            <div className="absolute top-full left-1/2 -translate-x-1/2 w-2 h-2 bg-[#1c1c1c] rotate-45 -mt-1"></div>
+                          </div>
+                        </div>
+                      </div>
+                      <input
+                        value={data.order_number}
+                        onChange={e => setData({ ...data, order_number: e.target.value })}
+                        className="w-full bg-transparent border-0 border-b border-gray-200 py-3 px-0 focus:ring-0 focus:border-accent text-sm"
+                        placeholder="e.g. GL-2024-00123"
+                        maxLength={100}
+                        required
+                      />
+                    </div>
+
                   </div>
                   <div className="p-4 md:p-8 bg-gray-50 border-t border-gray-100 flex justify-between">
                     <button onClick={() => setStep(1)} className="text-sm text-gray-500 hover:text-primary font-medium">Back</button>
@@ -575,23 +601,26 @@ export default function SellWizardPage() {
                       { v: 'new_unworn', title: 'Pristine & Unworn', sub: 'Collector Quality', desc: 'Never worn, no alterations. Original tags attached. Stored in a climate-controlled environment.' },
                       { v: 'excellent', title: 'Excellent', sub: 'Worn Once', desc: 'Worn for a wedding or event. Professionally dry-cleaned immediately after use. No visible stains.' },
                       { v: 'good', title: 'Good', sub: 'Minor Wear', desc: 'Previously worn with minor wear. Includes deep dry cleaning. Any remaining minor imperfections must be disclosed.' }
-                    ].map(c => (
-                      <label key={c.v} className="relative block cursor-pointer group">
-                        <input type="radio" name="condition" checked={data.condition === c.v} onChange={() => setData({ ...data, condition: c.v as any })} className="sr-only peer" />
-                        <div className="p-4 md:p-6 border-2 border-gray-100 rounded-lg transition-all hover:border-accent peer-checked:border-primary">
-                          <div className="flex justify-between items-start mb-2">
-                            <div>
-                              <h3 className="text-base md:text-lg font-semibold tracking-tight">{c.title}</h3>
-                              <p className="text-[10px] md:text-xs uppercase tracking-widest text-accent font-medium mt-1">{c.sub}</p>
+                    ].map(c => {
+                      const isSelected = data.condition === c.v
+                      return (
+                        <label key={c.v} className="relative block cursor-pointer group">
+                          <input type="radio" name="condition" checked={isSelected} onChange={() => setData({ ...data, condition: c.v as any })} className="sr-only" />
+                          <div className={`p-4 md:p-6 border-2 rounded-lg transition-all hover:border-accent ${isSelected ? 'border-primary' : 'border-gray-100'}`}>
+                            <div className="flex justify-between items-start mb-2">
+                              <div>
+                                <h3 className="text-base md:text-lg font-semibold tracking-tight">{c.title}</h3>
+                                <p className="text-[10px] md:text-xs uppercase tracking-widest text-accent font-medium mt-1">{c.sub}</p>
+                              </div>
+                              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ml-2 transition-colors ${isSelected ? 'border-primary' : 'border-gray-300'}`}>
+                                <div className={`w-2.5 h-2.5 rounded-full transition-colors ${isSelected ? 'bg-primary' : 'bg-transparent'}`}></div>
+                              </div>
                             </div>
-                            <div className="w-5 h-5 rounded-full border border-gray-300 flex items-center justify-center shrink-0 ml-2 peer-checked:bg-primary">
-                              <div className="w-2.5 h-2.5 rounded-full bg-primary opacity-0 peer-checked:opacity-100 transition-opacity"></div>
-                            </div>
+                            <p className="text-xs md:text-sm text-gray-500 mt-2">{c.desc}</p>
                           </div>
-                          <p className="text-xs md:text-sm text-gray-500 mt-2">{c.desc}</p>
-                        </div>
-                      </label>
-                    ))}
+                        </label>
+                      )
+                    })}
                   </div>
                   <div className="p-4 md:p-8 bg-gray-50 border-t border-gray-100 flex justify-between">
                     <button onClick={() => setStep(2)} className="text-sm text-gray-500 hover:text-primary font-medium">Back</button>

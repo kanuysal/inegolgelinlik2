@@ -8,7 +8,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/server'
 import { notifyNewMessage } from '@/lib/notify'
-import { verifyWebhookSignature } from '@/lib/kustomer'
 import { rateLimit } from '@/lib/rate-limit'
 
 /** Strip HTML tags from webhook message content to prevent stored XSS */
@@ -20,7 +19,6 @@ export async function POST(req: NextRequest) {
   try {
     // Rate limit BEFORE reading body to prevent resource exhaustion
     const ip =
-      req.ip ||
       req.headers.get('x-real-ip') ||
       req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
       'unknown'
@@ -50,20 +48,21 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Payload too large' }, { status: 413 })
     }
 
-    // Verify webhook authenticity – fail closed if secret is not configured
+    // Verify webhook authenticity via secret token in URL query param,
+    // custom header, or Bearer token (whichever Kustomer sends).
     const secret = process.env.KUSTOMER_WEBHOOK_SECRET
     if (!secret) {
       console.error('[Kustomer Webhook] Missing KUSTOMER_WEBHOOK_SECRET – refusing request')
       return NextResponse.json({ error: 'Webhook secret not configured' }, { status: 500 })
     }
 
-    // Reject missing signatures before doing any crypto work
-    const signature = req.headers.get('x-kustomer-signature')
-    if (!signature) {
-      return NextResponse.json({ error: 'Missing signature' }, { status: 401 })
-    }
-    if (!verifyWebhookSignature(body, signature, secret)) {
-      return NextResponse.json({ error: 'Invalid signature' }, { status: 401 })
+    const url = new URL(req.url)
+    const token =
+      url.searchParams.get('token') ||
+      req.headers.get('x-webhook-secret') ||
+      req.headers.get('authorization')?.replace('Bearer ', '')
+    if (token !== secret) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const payload = JSON.parse(body)
@@ -107,8 +106,8 @@ export async function POST(req: NextRequest) {
       .single()
 
     if (convError || !conv) {
-      console.error('[Kustomer Webhook] Conversation not found for:', kustomerConvId)
-      return NextResponse.json({ error: 'Conversation not found' }, { status: 404 })
+      // Return 200 to acknowledge receipt — prevents Kustomer from retrying endlessly
+      return NextResponse.json({ ok: true, skipped: 'conversation not linked' })
     }
 
     // Insert the CS agent's message as the seller side

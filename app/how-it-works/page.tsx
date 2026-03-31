@@ -1,12 +1,7 @@
 "use client";
 
-import { useRef, useState } from "react";
-import {
-  motion,
-  useScroll,
-  useTransform,
-  AnimatePresence,
-} from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import Navbar from "@/components/ui/Navbar";
@@ -20,10 +15,10 @@ const JOURNEY_STEPS = [
   {
     num: "01",
     title: "Discover",
-    subtitle: "Your Couture",
+    subtitle: "Our Bridal Collections",
     desc: "Browse our curated collection of authenticated Galia Lahav gowns. Filter by collection, size, condition, and price to find your perfect piece.",
-    image: "/images/hiw/ballgown.gif",
-    imageAlt: "Galia Lahav tiered tulle ball gown",
+    image: "/images/hiw/bride-step1.jpg",
+    imageAlt: "Galia Lahav G-207 bridal gown",
     accent: "The Collection Awaits",
   },
   {
@@ -31,66 +26,57 @@ const JOURNEY_STEPS = [
     title: "Inquire",
     subtitle: "With Confidence",
     desc: "Request additional details, photos, or measurements. Our team facilitates all communication, ensuring clarity and total transparency between you and the seller.",
-    image: "/images/hiw/staircase.jpg",
-    imageAlt: "Galia Lahav satin draped evening gown",
+    image: "/images/hiw/bride-step2.jpg",
+    imageAlt: "Galia Lahav Juniper bridal gown",
     accent: "Every Detail Matters",
   },
   {
     num: "03",
     title: "Purchase",
-    subtitle: "With Security",
-    desc: "Transaction security is paramount. Your payment is held in escrow until you confirm the gown's arrival and your absolute satisfaction with every detail.",
-    image: "/images/hiw/poodle.jpg",
-    imageAlt: "Galia Lahav lace mermaid gown",
-    accent: "Protected & Verified",
+    subtitle: "With Confidence",
+    desc: "Connect directly with the seller through our secure messaging platform. Once you agree on terms, payment and shipping are arranged between you and the seller.",
+    image: "/images/hiw/bride-step3.jpg",
+    imageAlt: "Galia Lahav Aelin bridal gown",
+    accent: "Direct & Transparent",
   },
   {
     num: "04",
-    title: "Receive",
-    subtitle: "Your Moment",
-    desc: "Your couture arrives via insured white-glove courier with full tracking. A 14-day protection window allows you to inspect every detail at your leisure.",
-    image: "/images/hiw/veil.jpg",
-    imageAlt: "Galia Lahav bridal gown with cathedral veil",
-    accent: "White-Glove Delivery",
+    title: "Delivered",
+    subtitle: "With Care",
+    desc: "For brand-direct purchases, returns are accepted within 5 days with a $200 fee. For peer-to-peer purchases, returns are at the discretion of buyer and seller.",
+    image: "/images/hiw/bride-step4.jpg",
+    imageAlt: "Galia Lahav G-302 bridal gown",
+    accent: "Your Gown Arrives",
   },
 ];
 
 const SELLING_STEPS = [
   {
     num: "01",
-    title: "Submit",
+    title: "Upload",
     subtitle: "Your Gown",
-    desc: "Provide your gown's history, condition, and imagery through our premium sell wizard. The streamlined process is designed for discretion and ease.",
-    image: "/images/hiw/convertible.jpg",
-    imageAlt: "Bride in vintage convertible with flowing gown",
+    desc: "Share your gown\u2019s details, condition, and imagery through our elevated sales experience, designed for discretion and effortless ease.",
+    image: "/images/hiw/seller-step1.webp",
+    imageAlt: "Galia Lahav Lady G bridal gown",
     accent: "Simple & Guided",
   },
   {
     num: "02",
     title: "Verified",
-    subtitle: "By The House",
-    desc: "The House of Galia Lahav authenticates every submission. Our experts verify craftsmanship and provenance to ensure complete marketplace integrity.",
-    image: "/images/hiw/veil.jpg",
-    imageAlt: "Galia Lahav gown with hand-embroidered veil",
+    subtitle: "By The Brand",
+    desc: "Every gown is authenticated by the House of Galia Lahav. Our experts verify craftsmanship and provenance to ensure complete marketplace integrity.",
+    image: "/images/hiw/seller-step2.jpg",
+    imageAlt: "Galia Lahav authentication process",
     accent: "GL Authentication",
   },
   {
     num: "03",
-    title: "Showcase",
-    subtitle: "To The World",
-    desc: "Your gown is presented to an exclusive global audience of high-intent brides, maximizing exposure and ensuring the best possible resale value.",
-    image: "/images/hiw/waterfall.jpg",
-    imageAlt: "Galia Lahav beaded gown by waterfall",
-    accent: "Global Reach",
-  },
-  {
-    num: "04",
     title: "Complete",
     subtitle: "The Handover",
-    desc: "We provide insured logistics and manage secure payment processing. You receive payment promptly upon buyer confirmation — seamless from start to finish.",
+    desc: "Once both parties agree on terms, the transaction is completed directly between buyer and seller. RE:GALIA facilitates the connection and authentication \u2014 logistics and payment are arranged between the parties.",
     image: "/images/hiw/staircase.jpg",
     imageAlt: "Galia Lahav satin gown on elegant staircase",
-    accent: "Secure & Swift",
+    accent: "Seamless & Direct",
   },
 ];
 
@@ -109,8 +95,8 @@ const TRUST_FEATURES = [
     ),
   },
   {
-    title: "Escrow Protection",
-    desc: "Funds are held securely and only released when the buyer is satisfied, protecting both parties in every transaction.",
+    title: "Secure Messaging",
+    desc: "Communicate directly with buyers and sellers through our secure platform. Every interaction is protected and private.",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-7 h-7">
         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
@@ -118,14 +104,12 @@ const TRUST_FEATURES = [
     ),
   },
   {
-    title: "White-Glove Logistics",
-    desc: "Insured, tracked, and handled with the care couture deserves. We manage the entire journey from door to door.",
+    title: "Brand-Direct Returns",
+    desc: "Galia Lahav brand-direct purchases include a 5-day return window. Peer-to-peer returns are arranged between buyer and seller.",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-7 h-7">
-        <rect x="1" y="3" width="15" height="13" />
-        <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
-        <circle cx="5.5" cy="18.5" r="2.5" />
-        <circle cx="18.5" cy="18.5" r="2.5" />
+        <path d="M9 14l-4-4 4-4" />
+        <path d="M5 10h11a4 4 0 0 1 0 8h-1" />
       </svg>
     ),
   },
@@ -142,7 +126,7 @@ const FAQS = [
   },
   {
     q: "Can I try the gown before purchasing?",
-    a: "Due to the nature of online resale, in-person try-ons are not available. However, our 14-day return policy gives you time to receive and inspect the gown. We recommend checking measurements carefully and communicating with sellers for additional details.",
+    a: "Due to the nature of online resale, in-person try-ons are not available. For brand-direct purchases, returns are accepted within 5 days (a $200 return fee applies). For peer-to-peer listings, returns are at the discretion of buyer and seller. We recommend checking measurements carefully and communicating with sellers for additional details.",
   },
   {
     q: "How long does selling take?",
@@ -167,43 +151,20 @@ function JourneyStep({
   index: number;
   isLast: boolean;
 }) {
-  const sectionRef = useRef<HTMLDivElement>(null);
   const isEven = index % 2 === 0;
-
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"],
-  });
-
-  // Image parallax & reveal
-  const imageY = useTransform(scrollYProgress, [0, 0.5, 1], [80, 0, -80]);
-  const imageScale = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0.9, 1, 1, 0.95]);
-  const imageOpacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
-
-  // Text reveal
-  const textY = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [60, 0, 0, -40]);
-  const textOpacity = useTransform(scrollYProgress, [0, 0.25, 0.75, 1], [0, 1, 1, 0]);
-
-  // Number reveal
-  const numOpacity = useTransform(scrollYProgress, [0, 0.15, 0.8, 1], [0, 0.06, 0.06, 0]);
-
-  // Accent line
-  const lineScaleX = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0, 1, 1, 0]);
 
   return (
     <section
-      ref={sectionRef}
       className={`relative min-h-screen flex items-center ${!isLast ? "mb-0" : ""}`}
     >
       {/* Giant background number */}
-      <motion.div
-        style={{ opacity: numOpacity }}
-        className={`absolute top-1/2 -translate-y-1/2 font-serif text-[20vw] md:text-[28vw] leading-none text-[#1c1c1c] select-none pointer-events-none ${
+      <div
+        className={`absolute top-1/2 -translate-y-1/2 font-serif text-[20vw] md:text-[28vw] leading-none text-[#1c1c1c] opacity-[0.06] select-none pointer-events-none ${
           isEven ? "right-0 md:right-10" : "left-0 md:left-10"
         }`}
       >
         {step.num}
-      </motion.div>
+      </div>
 
       <div className="max-w-[90rem] mx-auto w-full px-6 md:px-16 py-24 md:py-32 relative z-10">
         <div
@@ -213,7 +174,10 @@ function JourneyStep({
         >
           {/* Image side */}
           <motion.div
-            style={{ y: imageY, scale: imageScale, opacity: imageOpacity }}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
             className="relative aspect-[3/4] overflow-hidden md:[direction:ltr]"
           >
             <Image
@@ -229,22 +193,22 @@ function JourneyStep({
 
           {/* Text side */}
           <motion.div
-            style={{ y: textY, opacity: textOpacity }}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.15 }}
             className="flex flex-col justify-center md:[direction:ltr]"
           >
             {/* Accent label */}
             <div className="flex items-center gap-4 mb-8">
-              <motion.div
-                style={{ scaleX: lineScaleX }}
-                className="h-[1px] w-12 bg-[#1c1c1c]/20 origin-left"
-              />
-              <span className="font-sans text-[10px] font-light uppercase tracking-[0.3em] text-[#1c1c1c]/30">
+              <div className="h-[1px] w-12 bg-[#1c1c1c]/20" />
+              <span className="font-sans text-[10px] font-light uppercase tracking-[0.3em] text-[#1c1c1c]/50">
                 {step.accent}
               </span>
             </div>
 
             {/* Step number */}
-            <span className="font-sans text-[11px] font-light uppercase tracking-[0.2em] text-[#1c1c1c]/20 mb-4">
+            <span className="font-sans text-[11px] font-light uppercase tracking-[0.2em] text-[#1c1c1c]/50 mb-4">
               Step {step.num}
             </span>
 
@@ -252,12 +216,12 @@ function JourneyStep({
             <h2 className="font-serif text-5xl md:text-7xl lg:text-8xl font-light text-[#1c1c1c] tracking-[-0.03em] leading-[0.9] mb-2">
               {step.title}
             </h2>
-            <h3 className="font-serif text-4xl md:text-5xl lg:text-6xl font-light italic text-[#1c1c1c]/40 tracking-[-0.02em] leading-[0.95] mb-10">
+            <h3 className="font-serif text-4xl md:text-5xl lg:text-6xl font-light italic text-[#1c1c1c]/55 tracking-[-0.02em] leading-[0.95] mb-10">
               {step.subtitle}
             </h3>
 
             {/* Description */}
-            <p className="font-sans text-[15px] md:text-[16px] text-[#1c1c1c]/45 leading-[1.8] font-light max-w-md">
+            <p className="font-sans text-[15px] md:text-[16px] text-[#1c1c1c]/60 leading-[1.8] font-light max-w-md">
               {step.desc}
             </p>
           </motion.div>
@@ -269,64 +233,6 @@ function JourneyStep({
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[1px] h-20 bg-gradient-to-b from-[#1c1c1c]/10 to-transparent" />
       )}
     </section>
-  );
-}
-
-/* ═══════════════════════════════════════════
-   Hero Word Reveal Component
-   ═══════════════════════════════════════════ */
-
-function HeroWordReveal() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"],
-  });
-
-  const words = ["Your", "journey", "to", "couture,", "perfected."];
-
-  return (
-    <div ref={containerRef} className="relative min-h-[200vh]">
-      <div className="sticky top-0 h-screen flex items-center justify-center">
-        <div className="text-center px-6">
-          <motion.p
-            style={{ opacity: useTransform(scrollYProgress, [0, 0.1], [1, 0]) }}
-            className="font-sans text-[10px] font-light uppercase tracking-[0.5em] text-[#1c1c1c]/30 mb-10"
-          >
-            The RE:GALIA Journey
-          </motion.p>
-          <div className="flex flex-wrap justify-center gap-x-[0.35em]">
-            {words.map((word, i) => {
-              const start = 0.1 + i * 0.12;
-              const end = start + 0.15;
-              return (
-                <motion.span
-                  key={i}
-                  style={{
-                    opacity: useTransform(scrollYProgress, [start, end], [0.08, 1]),
-                    y: useTransform(scrollYProgress, [start, end], [30, 0]),
-                  }}
-                  className={`font-serif text-5xl md:text-7xl lg:text-[6rem] font-light tracking-[-0.03em] text-[#1c1c1c] leading-none ${
-                    word === "couture," ? "italic" : ""
-                  } ${word === "perfected." ? "italic" : ""}`}
-                >
-                  {word}
-                </motion.span>
-              );
-            })}
-          </div>
-          <motion.p
-            style={{
-              opacity: useTransform(scrollYProgress, [0.7, 0.85], [0, 1]),
-              y: useTransform(scrollYProgress, [0.7, 0.85], [20, 0]),
-            }}
-            className="font-sans text-[15px] text-[#1c1c1c]/35 tracking-wide max-w-lg mx-auto leading-relaxed mt-10 font-light"
-          >
-            A curated experience built on trust, authentication, and the signature Galia Lahav standard.
-          </motion.p>
-        </div>
-      </div>
-    </div>
   );
 }
 
@@ -343,13 +249,8 @@ export default function HowItWorksPage() {
     <main className="min-h-screen bg-white">
       <Navbar />
 
-      {/* ── Immersive Hero with Word Reveal ── */}
-      <div className="pt-[65px]">
-        <HeroWordReveal />
-      </div>
-
       {/* ── Journey Toggle ── */}
-      <section className="py-8 px-6">
+      <section className="pt-28 py-8 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-center gap-16 border-b border-[#1c1c1c]/5">
             {(["Buying", "Selling"] as const).map((tab) => {
@@ -481,7 +382,7 @@ export default function HowItWorksPage() {
             viewport={{ once: true }}
             className="text-center mb-20"
           >
-            <p className="font-sans text-[10px] font-light uppercase tracking-[0.4em] text-[#1c1c1c]/25 mb-6">
+            <p className="font-sans text-[10px] font-light uppercase tracking-[0.4em] text-[#1c1c1c]/50 mb-6">
               Common Questions
             </p>
             <h2 className="font-serif text-4xl md:text-6xl font-light text-[#1c1c1c] tracking-[-0.02em] leading-none">
@@ -502,7 +403,7 @@ export default function HowItWorksPage() {
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
                   className="w-full flex items-center justify-between py-6 text-left group"
                 >
-                  <span className="font-sans text-[14px] text-[#1c1c1c]/50 group-hover:text-[#1c1c1c] transition-colors font-light">
+                  <span className="font-sans text-[14px] text-[#1c1c1c]/60 group-hover:text-[#1c1c1c] transition-colors font-light">
                     {faq.q}
                   </span>
                   <motion.span
@@ -522,7 +423,7 @@ export default function HowItWorksPage() {
                       transition={{ duration: 0.4, ease: "easeInOut" }}
                       className="overflow-hidden"
                     >
-                      <div className="pb-8 font-sans text-[14px] text-[#1c1c1c]/40 leading-[1.8] font-light max-w-2xl">
+                      <div className="pb-8 font-sans text-[14px] text-[#1c1c1c]/55 leading-[1.8] font-light max-w-2xl">
                         {faq.a}
                       </div>
                     </motion.div>

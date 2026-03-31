@@ -7,6 +7,7 @@ import Footer from "@/components/ui/Footer";
 import { getPublicFeaturedGowns } from "@/app/admin/actions";
 import { getApprovedListings } from "@/app/shop/actions";
 import { thumb } from "@/lib/image";
+import { InlineLoadingSpinner } from "@/components/ui/LoadingSpinner";
 
 const DEFAULT_FEATURED = [
   { id: '1', title: 'The Maya', subtitle: 'Size 4 • Excellent Condition', price: '$4,200', image_url: 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Maya_side.jpg', link: '/shop' },
@@ -18,7 +19,7 @@ const DEFAULT_FEATURED = [
 ];
 
 export default function Home() {
-  const [featuredGowns, setFeaturedGowns] = useState(DEFAULT_FEATURED);
+  const [featuredGowns, setFeaturedGowns] = useState<any[] | null>(null);
   const [listings, setListings] = useState<any[]>([]);
   const [listingsLoading, setListingsLoading] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -32,11 +33,13 @@ export default function Home() {
   };
 
   useEffect(() => {
-    getPublicFeaturedGowns().then((data) => {
-      if (data && data.length > 0) {
-        setFeaturedGowns(data);
-      }
-    });
+    getPublicFeaturedGowns()
+      .then((data) => {
+        setFeaturedGowns(data && data.length > 0 ? data : DEFAULT_FEATURED);
+      })
+      .catch(() => {
+        setFeaturedGowns(DEFAULT_FEATURED);
+      });
     getApprovedListings()
       .then((data) => {
         if (data && data.length > 0) {
@@ -91,19 +94,23 @@ export default function Home() {
             View All
           </Link>
         </div>
-        <div className="flex overflow-x-auto gap-6 px-6 pb-6 snap-x snap-mandatory" style={{ scrollbarWidth: "none", msOverflowStyle: "none", WebkitOverflowScrolling: "touch" }}>
-          {featuredGowns.map((gown) => (
-            <Link key={gown.id} href={gown.link || "/shop"} className="min-w-[300px] md:min-w-[380px] snap-center group relative overflow-hidden h-[500px] flex-shrink-0">
-              <img alt={`${gown.title} Gown`} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src={thumb(gown.image_url, 800)} loading="lazy" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
-              <div className="absolute bottom-0 left-0 p-6 w-full text-white">
-                <h4 className="text-2xl font-semibold mb-1">{gown.title}</h4>
-                {gown.subtitle && <p className="text-sm opacity-80 mb-4">{gown.subtitle}</p>}
-                {gown.price && <span className="font-medium">{gown.price}</span>}
-              </div>
-            </Link>
-          ))}
-        </div>
+        {featuredGowns ? (
+          <div className="flex overflow-x-auto gap-6 px-6 pb-6 snap-x snap-mandatory" style={{ scrollbarWidth: "none", msOverflowStyle: "none", WebkitOverflowScrolling: "touch" }}>
+            {featuredGowns.map((gown) => (
+              <Link key={gown.id} href={gown.link || "/shop"} className="min-w-[300px] md:min-w-[380px] snap-center group relative overflow-hidden h-[500px] flex-shrink-0">
+                <img alt={`${gown.title} Gown`} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src={thumb(gown.image_url, 800)} loading="lazy" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
+                <div className="absolute bottom-0 left-0 p-6 w-full text-white">
+                  <h4 className="text-2xl font-semibold mb-1">{gown.title}</h4>
+                  {gown.subtitle && <p className="text-sm opacity-80 mb-4">{gown.subtitle}</p>}
+                  {gown.price && <span className="font-medium">{gown.price}</span>}
+                </div>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <InlineLoadingSpinner size="lg" />
+        )}
       </section>
 
       {/* ── Marketplace — Scrollable Grid ── */}
@@ -121,22 +128,11 @@ export default function Home() {
         </div>
 
         {listingsLoading ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-5">
-            {Array.from({ length: 10 }).map((_, i) => (
-              <div key={i} className="animate-pulse">
-                <div className="aspect-[3/4] bg-slate-200"></div>
-                <div className="p-3 space-y-2">
-                  <div className="h-4 bg-slate-200 rounded w-3/4"></div>
-                  <div className="h-3 bg-slate-100 rounded w-1/2"></div>
-                  <div className="h-4 bg-slate-200 rounded w-1/3 mt-3"></div>
-                </div>
-              </div>
-            ))}
-          </div>
+          <InlineLoadingSpinner size="lg" />
         ) : listings.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-5">
               {listings.map((listing: any) => {
-                const image = thumb(listing.images?.[0] || listing.products?.images?.[0]);
+                const image = thumb(listing.products?.images?.[0] || listing.images?.[0]);
                 const price = listing.price;
                 const msrp = listing.msrp || listing.products?.msrp;
                 const conditionMap: Record<string, string> = {
@@ -154,6 +150,15 @@ export default function Home() {
                           src={image}
                           loading="lazy"
                         />
+                        {listing.listing_type === "brand_direct" && (
+                          <div className="absolute top-2 left-2 flex items-center gap-1 bg-[#1c1c1c]/90 backdrop-blur-sm text-white px-2 py-1">
+                            <svg viewBox="0 0 24 24" fill="none" className="w-3 h-3 flex-shrink-0">
+                              <path d="M12 2L14.09 4.26L17 3.64L17.18 6.57L19.82 8.07L18.56 10.74L20 13.14L17.72 14.72L17.5 17.66L14.58 17.95L12.73 20.39L10.27 18.76L7.27 19.5L6.27 16.73L3.53 15.32L4.63 12.56L3.27 10L5.57 8.45L5.82 5.51L8.74 5.27L10.64 2.87L12 2Z" fill="white"/>
+                              <path d="M9 12L11 14L15 10" stroke="#1c1c1c" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                            <span className="text-[8px] font-bold uppercase tracking-[0.1em]">Galia Lahav</span>
+                          </div>
+                        )}
                       </div>
                       <div className="p-2.5 md:p-3 flex flex-col flex-grow">
                         <div className="mb-1.5">
@@ -206,6 +211,7 @@ export default function Home() {
       <section className="relative py-32 px-6 overflow-hidden">
         <div className="absolute inset-0">
           <img alt="Bridal background" className="w-full h-full object-cover" src="/images/hiw/banner.jpg" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-black/10" />
         </div>
         <div className="relative z-10 max-w-4xl mx-auto text-center text-white">
           <h2 className="text-4xl md:text-6xl font-serif font-light leading-tight mb-8">
@@ -227,8 +233,8 @@ export default function Home() {
               <h3 className="text-3xl md:text-4xl font-medium mb-6 leading-tight text-gray-900 font-serif">
                 New arrivals, authentication tips, and bridal inspiration — find it in our newsletter.
               </h3>
-              <form className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
-                <input className="bg-white border-0 px-6 py-3 text-sm focus:ring-2 focus:ring-gray-400 w-full shadow-sm text-gray-900 placeholder-gray-400" placeholder="name@email.com" type="email" />
+              <form className="flex w-full max-w-md">
+                <input className="bg-white border-0 px-6 py-3 text-sm focus:ring-2 focus:ring-gray-400 flex-1 min-w-0 shadow-sm text-gray-900 placeholder-gray-400" placeholder="name@email.com" type="email" />
                 <button className="bg-[#1c1c1c] text-white px-8 py-3 text-sm font-medium hover:bg-[#1c1c1c]/90 transition shadow-lg flex items-center justify-center gap-2 group whitespace-nowrap" type="submit">
                   Register
                   <span className="material-symbols-outlined text-xs group-hover:translate-x-1 transition-transform" style={{ fontVariationSettings: "'wght' 200" }}>arrow_forward</span>

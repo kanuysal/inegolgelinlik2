@@ -125,8 +125,31 @@
   box-sizing: border-box;
 }
 
+/* ── Disabled interactive elements ── */
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled {
+  cursor: not-allowed;
+}
+
+/* ── Active/pressed feedback on buttons ── */
+button:not(:disabled):active {
+  transform: scale(0.98);
+}
+
+/* ── Focus-visible rings for keyboard navigation ── */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid #1c1c1c;
+  outline-offset: 2px;
+}
+
 html {
-  scroll-behavior: auto;
+  scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -176,6 +199,18 @@ h4,
 ::selection {
   background-color: rgba(28, 28, 28, 0.1);
   color: #1c1c1c;
+}
+
+/* ── Reduced-motion support ── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* ── Canvas rendering optimisation ── */

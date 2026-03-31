@@ -8,9 +8,8 @@
  * the API is unreachable, the app continues working normally.
  */
 
-import { createHmac, timingSafeEqual } from 'crypto'
-
-const KUSTOMER_BASE = 'https://api.kustomerapp.com/v1'
+// US: api.kustomerapp.com | EU: api.prod2.kustomerapp.com
+const KUSTOMER_BASE = process.env.KUSTOMER_API_BASE || 'https://api.kustomerapp.com/v1'
 
 function getApiKey(): string | undefined {
   return process.env.KUSTOMER_API_KEY
@@ -44,16 +43,18 @@ async function kustomerFetch(path: string, options: RequestInit = {}) {
 export async function findOrCreateCustomer(email: string, name?: string): Promise<string | null> {
   if (!getApiKey()) return null
 
-  // Search by email
-  const search = await kustomerFetch(`/customers/search`, {
-    method: 'POST',
-    body: JSON.stringify({
-      and: [{ emails: { value: email } }],
-    }),
-  })
-
-  const existing = search?.data?.[0]
-  if (existing) return existing.id
+  // Look up by email using the direct endpoint
+  const lookup = await kustomerFetch(`/customers/email=${encodeURIComponent(email)}`)
+  if (lookup?.data?.id) {
+    // Update the customer name if we have one and it differs
+    if (name && lookup.data.attributes?.name !== name) {
+      await kustomerFetch(`/customers/${lookup.data.id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ name }),
+      })
+    }
+    return lookup.data.id
+  }
 
   // Create new customer
   const created = await kustomerFetch('/customers', {
@@ -64,7 +65,11 @@ export async function findOrCreateCustomer(email: string, name?: string): Promis
     }),
   })
 
-  return created?.data?.id || null
+  if (created?.data?.id) return created.data.id
+
+  // Handle race condition: if create failed with 409 duplicate, look up again
+  const retry = await kustomerFetch(`/customers/email=${encodeURIComponent(email)}`)
+  return retry?.data?.id || null
 }
 
 /**
@@ -86,17 +91,9 @@ export async function createConversation({
 }): Promise<string | null> {
   if (!getApiKey()) return null
 
-  const body: Record<string, any> = {
+  // Step 1: Create the conversation (no inline message — Kustomer rejects extra fields)
+  const convBody: Record<string, any> = {
     name: subject,
-    message: {
-      direction: 'in',
-      channel: 'chat',
-      preview: message.slice(0, 200),
-      meta: {
-        subject,
-        body: message,
-      },
-    },
     custom: {
       ...(listingUrl && { listingUrlStr: listingUrl }),
       ...(senderName && { senderNameStr: senderName }),
@@ -107,10 +104,16 @@ export async function createConversation({
 
   const result = await kustomerFetch(`/customers/${customerId}/conversations`, {
     method: 'POST',
-    body: JSON.stringify(body),
+    body: JSON.stringify(convBody),
   })
 
-  return result?.data?.id || null
+  const convId = result?.data?.id
+  if (!convId) return null
+
+  // Step 2: Send the first message separately
+  await sendMessage({ conversationId: convId, message, direction: 'in' })
+
+  return convId
 }
 
 /**
@@ -132,26 +135,10 @@ export async function sendMessage({
     body: JSON.stringify({
       direction,
       channel: 'chat',
+      app: 'custom',
       preview: message.slice(0, 200),
-      meta: {
-        body: message,
-      },
     }),
   })
 
   return result !== null
-}
-
-/**
- * Verify a Kustomer webhook signature.
- * Kustomer signs webhooks with HMAC-SHA256 using the shared secret.
- */
-export function verifyWebhookSignature(
-  body: string,
-  signature: string,
-  secret: string,
-): boolean {
-  const expected = createHmac('sha256', secret).update(body).digest('hex')
-  if (signature.length !== expected.length) return false
-  return timingSafeEqual(Buffer.from(signature, 'utf8'), Buffer.from(expected, 'utf8'))
 }

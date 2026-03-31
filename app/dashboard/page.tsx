@@ -8,6 +8,7 @@ import toast, { Toaster } from "react-hot-toast";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
 import { thumb } from "@/lib/image";
+import { InlineLoadingSpinner } from "@/components/ui/LoadingSpinner";
 import {
   getMyListings,
   deleteListing,
@@ -23,6 +24,7 @@ import {
   getMyNotifications,
   markNotificationRead,
 } from "./actions";
+import { updateTrackingNumber, markOrderDelivered } from "./order-actions";
 import { getApprovedListings } from "@/app/shop/actions";
 import { useWishlist } from "@/lib/wishlist-context";
 
@@ -30,21 +32,7 @@ type Tab = "listings" | "purchases" | "messages" | "wishlist" | "profile";
 
 /* ── Loading Skeleton ── */
 function LoadingSkeleton() {
-  return (
-    <div className="space-y-4 p-8">
-      {[1, 2, 3].map((i) => (
-        <div key={i} className="border border-slate-100 p-6 animate-pulse">
-          <div className="flex gap-5">
-            <div className="w-20 h-24 bg-slate-100" />
-            <div className="flex-1 space-y-3">
-              <div className="h-4 bg-slate-100 w-1/3" />
-              <div className="h-3 bg-slate-100 w-1/2" />
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
+  return <InlineLoadingSpinner size="md" />;
 }
 
 /* ══════════════════════════════════════════════════
@@ -234,6 +222,137 @@ function ListingsTab() {
 /* ══════════════════════════════════════════════════
    MY PURCHASES / SALES TAB
    ══════════════════════════════════════════════════ */
+function SaleOrderCard({ order }: { order: any }) {
+  const [trackingInput, setTrackingInput] = useState(order.tracking_number || "");
+  const [saving, setSaving] = useState(false);
+
+  const statusColors: Record<string, string> = {
+    pending: "bg-yellow-100 text-yellow-700",
+    confirmed: "bg-blue-100 text-blue-700",
+    shipped: "bg-purple-100 text-purple-700",
+    delivered: "bg-green-100 text-green-700",
+    completed: "bg-green-100 text-green-700",
+    cancelled: "bg-slate-100 text-slate-500",
+    refunded: "bg-red-100 text-red-700",
+  };
+
+  const handleSaveTracking = async () => {
+    if (!trackingInput.trim()) return;
+    setSaving(true);
+    const result = await updateTrackingNumber(order.id, trackingInput);
+    setSaving(false);
+    if (result.error) {
+      toast.error(result.error);
+    } else {
+      toast.success("Tracking updated — order marked as shipped");
+    }
+  };
+
+  const handleMarkDelivered = async () => {
+    setSaving(true);
+    const result = await markOrderDelivered(order.id);
+    setSaving(false);
+    if (result.error) {
+      toast.error(result.error);
+    } else {
+      toast.success("Order marked as delivered");
+    }
+  };
+
+  const addr = order.shipping_address as Record<string, string> | null;
+
+  return (
+    <div className="bg-white border border-slate-200 p-5 md:p-6 relative overflow-hidden">
+      <div className="absolute top-0 right-0 p-3 md:p-4">
+        <span className="text-[9px] md:text-[10px] font-bold tracking-widest uppercase text-slate-400">Order #{order.id.slice(0, 8)}</span>
+      </div>
+      <div className="flex flex-col sm:flex-row items-start gap-4 md:gap-6">
+        <div className="w-20 h-24 bg-slate-100 flex-shrink-0">
+          {order.listings?.images?.[0] ? (
+            <img src={order.listings.images[0]} alt="" className="w-full h-full object-cover opacity-80" />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-slate-300">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="w-8 h-8"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 0 1-8 0" /></svg>
+            </div>
+          )}
+        </div>
+        <div className="flex-1 w-full">
+          <div className="flex flex-wrap items-center gap-2 mb-2">
+            <h4 className="font-semibold text-base md:text-lg">{order.listings?.title || "Signature Couture"}</h4>
+            <span className={`px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest rounded-full ${statusColors[order.status] || "bg-slate-100 text-slate-500"}`}>{order.status}</span>
+          </div>
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            <div>
+              <p className="text-[9px] md:text-[10px] text-slate-400 uppercase tracking-widest mb-1">Net Payout</p>
+              <p className="text-sm font-medium">${order.seller_payout?.toLocaleString()}</p>
+            </div>
+            <div>
+              <p className="text-[9px] md:text-[10px] text-slate-400 uppercase tracking-widest mb-1">Date</p>
+              <p className="text-[11px] md:text-xs text-slate-600">{new Date(order.created_at).toLocaleDateString()}</p>
+            </div>
+          </div>
+
+          {/* Shipping address */}
+          {addr && (order.status === "confirmed" || order.status === "shipped") && (
+            <div className="mb-4 p-3 bg-slate-50 border border-slate-100 text-xs">
+              <p className="text-[9px] text-slate-400 uppercase tracking-widest mb-1">Ship To</p>
+              <p className="text-slate-700 leading-relaxed">
+                {[addr.name, addr.line1, addr.line2, `${addr.city}, ${addr.state} ${addr.postal_code}`, addr.country].filter(Boolean).join(", ")}
+              </p>
+            </div>
+          )}
+
+          {/* Tracking number input for confirmed orders */}
+          {(order.status === "confirmed" || order.status === "shipped") && (
+            <div className="pt-4 border-t border-slate-100">
+              <p className="text-[9px] text-slate-400 uppercase tracking-widest mb-2">Tracking Number</p>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={trackingInput}
+                  onChange={(e) => setTrackingInput(e.target.value)}
+                  placeholder="Enter tracking number..."
+                  className="flex-1 px-3 py-2 border border-slate-200 text-xs font-mono focus:outline-none focus:border-slate-400"
+                />
+                <button
+                  onClick={handleSaveTracking}
+                  disabled={saving || !trackingInput.trim()}
+                  className="px-4 py-2 bg-slate-900 text-white text-[10px] uppercase tracking-widest hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  {saving ? "..." : order.status === "shipped" ? "Update" : "Ship"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Mark delivered button for shipped orders */}
+          {order.status === "shipped" && (
+            <div className="mt-3">
+              <button
+                onClick={handleMarkDelivered}
+                disabled={saving}
+                className="w-full py-2 border border-green-200 text-green-700 text-[10px] uppercase tracking-widest hover:bg-green-50 disabled:opacity-50 transition-colors"
+              >
+                {saving ? "..." : "Mark as Delivered"}
+              </button>
+            </div>
+          )}
+
+          {/* Payout status */}
+          {order.payout_status && order.status !== "cancelled" && order.status !== "refunded" && (
+            <div className="mt-3 flex items-center gap-2">
+              <span className="text-[9px] text-slate-400 uppercase tracking-widest">Payout:</span>
+              <span className={`text-[10px] font-medium ${order.payout_status === "paid" ? "text-green-600" : "text-amber-600"}`}>
+                {order.payout_status === "paid" ? "Paid" : order.payout_status === "scheduled" ? "Scheduled" : "Pending"}
+              </span>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function PurchasesTab() {
   const [purchases, setPurchases] = useState<any[]>([]);
   const [sales, setSales] = useState<any[]>([]);
@@ -273,7 +392,9 @@ function PurchasesTab() {
                     {order.listings?.images?.[0] ? (
                       <img src={order.listings.images[0]} alt="" className="w-full h-full object-cover opacity-80" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-slate-300">👗</div>
+                      <div className="w-full h-full flex items-center justify-center text-slate-300">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="w-8 h-8"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 0 1-8 0" /></svg>
+                      </div>
                     )}
                   </div>
                   <div className="flex-1 w-full">
@@ -316,36 +437,7 @@ function PurchasesTab() {
           </div>
           <div className="space-y-4 md:space-y-6">
             {sales.map((order: any) => (
-              <div key={order.id} className="bg-white border border-slate-200 p-5 md:p-6 relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-3 md:p-4">
-                  <span className="text-[9px] md:text-[10px] font-bold tracking-widest uppercase text-slate-400">Order #{order.id.slice(0, 8)}</span>
-                </div>
-                <div className="flex flex-col sm:flex-row items-start gap-4 md:gap-6">
-                  <div className="w-20 h-24 bg-slate-100 flex-shrink-0">
-                    {order.listings?.images?.[0] ? (
-                      <img src={order.listings.images[0]} alt="" className="w-full h-full object-cover opacity-80" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-slate-300">👗</div>
-                    )}
-                  </div>
-                  <div className="flex-1 w-full">
-                    <div className="flex flex-wrap items-center gap-2 mb-2">
-                      <h4 className="font-semibold text-base md:text-lg">{order.listings?.title || "Signature Couture"}</h4>
-                      <span className="bg-blue-100 text-blue-700 px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest rounded-full">{order.status}</span>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4 mb-4">
-                      <div>
-                        <p className="text-[9px] md:text-[10px] text-slate-400 uppercase tracking-widest mb-1">Net Payout</p>
-                        <p className="text-sm font-medium">${order.seller_payout?.toLocaleString()}</p>
-                      </div>
-                      <div>
-                        <p className="text-[9px] md:text-[10px] text-slate-400 uppercase tracking-widest mb-1">Date</p>
-                        <p className="text-[11px] md:text-xs text-slate-600">{new Date(order.created_at).toLocaleDateString()}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <SaleOrderCard key={order.id} order={order} />
             ))}
             {sales.length === 0 && (
               <p className="text-sm text-slate-400">You haven't sold anything yet.</p>

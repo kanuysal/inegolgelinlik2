@@ -14,7 +14,7 @@ import type { UserRole } from '@/lib/types/database'
  * Returns null if not authenticated (does NOT redirect).
  */
 export async function getUser() {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data: { user }, error } = await supabase.auth.getUser()
 
   if (error || !user) return null
@@ -37,7 +37,7 @@ export async function requireAuth() {
  * Get the user's profile from the profiles table.
  */
 export async function getProfile(userId: string) {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data, error } = await supabase
     .from('profiles')
     .select('*')
