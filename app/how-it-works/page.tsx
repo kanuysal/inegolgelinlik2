@@ -202,13 +202,13 @@ function JourneyStep({
             {/* Accent label */}
             <div className="flex items-center gap-4 mb-8">
               <div className="h-[1px] w-12 bg-[#1c1c1c]/20" />
-              <span className="font-sans text-[10px] font-light uppercase tracking-[0.3em] text-[#1c1c1c]/50">
+              <span className="font-sans text-[10px] font-light uppercase tracking-[0.3em] text-[#1c1c1c]/60">
                 {step.accent}
               </span>
             </div>
 
             {/* Step number */}
-            <span className="font-sans text-[11px] font-light uppercase tracking-[0.2em] text-[#1c1c1c]/50 mb-4">
+            <span className="font-sans text-[11px] font-light uppercase tracking-[0.2em] text-[#1c1c1c]/60 mb-4">
               Step {step.num}
             </span>
 
@@ -216,12 +216,12 @@ function JourneyStep({
             <h2 className="font-serif text-5xl md:text-7xl lg:text-8xl font-light text-[#1c1c1c] tracking-[-0.03em] leading-[0.9] mb-2">
               {step.title}
             </h2>
-            <h3 className="font-serif text-4xl md:text-5xl lg:text-6xl font-light italic text-[#1c1c1c]/55 tracking-[-0.02em] leading-[0.95] mb-10">
+            <h3 className="font-serif text-4xl md:text-5xl lg:text-6xl font-light italic text-[#1c1c1c]/70 tracking-[-0.02em] leading-[0.95] mb-10">
               {step.subtitle}
             </h3>
 
             {/* Description */}
-            <p className="font-sans text-[15px] md:text-[16px] text-[#1c1c1c]/60 leading-[1.8] font-light max-w-md">
+            <p className="font-sans text-[15px] md:text-[16px] text-[#1c1c1c]/75 leading-[1.8] font-light max-w-md">
               {step.desc}
             </p>
           </motion.div>
@@ -262,7 +262,7 @@ export default function HowItWorksPage() {
                   className={`pb-6 font-sans text-[12px] font-light uppercase tracking-[0.2em] transition-all relative ${
                     activeTab === key
                       ? "text-[#1c1c1c]"
-                      : "text-[#1c1c1c]/20 hover:text-[#1c1c1c]/50"
+                      : "text-[#1c1c1c]/40 hover:text-[#1c1c1c]/70"
                   }`}
                 >
                   {tab === "Buying" ? "For Brides" : "For Sellers"}
@@ -343,7 +343,7 @@ export default function HowItWorksPage() {
             transition={{ duration: 0.8 }}
             className="text-center mb-24"
           >
-            <p className="font-sans text-[10px] font-light uppercase tracking-[0.4em] text-white/25 mb-6">
+            <p className="font-sans text-[10px] font-light uppercase tracking-[0.4em] text-white/50 mb-6">
               The RE:GALIA Standard
             </p>
             <h2 className="font-serif text-4xl md:text-7xl font-light text-white tracking-[-0.02em] leading-none">
@@ -360,11 +360,11 @@ export default function HowItWorksPage() {
                 transition={{ delay: i * 0.15 }}
                 className="p-14 md:p-16 text-center flex flex-col items-center bg-[#1c1c1c]"
               >
-                <div className="text-white/30 mb-10">{feature.icon}</div>
+                <div className="text-white/50 mb-10">{feature.icon}</div>
                 <h3 className="font-serif text-2xl text-white mb-6 tracking-[-0.02em] font-light">
                   {feature.title}
                 </h3>
-                <p className="font-sans text-[13px] text-white/35 leading-relaxed font-light max-w-xs">
+                <p className="font-sans text-[13px] text-white/60 leading-relaxed font-light max-w-xs">
                   {feature.desc}
                 </p>
               </motion.div>
@@ -382,7 +382,7 @@ export default function HowItWorksPage() {
             viewport={{ once: true }}
             className="text-center mb-20"
           >
-            <p className="font-sans text-[10px] font-light uppercase tracking-[0.4em] text-[#1c1c1c]/50 mb-6">
+            <p className="font-sans text-[10px] font-light uppercase tracking-[0.4em] text-[#1c1c1c]/60 mb-6">
               Common Questions
             </p>
             <h2 className="font-serif text-4xl md:text-6xl font-light text-[#1c1c1c] tracking-[-0.02em] leading-none">
@@ -403,13 +403,13 @@ export default function HowItWorksPage() {
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
                   className="w-full flex items-center justify-between py-6 text-left group"
                 >
-                  <span className="font-sans text-[14px] text-[#1c1c1c]/60 group-hover:text-[#1c1c1c] transition-colors font-light">
+                  <span className="font-sans text-[14px] text-[#1c1c1c]/75 group-hover:text-[#1c1c1c] transition-colors font-light">
                     {faq.q}
                   </span>
                   <motion.span
                     animate={{ rotate: openFaq === i ? 45 : 0 }}
                     transition={{ duration: 0.3 }}
-                    className="text-[#1c1c1c]/20 text-xl font-light flex-shrink-0 ml-4"
+                    className="text-[#1c1c1c]/40 text-xl font-light flex-shrink-0 ml-4"
                   >
                     +
                   </motion.span>
@@ -423,7 +423,7 @@ export default function HowItWorksPage() {
                       transition={{ duration: 0.4, ease: "easeInOut" }}
                       className="overflow-hidden"
                     >
-                      <div className="pb-8 font-sans text-[14px] text-[#1c1c1c]/55 leading-[1.8] font-light max-w-2xl">
+                      <div className="pb-8 font-sans text-[14px] text-[#1c1c1c]/70 leading-[1.8] font-light max-w-2xl">
                         {faq.a}
                       </div>
                     </motion.div>

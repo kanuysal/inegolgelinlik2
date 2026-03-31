@@ -166,7 +166,7 @@ export default function ProductCard({ listing, index = 0 }: ProductCardProps) {
         {/* Card info */}
         <div className="pt-5 pb-2">
           {/* Collection */}
-          <p className="font-sans text-[10px] uppercase tracking-[0.15em] text-[#1c1c1c]/30 mb-1.5 font-light">
+          <p className="font-sans text-[10px] uppercase tracking-[0.15em] text-[#1c1c1c]/50 mb-1.5 font-light">
             {listing.collection}
           </p>
 
@@ -176,7 +176,7 @@ export default function ProductCard({ listing, index = 0 }: ProductCardProps) {
           </h3>
 
           {/* Attributes row */}
-          <p className="font-sans text-[11px] text-[#1c1c1c]/40 mt-2 tracking-wide font-light">
+          <p className="font-sans text-[11px] text-[#1c1c1c]/55 mt-2 tracking-wide font-light">
             Size {listing.size} &middot; {listing.silhouette} &middot; {listing.fabric}
           </p>
 
@@ -185,13 +185,13 @@ export default function ProductCard({ listing, index = 0 }: ProductCardProps) {
             <span className="font-sans text-base text-[#1c1c1c] tracking-tight">
               {formatPrice(listing.salePrice)}
             </span>
-            <span className="font-sans text-sm text-[#1c1c1c]/30 line-through">
+            <span className="font-sans text-sm text-[#1c1c1c]/50 line-through">
               {formatPrice(listing.originalPrice)}
             </span>
           </div>
 
           {/* Financing hint */}
-          <p className="font-sans text-[10px] text-[#1c1c1c]/30 mt-2 font-light">
+          <p className="font-sans text-[10px] text-[#1c1c1c]/50 mt-2 font-light">
             As low as {formatPrice(Math.round(listing.salePrice / 12))}/mo with Affirm
           </p>
         </div>

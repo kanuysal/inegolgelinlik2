@@ -110,7 +110,7 @@ function LoginForm() {
                   <label htmlFor="password" className="block font-sans text-[11px] font-light uppercase tracking-[0.15em] text-[#1c1c1c]/40">
                     Password
                   </label>
-                  <a href="mailto:hello@regalia.com" className="font-sans text-[10px] font-light uppercase tracking-[0.1em] text-[#1c1c1c]/25 hover:text-[#1c1c1c]/60 transition-colors">
+                  <a href="mailto:regalia@galialahav.com" className="font-sans text-[10px] font-light uppercase tracking-[0.1em] text-[#1c1c1c]/25 hover:text-[#1c1c1c]/60 transition-colors">
                     Forgot?
                   </a>
                 </div>

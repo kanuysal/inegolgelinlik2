@@ -62,10 +62,10 @@ export default function ReturnPolicyPage() {
                 <p className="font-sans text-[14px] text-[#1c1c1c]/70 leading-relaxed font-light">
                   To initiate a return, contact us at{" "}
                   <a
-                    href="mailto:hello@regalia.com"
+                    href="mailto:regalia@galialahav.com"
                     className="text-[#1c1c1c] underline underline-offset-4 decoration-[#1c1c1c]/20 hover:decoration-[#1c1c1c]/60 transition-colors"
                   >
-                    hello@regalia.com
+                    regalia@galialahav.com
                   </a>{" "}
                   or through your RE:GALIA dashboard messages. Please include your order
                   number and reason for return.
@@ -159,7 +159,7 @@ export default function ReturnPolicyPage() {
               <p className="font-sans text-[13px] text-[#1c1c1c]/40 leading-relaxed font-light">
                 Questions about a return?{" "}
                 <a
-                  href="mailto:hello@regalia.com"
+                  href="mailto:regalia@galialahav.com"
                   className="text-[#1c1c1c]/60 underline underline-offset-4 decoration-[#1c1c1c]/20 hover:decoration-[#1c1c1c]/60 transition-colors"
                 >
                   Reach out to us

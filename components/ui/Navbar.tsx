@@ -110,7 +110,7 @@ export default function Navbar() {
             <button
               onClick={() => setMenuOpen(true)}
               aria-label="Open menu"
-              className="w-6 h-6 flex items-center justify-center"
+              className="w-6 h-6 flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1c1c1c]/30 focus-visible:ring-offset-2 rounded-sm"
             >
               <span className={`material-symbols-outlined text-xl transition-colors duration-300 ${useLight ? "text-white" : "text-primary"}`} style={{ fontVariationSettings: "'wght' 300" }}>menu</span>
             </button>

@@ -117,11 +117,11 @@ export default function Home() {
       <section className="pt-6 pb-2 px-4 md:px-8 max-w-[1600px] mx-auto">
         <div className="flex justify-between items-end mb-6">
           <div>
-            <p className="text-[11px] uppercase tracking-[0.4em] text-gray-400 mb-2">Just Listed</p>
+            <p className="text-[11px] uppercase tracking-[0.4em] text-[#1c1c1c]/50 mb-2">Just Listed</p>
             <h3 className="text-3xl md:text-5xl font-medium tracking-tight font-serif">New Arrivals</h3>
           </div>
           {listings.length > 0 && (
-            <p className="text-[11px] text-gray-400 uppercase tracking-[0.3em]">
+            <p className="text-[11px] text-[#1c1c1c]/50 uppercase tracking-[0.3em]">
               {listings.length} gowns
             </p>
           )}
@@ -183,7 +183,7 @@ export default function Home() {
                               ${price?.toLocaleString()}
                             </p>
                             {msrp && msrp > price && (
-                              <p className="text-xs md:text-sm text-[#1c1c1c]/30 line-through">
+                              <p className="text-xs md:text-sm text-[#1c1c1c]/50 line-through">
                                 ${msrp.toLocaleString()}
                               </p>
                             )}

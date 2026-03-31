@@ -59,11 +59,11 @@ function AccordionSection({
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between py-6 text-left group"
       >
-        <span className="font-sans text-[12px] uppercase tracking-[0.1em] font-light text-[#1c1c1c]/55 group-hover:text-[#1c1c1c] transition-colors">{title}</span>
+        <span className="font-sans text-[12px] uppercase tracking-[0.1em] font-light text-[#1c1c1c]/70 group-hover:text-[#1c1c1c] transition-colors">{title}</span>
         <motion.span
           animate={{ rotate: open ? 45 : 0 }}
           transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-          className="text-[#1c1c1c]/20 text-xl leading-none"
+          className="text-[#1c1c1c]/40 text-xl leading-none"
         >
           +
         </motion.span>
@@ -115,13 +115,13 @@ function SellerBadge({ type }: { type: ListingType }) {
   }
   return (
     <div className="flex items-center gap-2 px-3 py-1.5 bg-[#1c1c1c]/[0.03] border border-[#1c1c1c]/5">
-      <svg viewBox="0 0 24 24" fill="none" className="w-3 h-3 flex-shrink-0 text-[#1c1c1c]/30">
+      <svg viewBox="0 0 24 24" fill="none" className="w-3 h-3 flex-shrink-0 text-[#1c1c1c]/50">
         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
         <circle cx="9" cy="7" r="4" stroke="currentColor" strokeWidth="1.5" />
         <path d="M23 21v-2a4 4 0 0 0-3-3.87" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
         <path d="M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
       </svg>
-      <span className="font-sans text-[10px] uppercase tracking-[0.1em] text-[#1c1c1c]/40 font-light">
+      <span className="font-sans text-[10px] uppercase tracking-[0.1em] text-[#1c1c1c]/55 font-light">
         {type === "sample_sale" ? "Sample Sale" : "Bride to Bride"}
       </span>
     </div>
@@ -469,8 +469,8 @@ export default function ProductDetailPage() {
                   const isEmphasized = ["Size", "Silhouette", "Condition"].includes(label);
                   return (
                     <div key={label}>
-                      <span className={`font-sans font-light uppercase tracking-[0.15em] text-[#1c1c1c]/50 block mb-2 ${isEmphasized ? "text-xs" : "text-[10px]"}`}>{label}</span>
-                      <span className={`font-sans text-[#1c1c1c] ${isEmphasized ? "text-lg font-medium" : "text-base text-[#1c1c1c]/70 font-light"}`}>{value}</span>
+                      <span className={`font-sans font-light uppercase tracking-[0.15em] text-[#1c1c1c]/60 block mb-2 ${isEmphasized ? "text-xs" : "text-[10px]"}`}>{label}</span>
+                      <span className={`font-sans text-[#1c1c1c] ${isEmphasized ? "text-lg font-medium" : "text-base text-[#1c1c1c]/80 font-light"}`}>{value}</span>
                     </div>
                   );
                 })}
@@ -494,7 +494,7 @@ export default function ProductDetailPage() {
                         aria-label={isWished(listing.id) ? "Remove from wishlist" : "Add to wishlist"}
                       >
                         <span
-                          className={`material-symbols-outlined text-xl ${isWished(listing.id) ? "text-red-500" : "text-[#1c1c1c]/30"}`}
+                          className={`material-symbols-outlined text-xl ${isWished(listing.id) ? "text-red-500" : "text-[#1c1c1c]/45"}`}
                           style={isWished(listing.id) ? { fontVariationSettings: "'FILL' 1" } : {}}
                         >
                           favorite
@@ -529,7 +529,7 @@ export default function ProductDetailPage() {
                         aria-label={isWished(listing.id) ? "Remove from wishlist" : "Add to wishlist"}
                       >
                         <span
-                          className={`material-symbols-outlined text-xl ${isWished(listing.id) ? "text-red-500" : "text-[#1c1c1c]/30"}`}
+                          className={`material-symbols-outlined text-xl ${isWished(listing.id) ? "text-red-500" : "text-[#1c1c1c]/45"}`}
                           style={isWished(listing.id) ? { fontVariationSettings: "'FILL' 1" } : {}}
                         >
                           favorite
@@ -564,18 +564,18 @@ export default function ProductDetailPage() {
                     >
                       <button
                         onClick={() => setShowInquiry(false)}
-                        className="absolute top-6 right-6 text-[#1c1c1c]/20 hover:text-[#1c1c1c] transition-colors"
+                        className="absolute top-6 right-6 text-[#1c1c1c]/40 hover:text-[#1c1c1c] transition-colors"
                       >
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                       </button>
 
-                      <p className="font-sans text-[11px] font-light uppercase tracking-[0.15em] text-[#1c1c1c]/40 mb-3">
+                      <p className="font-sans text-[11px] font-light uppercase tracking-[0.15em] text-[#1c1c1c]/55 mb-3">
                         Private Inquiry
                       </p>
                       <h3 className="font-serif text-3xl text-[#1c1c1c] mb-2 italic tracking-tight font-light">
                         {listing.title}
                       </h3>
-                      <p className="font-sans text-xs text-[#1c1c1c]/30 mb-8 font-light">
+                      <p className="font-sans text-xs text-[#1c1c1c]/50 mb-8 font-light">
                         Your message will be sent directly to the seller. No contact info is shared.
                       </p>
 
@@ -623,7 +623,7 @@ export default function ProductDetailPage() {
                     >
                       <button
                         onClick={() => setShowOffer(false)}
-                        className="absolute top-6 right-6 text-[#1c1c1c]/20 hover:text-[#1c1c1c] transition-colors"
+                        className="absolute top-6 right-6 text-[#1c1c1c]/40 hover:text-[#1c1c1c] transition-colors"
                       >
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                       </button>
@@ -637,7 +637,7 @@ export default function ProductDetailPage() {
                       <p className="font-sans text-xs text-[#1c1c1c]/30 mb-2 font-light">
                         Listed at {fmt(listing.salePrice)}
                       </p>
-                      <p className="font-sans text-xs text-[#1c1c1c]/30 mb-8 font-light">
+                      <p className="font-sans text-xs text-[#1c1c1c]/50 mb-8 font-light">
                         Your offer will be sent as a private message to the seller.
                       </p>
 
@@ -709,11 +709,11 @@ export default function ProductDetailPage() {
                         <table className="w-full text-xs">
                           <thead>
                             <tr className="border-b border-[#1c1c1c]/5">
-                              <th className="text-left py-2 pr-3 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">Size</th>
-                              <th className="text-left py-2 pr-3 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">Cup</th>
-                              <th className="text-left py-2 pr-3 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">Bust</th>
-                              <th className="text-left py-2 pr-3 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">Waist</th>
-                              <th className="text-left py-2 text-[10px] uppercase tracking-wider text-[#1c1c1c]/30 font-medium">Hips</th>
+                              <th className="text-left py-2 pr-3 text-[10px] uppercase tracking-wider text-[#1c1c1c]/50 font-medium">Size</th>
+                              <th className="text-left py-2 pr-3 text-[10px] uppercase tracking-wider text-[#1c1c1c]/50 font-medium">Cup</th>
+                              <th className="text-left py-2 pr-3 text-[10px] uppercase tracking-wider text-[#1c1c1c]/50 font-medium">Bust</th>
+                              <th className="text-left py-2 pr-3 text-[10px] uppercase tracking-wider text-[#1c1c1c]/50 font-medium">Waist</th>
+                              <th className="text-left py-2 text-[10px] uppercase tracking-wider text-[#1c1c1c]/50 font-medium">Hips</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -730,11 +730,11 @@ export default function ProductDetailPage() {
                               ["52", "H", "120 / 47\"", "98 / 39\"", "130 / 51\""],
                             ].map(([size, cup, bust, waist, hips]) => (
                               <tr key={size} className="border-b border-[#1c1c1c]/[0.03]">
-                                <td className="py-2 pr-3 font-medium text-[#1c1c1c]/60">{size}</td>
-                                <td className="py-2 pr-3 text-[#1c1c1c]/40">{cup}</td>
-                                <td className="py-2 pr-3 text-[#1c1c1c]/40">{bust}</td>
-                                <td className="py-2 pr-3 text-[#1c1c1c]/40">{waist}</td>
-                                <td className="py-2 text-[#1c1c1c]/40">{hips}</td>
+                                <td className="py-2 pr-3 font-medium text-[#1c1c1c]/70">{size}</td>
+                                <td className="py-2 pr-3 text-[#1c1c1c]/60">{cup}</td>
+                                <td className="py-2 pr-3 text-[#1c1c1c]/60">{bust}</td>
+                                <td className="py-2 pr-3 text-[#1c1c1c]/60">{waist}</td>
+                                <td className="py-2 text-[#1c1c1c]/60">{hips}</td>
                               </tr>
                             ))}
                           </tbody>
