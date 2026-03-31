@@ -31,11 +31,8 @@ function stripHtml(str: string): string {
 
 export async function POST(req: NextRequest) {
   try {
-    // Rate limit BEFORE reading body to prevent resource exhaustion
-    const ip =
-      req.headers.get('x-real-ip') ||
-      req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
-      'unknown'
+    // Rate limit BEFORE reading body to prevent resource exhaustion (H3 fix: use trusted IP source)
+    const ip = getClientIp(req)
     const allowed = await rateLimit({
       key: `kustomer-webhook:${ip}`,
       limit: 60,

@@ -166,22 +166,26 @@ export async function getPendingListings() {
   return data || []
 }
 
-export async function getAllListings(statusFilter?: string) {
+export async function getAllListings(statusFilter?: string, page: number = 0) {
   await requireModRole()
   const supabase = await db()
 
+  const PAGE_SIZE = 100
+  const from = page * PAGE_SIZE
+  const to = from + PAGE_SIZE - 1
+
   let query = supabase
     .from('listings')
-    .select('*, profiles(display_name, full_name)')
+    .select('*, profiles(display_name, full_name)', { count: 'exact' })
     .order('created_at', { ascending: false })
-    .limit(100)
+    .range(from, to)
 
   if (statusFilter && statusFilter !== 'all') {
     query = query.eq('status', statusFilter)
   }
 
-  const { data } = await query
-  return data || []
+  const { data, count } = await query
+  return { items: data || [], total: count ?? 0, page, pageSize: PAGE_SIZE }
 }
 
 export async function getApprovedListingsForSelector() {
@@ -282,15 +286,19 @@ export async function rejectListing(listingId: string, reason: string) {
 }
 
 // ── User Management ──────────────────────────────────
-export async function getUsers() {
+export async function getUsers(page: number = 0) {
   await requireAdminRole()
   const supabase = await adminDb()
 
-  const { data: profiles } = await supabase
+  const PAGE_SIZE = 100
+  const from = page * PAGE_SIZE
+  const to = from + PAGE_SIZE - 1
+
+  const { data: profiles, count } = await supabase
     .from('profiles')
-    .select('*')
+    .select('*', { count: 'exact' })
     .order('created_at', { ascending: false })
-    .limit(200)
+    .range(from, to)
 
   const { data: roles } = await supabase
     .from('user_roles')
@@ -1309,6 +1317,10 @@ const SEED_GOWNS = [
 ]
 
 export async function seedTestListings() {
+  // M3 fix: Prevent test data operations in production
+  if (process.env.NODE_ENV === 'production') {
+    return { error: 'Test seeding is disabled in production' }
+  }
   const user = await requireAdminRole()
   const supabase = await adminDb()
 
@@ -1345,6 +1357,10 @@ export async function seedTestListings() {
 }
 
 export async function deleteAllTestListings() {
+  // M3 fix: Prevent test data operations in production
+  if (process.env.NODE_ENV === 'production') {
+    return { error: 'Test deletion is disabled in production' }
+  }
   const user = await requireAdminRole()
   const supabase = await adminDb()
 

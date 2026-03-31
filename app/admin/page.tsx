@@ -1342,7 +1342,7 @@ function TransactionsTab({ mode }: { mode: 'all' | 'transactions' }) {
 
   const refresh = () => {
     setLoading(true);
-    getAllListings(filter).then(d => { setItems(d); setLoading(false); });
+    getAllListings(filter).then(d => { setItems(d?.items ?? d ?? []); setLoading(false); });
   };
 
   useEffect(() => { refresh(); }, [filter]);
@@ -1583,7 +1583,7 @@ function UsersTab() {
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
-    getUsers().then(d => { setUsers(d); setLoading(false); });
+    getUsers().then((d: any) => { setUsers(Array.isArray(d) ? d : d ?? []); setLoading(false); });
   }, []);
 
   const handleRoleChange = (userId: string, role: 'user' | 'moderator' | 'admin') => {
@@ -2140,7 +2140,7 @@ function AllListingsEditTab() {
 
   const load = () => {
     setLoading(true);
-    getAllListings(statusFilter).then(d => { setListings(d); setLoading(false); });
+    getAllListings(statusFilter).then(d => { setListings(d?.items ?? d ?? []); setLoading(false); });
   };
 
   useEffect(() => { load(); }, [statusFilter]);
