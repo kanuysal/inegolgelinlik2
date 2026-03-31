@@ -11,12 +11,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { mockListings, type Listing, type ListingType } from "@/lib/mock-listings";
 import { getListingById, startConversation, getRelatedListings } from "../actions";
+import { createCheckoutSession } from "../checkout-actions";
 import { GOWN_CATALOG } from "@/lib/catalog";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
 import { createClient } from "@/lib/supabase/client";
 import { useWishlist } from "@/lib/wishlist-context";
-import { thumb, fullImg } from "@/lib/image";
+import { thumb, fullImg, PLACEHOLDER_IMG } from "@/lib/image";
 
 /* ── Helpers ────────────────────────────────────── */
 
@@ -165,6 +166,8 @@ export default function ProductDetailPage() {
   const [offerSending, setOfferSending] = useState(false);
   const [offerError, setOfferError] = useState<string | null>(null);
   const [relatedListings, setRelatedListings] = useState<any[]>([]);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   useEffect(() => {
     const id = params.id as string;
@@ -328,6 +331,24 @@ export default function ProductDetailPage() {
     }
   };
 
+  const handleCheckout = async () => {
+    setCheckoutLoading(true);
+    setCheckoutError(null);
+    try {
+      const result = await createCheckoutSession(params.id as string);
+      if (result.error) {
+        setCheckoutError(result.error);
+        setCheckoutLoading(false);
+      } else if (result.url) {
+        window.location.href = result.url;
+      }
+    } catch (err) {
+      setCheckoutLoading(false);
+      setCheckoutError("Failed to start checkout. Please try again.");
+      console.error("Checkout error:", err);
+    }
+  };
+
   if (!listing) return null;
 
   const images = allImages.length > 0 ? allImages : [listing.imageUrl, listing.stockImageUrl];
@@ -356,6 +377,7 @@ export default function ProductDetailPage() {
                     fill
                     className="object-cover"
                     priority
+                    onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_IMG; }}
                   />
                 </motion.div>
                 {/* Navigation arrows */}
@@ -392,7 +414,7 @@ export default function ProductDetailPage() {
                     className={`relative flex-shrink-0 w-24 aspect-[3/4] overflow-hidden border-2 transition-all duration-300 ${activeImage === i ? "border-[#1c1c1c]" : "border-transparent opacity-40"
                       }`}
                   >
-                    <Image src={img} alt="Thumbnail" fill className="object-cover" />
+                    <Image src={img} alt="Thumbnail" fill className="object-cover" onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_IMG; }} />
                   </button>
                 ))}
               </div>
@@ -452,10 +474,20 @@ export default function ProductDetailPage() {
               </div>
 
               <div className="mb-16 space-y-3">
+                {checkoutError && (
+                  <p className="text-red-600 text-xs font-sans mb-2">{checkoutError}</p>
+                )}
+                <button
+                  onClick={handleCheckout}
+                  disabled={checkoutLoading}
+                  className="w-full py-5 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-[#333] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {checkoutLoading ? "Redirecting to Checkout…" : `Buy Now — ${fmt(listing.salePrice)}`}
+                </button>
                 <div className="flex gap-3">
                   <button
                     onClick={() => setShowInquiry(true)}
-                    className="flex-1 py-5 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-[#333] transition-all duration-300"
+                    className="flex-1 py-4 border border-[#1c1c1c]/10 text-[#1c1c1c] font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:border-[#1c1c1c]/30 hover:bg-[#1c1c1c]/[0.02] transition-all duration-300"
                   >
                     Inquire Now
                   </button>
@@ -714,6 +746,7 @@ export default function ProductDetailPage() {
                       alt={item.title}
                       loading="lazy"
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_IMG; }}
                     />
                   </div>
                   <h3 className="font-serif text-base font-normal mb-1">{item.title}</h3>

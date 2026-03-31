@@ -7,7 +7,7 @@ import Footer from "@/components/ui/Footer";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { mockListings, type Listing } from "@/lib/mock-listings";
 import { getApprovedListings } from "./actions";
-import { thumb } from "@/lib/image";
+import { thumb, PLACEHOLDER_IMG } from "@/lib/image";
 
 // Helper function to remove accents for search (e.g., "Élysée" → "elysee")
 function removeAccents(str: string): string {
@@ -36,7 +36,7 @@ function mapDbListing(row: any): Listing {
 
   // Prefer stock (Galia Lahav) photo as the primary image shown to buyers
   const stockImage = thumb(row.products?.images?.[0]);
-  const mainImage = stockImage || thumb(row.images?.[0]) || "/placeholder-gown.jpg";
+  const mainImage = stockImage || thumb(row.images?.[0]) || PLACEHOLDER_IMG;
 
   // Map collection line: "Bridal Couture" → "Couture", "Bridal GALA" → "GALA"
   const rawCollection = row.products?.stockist_data?.collectionLine || "";
@@ -317,6 +317,7 @@ export default function ShopPage() {
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     src={listing.imageUrl}
                     loading="lazy"
+                    onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_IMG; }}
                   />
                   {listing.listingType === "brand_direct" && (
                     <div className="absolute top-2 left-2 flex items-center gap-1 bg-[#1c1c1c]/90 backdrop-blur-sm text-white px-2 py-1">

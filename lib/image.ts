@@ -3,6 +3,9 @@
  * Adds resize/format transforms to reduce bandwidth and improve scroll performance.
  */
 
+/** Placeholder shown when a listing has no usable image */
+export const PLACEHOLDER_IMG = '/placeholder-gown.svg'
+
 /** Allowed image URL hostnames to prevent tracking pixels and arbitrary content */
 const ALLOWED_IMAGE_HOSTS = [
   'ucarecdn.com',
@@ -17,7 +20,7 @@ function validateImageUrl(url: string): string {
   try {
     const parsed = new URL(url)
     if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
-      return '/placeholder-gown.jpg'
+      return PLACEHOLDER_IMG
     }
     if (ALLOWED_IMAGE_HOSTS.some(h => parsed.hostname === h || parsed.hostname.endsWith('.' + h))) {
       return url
@@ -26,9 +29,9 @@ function validateImageUrl(url: string): string {
     if (parsed.hostname.endsWith('.supabase.co')) {
       return url
     }
-    return '/placeholder-gown.jpg'
+    return PLACEHOLDER_IMG
   } catch {
-    return '/placeholder-gown.jpg'
+    return PLACEHOLDER_IMG
   }
 }
 
@@ -38,7 +41,7 @@ function validateImageUrl(url: string): string {
  * For other URLs, validates domain and returns as-is.
  */
 export function thumb(url: string | undefined | null, width = 600): string {
-  if (!url) return '/placeholder-gown.jpg'
+  if (!url || !url.trim()) return PLACEHOLDER_IMG
   if (!url.includes('ucarecdn.com/')) return validateImageUrl(url)
 
   // Strip existing transforms and rebuild with resize
@@ -53,7 +56,7 @@ export function thumb(url: string | undefined | null, width = 600): string {
  * Applies quality/format optimization but no resize.
  */
 export function fullImg(url: string | undefined | null): string {
-  if (!url) return '/placeholder-gown.jpg'
+  if (!url || !url.trim()) return PLACEHOLDER_IMG
   if (!url.includes('ucarecdn.com/')) return validateImageUrl(url)
 
   const base = url.match(/https:\/\/ucarecdn\.com\/[a-f0-9-]{36}\//)?.[0]
