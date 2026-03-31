@@ -746,8 +746,10 @@ export default function ProductDetailPage() {
                 <AccordionSection title="Shipping & Returns">
                   <div className="space-y-4 font-sans text-sm text-[#1c1c1c] leading-relaxed font-light">
                     {listing.listingType === "brand_direct" ? (
-                      <p>Returns for brand-direct items are accepted, subject to a $200 fee for domestic orders and $300 international. Exchanges for brand-direct items are accepted subject to a $100 fee for domestic orders and $200 international. Return and exchange requests must be submitted within 5 days of receiving the item.</p>
-                      <p className="mt-2"><Link href="/company/return-policy" className="text-[#1c1c1c] underline underline-offset-4 decoration-[#1c1c1c]/20 hover:decoration-[#1c1c1c]/60 transition-colors text-sm">View full return policy</Link></p>
+                      <>
+                        <p>Returns for brand-direct items are accepted, subject to a $200 fee for domestic orders and $300 international. Exchanges for brand-direct items are accepted subject to a $100 fee for domestic orders and $200 international. Return and exchange requests must be submitted within 5 days of receiving the item.</p>
+                        <p className="mt-2"><Link href="/company/return-policy" className="text-[#1c1c1c] underline underline-offset-4 decoration-[#1c1c1c]/20 hover:decoration-[#1c1c1c]/60 transition-colors text-sm">View full return policy</Link></p>
+                      </>
                     ) : (
                       <p>Returns for bride-to-bride listings are entirely at the discretion of the buyer and seller. Regalia does not take responsibility for these transactions, and both parties should proceed as they see fit.</p>
                     )}
