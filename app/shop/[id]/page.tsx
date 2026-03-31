@@ -11,6 +11,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { mockListings, type Listing, type ListingType } from "@/lib/mock-listings";
 import { getListingById, startConversation, getRelatedListings } from "../actions";
+import { createCheckoutSession } from "../checkout-actions";
 import { GOWN_CATALOG } from "@/lib/catalog";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
@@ -165,6 +166,8 @@ export default function ProductDetailPage() {
   const [offerSending, setOfferSending] = useState(false);
   const [offerError, setOfferError] = useState<string | null>(null);
   const [relatedListings, setRelatedListings] = useState<any[]>([]);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   useEffect(() => {
     const id = params.id as string;
@@ -328,6 +331,27 @@ export default function ProductDetailPage() {
     }
   };
 
+  /* ── Stripe Checkout ─────────────────────────── */
+  const handleCheckout = async () => {
+    if (!listing) return;
+    setCheckoutLoading(true);
+    setCheckoutError(null);
+    try {
+      const result = await createCheckoutSession(listing.id);
+      if (result.error) {
+        setCheckoutError(result.error);
+        setCheckoutLoading(false);
+        return;
+      }
+      if (result.url) {
+        window.location.href = result.url;
+      }
+    } catch (err) {
+      setCheckoutError("Something went wrong. Please try again.");
+      setCheckoutLoading(false);
+    }
+  };
+
   if (!listing) return null;
 
   const images = allImages.length > 0 ? allImages : [listing.imageUrl, listing.stockImageUrl];
@@ -453,32 +477,73 @@ export default function ProductDetailPage() {
               </div>
 
               <div className="mb-16 space-y-3">
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => setShowInquiry(true)}
-                    className="flex-1 py-5 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-[#333] transition-all duration-300"
-                  >
-                    Inquire Now
-                  </button>
-                  <button
-                    onClick={() => toggleWish(listing.id)}
-                    className={`w-14 flex items-center justify-center border transition-all duration-300 ${isWished(listing.id) ? "border-red-200 bg-red-50" : "border-[#1c1c1c]/10 hover:border-[#1c1c1c]/30"}`}
-                    aria-label={isWished(listing.id) ? "Remove from wishlist" : "Add to wishlist"}
-                  >
-                    <span
-                      className={`material-symbols-outlined text-xl ${isWished(listing.id) ? "text-red-500" : "text-[#1c1c1c]/30"}`}
-                      style={isWished(listing.id) ? { fontVariationSettings: "'FILL' 1" } : {}}
+                {/* Buy Now — brand_direct only */}
+                {listing.listingType === "brand_direct" && (
+                  <>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={handleCheckout}
+                        disabled={checkoutLoading}
+                        className="flex-1 py-5 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-[#333] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {checkoutLoading ? "Redirecting to Checkout…" : "Buy Now"}
+                      </button>
+                      <button
+                        onClick={() => toggleWish(listing.id)}
+                        className={`w-14 flex items-center justify-center border transition-all duration-300 ${isWished(listing.id) ? "border-red-200 bg-red-50" : "border-[#1c1c1c]/10 hover:border-[#1c1c1c]/30"}`}
+                        aria-label={isWished(listing.id) ? "Remove from wishlist" : "Add to wishlist"}
+                      >
+                        <span
+                          className={`material-symbols-outlined text-xl ${isWished(listing.id) ? "text-red-500" : "text-[#1c1c1c]/30"}`}
+                          style={isWished(listing.id) ? { fontVariationSettings: "'FILL' 1" } : {}}
+                        >
+                          favorite
+                        </span>
+                      </button>
+                    </div>
+                    {checkoutError && (
+                      <p className="text-red-600 text-xs font-sans">{checkoutError}</p>
+                    )}
+                    <button
+                      onClick={() => setShowInquiry(true)}
+                      className="w-full py-4 border border-[#1c1c1c]/10 text-[#1c1c1c] font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:border-[#1c1c1c]/30 hover:bg-[#1c1c1c]/[0.02] transition-all duration-300"
                     >
-                      favorite
-                    </span>
-                  </button>
-                </div>
-                <button
-                  onClick={() => setShowOffer(true)}
-                  className="w-full py-4 border border-[#1c1c1c]/10 text-[#1c1c1c] font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:border-[#1c1c1c]/30 hover:bg-[#1c1c1c]/[0.02] transition-all duration-300"
-                >
-                  Make an Offer
-                </button>
+                      Inquire First
+                    </button>
+                  </>
+                )}
+
+                {/* Inquire + Offer — peer-to-peer / sample_sale */}
+                {listing.listingType !== "brand_direct" && (
+                  <>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => setShowInquiry(true)}
+                        className="flex-1 py-5 bg-[#1c1c1c] text-white font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:bg-[#333] transition-all duration-300"
+                      >
+                        Inquire Now
+                      </button>
+                      <button
+                        onClick={() => toggleWish(listing.id)}
+                        className={`w-14 flex items-center justify-center border transition-all duration-300 ${isWished(listing.id) ? "border-red-200 bg-red-50" : "border-[#1c1c1c]/10 hover:border-[#1c1c1c]/30"}`}
+                        aria-label={isWished(listing.id) ? "Remove from wishlist" : "Add to wishlist"}
+                      >
+                        <span
+                          className={`material-symbols-outlined text-xl ${isWished(listing.id) ? "text-red-500" : "text-[#1c1c1c]/30"}`}
+                          style={isWished(listing.id) ? { fontVariationSettings: "'FILL' 1" } : {}}
+                        >
+                          favorite
+                        </span>
+                      </button>
+                    </div>
+                    <button
+                      onClick={() => setShowOffer(true)}
+                      className="w-full py-4 border border-[#1c1c1c]/10 text-[#1c1c1c] font-sans text-[11px] font-light uppercase tracking-[0.15em] hover:border-[#1c1c1c]/30 hover:bg-[#1c1c1c]/[0.02] transition-all duration-300"
+                    >
+                      Make an Offer
+                    </button>
+                  </>
+                )}
               </div>
 
               {/* Inquiry Modal */}
