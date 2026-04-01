@@ -34,9 +34,11 @@ function mapDbListing(row: any): Listing {
     column: "Sheath",
   };
 
-  // Prefer stock (Galia Lahav) photo as the primary image shown to buyers
-  // Check for actual URL before calling thumb() — thumb(undefined) returns truthy PLACEHOLDER_IMG
-  const stockImage = row.products?.images?.[0] ? thumb(row.products.images[0]) : null;
+  // Prefer the stockist primary image (e.g., overskirt photo) over the first image in the array
+  const stockistPrimary = row.products?.stockist_data?.primaryImage?.url;
+  const stockImage = stockistPrimary
+    ? thumb(stockistPrimary)
+    : row.products?.images?.[0] ? thumb(row.products.images[0]) : null;
   const listingImage = row.images?.[0] ? thumb(row.images[0]) : null;
   const mainImage = stockImage || listingImage || PLACEHOLDER_IMG;
 

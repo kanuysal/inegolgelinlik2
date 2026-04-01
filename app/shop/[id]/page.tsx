@@ -144,6 +144,7 @@ interface StockistData {
   collectionLine?: string
   modelNumber?: string
   retailPrice?: { amount: number; currency: string }
+  primaryImage?: { url: string; thumbnail?: string; isPrimary?: boolean }
 }
 
 export default function ProductDetailPage() {
@@ -193,8 +194,12 @@ export default function ProductDetailPage() {
 
         const listingImages = (dbRow.images || []).filter((u: string) => u && u.startsWith('http'));
         const productImages = (dbRow.products?.images || []).filter((u: string) => u && u.startsWith('http'));
-        // Stock photos (Galia Lahav) first, then bride's photos after
-        const uniqueImages = Array.from(new Set([...productImages, ...listingImages]));
+        // Put stockist primary image (e.g., overskirt) first, then remaining stock photos, then bride's photos
+        const stockistPrimaryUrl = sd?.primaryImage?.url;
+        const orderedProductImages = stockistPrimaryUrl
+          ? [stockistPrimaryUrl, ...productImages.filter((u: string) => u !== stockistPrimaryUrl)]
+          : productImages;
+        const uniqueImages = Array.from(new Set([...orderedProductImages, ...listingImages]));
         const imgs = uniqueImages.length > 0 ? uniqueImages : [mainImg];
         setAllImages(imgs);
 

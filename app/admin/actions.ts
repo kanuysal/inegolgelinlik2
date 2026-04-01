@@ -821,9 +821,15 @@ export async function syncStockistPage(page: number, cookies: string, version: s
       collectionLine: dress.collection?.collectionLineName || '',
       modelNumber: dress.modelNumber || '',
       retailPrice: dress.retailPrice || null,
+      primaryImage: dress.primaryImage || null,
     }
 
-    const images = (dress.images || []).map((img: any) => img.url)
+    // Put the primary image first (e.g., overskirt photo) to match stockist display order
+    const primaryUrl = dress.primaryImage?.url
+    const allUrls = (dress.images || []).map((img: any) => img.url)
+    const images = primaryUrl
+      ? [primaryUrl, ...allUrls.filter((u: string) => u !== primaryUrl)]
+      : allUrls
 
     const row = {
       style_name: dress.name,
