@@ -13,9 +13,6 @@ if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) 
     url: process.env.UPSTASH_REDIS_REST_URL,
     token: process.env.UPSTASH_REDIS_REST_TOKEN,
   })
-} else {
-  // M1 fix: Log a clear warning at startup — no silent in-memory fallback
-  console.warn('[rate-limit] UPSTASH_REDIS_REST_URL / TOKEN not configured — rate limiting will REJECT all requests (fail-closed). Set these env vars to enable rate limiting.')
 }
 
 /**
@@ -28,10 +25,8 @@ if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) 
  */
 export async function rateLimit(config: RateLimitConfig): Promise<boolean> {
   if (!redis) {
-    // M1 fix: Fail-closed when Redis is not configured. In-memory fallback was
-    // ineffective in serverless (each cold start = fresh empty counters).
-    console.error('[rate-limit] Redis not configured — rejecting request (fail-closed)')
-    return false
+    // No Redis configured — allow request through (rate limiting disabled)
+    return true
   }
 
   const { key, limit, windowSeconds } = config
