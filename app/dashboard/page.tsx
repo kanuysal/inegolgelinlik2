@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import toast, { Toaster } from "react-hot-toast";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
-import { thumb } from "@/lib/image";
+import { thumb, PLACEHOLDER_IMG } from "@/lib/image";
 import { InlineLoadingSpinner } from "@/components/ui/LoadingSpinner";
 import {
   getMyListings,
@@ -132,7 +132,7 @@ function ListingsTab() {
         {listings.map((listing: any) => (
           <div key={listing.id} className="listing-card group flex flex-col bg-white border border-slate-100 transition-all duration-500 hover:shadow-2xl hover:shadow-black/5">
             <div className="relative aspect-[3/4] overflow-hidden">
-              <img alt={listing.title} className="listing-image w-full h-full object-cover transition-transform duration-700" src={listing.images?.[0] || 'https://cdn.shopify.com/s/files/1/0839/7222/7357/files/Lorena_-_Studio_-_Ai.jpg'} />
+              <img alt={listing.title} className="listing-image w-full h-full object-cover transition-transform duration-700" src={thumb(listing.images?.[0]) || PLACEHOLDER_IMG} onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_IMG; }} />
               <div className="absolute top-3 left-3 md:top-4 md:left-4">
                 <span className={`border px-3 py-1 text-[8px] md:text-[9px] font-bold uppercase tracking-widest rounded-full backdrop-blur-sm ${listing.status === 'approved' ? 'bg-green-500 text-white border-green-500' :
                   listing.status === 'sold' ? 'bg-primary text-white border-primary' :
@@ -295,13 +295,7 @@ function SaleOrderCard({ order }: { order: any }) {
       </div>
       <div className="flex flex-col sm:flex-row items-start gap-4 md:gap-6">
         <div className="w-20 h-24 bg-slate-100 flex-shrink-0">
-          {order.listings?.images?.[0] ? (
-            <img src={order.listings.images[0]} alt="" className="w-full h-full object-cover opacity-80" />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-slate-300">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="w-8 h-8"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 0 1-8 0" /></svg>
-            </div>
-          )}
+          <img src={thumb(order.listings?.images?.[0]) || PLACEHOLDER_IMG} alt="" className="w-full h-full object-cover opacity-80" onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_IMG; }} />
         </div>
         <div className="flex-1 w-full">
           <div className="flex flex-wrap items-center gap-2 mb-2">
@@ -416,13 +410,7 @@ function PurchasesTab() {
                 </div>
                 <div className="flex flex-col sm:flex-row items-start gap-4 md:gap-6">
                   <div className="w-20 h-24 bg-slate-100 flex-shrink-0">
-                    {order.listings?.images?.[0] ? (
-                      <img src={order.listings.images[0]} alt="" className="w-full h-full object-cover opacity-80" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-slate-300">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="w-8 h-8"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 0 1-8 0" /></svg>
-                      </div>
-                    )}
+                    <img src={thumb(order.listings?.images?.[0]) || PLACEHOLDER_IMG} alt="" className="w-full h-full object-cover opacity-80" onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_IMG; }} />
                   </div>
                   <div className="flex-1 w-full">
                     <div className="flex flex-wrap items-center gap-2 mb-2">

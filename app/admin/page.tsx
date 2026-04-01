@@ -1339,6 +1339,7 @@ function TransactionsTab({ mode }: { mode: 'all' | 'transactions' }) {
   const [loading, setLoading] = useState(true);
   const [isPending, startTransition] = useTransition();
   const [seedMsg, setSeedMsg] = useState('');
+  const [listingSearch, setListingSearch] = useState('');
 
   const refresh = () => {
     setLoading(true);
@@ -1390,7 +1391,13 @@ function TransactionsTab({ mode }: { mode: 'all' | 'transactions' }) {
         <div className="flex items-center gap-4 flex-1">
           <div className="relative flex-1 max-w-sm">
             <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
-            <input className="w-full pl-10 pr-4 py-2 text-xs bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-accent focus:border-accent outline-none" placeholder="Search by details..." type="text" />
+            <input
+              className="w-full pl-10 pr-4 py-2 text-xs bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-accent focus:border-accent outline-none"
+              placeholder="Search by title, seller, category..."
+              type="text"
+              value={listingSearch}
+              onChange={(e) => setListingSearch(e.target.value)}
+            />
           </div>
           <div className="h-8 w-px bg-slate-200"></div>
           <select
@@ -1439,7 +1446,16 @@ function TransactionsTab({ mode }: { mode: 'all' | 'transactions' }) {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {items.map(l => (
+              {items.filter(l => {
+                if (!listingSearch.trim()) return true;
+                const q = listingSearch.toLowerCase();
+                return (
+                  (l.title || '').toLowerCase().includes(q) ||
+                  (l.category || '').toLowerCase().includes(q) ||
+                  (l.profiles?.display_name || '').toLowerCase().includes(q) ||
+                  (l.id || '').toLowerCase().includes(q)
+                );
+              }).map(l => (
                 <tr key={l.id} className="hover:bg-slate-50/50 transition-colors group">
                   <td className="px-6 py-4">
                     <span className="text-[11px] font-mono text-slate-400 group-hover:text-accent transition-colors">#{l.id.slice(0, 8)}</span>
@@ -1492,12 +1508,25 @@ function InventoryTab() {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isPending, startTransition] = useTransition();
+  const [catalogSearch, setCatalogSearch] = useState('');
 
   const refresh = () => getProducts().then(setProducts);
 
   useEffect(() => {
     refresh().then(() => setLoading(false));
   }, []);
+
+  // Client-side filtering by style name, SKU, or category
+  const filteredProducts = products.filter(p => {
+    if (!catalogSearch.trim()) return true;
+    const q = catalogSearch.toLowerCase();
+    return (
+      (p.style_name || '').toLowerCase().includes(q) ||
+      (p.sku || '').toLowerCase().includes(q) ||
+      (p.category || '').toLowerCase().includes(q) ||
+      (p.silhouette || '').toLowerCase().includes(q)
+    );
+  });
 
   if (loading) return <div className="p-8"><LoadingSkeleton /></div>;
 
@@ -1507,8 +1536,17 @@ function InventoryTab() {
         <div className="flex items-center gap-4 flex-1">
           <div className="relative flex-1 max-w-sm">
             <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
-            <input className="w-full pl-10 pr-4 py-2 text-xs bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-accent focus:border-accent outline-none" placeholder="Search product catalog..." type="text" />
+            <input
+              className="w-full pl-10 pr-4 py-2 text-xs bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-accent focus:border-accent outline-none"
+              placeholder="Search by name, SKU, category..."
+              type="text"
+              value={catalogSearch}
+              onChange={(e) => setCatalogSearch(e.target.value)}
+            />
           </div>
+          {catalogSearch && (
+            <span className="text-[10px] text-slate-400">{filteredProducts.length} of {products.length}</span>
+          )}
         </div>
         <div className="flex gap-2">
           <button
@@ -1539,13 +1577,13 @@ function InventoryTab() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {products.map(p => (
+        {filteredProducts.map(p => (
           <div key={p.id} className="bg-white border border-slate-200 p-4">
             <div className="aspect-[3/4] bg-slate-100 rounded overflow-hidden mb-4 relative">
               {p.images?.[0] ? (
-                <img src={p.images[0]} alt="" className="w-full h-full object-cover" />
+                <img src={p.images[0]} alt="" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder-gown.svg'; }} />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-slate-300">No Image</div>
+                <img src="/placeholder-gown.svg" alt="No image" className="w-full h-full object-cover opacity-50" />
               )}
               <div className="absolute top-2 left-2 flex gap-1">
                 <span className="bg-white/90 backdrop-blur px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider shadow-sm">{p.category}</span>
