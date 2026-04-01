@@ -59,7 +59,7 @@ function mapDbListing(row: any): Listing {
     fabric: "Lace",
     color: "Ivory",
     imageUrl: mainImage,
-    stockImageUrl: stockImage,
+    stockImageUrl: stockImage || "",
     verified: true,
     featured: false,
     saves: 0,
