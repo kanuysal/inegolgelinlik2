@@ -1,10 +1,21 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // M4 fix: Explicitly configure CSRF allowed origins for server actions
+  experimental: {
+    serverActions: {
+      allowedOrigins: [
+        'regalia-scroll.vercel.app',
+        'localhost:3000',
+      ],
+    },
+  },
   images: {
     unoptimized: true,
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "cdn.stockist.galialahav.com" },
+      // L2 fix: Restrict to our specific Supabase project instead of wildcard *.supabase.co
+      { protocol: "https", hostname: "acfsgzumjwqatzqureuq.supabase.co" },
     ],
   },
   async headers() {

@@ -47,6 +47,41 @@ import {
   sendBlastEmail,
 } from './actions';
 
+/**
+ * Client-side HTML sanitizer for blast email preview (C1 fix).
+ * Strips script tags, event handlers, dangerous protocols, and iframes
+ * so the preview cannot execute arbitrary JS in the admin's browser.
+ */
+function sanitizePreviewHtml(html: string): string {
+  // Use the browser's DOM parser to safely strip dangerous elements
+  const doc = new DOMParser().parseFromString(html, 'text/html')
+
+  // Remove dangerous elements
+  const dangerousTags = ['script', 'iframe', 'object', 'embed', 'link', 'base', 'form']
+  dangerousTags.forEach(tag => {
+    doc.querySelectorAll(tag).forEach(el => el.remove())
+  })
+
+  // Remove all event handler attributes (on*)
+  doc.querySelectorAll('*').forEach(el => {
+    const attrs = Array.from(el.attributes)
+    attrs.forEach(attr => {
+      if (/^on/i.test(attr.name)) {
+        el.removeAttribute(attr.name)
+      }
+      // Remove dangerous href/src protocols (javascript:, data:, vbscript:)
+      if (['href', 'src', 'action', 'formaction', 'xlink:href'].includes(attr.name.toLowerCase())) {
+        const val = attr.value.replace(/[\s\x00-\x1f]/g, '').toLowerCase()
+        if (val.startsWith('javascript:') || val.startsWith('vbscript:') || val.startsWith('data:text/html')) {
+          el.removeAttribute(attr.name)
+        }
+      }
+    })
+  })
+
+  return doc.body.innerHTML
+}
+
 type Tab = 'dashboard' | 'moderation' | 'brand_direct' | 'brand_messages' | 'inventory' | 'sellers' | 'transactions' | 'featured' | 'blast_email';
 
 // ═══════════════════════════════════════════════════════
@@ -1307,7 +1342,7 @@ function TransactionsTab({ mode }: { mode: 'all' | 'transactions' }) {
 
   const refresh = () => {
     setLoading(true);
-    getAllListings(filter).then(d => { setItems(d); setLoading(false); });
+    getAllListings(filter).then(d => { setItems(d?.items ?? d ?? []); setLoading(false); });
   };
 
   useEffect(() => { refresh(); }, [filter]);
@@ -1548,7 +1583,7 @@ function UsersTab() {
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
-    getUsers().then(d => { setUsers(d); setLoading(false); });
+    getUsers().then((d: any) => { setUsers(Array.isArray(d) ? d : d ?? []); setLoading(false); });
   }, []);
 
   const handleRoleChange = (userId: string, role: 'user' | 'moderator' | 'admin') => {
@@ -2105,7 +2140,7 @@ function AllListingsEditTab() {
 
   const load = () => {
     setLoading(true);
-    getAllListings(statusFilter).then(d => { setListings(d); setLoading(false); });
+    getAllListings(statusFilter).then(d => { setListings(d?.items ?? d ?? []); setLoading(false); });
   };
 
   useEffect(() => { load(); }, [statusFilter]);
@@ -2347,7 +2382,7 @@ function BlastEmailTab() {
         {showPreview && (
           <div className="border border-slate-200 p-6 bg-white">
             <p className="text-[10px] uppercase tracking-widest text-slate-400 mb-3">Preview</p>
-            <div dangerouslySetInnerHTML={{ __html: body || defaultTemplate }} />
+            <div dangerouslySetInnerHTML={{ __html: sanitizePreviewHtml(body || defaultTemplate) }} />
           </div>
         )}
 

@@ -24,12 +24,26 @@ function sanitizeRedirect(raw: string | null): string {
     return '/dashboard'
   }
 
-  // Only allow internal paths
+  // Only allow internal paths starting with /
   if (!raw.startsWith('/')) {
     return '/dashboard'
   }
 
-  // Optionally tighten further with an allowlist if needed
+  // Block backslashes — browsers normalize /\ to // (protocol-relative redirect) (H1 fix)
+  if (raw.includes('\\') || raw.includes('%5c') || raw.includes('%5C')) {
+    return '/dashboard'
+  }
+
+  // Block encoded slashes that could form protocol-relative URLs
+  if (raw.includes('%2f%2f') || raw.includes('%2F%2F')) {
+    return '/dashboard'
+  }
+
+  // Block tab/newline/null chars that can break URL parsing
+  if (/[\x00-\x1f]/.test(raw) || raw.includes('%00') || raw.includes('%09') || raw.includes('%0a') || raw.includes('%0d')) {
+    return '/dashboard'
+  }
+
   return raw
 }
 
