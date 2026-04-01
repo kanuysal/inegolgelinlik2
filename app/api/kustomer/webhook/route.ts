@@ -8,25 +8,31 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/server'
 import { notifyNewMessage } from '@/lib/notify'
-import { rateLimit } from '@/lib/rate-limit'
+import { rateLimit, getClientIp } from '@/lib/rate-limit'
 
-/** Strip HTML tags and dangerous protocols from webhook message content to prevent stored XSS */
+/** Strip HTML tags and dangerous protocols from webhook message content to prevent stored XSS (M2 fix) */
 function stripHtml(str: string): string {
-  return str
+  let cleaned = str
+    // Remove all HTML tags
     .replace(/<[^>]*>/g, '')
-    .replace(/javascript:/gi, '')
-    .replace(/data:/gi, '')
-    .replace(/vbscript:/gi, '')
-    .trim()
+    // Decode HTML entities BEFORE checking for dangerous protocols
+    .replace(/&#x([0-9a-f]+);/gi, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
+    .replace(/&#(\d+);/gi, (_, dec) => String.fromCharCode(parseInt(dec, 10)))
+    .replace(/&amp;/gi, '&')
+    // Remove null bytes and control characters that can break regex matching
+    .replace(/[\x00-\x08\x0b\x0c\x0e-\x1f]/g, '')
+  // Now strip dangerous protocols (after entity decoding)
+  cleaned = cleaned
+    .replace(/javascript\s*:/gi, '')
+    .replace(/data\s*:/gi, '')
+    .replace(/vbscript\s*:/gi, '')
+  return cleaned.trim()
 }
 
 export async function POST(req: NextRequest) {
   try {
-    // Rate limit BEFORE reading body to prevent resource exhaustion
-    const ip =
-      req.headers.get('x-real-ip') ||
-      req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
-      'unknown'
+    // Rate limit BEFORE reading body to prevent resource exhaustion (H3 fix: use trusted IP source)
+    const ip = getClientIp(req)
     const allowed = await rateLimit({
       key: `kustomer-webhook:${ip}`,
       limit: 60,
@@ -70,6 +76,21 @@ export async function POST(req: NextRequest) {
     }
 
     const payload = JSON.parse(body)
+
+    // H2 fix: Idempotency — deduplicate by Kustomer message ID to prevent replay attacks
+    const kustomerMessageId = payload?.data?.id
+    if (kustomerMessageId) {
+      const supabaseCheck = createAdminClient() as any
+      // Check if we've already processed this webhook message
+      const { data: existing } = await supabaseCheck
+        .from('messages')
+        .select('id')
+        .eq('kustomer_message_id', kustomerMessageId)
+        .maybeSingle()
+      if (existing) {
+        return NextResponse.json({ ok: true, duplicate: true })
+      }
+    }
 
     // Kustomer webhook payload structure:
     // payload.data.type — event type
@@ -123,6 +144,7 @@ export async function POST(req: NextRequest) {
         conversation_id: conv.id,
         sender_id: conv.seller_id,
         content: sanitizedMessage,
+        ...(kustomerMessageId ? { kustomer_message_id: kustomerMessageId } : {}),
       })
 
     if (msgError) {

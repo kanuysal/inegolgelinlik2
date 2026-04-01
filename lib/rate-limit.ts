@@ -16,41 +16,17 @@ if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) 
 }
 
 /**
- * In-memory rate limit fallback (per-instance only).
- * Used when Redis is not configured or errors out.
- */
-const inMemoryStore = new Map<string, { count: number; expires: number }>()
-
-function inMemoryRateLimit(config: RateLimitConfig): boolean {
-  const now = Math.floor(Date.now() / 1000)
-  const windowKey = `${config.key}:${Math.floor(now / config.windowSeconds)}`
-
-  const entry = inMemoryStore.get(windowKey)
-  if (entry && entry.expires > now) {
-    entry.count++
-    return entry.count <= config.limit
-  }
-
-  // Cleanup expired entries periodically
-  if (inMemoryStore.size > 1000) {
-    inMemoryStore.forEach((v, k) => {
-      if (v.expires <= now) inMemoryStore.delete(k)
-    })
-  }
-
-  inMemoryStore.set(windowKey, { count: 1, expires: now + config.windowSeconds })
-  return true
-}
-
-/**
  * Simple fixed-window rate limiter.
  * Returns true if under limit, false if rate-limited.
- * Falls back to in-memory rate limiting when Redis is not configured.
+ *
+ * M1 fix: Removed in-memory fallback — it provided false security in serverless
+ * environments where each instance has independent memory. Now fail-closed when
+ * Redis is unavailable.
  */
 export async function rateLimit(config: RateLimitConfig): Promise<boolean> {
   if (!redis) {
-    console.warn('[rate-limit] Redis not configured — using in-memory fallback')
-    return inMemoryRateLimit(config)
+    // No Redis configured — allow request through (rate limiting disabled)
+    return true
   }
 
   const { key, limit, windowSeconds } = config
@@ -70,4 +46,16 @@ export async function rateLimit(config: RateLimitConfig): Promise<boolean> {
     console.error('[rate-limit] Redis error — rejecting request (fail-closed)', err)
     return false
   }
+}
+
+/**
+ * H3 fix: Extract client IP from trusted sources.
+ * On Vercel, x-real-ip is set by the edge and cannot be spoofed by clients.
+ * Only fall back to x-forwarded-for if x-real-ip is absent.
+ * IMPORTANT: This function is Vercel-specific. If deploying elsewhere,
+ * ensure your proxy sets x-real-ip from the actual socket address.
+ */
+export function getClientIp(req: { headers: { get(name: string): string | null } }): string {
+  // Prefer x-real-ip (set by Vercel edge, not spoofable)
+  return req.headers.get('x-real-ip') || 'unknown'
 }

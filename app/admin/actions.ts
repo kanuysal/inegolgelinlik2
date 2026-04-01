@@ -10,18 +10,83 @@ import { rateLimit } from '@/lib/rate-limit'
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
-/** Basic HTML sanitization for email content — strips script tags, event handlers, and dangerous protocols */
+/**
+ * Robust server-side HTML sanitizer for email content (C2 fix).
+ * Allowlist-based: only permits safe tags and safe attributes.
+ * This replaces the previous regex-based approach which had multiple bypass vectors
+ * (HTML entity encoding, null bytes, data: URIs without base64, etc.).
+ */
 function sanitizeHtml(html: string): string {
-  return html
-    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
-    .replace(/<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi, '')
-    .replace(/<embed[^>]*>/gi, '')
-    .replace(/<link[^>]*>/gi, '')
-    .replace(/\bon\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
-    .replace(/javascript\s*:/gi, '')
-    .replace(/vbscript\s*:/gi, '')
-    .replace(/data\s*:[^,]*;base64/gi, '')
+  // Allowlisted tags and attributes for email HTML
+  const ALLOWED_TAGS = new Set([
+    'p', 'br', 'b', 'i', 'u', 'em', 'strong', 'a', 'ul', 'ol', 'li',
+    'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'pre', 'code',
+    'table', 'thead', 'tbody', 'tr', 'th', 'td', 'img', 'div', 'span',
+    'hr', 'sup', 'sub', 'small', 'center',
+  ])
+  const ALLOWED_ATTRS = new Set([
+    'href', 'src', 'alt', 'title', 'width', 'height', 'style',
+    'class', 'align', 'valign', 'cellpadding', 'cellspacing', 'border',
+    'bgcolor', 'color', 'colspan', 'rowspan', 'target',
+  ])
+  const SAFE_URL_RE = /^(https?:\/\/|mailto:|#|\/[^/])/i
+
+  // Step 1: Decode all HTML entities before processing to prevent entity-based bypasses
+  function decodeEntities(str: string): string {
+    return str
+      .replace(/&#x([0-9a-f]+);/gi, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
+      .replace(/&#(\d+);/gi, (_, dec) => String.fromCharCode(parseInt(dec, 10)))
+      .replace(/&amp;/gi, '&').replace(/&lt;/gi, '<').replace(/&gt;/gi, '>')
+      .replace(/&quot;/gi, '"').replace(/&apos;/gi, "'")
+  }
+
+  // Step 2: Strip all tags not in the allowlist, and strip disallowed attributes
+  let result = html
+    // Remove null bytes that can break regex matching
+    .replace(/\x00/g, '')
+
+  // Remove all comments
+  result = result.replace(/<!--[\s\S]*?-->/g, '')
+
+  // Process tags: allow safe ones, strip everything else
+  result = result.replace(/<\/?([a-z][a-z0-9]*)\b([^>]*)?\/?>/gi, (match, tag, attrString) => {
+    const tagLower = tag.toLowerCase()
+    if (!ALLOWED_TAGS.has(tagLower)) return '' // strip disallowed tags entirely
+
+    if (!attrString?.trim()) return `<${match.startsWith('</') ? '/' : ''}${tagLower}>`
+
+    // Filter attributes
+    const safeAttrs: string[] = []
+    const attrRe = /([a-z][\w-]*)\s*=\s*(?:"([^"]*)"|'([^']*)'|(\S+))/gi
+    let attrMatch
+    while ((attrMatch = attrRe.exec(attrString)) !== null) {
+      const attrName = attrMatch[1].toLowerCase()
+      const attrVal = attrMatch[2] ?? attrMatch[3] ?? attrMatch[4] ?? ''
+
+      // Block all event handlers (on*)
+      if (attrName.startsWith('on')) continue
+
+      // Block disallowed attributes
+      if (!ALLOWED_ATTRS.has(attrName)) continue
+
+      // For URL attributes, validate the protocol
+      if (['href', 'src', 'action', 'formaction'].includes(attrName)) {
+        const decodedVal = decodeEntities(attrVal).replace(/[\s\x00-\x1f]/g, '').toLowerCase()
+        if (decodedVal.startsWith('javascript:') || decodedVal.startsWith('vbscript:') ||
+            decodedVal.startsWith('data:')) {
+          continue // strip dangerous URL attributes
+        }
+        if (!SAFE_URL_RE.test(decodedVal) && decodedVal.length > 0) continue
+      }
+
+      safeAttrs.push(`${attrName}="${attrVal.replace(/"/g, '&quot;')}"`)
+    }
+
+    const attrStr = safeAttrs.length > 0 ? ' ' + safeAttrs.join(' ') : ''
+    return `<${match.startsWith('</') ? '/' : ''}${tagLower}${match.startsWith('</') ? '' : attrStr}>`
+  })
+
+  return result
 }
 
 async function db() {
@@ -101,22 +166,26 @@ export async function getPendingListings() {
   return data || []
 }
 
-export async function getAllListings(statusFilter?: string) {
+export async function getAllListings(statusFilter?: string, page: number = 0) {
   await requireModRole()
   const supabase = await db()
 
+  const PAGE_SIZE = 100
+  const from = page * PAGE_SIZE
+  const to = from + PAGE_SIZE - 1
+
   let query = supabase
     .from('listings')
-    .select('*, profiles(display_name, full_name)')
+    .select('*, profiles(display_name, full_name)', { count: 'exact' })
     .order('created_at', { ascending: false })
-    .limit(100)
+    .range(from, to)
 
   if (statusFilter && statusFilter !== 'all') {
     query = query.eq('status', statusFilter)
   }
 
-  const { data } = await query
-  return data || []
+  const { data, count } = await query
+  return { items: data || [], total: count ?? 0, page, pageSize: PAGE_SIZE }
 }
 
 export async function getApprovedListingsForSelector() {
@@ -217,15 +286,19 @@ export async function rejectListing(listingId: string, reason: string) {
 }
 
 // ── User Management ──────────────────────────────────
-export async function getUsers() {
+export async function getUsers(page: number = 0) {
   await requireAdminRole()
   const supabase = await adminDb()
 
-  const { data: profiles } = await supabase
+  const PAGE_SIZE = 100
+  const from = page * PAGE_SIZE
+  const to = from + PAGE_SIZE - 1
+
+  const { data: profiles, count } = await supabase
     .from('profiles')
-    .select('*')
+    .select('*', { count: 'exact' })
     .order('created_at', { ascending: false })
-    .limit(200)
+    .range(from, to)
 
   const { data: roles } = await supabase
     .from('user_roles')
@@ -1244,6 +1317,10 @@ const SEED_GOWNS = [
 ]
 
 export async function seedTestListings() {
+  // M3 fix: Prevent test data operations in production
+  if (process.env.NODE_ENV === 'production') {
+    return { error: 'Test seeding is disabled in production' }
+  }
   const user = await requireAdminRole()
   const supabase = await adminDb()
 
@@ -1280,6 +1357,10 @@ export async function seedTestListings() {
 }
 
 export async function deleteAllTestListings() {
+  // M3 fix: Prevent test data operations in production
+  if (process.env.NODE_ENV === 'production') {
+    return { error: 'Test deletion is disabled in production' }
+  }
   const user = await requireAdminRole()
   const supabase = await adminDb()
 
