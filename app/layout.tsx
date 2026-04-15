@@ -1,3 +1,7 @@
+/**
+ * MINA LIDYA PLATFORM
+ * Final stabilized build for Cloudflare Pages
+ */
 import type { Metadata } from "next";
 import { Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
