@@ -876,7 +876,7 @@ function ProfileTab() {
    WISHLIST TAB
    ══════════════════════════════════════════════════ */
 function WishlistTab() {
-  const { ids: wishlistIds, toggle } = useHanger();
+  const { ids: wishlistIds, toggleHanger: toggle } = useHanger();
   const [listings, setListings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -888,11 +888,11 @@ function WishlistTab() {
     }
     getApprovedListings().then((data) => {
       if (data) {
-        setListings(data.filter((l: any) => ids.includes(l.id)));
+        setListings(data.filter((l: any) => wishlistIds.includes(l.id.toString())));
       }
       setLoading(false);
     });
-  }, [ids]);
+  }, [wishlistIds]);
 
   if (loading) return <LoadingSkeleton />;
 
