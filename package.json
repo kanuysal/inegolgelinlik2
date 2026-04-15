@@ -1,6 +1,6 @@
 {
-  "name": "regalia-scroll",
-  "version": "1.0.0",
+  "name": "mina-lidya-platform",
+  "version": "1.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
