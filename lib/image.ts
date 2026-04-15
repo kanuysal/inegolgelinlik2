@@ -13,6 +13,7 @@ const ALLOWED_IMAGE_HOSTS = [
   'cdn.stockist.galialahav.com',
   'www.galialahav.com',
   'images.unsplash.com',
+  'api.minalidya.wedding',
 ]
 
 /** Validate image URL against allowlist. Returns placeholder for untrusted domains. */

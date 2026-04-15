@@ -18,14 +18,14 @@ const config: Config = {
         silk: "#FFFFFF",
         "bridal-white": "#FFFFFF",
         champagne: "#F7E7CE",
-        "gold-muted": "#D4AF37",
-        "resonance-amber": "#c9a96e",
+        "gold-muted": "#B76E79", // Rosegold
+        "resonance-amber": "#B76E79",
         "resonance-blue": "#8da9c4",
         neutral: "#efefef",
         border: "#cfcfcf",
         primary: "#111111",
         "background-light": "#FDFDFD",
-        accent: "#C5A059",
+        accent: "#B76E79",
         secondary: "#f9f8f6",
       },
       keyframes: {

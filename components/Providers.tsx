@@ -1,7 +1,7 @@
 "use client";
 
-import { WishlistProvider } from "@/lib/wishlist-context";
+import { HangerProvider } from "@/lib/hanger-context";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
-  return <WishlistProvider>{children}</WishlistProvider>;
+  return <HangerProvider>{children}</HangerProvider>;
 }

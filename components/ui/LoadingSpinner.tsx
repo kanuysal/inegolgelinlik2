@@ -11,17 +11,29 @@ export default function LoadingSpinner() {
           rotate: 360,
         }}
         transition={{
-          duration: 2,
+          duration: 8,
           repeat: Infinity,
           ease: "linear",
         }}
-        className="relative"
+        className="relative w-48 h-48 flex items-center justify-center"
       >
-        <img
-          src="/images/loading_logo.png"
-          alt="Loading..."
-          className="w-32 h-32 md:w-40 md:h-40 object-contain"
-        />
+        <svg viewBox="0 0 100 100" className="w-full h-full">
+          <defs>
+            <path
+              id="circlePath"
+              d="M 50, 50 m -35, 0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0"
+            />
+          </defs>
+          <text className="font-serif text-[8px] uppercase tracking-[0.2em] fill-[#1c1c1c]">
+            <textPath href="#circlePath" startOffset="0%">
+              MİNA LİDYA • MİNA LİDYA • MİNA LİDYA • MİNA LİDYA •
+            </textPath>
+          </text>
+        </svg>
+        {/* Center Symbol */}
+        <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-1.5 h-1.5 bg-[#B76E79] rounded-full" />
+        </div>
       </motion.div>
 
       {/* Optional: Pulsing glow effect behind logo */}
@@ -55,14 +67,22 @@ export function InlineLoadingSpinner({ size = "md" }: { size?: "sm" | "md" | "lg
     <div className="flex items-center justify-center py-12">
       <motion.div
         animate={{ rotate: 360 }}
-        transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+        transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
         className={sizeClasses[size]}
       >
-        <img
-          src="/images/loading_logo.png"
-          alt="Loading..."
-          className="w-full h-full object-contain"
-        />
+        <svg viewBox="0 0 100 100" className="w-full h-full">
+          <defs>
+            <path
+              id="circlePathInline"
+              d="M 50, 50 m -35, 0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0"
+            />
+          </defs>
+          <text className="font-serif text-[10px] uppercase tracking-[0.1em] fill-[#1c1c1c]/40">
+            <textPath href="#circlePathInline" startOffset="0%">
+              MİNA LİDYA • MİNA LİDYA •
+            </textPath>
+          </text>
+        </svg>
       </motion.div>
     </div>
   );

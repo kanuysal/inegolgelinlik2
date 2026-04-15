@@ -3,32 +3,54 @@ import Link from "next/link";
 export default function Footer() {
   return (
     <footer className="border-t border-[#1c1c1c]/5 bg-white">
-      {/* Main footer */}
+      
+      {/* Instagram Follow Section - Pre-Footer style */}
+      <div className="pt-20 border-b border-[#1c1c1c]/5 text-center px-6">
+        <div className="max-w-xl mx-auto space-y-8 pb-20">
+          <span className="text-[10px] font-bold tracking-[0.4em] text-[#B76E79] uppercase">Bizi Takip Edin</span>
+          <h3 className="font-serif text-3xl md:text-5xl text-[#1c1c1c] font-light">@minalidyagelinlik</h3>
+          <p className="font-sans text-[13px] text-[#1c1c1c]/40 leading-relaxed font-light">
+            En son koleksiyonlarımız, sahne arkası görüntülerimiz ve gelin adaylarımızdan ilham verici anlar için Instagram topluluğumuza katılın.
+          </p>
+          <div className="pt-4">
+            <a 
+              href="https://instagram.com/minalidyagelinlik" 
+              target="_blank" 
+              className="inline-flex items-center gap-3 py-4 px-10 border border-[#1c1c1c] text-[11px] font-bold tracking-[0.2em] transition-all hover:bg-[#1c1c1c] hover:text-white uppercase"
+            >
+              <span>INSTAGRAM'DA GÖRÜNTÜLE</span>
+              <span className="material-symbols-outlined text-sm">open_in_new</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* Main footer contents */}
       <div className="max-w-[85rem] mx-auto px-6 md:px-16 py-20 md:py-24">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-14 md:gap-8">
           {/* Brand */}
           <div className="md:col-span-1">
             <Link href="/" className="inline-block">
               <h3 className="font-serif text-2xl tracking-[0.25em] text-[#1c1c1c] font-light uppercase">
-                RE:GALIA
+                MİNA LİDYA
               </h3>
             </Link>
             <p className="font-sans text-[13px] text-[#1c1c1c]/40 mt-6 leading-relaxed max-w-[260px] font-light">
-              The official certified pre-owned marketplace by Galia Lahav. Every gown authenticated by the House.
+              Lüks gelinlik ve couture mirası. Anadolu'nun usta işçiliği ve İspanyol tasarımıyla hayallerinizi gerçeğe dönüştürüyoruz.
             </p>
           </div>
 
           {/* Shop */}
           <div>
             <h4 className="font-sans text-[11px] uppercase tracking-[0.15em] text-[#1c1c1c]/30 mb-8 font-light">
-              Shop
+              KOLEKSİYONLAR
             </h4>
             <ul className="space-y-4">
               {[
-                { href: "/shop", label: "Browse All Gowns" },
-                { href: "/shop?collection=Couture", label: "Couture Collection" },
-                { href: "/shop?collection=GALA", label: "GALA by GL" },
-                { href: "/shop?condition=new", label: "New — Never Worn" },
+                { href: "/shop?category=gelinlik", label: "Gelinlik" },
+                { href: "/shop?category=tesettur-gelinlik", label: "Tesettür Gelinlikler" },
+                { href: "/shop?category=after-party", label: "After Party" },
+                { href: "/shop?category=abiye", label: "Abiye" },
               ].map((link) => (
                 <li key={link.label}>
                   <Link
@@ -42,17 +64,17 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Sell */}
+          {/* Sell (Contact/Services) */}
           <div>
             <h4 className="font-sans text-[11px] uppercase tracking-[0.15em] text-[#1c1c1c]/30 mb-8 font-light">
-              Sell
+              HİZMETLER
             </h4>
             <ul className="space-y-4">
               {[
-                { href: "/consign", label: "Consign Your Gown" },
-                { href: "/how-it-works", label: "How It Works" },
-                { href: "/how-it-works#commission", label: "Commission Rates" },
-                { href: "/how-it-works#faq", label: "Seller FAQ" },
+                { href: "/appointment", label: "Randevu Al" },
+                { href: "/online-couture", label: "Mesafesiz Couture" },
+                { href: "/about#process", label: "Dikim Süreci" },
+                { href: "/about#atelier", label: "Atölyemiz" },
               ].map((link) => (
                 <li key={link.label}>
                   <Link
@@ -69,15 +91,14 @@ export default function Footer() {
           {/* Company */}
           <div>
             <h4 className="font-sans text-[11px] uppercase tracking-[0.15em] text-[#1c1c1c]/30 mb-8 font-light">
-              Company
+              KURUMSAL
             </h4>
             <ul className="space-y-4">
               {[
-                { href: "/how-it-works", label: "About RE:GALIA" },
-                { href: "/how-it-works#authenticity", label: "Authenticity Promise" },
-                { href: "/how-it-works#buyer-protection", label: "Buyer Protection" },
-                { href: "/company/return-policy", label: "Return Policy" },
-                { href: "mailto:regalia@galialahav.com", label: "Contact Us" },
+                { href: "/about", label: "Hakkımızda" },
+                { href: "/boutiques", label: "Mağazalarımız" },
+                { href: "/faq", label: "Sıkça Sorulan Sorular" },
+                { href: "/contact", label: "İletişim" },
               ].map((link) => (
                 <li key={link.label}>
                   <Link
@@ -97,19 +118,19 @@ export default function Footer() {
       <div className="border-t border-[#1c1c1c]/5">
         <div className="max-w-[85rem] mx-auto px-6 md:px-16 py-6">
           <p className="font-sans text-[11px] text-[#1c1c1c]/30 font-light leading-relaxed text-center max-w-3xl mx-auto">
-            All transactions between buyers and sellers are conducted independently. RE:GALIA facilitates the marketplace but does not take responsibility for communications, payments, or disputes between parties.
+            Mina Lidya, Bursa ve Valencia merkezli global bir gelinlik markasıdır. Tüm tasarımlarımız tescillidir ve usta işçilikle atölyemizde üretilmektedir.
           </p>
         </div>
       </div>
 
       {/* Bottom bar */}
-      <div className="border-t border-[#1c1c1c]/5">
+      <div className="border-t border-[#1c1c1c]/5 bg-[#fcfcfc]">
         <div className="max-w-[85rem] mx-auto px-6 md:px-16 py-8 flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="font-sans text-[12px] text-[#1c1c1c]/30 font-light">
-            &copy; {new Date().getFullYear()} Galia Lahav. All rights reserved.
+            &copy; {new Date().getFullYear()} MİNA LİDYA. Tüm hakları saklıdır.
           </p>
           <div className="flex items-center gap-8">
-            {["Privacy Policy", "Terms of Service", "Cookie Policy"].map((text) => (
+            {["Gizlilik Politikası", "Kullanım Şartları", "Çerez Politikası"].map((text) => (
               <a
                 key={text}
                 href="#"

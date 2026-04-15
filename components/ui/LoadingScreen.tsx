@@ -59,7 +59,7 @@ export default function LoadingScreen() {
                                     transition={{ duration: 0.8, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
                                     className="font-serif text-[2.5rem] tracking-[0.35em] text-[#1c1c1c] font-light uppercase text-center"
                                 >
-                                    RE:GALIA
+                                    MİNA LİDYA
                                 </motion.h1>
                             </div>
 
@@ -78,7 +78,7 @@ export default function LoadingScreen() {
                                 transition={{ duration: 0.6, delay: 1.0, ease: "easeOut" }}
                                 className="font-sans text-[10px] tracking-[0.5em] text-[#1c1c1c]/40 mt-8 uppercase text-center font-light"
                             >
-                                By Galia Lahav
+                                Luxury Bridal & Haute Couture
                             </motion.p>
                         </motion.div>
 

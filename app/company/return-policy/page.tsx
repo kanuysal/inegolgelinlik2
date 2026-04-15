@@ -1,13 +1,9 @@
+"use client";
+
 import type { Metadata } from "next";
 import Link from "next/link";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
-
-export const metadata: Metadata = {
-  title: "Return Policy — RE:GALIA",
-  description:
-    "Return policy for brand-direct Galia Lahav gowns purchased through RE:GALIA. 5-day return window from delivery.",
-};
 
 export default function ReturnPolicyPage() {
   return (
@@ -17,11 +13,11 @@ export default function ReturnPolicyPage() {
       {/* Hero */}
       <section className="pt-32 pb-16 md:pt-40 md:pb-20 px-6">
         <div className="max-w-3xl mx-auto text-center">
-          <p className="font-sans text-[11px] uppercase tracking-[0.2em] text-[#1c1c1c]/40 mb-6 font-light">
-            Brand-Direct Purchases
+          <p className="font-sans text-[11px] uppercase tracking-[0.2em] text-[#B76E79] mb-6 font-bold">
+            Mina Lidya Couture
           </p>
-          <h1 className="font-serif text-4xl md:text-5xl font-light text-[#1c1c1c] leading-[1.15]">
-            Return Policy
+          <h1 className="font-serif text-4xl md:text-5xl font-light text-[#1c1c1c] leading-[1.15] lowercase first-letter:uppercase">
+            İptal ve İade Koşulları
           </h1>
         </div>
       </section>
@@ -33,16 +29,11 @@ export default function ReturnPolicyPage() {
             {/* Scope */}
             <div>
               <h2 className="font-sans text-[11px] uppercase tracking-[0.15em] text-[#1c1c1c]/30 mb-4 font-light">
-                Scope
+                KAPSAM
               </h2>
               <div className="border-t border-[#1c1c1c]/10 pt-6">
                 <p className="font-sans text-[14px] text-[#1c1c1c]/70 leading-relaxed font-light">
-                  This return policy applies exclusively to{" "}
-                  <strong className="text-[#1c1c1c] font-normal">brand-direct</strong>{" "}
-                  purchases — gowns sold directly by Galia Lahav through RE:GALIA.
-                  Bride-to-bride (peer-to-peer) transactions are arranged independently
-                  between buyer and seller; RE:GALIA does not mediate returns for those
-                  listings.
+                  Bu iade politikası sadece <strong className="text-[#1c1c1c] font-normal">Mina Lidya</strong> butiklerinden veya resmi web sitemiz üzerinden yapılan doğrudan satın alımlar için geçerlidir. Kişiye özel dikim süreçleri bu politikanın ana odak noktasıdır.
                 </p>
               </div>
             </div>
@@ -50,62 +41,26 @@ export default function ReturnPolicyPage() {
             {/* Return Window */}
             <div>
               <h2 className="font-sans text-[11px] uppercase tracking-[0.15em] text-[#1c1c1c]/30 mb-4 font-light">
-                Return Window
+                İADE VE DEĞİŞİM SÜRESİ
               </h2>
               <div className="border-t border-[#1c1c1c]/10 pt-6 space-y-4">
                 <p className="font-sans text-[14px] text-[#1c1c1c]/70 leading-relaxed font-light">
-                  You have{" "}
-                  <strong className="text-[#1c1c1c] font-normal">5 days from the date of delivery</strong>{" "}
-                  to submit a return request. The delivery date is determined by the
-                  carrier&rsquo;s confirmed delivery timestamp.
+                  Hazır giyim koleksiyonumuza ait ürünlerde, teslimat tarihinden itibaren <strong className="text-[#1c1c1c] font-normal">14 gün</strong> içerisinde iade veya değişim talebinde bulunabilirsiniz. Hijyen kuralları gereği aksesuar ve iç giyim ürünlerinde iade kabul edilmemektedir.
                 </p>
                 <p className="font-sans text-[14px] text-[#1c1c1c]/70 leading-relaxed font-light">
-                  To initiate a return, contact us at{" "}
-                  <a
-                    href="mailto:regalia@galialahav.com"
-                    className="text-[#1c1c1c] underline underline-offset-4 decoration-[#1c1c1c]/20 hover:decoration-[#1c1c1c]/60 transition-colors"
-                  >
-                    regalia@galialahav.com
-                  </a>{" "}
-                  or through your RE:GALIA dashboard messages. Please include your order
-                  number and reason for return.
+                  İade sürecini başlatmak için <a href="mailto:info@minalidya.wedding" className="text-[#1c1c1c] underline underline-offset-4 decoration-[#1c1c1c]/20 hover:decoration-[#1c1c1c]/60 transition-colors">info@minalidya.wedding</a> adresine mail atabilir veya +90 532 247 64 62 numaralı WhatsApp hattımızdan bizimle iletişime geçebilirsiniz.
                 </p>
               </div>
             </div>
 
-            {/* Return Fees */}
+            {/* custom production */}
             <div>
               <h2 className="font-sans text-[11px] uppercase tracking-[0.15em] text-[#1c1c1c]/30 mb-4 font-light">
-                Return &amp; Exchange Fees
+                KİŞİYE ÖZEL DİKİM
               </h2>
               <div className="border-t border-[#1c1c1c]/10 pt-6 space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div className="p-6 border border-[#1c1c1c]/5">
-                    <p className="font-sans text-[11px] uppercase tracking-[0.15em] text-[#1c1c1c]/30 mb-3 font-light">
-                      Returns
-                    </p>
-                    <p className="font-sans text-[22px] text-[#1c1c1c] font-light">
-                      $200 <span className="text-[14px] text-[#1c1c1c]/40">domestic</span>
-                    </p>
-                    <p className="font-sans text-[22px] text-[#1c1c1c] font-light">
-                      $300 <span className="text-[14px] text-[#1c1c1c]/40">international</span>
-                    </p>
-                  </div>
-                  <div className="p-6 border border-[#1c1c1c]/5">
-                    <p className="font-sans text-[11px] uppercase tracking-[0.15em] text-[#1c1c1c]/30 mb-3 font-light">
-                      Exchanges
-                    </p>
-                    <p className="font-sans text-[22px] text-[#1c1c1c] font-light">
-                      $100 <span className="text-[14px] text-[#1c1c1c]/40">domestic</span>
-                    </p>
-                    <p className="font-sans text-[22px] text-[#1c1c1c] font-light">
-                      $200 <span className="text-[14px] text-[#1c1c1c]/40">international</span>
-                    </p>
-                  </div>
-                </div>
-                <p className="font-sans text-[13px] text-[#1c1c1c]/40 leading-relaxed font-light">
-                  Fees cover return shipping, inspection, and re-listing preparation.
-                  They are deducted from your refund amount.
+                <p className="font-sans text-[14px] text-[#1c1c1c]/70 leading-relaxed font-light">
+                  Türk Ticaret Kanunu mesafeli satış sözleşmesi gereğince; tüketicinin istekleri veya kişisel ihtiyaçları doğrultusunda hazırlanan (kişiye özel ölçü ile dikilen) ürünlerde cayma hakkı bulunmamaktadır. Ancak Mina Lidya olarak, prova sürecinde memnuniyetinizi garanti altına almak için tüm tadilat işlemlerini ücretsiz gerçekleştirmekteyiz.
                 </p>
               </div>
             </div>
@@ -113,14 +68,11 @@ export default function ReturnPolicyPage() {
             {/* Condition Requirements */}
             <div>
               <h2 className="font-sans text-[11px] uppercase tracking-[0.15em] text-[#1c1c1c]/30 mb-4 font-light">
-                Condition Requirements
+                ŞARTLAR
               </h2>
               <div className="border-t border-[#1c1c1c]/10 pt-6 space-y-4">
                 <p className="font-sans text-[14px] text-[#1c1c1c]/70 leading-relaxed font-light">
-                  To be eligible for a return, the gown must be in the same condition as when
-                  it was received: unworn, unaltered, with all original tags and packaging intact.
-                  Gowns that have been altered, damaged, or show signs of wear will not be
-                  accepted for return.
+                  İade edilecek ürünlerin kullanılmamış, tadilat görmemiş, orijinal etiketleri ve ambalajı ile birlikte eksiksiz olarak gönderilmesi gerekmektedir. Kullanım izi taşıyan veya zarar görmüş ürünlerin iadesi kabul edilmez.
                 </p>
               </div>
             </div>
@@ -128,28 +80,11 @@ export default function ReturnPolicyPage() {
             {/* Refund Process */}
             <div>
               <h2 className="font-sans text-[11px] uppercase tracking-[0.15em] text-[#1c1c1c]/30 mb-4 font-light">
-                Refund Process
+                GERİ ÖDEME
               </h2>
               <div className="border-t border-[#1c1c1c]/10 pt-6 space-y-4">
                 <p className="font-sans text-[14px] text-[#1c1c1c]/70 leading-relaxed font-light">
-                  Once we receive and inspect the returned gown, your refund — minus the
-                  applicable return fee — will be processed to your original payment method.
-                  Please allow 5–10 business days for the refund to appear on your statement.
-                </p>
-              </div>
-            </div>
-
-            {/* Peer-to-Peer Note */}
-            <div>
-              <h2 className="font-sans text-[11px] uppercase tracking-[0.15em] text-[#1c1c1c]/30 mb-4 font-light">
-                Bride-to-Bride Listings
-              </h2>
-              <div className="border-t border-[#1c1c1c]/10 pt-6 space-y-4">
-                <p className="font-sans text-[14px] text-[#1c1c1c]/70 leading-relaxed font-light">
-                  Returns for bride-to-bride listings are entirely at the discretion of the
-                  buyer and seller. RE:GALIA facilitates the marketplace but does not mediate
-                  or take responsibility for these transactions. Both parties should agree on
-                  return terms before completing a purchase.
+                  İade onaylandıktan sonra, ödemeniz 7-10 iş günü içerisinde orijinal ödeme yönteminize geri yüklenir. Bankanıza bağlı olarak bu sürenin yansıması değişiklik gösterebilir.
                 </p>
               </div>
             </div>
@@ -157,14 +92,11 @@ export default function ReturnPolicyPage() {
             {/* Contact */}
             <div className="pt-4 border-t border-[#1c1c1c]/10">
               <p className="font-sans text-[13px] text-[#1c1c1c]/40 leading-relaxed font-light">
-                Questions about a return?{" "}
-                <a
-                  href="mailto:regalia@galialahav.com"
-                  className="text-[#1c1c1c]/60 underline underline-offset-4 decoration-[#1c1c1c]/20 hover:decoration-[#1c1c1c]/60 transition-colors"
-                >
-                  Reach out to us
-                </a>{" "}
-                — we&rsquo;re here to help.
+                Bir sorunuz mu var?{" "}
+                <Link href="/appointment" className="text-[#1c1c1c]/60 underline underline-offset-4 decoration-[#1c1c1c]/20 hover:decoration-[#1c1c1c]/60 transition-colors">
+                  Bize ulaşın
+                </Link>{" "}
+                — size yardımcı olmaktan mutluluk duyarız.
               </p>
             </div>
           </div>
