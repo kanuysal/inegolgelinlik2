@@ -292,7 +292,14 @@ export default function ExperiencePage() {
             </div>
           <div className="space-y-4">
             {FAQS.map((faq, i) => (
-              <div key={i} className="border border-[#1c1c1c]/5 px-8 md:px-12 py-2 hover:border-[#B76E79]/30 transition-all duration-500">
+              <motion.div 
+                key={i} 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="border border-[#1c1c1c]/5 px-8 md:px-12 py-2 hover:border-[#B76E79]/30 transition-all duration-500"
+              >
                 <button
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
                   className="w-full flex items-center justify-between py-6 text-left"

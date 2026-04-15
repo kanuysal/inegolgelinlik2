@@ -27,7 +27,7 @@ import {
 } from "./actions";
 import { updateTrackingNumber, markOrderDelivered } from "./order-actions";
 import { getApprovedListings } from "@/app/shop/actions";
-import { useWishlist } from "@/lib/wishlist-context";
+import { useHanger } from "@/lib/hanger-context";
 
 type Tab = "listings" | "purchases" | "messages" | "wishlist" | "profile";
 
@@ -876,12 +876,12 @@ function ProfileTab() {
    WISHLIST TAB
    ══════════════════════════════════════════════════ */
 function WishlistTab() {
-  const { ids, toggle } = useWishlist();
+  const { ids: wishlistIds, toggle } = useHanger();
   const [listings, setListings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (ids.length === 0) {
+    if (wishlistIds.length === 0) {
       setListings([]);
       setLoading(false);
       return;
