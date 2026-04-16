@@ -1,5 +1,7 @@
 "use client";
 
+export const runtime = "edge";
+
 import { useState, useEffect, useTransition, useRef } from 'react';
 import Link from 'next/link';
 import { InlineLoadingSpinner } from '@/components/ui/LoadingSpinner';

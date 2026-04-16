@@ -6,6 +6,9 @@
  * buyers see them on the website.
  */
 import { NextRequest, NextResponse } from 'next/server'
+
+export const runtime = 'edge';
+
 import { createAdminClient } from '@/lib/supabase/server'
 import { notifyNewMessage } from '@/lib/notify'
 import { rateLimit, getClientIp } from '@/lib/rate-limit'

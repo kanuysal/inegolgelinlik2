@@ -13,6 +13,8 @@ import { thumb, PLACEHOLDER_IMG } from "@/lib/image";
 
 /* ── Helpers ────────────────────────────────────── */
 
+export const runtime = "edge";
+
 function fmt(amount: number): string {
   return new Intl.NumberFormat("tr-TR", {
     style: "currency",

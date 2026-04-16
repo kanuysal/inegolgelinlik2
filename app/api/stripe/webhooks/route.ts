@@ -14,6 +14,9 @@
  *   - Uses admin client (bypasses RLS)
  */
 import { NextRequest, NextResponse } from 'next/server'
+
+export const runtime = 'edge';
+
 import { stripe } from '@/lib/stripe'
 import { createAdminClient } from '@/lib/supabase/server'
 import { notifyOrderConfirmed, notifyNewSale, notifyOrderRefunded } from '@/lib/notify-orders'

@@ -8,6 +8,9 @@
  * Exchanges the auth code for a session, then redirects to dashboard.
  */
 import { NextResponse } from 'next/server'
+
+export const runtime = 'edge';
+
 import { createClient, createAdminClient } from '@/lib/supabase/server'
 
 export async function GET(request: Request) {
