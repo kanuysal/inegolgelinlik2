@@ -21,6 +21,7 @@ const IMAGE_STORE = process.env.NEXT_PUBLIC_IMAGE_STORE || 'https://api.minalidy
 export async function fetchProducts(): Promise<MinaLidyaProduct[]> {
   try {
     const response = await fetch(`${API_URL}/products?limit=100`, {
+      mode: 'cors',
       headers: {
         'x-api-key': API_KEY,
       },

@@ -10,6 +10,7 @@ const MENU_LINKS = [
   { href: "/shop", label: "Koleksiyonlar" },
   { href: "/online-couture", label: "Online Couture" },
   { href: "/about", label: "Hakkımızda" },
+  { href: "/faq", label: "SSS" },
   { href: "/boutiques", label: "Mağazalar" },
   { href: "/appointment", label: "Randevu Al" },
 ];

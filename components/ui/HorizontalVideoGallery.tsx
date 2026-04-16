@@ -9,15 +9,15 @@ if (typeof window !== 'undefined') {
 }
 
 const MARQUEE_VIDEOS = [
-  "/videos/sliders/sliders (1).mp4",
-  "/videos/sliders/sliders (2).mp4",
-  "/videos/sliders/sliders (3).mp4",
-  "/videos/sliders/sliders (4).mp4",
-  "/videos/sliders/sliders (5).mp4",
-  "/videos/sliders/sliders (6).mp4",
-  "/videos/sliders/sliders (7).mp4",
-  "/videos/sliders/sliders (8).mp4",
-  "/videos/sliders/sliders (9).mp4",
+  "/videos/sliders/sliders-1.mp4",
+  "/videos/sliders/sliders-2.mp4",
+  "/videos/sliders/sliders-3.mp4",
+  "/videos/sliders/sliders-4.mp4",
+  "/videos/sliders/sliders-5.mp4",
+  "/videos/sliders/sliders-6.mp4",
+  "/videos/sliders/sliders-7.mp4",
+  "/videos/sliders/sliders-8.mp4",
+  "/videos/sliders/sliders-9.mp4",
 ];
 
 export default function HorizontalVideoGallery() {
